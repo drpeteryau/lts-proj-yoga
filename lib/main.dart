@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
+import 'screens/home_screen.dart';
+import 'screens/sessions_screen.dart';
+import 'screens/progress_screen.dart';
+import 'screens/about_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const HealYogaApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class HealYogaApp extends StatelessWidget {
+  const HealYogaApp({super.key});
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Heal Yoga',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -28,9 +33,17 @@ class MyApp extends StatelessWidget {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        primaryColor: const Color(0xFF40E0D0), // Turquoise
+        colorScheme: ColorScheme.fromSwatch().copyWith(
+        primary: const Color(0xFF40E0D0),
+        secondary: const Color(0xFF00796B),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      textTheme: const TextTheme(
+        bodyLarge: TextStyle(fontSize: 16.0, color: Colors.black87),
+        titleLarge: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
+      ),
+      ),
+      home: const HomeScreen(),
     );
   }
 }
