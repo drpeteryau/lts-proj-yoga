@@ -1,0 +1,213 @@
+import '../models/yoga_pose.dart';
+import '../models/yoga_session.dart';
+
+class YogaData {
+  // Beginner Warmup Poses
+  static final List<YogaPose> beginnerWarmup = [
+    YogaPose(
+      name: 'Seated Mountain Pose',
+      description: 'Sit tall with awareness of your posture',
+      imageUrl: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=500',
+      durationSeconds: 60,
+      modifications: ['Use a chair with back support', 'Place cushion under hips'],
+      instructions: 'Sit on a chair with feet flat on floor. Lengthen your spine, relax shoulders, and breathe deeply.',
+      category: 'warmup',
+    ),
+    YogaPose(
+      name: 'Neck Rolls',
+      description: 'Gentle circular movements to release neck tension',
+      imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=500',
+      durationSeconds: 90,
+      modifications: ['Move slowly', 'Stop if you feel dizzy'],
+      instructions: 'Slowly roll your head in circles. 5 times clockwise, then 5 times counter-clockwise.',
+      category: 'warmup',
+    ),
+    YogaPose(
+      name: 'Shoulder Rolls',
+      description: 'Release tension in shoulders and upper back',
+      imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=500',
+      durationSeconds: 60,
+      modifications: ['Do one shoulder at a time if easier'],
+      instructions: 'Roll shoulders backward 10 times, then forward 10 times. Keep movements smooth.',
+      category: 'warmup',
+    ),
+    YogaPose(
+      name: 'Seated Cat-Cow',
+      description: 'Gentle spinal movements while seated',
+      imageUrl: 'https://images.unsplash.com/photo-1588286840104-8957b019727f?w=500',
+      durationSeconds: 90,
+      modifications: ['Use chair back for support'],
+      instructions: 'Inhale: arch back, look up. Exhale: round spine, tuck chin. Repeat 8-10 times.',
+      category: 'warmup',
+    ),
+    YogaPose(
+      name: 'Ankle Circles',
+      description: 'Warm up ankle joints',
+      imageUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500',
+      durationSeconds: 60,
+      modifications: ['Hold onto chair for balance'],
+      instructions: 'Lift one foot slightly. Circle ankle 10 times each direction. Repeat other foot.',
+      category: 'warmup',
+    ),
+  ];
+
+  // Beginner Main Poses
+  static final List<YogaPose> beginnerMain = [
+    YogaPose(
+      name: 'Chair Mountain Pose',
+      description: 'Standing pose with chair support for balance',
+      imageUrl: 'https://images.unsplash.com/photo-1603988363607-e1e4a66962c6?w=500',
+      durationSeconds: 45,
+      modifications: ['Keep both hands on chair', 'Sit in chair instead'],
+      instructions: 'Stand behind chair, hands on back. Stand tall, feet hip-width apart, engage legs.',
+      category: 'main',
+    ),
+    YogaPose(
+      name: 'Chair Forward Fold',
+      description: 'Gentle forward bend with chair support',
+      imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=500',
+      durationSeconds: 60,
+      modifications: ['Only fold as far as comfortable', 'Keep knees slightly bent'],
+      instructions: 'Stand behind chair. Hinge at hips, hands on chair seat. Let head hang. Breathe.',
+      category: 'main',
+    ),
+    YogaPose(
+      name: 'Seated Twist',
+      description: 'Gentle spinal rotation while seated',
+      imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=500',
+      durationSeconds: 60,
+      modifications: ['Use armrest for support'],
+      instructions: 'Sit sideways in chair. Hold back of chair with both hands. Twist gently. Hold 30 sec each side.',
+      category: 'main',
+    ),
+    YogaPose(
+      name: 'Warrior I with Chair',
+      description: 'Standing leg strengthener with support',
+      imageUrl: 'https://images.unsplash.com/photo-1599447292326-e6daae7ae9cb?w=500',
+      durationSeconds: 45,
+      modifications: ['Shorter stance', 'Keep back heel down'],
+      instructions: 'Stand beside chair. Step one foot back. Bend front knee. Hold chair for balance. 30 sec each side.',
+      category: 'main',
+    ),
+    YogaPose(
+      name: 'Tree Pose with Wall',
+      description: 'Balance pose with wall support',
+      imageUrl: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=500',
+      durationSeconds: 45,
+      modifications: ['Keep toes on ground', 'Use wall for support'],
+      instructions: 'Stand near wall. Lift one foot to opposite ankle or calf. Balance. Hold 30 sec each side.',
+      category: 'main',
+    ),
+    YogaPose(
+      name: "Child's Pose (Modified)",
+      description: 'Resting and gentle stretch',
+      imageUrl: 'https://images.unsplash.com/photo-1588286840104-8957b019727f?w=500',
+      durationSeconds: 90,
+      modifications: ['Use cushion under forehead', 'Sit on heels'],
+      instructions: 'Kneel on floor. Sit back on heels. Fold forward, arms extended. Rest and breathe.',
+      category: 'main',
+    ),
+    YogaPose(
+      name: 'Cat-Cow Stretch',
+      description: 'Spinal flexibility on hands and knees',
+      imageUrl: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=500',
+      durationSeconds: 90,
+      modifications: ['Use padding under knees', 'Do standing version'],
+      instructions: 'On hands and knees. Inhale: drop belly, look up. Exhale: arch back, tuck chin. Repeat 10 times.',
+      category: 'main',
+    ),
+    YogaPose(
+      name: 'Bridge Pose (Gentle)',
+      description: 'Hip opening and back strengthening',
+      imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=500',
+      durationSeconds: 60,
+      modifications: ['Keep lift small', 'Place block under sacrum'],
+      instructions: 'Lie on back, knees bent, feet flat. Lift hips gently. Hold 20-30 seconds. Lower slowly.',
+      category: 'main',
+    ),
+  ];
+
+  // Beginner Cooldown Poses
+  static final List<YogaPose> beginnerCooldown = [
+    YogaPose(
+      name: 'Supine Twist',
+      description: 'Gentle spinal rotation lying down',
+      imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=500',
+      durationSeconds: 90,
+      modifications: ['Use pillow under knee'],
+      instructions: 'Lie on back. Drop both knees to one side. Arms out. Turn head opposite. Hold 60 sec each side.',
+      category: 'cooldown',
+    ),
+    YogaPose(
+      name: 'Knee to Chest',
+      description: 'Lower back release',
+      imageUrl: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=500',
+      durationSeconds: 60,
+      modifications: ['One leg at a time'],
+      instructions: 'Lie on back. Hug knees to chest. Rock gently side to side. Breathe deeply.',
+      category: 'cooldown',
+    ),
+    YogaPose(
+      name: 'Legs Up the Wall',
+      description: 'Restorative pose for circulation',
+      imageUrl: 'https://images.unsplash.com/photo-1588286840104-8957b019727f?w=500',
+      durationSeconds: 180,
+      modifications: ['Use chair instead of wall', 'Cushion under hips'],
+      instructions: 'Lie with buttocks near wall. Extend legs up wall. Arms relaxed. Stay 3-5 minutes.',
+      category: 'cooldown',
+    ),
+    YogaPose(
+      name: 'Corpse Pose (Savasana)',
+      description: 'Final relaxation',
+      imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=500',
+      durationSeconds: 300,
+      modifications: ['Cushion under head and knees', 'Cover with blanket'],
+      instructions: 'Lie flat on back. Legs slightly apart, arms at sides. Close eyes. Relax completely. Breathe naturally.',
+      category: 'cooldown',
+    ),
+  ];
+
+  // Beginner Sessions
+  static final List<YogaSession> beginnerSessions = [
+    YogaSession(
+      id: 'beginner_1',
+      title: 'Gentle Introduction',
+      level: 'Beginner',
+      description: 'Perfect for your first yoga session. Focus on basic movements and breathing.',
+      totalDurationMinutes: 30,
+      warmupPoses: beginnerWarmup,
+      mainPoses: beginnerMain,
+      cooldownPoses: beginnerCooldown,
+    ),
+    YogaSession(
+      id: 'beginner_2',
+      title: 'Morning Gentle Flow',
+      level: 'Beginner',
+      description: 'Wake up your body with gentle stretches. Great for starting your day.',
+      totalDurationMinutes: 25,
+      warmupPoses: beginnerWarmup.take(3).toList(),
+      mainPoses: beginnerMain.take(5).toList(),
+      cooldownPoses: beginnerCooldown.take(3).toList(),
+    ),
+    YogaSession(
+      id: 'beginner_3',
+      title: 'Evening Relaxation',
+      level: 'Beginner',
+      description: 'Calm your mind and body before bed. Focus on relaxation and breathing.',
+      totalDurationMinutes: 20,
+      warmupPoses: beginnerWarmup.take(2).toList(),
+      mainPoses: beginnerMain.sublist(4, 6).toList(),
+      cooldownPoses: beginnerCooldown,
+    ),
+    YogaSession(
+      id: 'beginner_4',
+      title: 'Balance & Stability',
+      level: 'Beginner',
+      description: 'Build strength and confidence with supported balance poses.',
+      totalDurationMinutes: 30,
+      warmupPoses: beginnerWarmup.take(4).toList(),
+      mainPoses: [beginnerMain[0], beginnerMain[3], beginnerMain[4], beginnerMain[5], beginnerMain[7]],
+      cooldownPoses: beginnerCooldown.take(3).toList(),
+    ),
+  ];
+}
