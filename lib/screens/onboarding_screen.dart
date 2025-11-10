@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'main_navigation_screen.dart';
+import 'login_screen.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
@@ -71,7 +72,7 @@ class OnboardingScreen extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const MainNavigationScreen(),
+                        builder: (context) => const LoginScreen(), 
                       ),
                     );
                   },

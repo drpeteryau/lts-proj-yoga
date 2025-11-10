@@ -45,5 +45,19 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	  <!-- Google Sign-In URL Scheme -->
+  <key>CFBundleURLTypes</key>
+  <array>
+    <dict>
+      <key>CFBundleTypeRole</key>
+      <string>Editor</string>
+      <key>CFBundleURLSchemes</key>
+      <array>
+        <!-- 👇 Replace this with your real iOS Client ID prefix -->
+<string>com.googleusercontent.apps.337226396229-lep8ipulrl4lsuci8ih8qo697nmg69lg</string>
+      </array>
+    </dict>
+  </array>
+
 </dict>
 </plist>

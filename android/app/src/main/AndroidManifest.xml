@@ -1,8 +1,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:label="heal_yoga"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+
+         <meta-data
+        android:name="com.google.android.gms.client.id"
+        android:value="337226396229-6pjiqm66kg7n424s0c2hmd2s99pvd8pl.apps.googleusercontent.com" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
