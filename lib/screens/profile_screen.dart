@@ -427,19 +427,22 @@ String _getAgeGroup(int age) {
       iconColor: _primaryColor,
       children: [
         // Age Group Dropdown
-        _buildDropdownSetting(
-  label: _localizedText('setting_age_group'),
-  value: _ageGroup,
-  onTap: () => _showSelectionSheet(
-    title: _localizedText('sheet_select_age'),
-    options: _ageGroupOptions,
-    currentValue: _ageGroup,
-    onSelected: (newValue) {
-      setState(() => _ageGroup = newValue);
-      _updateProfileField('age_group', newValue);
-    },
-  ),
-),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                _localizedText('setting_age_group'),
+                style: const TextStyle(fontSize: 16, color: _textColor),
+              ),
+              Text(
+                _ageGroup, // Displays the value calculated from the specific Age input
+                style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+              ),
+            ],
+          ),
+        ),
         const Divider(height: 1, color: Colors.black12),
         // Experience Level Dropdown
         _buildDropdownSetting(
