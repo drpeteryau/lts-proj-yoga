@@ -426,7 +426,7 @@ String _getAgeGroup(int age) {
       title: _localizedText('card_profile'),
       iconColor: _primaryColor,
       children: [
-        // Age Group Dropdown
+        // Age Group
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: Row(

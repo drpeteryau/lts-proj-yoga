@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:notificationapi_flutter_sdk/notificationapi_flutter_sdk.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'login_screen.dart';
 import 'main_navigation_screen.dart';
 import 'complete_profile_screen.dart';
@@ -13,6 +15,7 @@ class AuthGate extends StatefulWidget {
 
 class _AuthGateState extends State<AuthGate> {
   bool _isLoading = true;
+  bool _notificationsInitialized = false;
 
   @override
   void initState() {
@@ -84,6 +87,39 @@ class _AuthGateState extends State<AuthGate> {
     final isIncomplete = fullName.isEmpty || age == null;
 
     if (!mounted) return;
+
+    if (!_notificationsInitialized) {
+      try {
+        // 1. Use Email as the ID
+        // This makes your curl command work because it targets the email
+        final myUserId = user.email ?? user.id;
+
+        // 2. Setup (This automatically identifies the user)
+        await NotificationAPI.setup(
+          clientId: 'jseq4x2joxg6ymskltqx0wg4vk',
+          userId: myUserId,
+        );
+
+        print('✅ NotificationAPI initialized with userId: $myUserId');
+
+        // 3. Remove the identifyUser block entirely (it doesn't exist)
+
+        await NotificationAPI.requestPermission();
+        print('✅ Push notification permission granted/requested');
+
+        // Debug: print the FCM token
+        try {
+          final fcmToken = await FirebaseMessaging.instance.getToken();
+          print('DEBUG: FCM token = $fcmToken');
+        } catch (e) {
+          print('DEBUG: Failed to read FCM token: $e');
+        }
+
+        _notificationsInitialized = true;
+      } catch (e) {
+        print('❌ Error with NotificationAPI: $e');
+      }
+    }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (isIncomplete) {
