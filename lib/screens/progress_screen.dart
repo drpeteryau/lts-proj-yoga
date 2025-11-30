@@ -13,10 +13,10 @@ class ProgressScreen extends StatefulWidget {
 
 class _ProgressScreenState extends State<ProgressScreen> {
   final supabase = Supabase.instance.client;
-  
+
   bool _isLoading = true;
   String? _error;
-  
+
   // Data
   int _currentStreak = 0;
   int _streakWeeks = 0;
@@ -24,16 +24,16 @@ class _ProgressScreenState extends State<ProgressScreen> {
   Map<int, int> _monthActivityMap = {}; // day -> minutes
   List<ChartData> _chartData = [];
   DateTime _currentMonth = DateTime.now();
-  
+
   // Weekly Progress & Trophies
   int _weeklyMinutes = 0;
   int _weeklyGoal = 300;
   String _currentTrophy = 'None';
-  
+
   // Monthly Wellness Check-in
   bool _showWellnessDialog = false;
   int? _lastFeedbackWeek;
-  
+
   // Wellness form values
   int? _bodyComfort;
   int? _flexibility;
@@ -92,7 +92,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
       // 5. Build current month activity map
       final startOfMonth = DateTime(_currentMonth.year, _currentMonth.month, 1);
       final endOfMonth = DateTime(_currentMonth.year, _currentMonth.month + 1, 0);
-      
+
       final monthSessionsResponse = await supabase
           .from('sessions')
           .select()
@@ -104,7 +104,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
       for (var session in monthSessionsResponse) {
         final date = DateTime.parse(session['date_completed']);
         final day = date.day;
-        _monthActivityMap[day] = (_monthActivityMap[day] ?? 0) + 
+        _monthActivityMap[day] = (_monthActivityMap[day] ?? 0) +
             (session['duration_minutes'] as int? ?? 0);
       }
 
@@ -204,7 +204,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
         if (firstSession.isNotEmpty) {
           final firstDate = DateTime.parse(firstSession[0]['date_completed']);
           final weeksSinceStart = DateTime.now().difference(firstDate).inDays ~/ 7;
-          
+
           if (weeksSinceStart >= 4) {
             _showWellnessDialog = true;
             _lastFeedbackWeek = 1;
@@ -215,7 +215,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
         final lastFeedback = feedbackResponse[0];
         final lastFeedbackDate = DateTime.parse(lastFeedback['created_at']);
         final weeksSinceLast = DateTime.now().difference(lastFeedbackDate).inDays ~/ 7;
-        
+
         if (weeksSinceLast >= 4) {
           _showWellnessDialog = true;
           _lastFeedbackWeek = (lastFeedback['feedback_week'] ?? 0) + 1;
@@ -229,11 +229,11 @@ class _ProgressScreenState extends State<ProgressScreen> {
   List<ChartData> _buildChartData(List<dynamic> sessions) {
     // Group by week and calculate total minutes
     Map<String, double> weeklyData = {};
-    
+
     for (var session in sessions) {
       final date = DateTime.parse(session['date_completed']);
       final weekKey = _getWeekKey(date);
-      weeklyData[weekKey] = (weeklyData[weekKey] ?? 0) + 
+      weeklyData[weekKey] = (weeklyData[weekKey] ?? 0) +
           (session['duration_minutes'] as int? ?? 0).toDouble();
     }
 
@@ -269,17 +269,17 @@ class _ProgressScreenState extends State<ProgressScreen> {
       }
 
       final sortedDates = uniqueDates.toList()..sort((a, b) => b.compareTo(a));
-      
+
       int streak = 0;
       DateTime? lastDate;
 
       for (var dateStr in sortedDates) {
         final currentDate = DateTime.parse(dateStr);
-        
+
         if (lastDate == null) {
           final today = DateTime.now();
           final yesterday = today.subtract(const Duration(days: 1));
-          
+
           if (_isSameDay(currentDate, today) || _isSameDay(currentDate, yesterday)) {
             streak = 1;
             lastDate = currentDate;
@@ -323,7 +323,10 @@ class _ProgressScreenState extends State<ProgressScreen> {
     _loadProgressData();
   }
 
+  // Replace the _submitWellnessFeedback method in progress_screen.dart with this:
+
   Future<void> _submitWellnessFeedback() async {
+    // Validate all required fields
     if (_bodyComfort == null ||
         _flexibility == null ||
         _balance == null ||
@@ -333,34 +336,77 @@ class _ProgressScreenState extends State<ProgressScreen> {
         _bodyConnection == null ||
         _overallWellbeing == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please answer all questions')),
+        const SnackBar(
+          content: Text('Please answer all required questions'),
+          backgroundColor: Colors.orange,
+        ),
       );
       return;
     }
 
     try {
       final userId = supabase.auth.currentUser?.id;
-      if (userId == null) return;
+      if (userId == null) {
+        throw Exception('User not authenticated');
+      }
 
-      // Combine reflections
-      final combinedComments = 'Balance: $_balanceReflection\n'
-          'Posture: $_postureReflection\n'
-          'Consistency: $_consistencyReflection\n'
-          'Other: $_otherReflection';
+      // Combine reflections into a structured format
+      final reflections = <String, String>{
+        'balance': _balanceReflection.trim(),
+        'posture': _postureReflection.trim(),
+        'consistency': _consistencyReflection.trim(),
+        'other': _otherReflection.trim(),
+      };
 
-      await supabase.from('feedback').insert({
+      // Create a formatted comment string
+      final List<String> commentParts = [];
+      if (_balanceReflection.trim().isNotEmpty) {
+        commentParts.add('Balance: ${_balanceReflection.trim()}');
+      }
+      if (_postureReflection.trim().isNotEmpty) {
+        commentParts.add('Posture: ${_postureReflection.trim()}');
+      }
+      if (_consistencyReflection.trim().isNotEmpty) {
+        commentParts.add('Consistency: ${_consistencyReflection.trim()}');
+      }
+      if (_otherReflection.trim().isNotEmpty) {
+        commentParts.add('Other: ${_otherReflection.trim()}');
+      }
+
+      final combinedComments = commentParts.isNotEmpty
+          ? commentParts.join('\n\n')
+          : null;
+
+      // Insert feedback into database
+      final feedbackData = {
         'user_id': userId,
         'feedback_week': _lastFeedbackWeek ?? 1,
         'flexibility_improvement': _flexibility,
         'fitness_improvement': _bodyComfort,
         'mental_wellbeing': _mood,
         'satisfaction_level': _overallWellbeing,
-        'additional_comments': combinedComments.trim().isEmpty ? null : combinedComments.trim(),
-      });
+        'additional_comments': combinedComments,
+        'created_at': DateTime.now().toIso8601String(),
+        // Add new fields for comprehensive tracking
+        'balance_rating': _balance,
+        'energy_level': _energyLevel,
+        'daily_confidence': _dailyConfidence,
+        'body_connection': _bodyConnection,
+      };
 
+      print('Submitting feedback: $feedbackData');
+
+      final response = await supabase
+          .from('feedback')
+          .insert(feedbackData)
+          .select()
+          .single();
+
+      print('✅ Feedback submitted successfully: $response');
+
+      // Reset form after successful submission
       setState(() {
         _showWellnessDialog = false;
-        // Reset all form values
         _bodyComfort = null;
         _flexibility = null;
         _balance = null;
@@ -375,16 +421,27 @@ class _ProgressScreenState extends State<ProgressScreen> {
         _otherReflection = '';
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Thank you for sharing your wellness check-in! 🌿'),
-          backgroundColor: Color(0xFF2CC5B6),
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Thank you for sharing your wellness check-in!'),
+            backgroundColor: Color(0xFF2CC5B6),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error submitting feedback: $e')),
-      );
+      print('Error submitting feedback: $e');
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error submitting feedback: ${e.toString()}'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
     }
   }
 
@@ -439,7 +496,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
           children: [
             // Simple Header - Just Title
             _buildHeader(),
-            
+
             // Content
             Expanded(
               child: _isLoading
@@ -482,34 +539,34 @@ class _ProgressScreenState extends State<ProgressScreen> {
         children: [
           // Line Chart
           _buildChart(primaryTeal),
-          
+
           const SizedBox(height: 20),
-          
+
           // Weekly Trophy Milestones
           _buildWeeklyTrophies(primaryTeal),
-          
+
           const SizedBox(height: 20),
-          
+
           // Month Header with Navigation
           _buildMonthHeader(),
-          
+
           const SizedBox(height: 16),
-          
+
           // Streak Stats
           _buildStreakStats(),
-          
+
           const SizedBox(height: 20),
-          
+
           // Calendar
           _buildCalendar(primaryTeal),
-          
+
           const SizedBox(height: 24),
-          
+
           // Manual Wellness Feedback Card (Always visible)
           _buildWellnessFeedbackCard(primaryTeal),
-          
+
           const SizedBox(height: 16),
-          
+
           // Motivational Section
           _buildMotivationalSection(),
         ],
@@ -645,8 +702,8 @@ class _ProgressScreenState extends State<ProgressScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: trophies.map((trophy) {
               final isAchieved = _weeklyMinutes >= trophy.minutes;
-              final isNext = !isAchieved && 
-                  trophies.indexOf(trophy) > 0 && 
+              final isNext = !isAchieved &&
+                  trophies.indexOf(trophy) > 0 &&
                   _weeklyMinutes >= trophies[trophies.indexOf(trophy) - 1].minutes ||
                   (trophies.indexOf(trophy) == 0 && !isAchieved);
 
@@ -811,7 +868,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
               .toList(),
         ),
         const SizedBox(height: 12),
-        
+
         // Calendar grid
         _buildCalendarGrid(daysInMonth, startingWeekday, primaryTeal),
       ],
@@ -820,17 +877,17 @@ class _ProgressScreenState extends State<ProgressScreen> {
 
   Widget _buildCalendarGrid(int daysInMonth, int startingWeekday, Color primaryTeal) {
     List<Widget> dayWidgets = [];
-    
+
     // Add empty cells for days before the first day of month
     for (int i = 1; i < startingWeekday; i++) {
       dayWidgets.add(const SizedBox(width: 48, height: 48));
     }
-    
+
     // Add day cells
     for (int day = 1; day <= daysInMonth; day++) {
       final hasActivity = _monthActivityMap.containsKey(day);
       final minutes = _monthActivityMap[day] ?? 0;
-      
+
       dayWidgets.add(
         Container(
           width: 48,
@@ -869,7 +926,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
         ),
       );
     }
-    
+
     // Wrap in rows of 7
     List<Widget> rows = [];
     for (int i = 0; i < dayWidgets.length; i += 7) {
@@ -883,7 +940,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
         ),
       );
     }
-    
+
     return Column(children: rows);
   }
 

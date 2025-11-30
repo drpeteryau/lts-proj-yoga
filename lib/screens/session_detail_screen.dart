@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../models/yoga_session.dart';
 import '../models/yoga_pose.dart';
 import 'pose_detail_screen.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 
 class SessionDetailScreen extends StatefulWidget {
   final YogaSession session;
@@ -14,6 +16,35 @@ class SessionDetailScreen extends StatefulWidget {
 
 class _SessionDetailScreenState extends State<SessionDetailScreen> {
   bool isFavorite = false;
+
+  // Store completion states for each pose (poseId → isCompleted)
+  Map<String, bool> poseProgress = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPoseProgress();
+  }
+
+// Load pose progress from Supabase
+  Future<void> _loadPoseProgress() async {
+    final supabase = Supabase.instance.client;
+
+    final response = await supabase
+        .from('user_progress')
+        .select('pose_id, is_completed')
+        .eq('session_level', widget.session.level);
+
+    final progressMap = <String, bool>{};
+    for (final row in response) {
+      progressMap[row['pose_id'].toString()] = row['is_completed'] == true;
+    }
+
+    setState(() {
+      poseProgress = progressMap;
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -334,6 +365,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                                   pose: widget.session.allPoses[0],
                                   allPoses: widget.session.allPoses,
                                   currentIndex: 0,
+                                  sessionLevel: widget.session.level,
                                 ),
                               ),
                             );
@@ -475,9 +507,13 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
               pose: pose,
               allPoses: allPoses,
               currentIndex: currentIndex,
+              sessionLevel: widget.session.level,
             ),
           ),
-        );
+        ).then((_) {
+          _loadPoseProgress(); // 🔥 Refresh after returning
+        });
+
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
@@ -557,12 +593,23 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
               ),
             ),
 
-            // Arrow
-            Icon(
-              Icons.chevron_right,
-              color: color,
-              size: 24,
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // 🔥 NEW checkmark if completed
+                if (poseProgress[pose.id.toString()] == true)
+                  const Icon(Icons.check_circle, color: Colors.green, size: 22),
+
+                const SizedBox(width: 6),
+
+                Icon(
+                  Icons.chevron_right,
+                  color: color,
+                  size: 24,
+                ),
+              ],
             ),
+
           ],
         ),
       ),

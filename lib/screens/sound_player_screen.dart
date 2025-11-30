@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'sounds_screen.dart';
+import '../services/global_audio_service.dart';
 
 class SoundPlayerScreen extends StatefulWidget {
   final MeditationSound sound;
@@ -23,7 +24,7 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
   @override
   void initState() {
     super.initState();
-    _audioPlayer = AudioPlayer();
+    _audioPlayer = GlobalAudioService.player;
     _initAudio();
   }
 
@@ -111,7 +112,7 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
 
   @override
   void dispose() {
-    _audioPlayer.dispose();
+
     super.dispose();
   }
 
@@ -296,6 +297,7 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
                       thumbColor: const Color(0xFF40E0D0),
                       overlayColor: const Color(0xFF40E0D0).withOpacity(0.2),
                     ),
+
                     child: Slider(
                       value: _currentPosition.inSeconds.toDouble(),
                       min: 0,

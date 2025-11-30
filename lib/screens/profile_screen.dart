@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'login_screen.dart';
+import '../services/global_audio_service.dart';
+
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -10,6 +12,8 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+
+  final GlobalAudioService _audioService = GlobalAudioService();
 
     // ==============================
   //  Supabase Profile Loader
@@ -603,7 +607,9 @@ String _getAgeGroup(int age) {
                 inactiveColor: _primaryColor.withOpacity(0.2),
                  onChanged: (double newValue) {
                 setState(() => _volumeLevel = newValue);
-                _updateProfileField('volume_level', newValue); // ✅ update Supabase
+                _updateProfileField('volume_level', newValue);
+
+                _audioService.setVolume(newValue);
               },
               ),
             ),

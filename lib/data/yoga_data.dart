@@ -5,6 +5,7 @@ class YogaData {
   // Beginner Warmup Poses
   static final List<YogaPose> beginnerWarmup = [
     YogaPose(
+      id: 'warmup_seated_mountain',
       name: 'Seated Mountain Pose',
       description: 'Sit tall with awareness of your posture',
       imageUrl: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=500',
@@ -14,6 +15,7 @@ class YogaData {
       category: 'warmup',
     ),
     YogaPose(
+      id: 'warmup_neck_rolls',
       name: 'Neck Rolls',
       description: 'Gentle circular movements to release neck tension',
       imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=500',
@@ -23,6 +25,7 @@ class YogaData {
       category: 'warmup',
     ),
     YogaPose(
+      id: 'warmup_shoulder_rolls',
       name: 'Shoulder Rolls',
       description: 'Release tension in shoulders and upper back',
       imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=500',
@@ -32,6 +35,7 @@ class YogaData {
       category: 'warmup',
     ),
     YogaPose(
+      id: 'warmup_seated_cat_cow',
       name: 'Seated Cat-Cow',
       description: 'Gentle spinal movements while seated',
       imageUrl: 'https://images.unsplash.com/photo-1588286840104-8957b019727f?w=500',
@@ -41,6 +45,7 @@ class YogaData {
       category: 'warmup',
     ),
     YogaPose(
+      id: 'warmup_ankle_circles',
       name: 'Ankle Circles',
       description: 'Warm up ankle joints',
       imageUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500',
@@ -54,6 +59,7 @@ class YogaData {
   // Beginner Main Poses
   static final List<YogaPose> beginnerMain = [
     YogaPose(
+      id: 'main_chair_mountain_pose',
       name: 'Chair Mountain Pose',
       description: 'Standing pose with chair support for balance',
       imageUrl: 'https://images.unsplash.com/photo-1603988363607-e1e4a66962c6?w=500',
@@ -63,6 +69,7 @@ class YogaData {
       category: 'main',
     ),
     YogaPose(
+      id: 'main_chair_forward_fold',
       name: 'Chair Forward Fold',
       description: 'Gentle forward bend with chair support',
       imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=500',
@@ -72,6 +79,7 @@ class YogaData {
       category: 'main',
     ),
     YogaPose(
+      id: 'main_seated_twist',
       name: 'Seated Twist',
       description: 'Gentle spinal rotation while seated',
       imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=500',
@@ -81,6 +89,7 @@ class YogaData {
       category: 'main',
     ),
     YogaPose(
+      id: 'main_warrior_1_chair',
       name: 'Warrior I with Chair',
       description: 'Standing leg strengthener with support',
       imageUrl: 'https://images.unsplash.com/photo-1599447292326-e6daae7ae9cb?w=500',
@@ -90,6 +99,7 @@ class YogaData {
       category: 'main',
     ),
     YogaPose(
+      id: 'main_tree_pose_wall',
       name: 'Tree Pose with Wall',
       description: 'Balance pose with wall support',
       imageUrl: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=500',
@@ -99,6 +109,7 @@ class YogaData {
       category: 'main',
     ),
     YogaPose(
+      id: 'main_child_pose_modified',
       name: "Child's Pose (Modified)",
       description: 'Resting and gentle stretch',
       imageUrl: 'https://images.unsplash.com/photo-1588286840104-8957b019727f?w=500',
@@ -108,6 +119,7 @@ class YogaData {
       category: 'main',
     ),
     YogaPose(
+      id: 'main_cat_cow',
       name: 'Cat-Cow Stretch',
       description: 'Spinal flexibility on hands and knees',
       imageUrl: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=500',
@@ -117,6 +129,7 @@ class YogaData {
       category: 'main',
     ),
     YogaPose(
+      id: 'main_bridge_gentle',
       name: 'Bridge Pose (Gentle)',
       description: 'Hip opening and back strengthening',
       imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=500',
@@ -130,6 +143,7 @@ class YogaData {
   // Beginner Cooldown Poses
   static final List<YogaPose> beginnerCooldown = [
     YogaPose(
+      id: 'cooldown_supine_twist',
       name: 'Supine Twist',
       description: 'Gentle spinal rotation lying down',
       imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=500',
@@ -139,6 +153,7 @@ class YogaData {
       category: 'cooldown',
     ),
     YogaPose(
+      id: 'cooldown_knee_to_chest',
       name: 'Knee to Chest',
       description: 'Lower back release',
       imageUrl: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=500',
@@ -148,6 +163,7 @@ class YogaData {
       category: 'cooldown',
     ),
     YogaPose(
+      id: 'cooldown_legs_up_wall',
       name: 'Legs Up the Wall',
       description: 'Restorative pose for circulation',
       imageUrl: 'https://images.unsplash.com/photo-1588286840104-8957b019727f?w=500',
@@ -157,6 +173,7 @@ class YogaData {
       category: 'cooldown',
     ),
     YogaPose(
+      id: 'cooldown_savasana',
       name: 'Corpse Pose (Savasana)',
       description: 'Final relaxation',
       imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=500',

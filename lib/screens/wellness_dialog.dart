@@ -29,13 +29,27 @@ void showSeniorFriendlyWellnessDialog({
   required Function(String) onOtherReflectionChanged,
   required Function() onSubmit,
 }) {
+  // Local state for the dialog
+  int? localBodyComfort = bodyComfort;
+  int? localFlexibility = flexibility;
+  int? localBalance = balance;
+  int? localEnergyLevel = energyLevel;
+  int? localMood = mood;
+  int? localDailyConfidence = dailyConfidence;
+  int? localBodyConnection = bodyConnection;
+  int? localOverallWellbeing = overallWellbeing;
+
   showDialog(
     context: context,
     barrierDismissible: false,
     builder: (BuildContext dialogContext) {
       return StatefulBuilder(
-        builder: (context, setState) {
+        builder: (context, setDialogState) {
           return AlertDialog(
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
             title: Row(
               children: [
                 const Text('🌿', style: TextStyle(fontSize: 28)),
@@ -51,216 +65,219 @@ void showSeniorFriendlyWellnessDialog({
                 ),
               ],
             ),
-            content: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Progress Summary
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [const Color(0xFFE3F8F5), const Color(0xFFD0F7F0)],
+            content: SizedBox(
+              width: MediaQuery.of(context).size.width * 0.9,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Progress Summary
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFFE3F8F5), Color(0xFFD0F7F0)],
+                        ),
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Row(
-                          children: [
-                            Icon(Icons.insights, color: Color(0xFF2CC5B6), size: 20),
-                            SizedBox(width: 8),
-                            Text(
-                              'Your Progress Summary',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Row(
+                            children: [
+                              Icon(Icons.insights, color: Color(0xFF2CC5B6), size: 20),
+                              SizedBox(width: 8),
+                              Text(
+                                'Your Progress Summary',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        Text('📅 Total Sessions: $totalActivities', style: const TextStyle(fontSize: 14)),
-                        const SizedBox(height: 6),
-                        Text('🔥 Current Streak: $currentStreak days', style: const TextStyle(fontSize: 14)),
-                        const SizedBox(height: 6),
-                        Text('🏆 Weekly Goal: $weeklyMinutes / $weeklyGoal minutes', style: const TextStyle(fontSize: 14)),
-                      ],
-                    ),
-                  ),
-                  
-                  const SizedBox(height: 24),
-                  
-                  // Section 1 - Physical Comfort & Mobility
-                  _buildSectionHeader('Section 1 – Physical Comfort & Mobility', Colors.blue),
-                  const SizedBox(height: 16),
-                  
-                  // Q1: Body Comfort
-                  _buildQuestion(
-                    '1️⃣ How comfortable does your body feel during movement?',
-                    ['Not comfortable', 'Slightly comfortable', 'Moderately comfortable', 'Very comfortable', 'Extremely comfortable'],
-                    bodyComfort,
-                    (value) {
-                      setState(() {});
-                      onBodyComfortChanged(value);
-                    },
-                  ),
-                  
-                  // Q2: Flexibility
-                  _buildQuestion(
-                    '2️⃣ How would you describe your flexibility recently?',
-                    ['Much stiffer', 'A little stiff', 'About the same', 'A bit more flexible', 'Much more flexible'],
-                    flexibility,
-                    (value) {
-                      setState(() {});
-                      onFlexibilityChanged(value);
-                    },
-                  ),
-                  
-                  // Q3: Balance
-                  _buildQuestion(
-                    '3️⃣ How steady do you feel when standing or balancing?',
-                    ['Not steady at all', 'Slightly steady', 'Moderately steady', 'Very steady', 'Extremely steady'],
-                    balance,
-                    (value) {
-                      setState(() {});
-                      onBalanceChanged(value);
-                    },
-                  ),
-                  
-                  const SizedBox(height: 16),
-                  
-                  // Section 2 - Energy & Mood
-                  _buildSectionHeader('Section 2 – Energy & Mood', Colors.orange),
-                  const SizedBox(height: 16),
-                  
-                  // Q4: Energy Level
-                  _buildQuestion(
-                    '4️⃣ How is your overall energy level?',
-                    ['Very low', 'Low', 'Average', 'Good', 'Very good'],
-                    energyLevel,
-                    (value) {
-                      setState(() {});
-                      onEnergyLevelChanged(value);
-                    },
-                  ),
-                  
-                  // Q5: Mood
-                  _buildQuestion(
-                    '5️⃣ How has your mood been lately?',
-                    ['Often stressed or down', 'Sometimes stressed', 'Mostly okay', 'Mostly positive', 'Very positive and calm'],
-                    mood,
-                    (value) {
-                      setState(() {});
-                      onMoodChanged(value);
-                    },
-                  ),
-                  
-                  const SizedBox(height: 16),
-                  
-                  // Section 3 - Awareness & Confidence
-                  _buildSectionHeader('Section 3 – Awareness & Confidence', Colors.purple),
-                  const SizedBox(height: 16),
-                  
-                  // Q6: Daily Confidence
-                  _buildQuestion(
-                    '6️⃣ How confident do you feel performing daily activities?',
-                    ['Not confident', 'Slightly confident', 'Somewhat confident', 'Confident', 'Very confident'],
-                    dailyConfidence,
-                    (value) {
-                      setState(() {});
-                      onDailyConfidenceChanged(value);
-                    },
-                  ),
-                  
-                  // Q7: Body Connection
-                  _buildQuestion(
-                    '7️⃣ How connected do you feel to your body during yoga practice?',
-                    ['Not connected', 'A little connected', 'Moderately connected', 'Very connected', 'Deeply connected'],
-                    bodyConnection,
-                    (value) {
-                      setState(() {});
-                      onBodyConnectionChanged(value);
-                    },
-                  ),
-                  
-                  const SizedBox(height: 16),
-                  
-                  // Section 4 - Overall Wellbeing
-                  _buildSectionHeader('⭐ Overall Wellbeing', Colors.green),
-                  const SizedBox(height: 16),
-                  
-                  // Q8: Overall Wellbeing
-                  _buildQuestion(
-                    '8️⃣ Overall, how would you rate your wellbeing this month?',
-                    ['Poor', 'Fair', 'Good', 'Very good', 'Excellent'],
-                    overallWellbeing,
-                    (value) {
-                      setState(() {});
-                      onOverallWellbeingChanged(value);
-                    },
-                  ),
-                  
-                  const SizedBox(height: 16),
-                  
-                  // Monthly Reflections Section
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFE3F8F5),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '💭 Monthly Reflections (Optional)',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF2CC5B6),
+                            ],
                           ),
-                        ),
-                        SizedBox(height: 6),
-                        Text(
-                          'Share specific improvements you\'ve noticed:',
-                          style: TextStyle(fontSize: 14, color: Colors.black87),
-                        ),
-                      ],
+                          const SizedBox(height: 12),
+                          Text('📅 Total Sessions: $totalActivities', style: const TextStyle(fontSize: 14)),
+                          const SizedBox(height: 6),
+                          Text('🔥 Current Streak: $currentStreak days', style: const TextStyle(fontSize: 14)),
+                          const SizedBox(height: 6),
+                          Text('🏆 Weekly Goal: $weeklyMinutes / $weeklyGoal minutes', style: const TextStyle(fontSize: 14)),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  // Balance Reflection
-                  _buildReflectionField(
-                    '🧘 Balance Improvements',
-                    'e.g., I can stand on one leg longer...',
-                    onBalanceReflectionChanged,
-                  ),
-                  
-                  // Posture Reflection
-                  _buildReflectionField(
-                    '🪑 Posture Improvements',
-                    'e.g., My back feels straighter...',
-                    onPostureReflectionChanged,
-                  ),
-                  
-                  // Consistency Reflection
-                  _buildReflectionField(
-                    '📅 Consistency & Habits',
-                    'e.g., I practice every morning now...',
-                    onConsistencyReflectionChanged,
-                  ),
-                  
-                  // Other Reflection
-                  _buildReflectionField(
-                    '💬 Other Thoughts',
-                    'Any other improvements or notes...',
-                    onOtherReflectionChanged,
-                  ),
-                ],
+
+                    const SizedBox(height: 24),
+
+                    // Section 1 - Physical Comfort & Mobility
+                    _buildSectionHeader('Section 1 – Physical Comfort & Mobility', Colors.blue),
+                    const SizedBox(height: 16),
+
+                    // Q1: Body Comfort
+                    _buildQuestion(
+                      '1️⃣ How comfortable does your body feel during movement?',
+                      ['Not comfortable', 'Slightly comfortable', 'Moderately comfortable', 'Very comfortable', 'Extremely comfortable'],
+                      localBodyComfort,
+                          (value) {
+                        setDialogState(() => localBodyComfort = value);
+                        onBodyComfortChanged(value);
+                      },
+                    ),
+
+                    // Q2: Flexibility
+                    _buildQuestion(
+                      '2️⃣ How would you describe your flexibility recently?',
+                      ['Much stiffer', 'A little stiff', 'About the same', 'A bit more flexible', 'Much more flexible'],
+                      localFlexibility,
+                          (value) {
+                        setDialogState(() => localFlexibility = value);
+                        onFlexibilityChanged(value);
+                      },
+                    ),
+
+                    // Q3: Balance
+                    _buildQuestion(
+                      '3️⃣ How steady do you feel when standing or balancing?',
+                      ['Not steady at all', 'Slightly steady', 'Moderately steady', 'Very steady', 'Extremely steady'],
+                      localBalance,
+                          (value) {
+                        setDialogState(() => localBalance = value);
+                        onBalanceChanged(value);
+                      },
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Section 2 - Energy & Mood
+                    _buildSectionHeader('Section 2 – Energy & Mood', Colors.orange),
+                    const SizedBox(height: 16),
+
+                    // Q4: Energy Level
+                    _buildQuestion(
+                      '4️⃣ How is your overall energy level?',
+                      ['Very low', 'Low', 'Average', 'Good', 'Very good'],
+                      localEnergyLevel,
+                          (value) {
+                        setDialogState(() => localEnergyLevel = value);
+                        onEnergyLevelChanged(value);
+                      },
+                    ),
+
+                    // Q5: Mood
+                    _buildQuestion(
+                      '5️⃣ How has your mood been lately?',
+                      ['Often stressed or down', 'Sometimes stressed', 'Mostly okay', 'Mostly positive', 'Very positive and calm'],
+                      localMood,
+                          (value) {
+                        setDialogState(() => localMood = value);
+                        onMoodChanged(value);
+                      },
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Section 3 - Awareness & Confidence
+                    _buildSectionHeader('Section 3 – Awareness & Confidence', Colors.purple),
+                    const SizedBox(height: 16),
+
+                    // Q6: Daily Confidence
+                    _buildQuestion(
+                      '6️⃣ How confident do you feel performing daily activities?',
+                      ['Not confident', 'Slightly confident', 'Somewhat confident', 'Confident', 'Very confident'],
+                      localDailyConfidence,
+                          (value) {
+                        setDialogState(() => localDailyConfidence = value);
+                        onDailyConfidenceChanged(value);
+                      },
+                    ),
+
+                    // Q7: Body Connection
+                    _buildQuestion(
+                      '7️⃣ How connected do you feel to your body during yoga practice?',
+                      ['Not connected', 'A little connected', 'Moderately connected', 'Very connected', 'Deeply connected'],
+                      localBodyConnection,
+                          (value) {
+                        setDialogState(() => localBodyConnection = value);
+                        onBodyConnectionChanged(value);
+                      },
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Section 4 - Overall Wellbeing
+                    _buildSectionHeader('⭐ Overall Wellbeing', Colors.green),
+                    const SizedBox(height: 16),
+
+                    // Q8: Overall Wellbeing
+                    _buildQuestion(
+                      '8️⃣ Overall, how would you rate your wellbeing this month?',
+                      ['Poor', 'Fair', 'Good', 'Very good', 'Excellent'],
+                      localOverallWellbeing,
+                          (value) {
+                        setDialogState(() => localOverallWellbeing = value);
+                        onOverallWellbeingChanged(value);
+                      },
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Monthly Reflections Section
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFE3F8F5),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '💭 Monthly Reflections (Optional)',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF2CC5B6),
+                            ),
+                          ),
+                          SizedBox(height: 6),
+                          Text(
+                            'Share specific improvements you\'ve noticed:',
+                            style: TextStyle(fontSize: 14, color: Colors.black87),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Balance Reflection
+                    _buildReflectionField(
+                      '🧘 Balance Improvements',
+                      'e.g., I can stand on one leg longer...',
+                      onBalanceReflectionChanged,
+                    ),
+
+                    // Posture Reflection
+                    _buildReflectionField(
+                      '🪑 Posture Improvements',
+                      'e.g., My back feels straighter...',
+                      onPostureReflectionChanged,
+                    ),
+
+                    // Consistency Reflection
+                    _buildReflectionField(
+                      '📅 Consistency & Habits',
+                      'e.g., I practice every morning now...',
+                      onConsistencyReflectionChanged,
+                    ),
+
+                    // Other Reflection
+                    _buildReflectionField(
+                      '💬 Other Thoughts',
+                      'Any other improvements or notes...',
+                      onOtherReflectionChanged,
+                    ),
+                  ],
+                ),
               ),
             ),
             actions: [
@@ -272,6 +289,24 @@ void showSeniorFriendlyWellnessDialog({
               ),
               ElevatedButton(
                 onPressed: () {
+                  // Validate all required fields
+                  if (localBodyComfort == null ||
+                      localFlexibility == null ||
+                      localBalance == null ||
+                      localEnergyLevel == null ||
+                      localMood == null ||
+                      localDailyConfidence == null ||
+                      localBodyConnection == null ||
+                      localOverallWellbeing == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Please answer all required questions before submitting'),
+                        backgroundColor: Colors.orange,
+                      ),
+                    );
+                    return;
+                  }
+
                   Navigator.pop(dialogContext);
                   onSubmit();
                 },
@@ -318,11 +353,11 @@ Widget _buildSectionHeader(String title, Color color) {
 }
 
 Widget _buildQuestion(
-  String question,
-  List<String> options,
-  int? selectedValue,
-  Function(int?) onChanged,
-) {
+    String question,
+    List<String> options,
+    int? selectedValue,
+    Function(int?) onChanged,
+    ) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -340,13 +375,13 @@ Widget _buildQuestion(
         return Container(
           margin: const EdgeInsets.only(bottom: 8),
           decoration: BoxDecoration(
-            color: selectedValue == value 
-                ? const Color(0xFF2CC5B6).withOpacity(0.15) 
+            color: selectedValue == value
+                ? const Color(0xFF2CC5B6).withOpacity(0.15)
                 : Colors.white,
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
-              color: selectedValue == value 
-                  ? const Color(0xFF2CC5B6) 
+              color: selectedValue == value
+                  ? const Color(0xFF2CC5B6)
                   : Colors.grey.shade300,
               width: selectedValue == value ? 2 : 1,
             ),
@@ -374,10 +409,10 @@ Widget _buildQuestion(
 }
 
 Widget _buildReflectionField(
-  String label,
-  String hint,
-  Function(String) onChanged,
-) {
+    String label,
+    String hint,
+    Function(String) onChanged,
+    ) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
