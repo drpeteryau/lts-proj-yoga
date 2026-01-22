@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'screens/auth_gate.dart';
+import 'services/global_audio_service.dart'; // ⭐ ADD THIS IMPORT
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,8 +18,16 @@ Future<void> main() async {
   await Supabase.initialize(
     url: 'https://rkhmailqbmbijsfzhcch.supabase.co',
     anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJraG1haWxxYm1iaWpzZnpoY2NoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE5OTA2NzIsImV4cCI6MjA3NzU2NjY3Mn0.WcM8AsP3YSoyBhrS7KRFf2lmxNqSg0FG1bkbihrrffY',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJraG1haWxxYm1iaWpzZnpoY2NoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE5OTA2NzIsImV4cCI6MjA3NzU2NjY3Mn0.WcM8AsP3YSoyBhrS7KRFf2lmxNqSg0FG1bkbihrrffY',
   );
+
+  // ⭐ ADD THIS - Initialize audio service for mini playback bar
+  try {
+    await GlobalAudioService().initialize();
+    print('✅ GlobalAudioService initialized');
+  } catch (e) {
+    print('⚠️ GlobalAudioService.initialize() failed: $e');
+  }
 
   runApp(const HealYogaApp());
 }

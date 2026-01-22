@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'sound_player_screen.dart';
+import '../services/global_audio_service.dart';
 
 class MeditationSound {
   final String title;
@@ -7,6 +8,7 @@ class MeditationSound {
   final String duration;
   final String imageUrl;
   final bool isPopular;
+  final String audioUrl;
 
   MeditationSound({
     required this.title,
@@ -14,12 +16,14 @@ class MeditationSound {
     required this.duration,
     required this.imageUrl,
     this.isPopular = false,
+    required this.audioUrl,
   });
 }
 
 class SoundsScreen extends StatelessWidget {
   const SoundsScreen({super.key});
 
+  // Using working audio URLs from free sources
   static final List<MeditationSound> sounds = [
     MeditationSound(
       title: 'Ocean Waves',
@@ -27,6 +31,8 @@ class SoundsScreen extends StatelessWidget {
       duration: '30 min',
       imageUrl: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=500',
       isPopular: true,
+      // Free ocean waves audio from Pixabay
+      audioUrl: 'https://cdn.pixabay.com/audio/2022/05/27/audio_1808fbf07a.mp3',
     ),
     MeditationSound(
       title: 'Forest Rain',
@@ -34,6 +40,8 @@ class SoundsScreen extends StatelessWidget {
       duration: '45 min',
       imageUrl: 'https://images.unsplash.com/photo-1511497584788-876760111969?w=500',
       isPopular: true,
+      // Free rain audio
+      audioUrl: 'https://cdn.pixabay.com/audio/2022/03/10/audio_4dedf3f94c.mp3',
     ),
     MeditationSound(
       title: 'Tibetan Bowls',
@@ -41,36 +49,48 @@ class SoundsScreen extends StatelessWidget {
       duration: '20 min',
       imageUrl: 'https://images.unsplash.com/photo-1545389336-cf090694435e?w=500',
       isPopular: true,
+      // Meditation music
+      audioUrl: 'https://cdn.pixabay.com/audio/2023/10/30/audio_13ca663de8.mp3',
     ),
     MeditationSound(
       title: 'Peaceful Piano',
       category: 'Ambient',
       duration: '60 min',
       imageUrl: 'https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?w=500',
+      // Peaceful piano music
+      audioUrl: 'https://cdn.pixabay.com/audio/2022/11/22/audio_0c1d8c5d65.mp3',
     ),
     MeditationSound(
       title: 'Mountain Stream',
       category: 'Nature',
       duration: '40 min',
       imageUrl: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=500',
+      // Stream/water sounds
+      audioUrl: 'https://cdn.pixabay.com/audio/2022/10/10/audio_c0d9b3bb5e.mp3',
     ),
     MeditationSound(
       title: 'Wind Chimes',
       category: 'Ambient',
       duration: '25 min',
       imageUrl: 'https://images.unsplash.com/photo-1499244571948-7ccddb3583f1?w=500',
+      // Wind chimes audio
+      audioUrl: 'https://cdn.pixabay.com/audio/2022/03/15/audio_134a5914f1.mp3',
     ),
     MeditationSound(
       title: 'Gentle Thunder',
       category: 'Nature',
       duration: '35 min',
       imageUrl: 'https://images.unsplash.com/photo-1502691876148-a84978e59af8?w=500',
+      // Thunder sounds
+      audioUrl: 'https://cdn.pixabay.com/audio/2023/07/25/audio_2c5c1c51f1.mp3',
     ),
     MeditationSound(
       title: 'Singing Birds',
       category: 'Nature',
       duration: '30 min',
       imageUrl: 'https://images.unsplash.com/photo-1444464666168-49d633b86797?w=500',
+      // Birds chirping
+      audioUrl: 'https://cdn.pixabay.com/audio/2022/03/09/audio_c610232532.mp3',
     ),
   ];
 
@@ -211,18 +231,62 @@ class SoundsScreen extends StatelessWidget {
   }
 
   Widget _buildSoundCard(
-    BuildContext context,
-    MeditationSound sound, {
-    double? width,
-  }) {
+      BuildContext context,
+      MeditationSound sound, {
+        double? width,
+      }) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => SoundPlayerScreen(sound: sound),
+      onTap: () async {
+        // Show loading indicator
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => const Center(
+            child: CircularProgressIndicator(
+              color: Color(0xFF40E0D0),
+            ),
           ),
         );
+
+        try {
+          // Play sound using global audio service
+          final audioService = GlobalAudioService();
+          await audioService.playSound(
+            url: sound.audioUrl,
+            title: sound.title,
+            category: sound.category,
+            imageUrl: sound.imageUrl,
+          );
+
+          // Wait a moment for audio to load
+          await Future.delayed(const Duration(milliseconds: 500));
+
+          // Close loading dialog
+          if (context.mounted) Navigator.pop(context);
+
+          // Navigate to sound player screen
+          if (context.mounted) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SoundPlayerScreen(sound: sound),
+              ),
+            );
+          }
+        } catch (e) {
+          // Close loading dialog
+          if (context.mounted) Navigator.pop(context);
+
+          // Show error
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Failed to play audio: $e'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        }
       },
       child: Container(
         width: width,

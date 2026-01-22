@@ -45,6 +45,7 @@ dependencies:
   notificationapi_flutter_sdk: ^2.1.0
   firebase_messaging: ^16.0.4
   firebase_core: ^4.2.1
+  video_player: ^2.10.1
 
 dev_dependencies:
   flutter_test:

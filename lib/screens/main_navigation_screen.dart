@@ -4,6 +4,7 @@ import 'progress_screen.dart';
 import 'sounds_screen.dart';
 import 'profile_screen.dart';
 import 'level_selection_screen.dart';
+import '../widgets/mini_playback_bar.dart';
 
 class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
@@ -14,7 +15,7 @@ class MainNavigationScreen extends StatefulWidget {
 
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _selectedIndex = 0;
-  
+
   final List<Widget> _screens = const [
     HomeTabScreen(),
     LevelSelectionScreen(),
@@ -38,7 +39,16 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         title: Text(_titles[_selectedIndex]),
         backgroundColor: const Color(0xFF40E0D0),
       ),
-      body: _screens[_selectedIndex],
+      body: Column(
+        children: [
+          // Main content
+          Expanded(
+            child: _screens[_selectedIndex],
+          ),
+          // Mini playback bar (appears above bottom nav when music is playing)
+          const MiniPlaybackBar(),
+        ],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: (index) => setState(() => _selectedIndex = index),

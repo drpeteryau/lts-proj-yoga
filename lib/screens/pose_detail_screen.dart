@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:video_player/video_player.dart';
 import '../models/yoga_pose.dart';
 import 'dart:async';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -28,6 +29,11 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
   Timer? _timer;
   bool _isTimerRunning = false;
 
+  // Video player
+  VideoPlayerController? _videoController;
+  bool _isVideoInitialized = false;
+  bool _isVideoPlaying = false;
+
   final PoseProgressService _poseProgressService = PoseProgressService();
   bool _isPoseCompleted = false;
   bool _loadingPoseStatus = true;
@@ -37,6 +43,41 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
     super.initState();
     _remainingSeconds = widget.pose.durationSeconds;
     _loadPoseCompletion();
+    _initializeVideo();
+  }
+
+  Future<void> _initializeVideo() async {
+    // Using a free yoga video from the internet
+    // You can replace this with your own hosted videos
+    _videoController = VideoPlayerController.networkUrl(
+      Uri.parse('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'),
+    );
+
+    try {
+      await _videoController!.initialize();
+      await _videoController!.setLooping(true);
+      if (mounted) {
+        setState(() {
+          _isVideoInitialized = true;
+        });
+      }
+    } catch (e) {
+      print('Error initializing video: $e');
+    }
+  }
+
+  void _toggleVideo() {
+    if (_videoController == null || !_isVideoInitialized) return;
+
+    setState(() {
+      if (_isVideoPlaying) {
+        _videoController!.pause();
+        _isVideoPlaying = false;
+      } else {
+        _videoController!.play();
+        _isVideoPlaying = true;
+      }
+    });
   }
 
   Future<void> _loadPoseCompletion() async {
@@ -86,11 +127,9 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
         _isPoseCompleted = true;
       });
 
-      // ✅ Check if ALL poses in the session are now completed
       final allCompleted = await _checkAllPosesCompleted(userId);
 
       if (allCompleted) {
-        // If this was the last pose to complete, track session completion
         await _trackSessionCompletion();
 
         if (mounted) {
@@ -120,7 +159,6 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
     }
   }
 
-  // ✅ NEW: Check if all poses in the session are completed
   Future<bool> _checkAllPosesCompleted(String userId) async {
     try {
       for (final pose in widget.allPoses) {
@@ -130,10 +168,10 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
           pose.id,
         );
         if (!completed) {
-          return false; // Found an incomplete pose
+          return false;
         }
       }
-      return true; // All poses completed
+      return true;
     } catch (e) {
       print('Error checking pose completion: $e');
       return false;
@@ -143,6 +181,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
   @override
   void dispose() {
     _timer?.cancel();
+    _videoController?.dispose();
     super.dispose();
   }
 
@@ -250,8 +289,8 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
         actions: [
           ElevatedButton(
             onPressed: () async {
-              Navigator.pop(context); // Close dialog
-              Navigator.pop(context); // Go back to session list
+              Navigator.pop(context);
+              Navigator.pop(context);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF40E0D0),
@@ -282,7 +321,6 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
         widget.sessionLevel,
       );
 
-      // Check if a level was just unlocked
       if (mounted) {
         if (updatedProgress.canUnlockIntermediate &&
             updatedProgress.intermediateUnlocked) {
@@ -293,7 +331,6 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
         }
       }
 
-      // Save to sessions table
       await Supabase.instance.client.from('sessions').insert({
         'user_id': userId,
         'session_id': 'session_${DateTime.now().millisecondsSinceEpoch}',
@@ -410,6 +447,12 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
     return const Color(0xFF40E0D0);
   }
 
+  String _formatTime(int seconds) {
+    final minutes = seconds ~/ 60;
+    final remainingSeconds = seconds % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
+  }
+
   @override
   Widget build(BuildContext context) {
     final pose = widget.pose;
@@ -451,40 +494,97 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
               ),
             ),
 
-            // Pose Image
+            // Video Player
             Container(
               height: 280,
               margin: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
+                color: Colors.black,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 15,
+                    offset: const Offset(0, 5),
                   ),
                 ],
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
-                child: Image.network(
-                  pose.imageUrl,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      decoration: BoxDecoration(
-                        color: categoryColor.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Center(
-                        child: Icon(
-                          Icons.self_improvement,
-                          size: 80,
-                          color: categoryColor,
+                child: _isVideoInitialized
+                    ? Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // Video
+                    AspectRatio(
+                      aspectRatio: _videoController!.value.aspectRatio,
+                      child: VideoPlayer(_videoController!),
+                    ),
+                    // Play/Pause Overlay
+                    GestureDetector(
+                      onTap: _toggleVideo,
+                      child: Container(
+                        color: Colors.transparent,
+                        child: Center(
+                          child: AnimatedOpacity(
+                            opacity: _isVideoPlaying ? 0.0 : 1.0,
+                            duration: const Duration(milliseconds: 300),
+                            child: Container(
+                              padding: const EdgeInsets.all(20),
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.6),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.play_arrow,
+                                size: 60,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                    );
-                  },
+                    ),
+                    // Video label
+                    Positioned(
+                      bottom: 16,
+                      left: 16,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.7),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.videocam,
+                              size: 16,
+                              color: categoryColor,
+                            ),
+                            const SizedBox(width: 6),
+                            const Text(
+                              'Video Tutorial',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+                    : Center(
+                  child: CircularProgressIndicator(
+                    color: categoryColor,
+                  ),
                 ),
               ),
             ),
@@ -536,38 +636,70 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
                     ),
                   ),
 
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 32),
 
-                  // Timer Display
+                  // Enhanced Timer Display
                   Center(
                     child: Container(
-                      width: 180,
-                      height: 180,
+                      padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: categoryColor.withOpacity(0.1),
-                        border: Border.all(
-                          color: categoryColor,
-                          width: 6,
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            categoryColor.withOpacity(0.1),
+                            categoryColor.withOpacity(0.05),
+                          ],
                         ),
+                        borderRadius: BorderRadius.circular(24),
+                        boxShadow: [
+                          BoxShadow(
+                            color: categoryColor.withOpacity(0.2),
+                            blurRadius: 20,
+                            offset: const Offset(0, 8),
+                          ),
+                        ],
                       ),
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            '$_remainingSeconds',
-                            style: TextStyle(
-                              fontSize: 52,
-                              fontWeight: FontWeight.bold,
+                          // Timer icon
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: categoryColor.withOpacity(0.2),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.timer_outlined,
                               color: categoryColor,
+                              size: 32,
                             ),
                           ),
+
+                          const SizedBox(height: 20),
+
+                          // Time display
                           Text(
-                            'seconds',
+                            _formatTime(_remainingSeconds),
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 64,
+                              fontWeight: FontWeight.bold,
                               color: categoryColor,
-                              fontWeight: FontWeight.w500,
+                              fontFeatures: const [
+                                FontFeature.tabularFigures(),
+                              ],
+                            ),
+                          ),
+
+                          const SizedBox(height: 8),
+
+                          Text(
+                            _isTimerRunning ? 'TIME REMAINING' : 'DURATION',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey[600],
+                              letterSpacing: 2,
                             ),
                           ),
                         ],
@@ -575,51 +707,114 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
                     ),
                   ),
 
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 32),
 
-                  // Timer Controls
+                  // Enhanced Timer Controls
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      ElevatedButton.icon(
-                        onPressed: _resetTimer,
-                        icon: const Icon(Icons.refresh, size: 20),
-                        label: const Text('Reset', style: TextStyle(fontSize: 16)),
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-                          backgroundColor: Colors.grey[100],
-                          foregroundColor: Colors.black87,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                      // Reset Button
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.08),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: _resetTimer,
+                            borderRadius: BorderRadius.circular(16),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 16,
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.refresh,
+                                    size: 24,
+                                    color: Colors.grey[700],
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'Reset',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.grey[700],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                      const SizedBox(width: 12),
-                      ElevatedButton.icon(
-                        onPressed: _isTimerRunning ? _pauseTimer : _startTimer,
-                        icon: Icon(
-                          _isTimerRunning ? Icons.pause : Icons.play_arrow,
-                          size: 24,
+
+                      const SizedBox(width: 16),
+
+                      // Start/Pause Button
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              categoryColor,
+                              categoryColor.withOpacity(0.8),
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: categoryColor.withOpacity(0.4),
+                              blurRadius: 15,
+                              offset: const Offset(0, 6),
+                            ),
+                          ],
                         ),
-                        label: Text(
-                          _isTimerRunning ? 'Pause' : 'Start',
-                          style: const TextStyle(fontSize: 18),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
-                          backgroundColor: categoryColor,
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: _isTimerRunning ? _pauseTimer : _startTimer,
+                            borderRadius: BorderRadius.circular(16),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 32,
+                                vertical: 16,
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    _isTimerRunning ? Icons.pause : Icons.play_arrow,
+                                    size: 28,
+                                    color: Colors.white,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    _isTimerRunning ? 'Pause' : 'Start',
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ],
                   ),
 
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 40),
 
                   // Instructions Card
                   Container(
