@@ -72,41 +72,6 @@ void showSeniorFriendlyWellnessDialog({
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Progress Summary
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFFE3F8F5), Color(0xFFD0F7F0)],
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Row(
-                            children: [
-                              Icon(Icons.insights, color: Color(0xFF2CC5B6), size: 20),
-                              SizedBox(width: 8),
-                              Text(
-                                'Your Progress Summary',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          Text('📅 Total Sessions: $totalActivities', style: const TextStyle(fontSize: 14)),
-                          const SizedBox(height: 6),
-                          Text('🔥 Current Streak: $currentStreak days', style: const TextStyle(fontSize: 14)),
-                          const SizedBox(height: 6),
-                          Text('🏆 Weekly Goal: $weeklyMinutes / $weeklyGoal minutes', style: const TextStyle(fontSize: 14)),
-                        ],
-                      ),
-                    ),
-
                     const SizedBox(height: 24),
 
                     // Section 1 - Physical Comfort & Mobility
