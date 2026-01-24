@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../models/yoga_pose.dart';
 import 'dart:async';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -29,7 +30,6 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
   Timer? _timer;
   bool _isTimerRunning = false;
 
-  // Video player
   VideoPlayerController? _videoController;
   bool _isVideoInitialized = false;
   bool _isVideoPlaying = false;
@@ -47,8 +47,6 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
   }
 
   Future<void> _initializeVideo() async {
-    // Using a free yoga video from the internet
-    // You can replace this with your own hosted videos
     _videoController = VideoPlayerController.networkUrl(
       Uri.parse('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'),
     );
@@ -103,79 +101,84 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
         _loadingPoseStatus = false;
       });
     } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _isPoseCompleted = false;
-        _loadingPoseStatus = false;
-      });
+      print('Error loading pose completion: $e');
+      if (mounted) {
+        setState(() {
+          _loadingPoseStatus = false;
+        });
+      }
     }
   }
 
-  Future<void> _onMarkPoseCompleted() async {
-    final userId = Supabase.instance.client.auth.currentUser?.id;
-    if (userId == null) return;
+  void _startTimer() {
+    if (_isTimerRunning) {
+      _pauseTimer();
+      return;
+    }
 
-    try {
+    setState(() => _isTimerRunning = true);
+
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_remainingSeconds > 0) {
+        setState(() => _remainingSeconds--);
+      } else {
+        _completeTimer();
+      }
+    });
+  }
+
+  void _pauseTimer() {
+    _timer?.cancel();
+    setState(() => _isTimerRunning = false);
+  }
+
+  void _stopTimer() {
+    _timer?.cancel();
+    setState(() {
+      _isTimerRunning = false;
+      _remainingSeconds = widget.pose.durationSeconds;
+    });
+  }
+
+  Future<void> _completeTimer() async {
+    _timer?.cancel();
+    setState(() {
+      _isTimerRunning = false;
+      _isPoseCompleted = true;
+    });
+
+    // Save completion
+    final userId = Supabase.instance.client.auth.currentUser?.id;
+    if (userId != null) {
       await _poseProgressService.markPoseCompleted(
         userId,
         widget.sessionLevel,
         widget.pose.id,
       );
+    }
 
-      if (!mounted) return;
-      setState(() {
-        _isPoseCompleted = true;
-      });
-
-      final allCompleted = await _checkAllPosesCompleted(userId);
-
-      if (allCompleted) {
-        await _trackSessionCompletion();
-
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Session completed! 🎉'),
-              duration: Duration(seconds: 2),
-              backgroundColor: Color(0xFF40E0D0),
+    // Move to next pose if available
+    if (widget.currentIndex < widget.allPoses.length - 1) {
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PoseDetailScreen(
+              pose: widget.allPoses[widget.currentIndex + 1],
+              allPoses: widget.allPoses,
+              currentIndex: widget.currentIndex + 1,
+              sessionLevel: widget.sessionLevel,
             ),
-          );
-        }
-      } else {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Pose completed 🌿'),
-              duration: Duration(seconds: 2),
-            ),
-          );
-        }
+          ),
+        );
       }
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error saving progress: $e')),
-      );
     }
   }
 
-  Future<bool> _checkAllPosesCompleted(String userId) async {
-    try {
-      for (final pose in widget.allPoses) {
-        final completed = await _poseProgressService.isPoseCompleted(
-          userId,
-          widget.sessionLevel,
-          pose.id,
-        );
-        if (!completed) {
-          return false;
-        }
-      }
-      return true;
-    } catch (e) {
-      print('Error checking pose completion: $e');
-      return false;
-    }
+  String _formatTime(int seconds) {
+    final minutes = seconds ~/ 60;
+    final secs = seconds % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
   }
 
   @override
@@ -185,123 +188,138 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
     super.dispose();
   }
 
-  void _startTimer() {
-    setState(() {
-      _isTimerRunning = true;
-    });
-
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_remainingSeconds > 0) {
-        setState(() {
-          _remainingSeconds--;
-        });
-      } else {
-        _timer?.cancel();
-        setState(() {
-          _isTimerRunning = false;
-        });
-        _showNextPoseDialog();
-      }
-    });
-  }
-
-  void _pauseTimer() {
-    _timer?.cancel();
-    setState(() {
-      _isTimerRunning = false;
-    });
-  }
-
-  void _resetTimer() {
-    _timer?.cancel();
-    setState(() {
-      _isTimerRunning = false;
-      _remainingSeconds = widget.pose.durationSeconds;
-    });
-  }
-
-  void _showNextPoseDialog() {
-    if (widget.currentIndex < widget.allPoses.length - 1) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: const Text('Great Job!', style: TextStyle(fontSize: 24)),
-          content: const Text(
-            'Ready for the next pose?',
-            style: TextStyle(fontSize: 18),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('Stay Here', style: TextStyle(fontSize: 16)),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-                _goToNextPose();
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF40E0D0),
-              ),
-              child: const Text(
-                'Next Pose',
-                style: TextStyle(fontSize: 16, color: Colors.white),
-              ),
-            ),
-          ],
-        ),
-      );
-    } else {
-      _showCompletionDialog();
-    }
-  }
-
-  void _showCompletionDialog() async {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text(
-          '🎉 Congratulations!',
-          style: TextStyle(fontSize: 24),
-          textAlign: TextAlign.center,
-        ),
-        content: const Column(
-          mainAxisSize: MainAxisSize.min,
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Column(
           children: [
-            Text(
-              'You completed all poses!',
-              style: TextStyle(fontSize: 18),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 16),
-            Text(
-              'Great work on your practice today.',
-              style: TextStyle(fontSize: 16, color: Colors.black54),
-              textAlign: TextAlign.center,
+            // Top navigation bar
+            _buildTopBar(),
+
+            // Scrollable content
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+
+
+                    // Video section
+                    _buildVideoSection(),
+
+                    const SizedBox(height: 24),
+
+                    // Sanskrit name
+                    _buildSanskritName(),
+
+                    const SizedBox(height: 8),
+
+                    // Pose title
+                    _buildPoseTitle(),
+
+                    const SizedBox(height: 16),
+
+                    // Description/Instructions
+                    _buildDescription(),
+
+                    const SizedBox(height: 24),
+
+                    // Safety (Safety Tips)
+                    _buildBenefits(),
+
+                    const SizedBox(height: 28),
+
+                    // Timer section
+                    _buildTimerSection(),
+
+                    // Completion status indicator
+                    if (_isPoseCompleted)
+                      Container(
+                        width: 310,
+                        padding: const EdgeInsets.all(16),
+                        margin: const EdgeInsets.only(left: 30),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF40E0D0).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(15),
+                          border: Border.all(
+                            color: const Color(0xFF40E0D0),
+                            width: 2,
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.check_circle,
+                              color: Color(0xFF40E0D0),
+                              size: 28,
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                'Completed',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: const Color(0xFF40E0D0),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),
-        actions: [
-          ElevatedButton(
-            onPressed: () async {
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF40E0D0),
-              minimumSize: const Size(double.infinity, 50),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+      ),
+    );
+  }
+
+  Widget _buildTopBar() {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        children: [
+          // Back button
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.grey[100],
+              shape: BoxShape.circle,
             ),
-            child: const Text(
-              'Finish',
-              style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.black87),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ),
+
+          const Spacer(),
+
+          // Progress indicator
+          Text(
+            '${widget.currentIndex + 1} of ${widget.allPoses.length}',
+            style: GoogleFonts.poppins(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: Colors.black87,
+            ),
+          ),
+
+          const Spacer(),
+
+          // Close button
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.grey[100],
+              shape: BoxShape.circle,
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.close, color: Colors.black87),
+              onPressed: () => Navigator.pop(context),
             ),
           ),
         ],
@@ -309,671 +327,729 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
     );
   }
 
-  Future<void> _trackSessionCompletion() async {
-    try {
-      final userId = Supabase.instance.client.auth.currentUser?.id;
-      if (userId == null) return;
-
-      final progressService = ProgressService();
-
-      final updatedProgress = await progressService.completeSession(
-        userId,
-        widget.sessionLevel,
-      );
-
-      if (mounted) {
-        if (updatedProgress.canUnlockIntermediate &&
-            updatedProgress.intermediateUnlocked) {
-          _showLevelUnlockedDialog('Intermediate');
-        } else if (updatedProgress.canUnlockAdvanced &&
-            updatedProgress.advancedUnlocked) {
-          _showLevelUnlockedDialog('Advanced');
+  Widget _buildVideoSection() {
+    return GestureDetector(
+      onTap: () {
+        // Open full video player
+        if (_isVideoInitialized && _videoController != null) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => _FullVideoPlayerScreen(
+                controller: _videoController!,
+                poseName: widget.pose.name,
+              ),
+            ),
+          );
+        } else {
+          _toggleVideo();
         }
-      }
-
-      await Supabase.instance.client.from('sessions').insert({
-        'user_id': userId,
-        'session_id': 'session_${DateTime.now().millisecondsSinceEpoch}',
-        'level': widget.sessionLevel,
-        'date_completed': DateTime.now().toIso8601String().split('T')[0],
-        'duration_minutes': widget.allPoses.fold<int>(
-          0,
-              (sum, pose) => sum + (pose.durationSeconds / 60).ceil(),
+      },
+      child: Container(
+        height: 220,
+        decoration: BoxDecoration(
+          color: Colors.grey[200],
+          // No border radius - straight edges as requested
         ),
-      });
-    } catch (e) {
-      print('Error tracking session completion: $e');
-    }
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            if (_isVideoInitialized && _videoController != null)
+              VideoPlayer(_videoController!)
+            else
+              Image.network(
+                widget.pose.imageUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: Colors.grey[300],
+                    child: const Icon(
+                      Icons.self_improvement,
+                      size: 80,
+                      color: Colors.grey,
+                    ),
+                  );
+                },
+              ),
+
+            // Play button overlay
+            Center(
+              child: Container(
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.95),
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  _isVideoPlaying ? Icons.pause : Icons.play_arrow,
+                  color: Colors.black87,
+                  size: 36,
+                ),
+              ),
+            ),
+
+            // Video Tutorial badge
+            Positioned(
+              bottom: 16,
+              left: 16,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF40E0D0),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.play_circle_outline,
+                      color: Colors.white,
+                      size: 16,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      'Video Tutorial',
+                      style: GoogleFonts.poppins(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
-  void _showLevelUnlockedDialog(String level) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        child: Container(
-          padding: const EdgeInsets.all(32),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xFFE3F8F5), Color(0xFFD0F7F0)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(24),
+  Widget _buildSanskritName() {
+    return Text(
+      'BEGINNER',
+      style: GoogleFonts.poppins(
+        fontSize: 14,
+        fontWeight: FontWeight.w400,
+        color: const Color(0xFF40E0D0),
+        letterSpacing: 0.5,
+      ),
+    );
+  }
+
+  Widget _buildPoseTitle() {
+    return Text(
+      widget.pose.name,
+      style: GoogleFonts.poppins(
+        fontSize: 28,
+        fontWeight: FontWeight.w600,
+        color: Colors.black87,
+        height: 1.2,
+      ),
+    );
+  }
+
+  Widget _buildDescription() {
+    return Text(
+      widget.pose.description,
+      style: GoogleFonts.poppins(
+        fontSize: 15,
+        fontWeight: FontWeight.w400,
+        color: Colors.grey[700],
+        height: 1.6,
+      ),
+    );
+  }
+
+  Widget _buildBenefits() {
+    final safetyTips = [
+      'Keep your knees slightly bent to avoid joint strain',
+      'Engage your core muscles throughout the pose',
+      'Don\'t force your heels to touch the ground',
+      'Breathe deeply and avoid holding your breath',
+      'Exit the pose slowly if you feel any pain',
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Safety Tips',
+          style: GoogleFonts.poppins(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: Colors.black87,
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+        ),
+        const SizedBox(height: 12),
+        ...safetyTips.map((tip) => Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                '🎉',
-                style: TextStyle(fontSize: 80),
+              const Icon(
+                Icons.check_outlined,
+                color: Color(0xFF40E0D0),
+                size: 20,
               ),
-              const SizedBox(height: 16),
-              const Text(
-                'Level Unlocked!',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF40E0D0),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Congratulations! You\'ve unlocked $level Level!',
-                style: const TextStyle(
-                  fontSize: 18,
-                  color: Colors.black87,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-              const Text(
-                'Keep up the amazing work on your yoga journey! 🧘‍♀️',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black54,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 32),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF40E0D0),
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-                child: const Text(
-                  'Continue',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  tip,
+                  style: GoogleFonts.poppins(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.grey[700],
+                    height: 1.5,
                   ),
                 ),
               ),
             ],
           ),
-        ),
-      ),
+        )),
+      ],
     );
   }
 
-  void _goToNextPose() {
-    if (widget.currentIndex < widget.allPoses.length - 1) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => PoseDetailScreen(
-            pose: widget.allPoses[widget.currentIndex + 1],
-            allPoses: widget.allPoses,
-            currentIndex: widget.currentIndex + 1,
-            sessionLevel: widget.sessionLevel,
-          ),
-        ),
-      );
-    }
-  }
+  Widget _buildTimerSection() {
+    final progress = 1 - (_remainingSeconds / widget.pose.durationSeconds);
 
-  Color _getCategoryColor() {
-    if (widget.pose.category == 'warmup') {
-      return const Color(0xFF5FE9D8);
-    } else if (widget.pose.category == 'cooldown') {
-      return const Color(0xFF30C5B5);
-    }
-    return const Color(0xFF40E0D0);
-  }
-
-  String _formatTime(int seconds) {
-    final minutes = seconds ~/ 60;
-    final remainingSeconds = seconds % 60;
-    return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final pose = widget.pose;
-    final progress = widget.currentIndex + 1;
-    final total = widget.allPoses.length;
-    final categoryColor = _getCategoryColor();
-
-    return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
-      appBar: AppBar(
-        title: Text('$progress of $total',
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.close, size: 24),
-            onPressed: () => Navigator.pop(context),
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Progress Bar
-            Container(
-              color: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: LinearProgressIndicator(
-                  value: progress / total,
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(32),
+      child: Column(
+        children: [
+          // Circular timer with progress ring
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              // Progress ring
+              SizedBox(
+                width: 240,
+                height: 240,
+                child: CircularProgressIndicator(
+                  value: progress,
+                  strokeWidth: 8,
                   backgroundColor: Colors.grey[200],
-                  valueColor: AlwaysStoppedAnimation<Color>(categoryColor),
-                  minHeight: 8,
+                  valueColor: const AlwaysStoppedAnimation<Color>(
+                    Color(0xFF40E0D0),
+                  ),
                 ),
               ),
-            ),
 
-            // Video Player
-            Container(
-              height: 280,
-              margin: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: Colors.black,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 15,
-                    offset: const Offset(0, 5),
-                  ),
-                ],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: _isVideoInitialized
-                    ? Stack(
-                  alignment: Alignment.center,
+              // Inner circle with time
+              Container(
+                width: 200,
+                height: 200,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 20,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Video
-                    AspectRatio(
-                      aspectRatio: _videoController!.value.aspectRatio,
-                      child: VideoPlayer(_videoController!),
-                    ),
-                    // Play/Pause Overlay
-                    GestureDetector(
-                      onTap: _toggleVideo,
-                      child: Container(
-                        color: Colors.transparent,
-                        child: Center(
-                          child: AnimatedOpacity(
-                            opacity: _isVideoPlaying ? 0.0 : 1.0,
-                            duration: const Duration(milliseconds: 300),
-                            child: Container(
-                              padding: const EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.6),
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(
-                                Icons.play_arrow,
-                                size: 60,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    // Video label
-                    Positioned(
-                      bottom: 16,
-                      left: 16,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.7),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.videocam,
-                              size: 16,
-                              color: categoryColor,
-                            ),
-                            const SizedBox(width: 6),
-                            const Text(
-                              'Video Tutorial',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
+                    // Timer display
+                    Text(
+                      _formatTime(_remainingSeconds),
+                      style: GoogleFonts.poppins(
+                        fontSize: 52,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                        letterSpacing: 2,
                       ),
                     ),
                   ],
-                )
-                    : Center(
-                  child: CircularProgressIndicator(
-                    color: categoryColor,
-                  ),
                 ),
               ),
-            ),
+            ],
+          ),
 
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Category Badge
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: categoryColor.withOpacity(0.15),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      pose.category.toUpperCase(),
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: categoryColor,
-                        letterSpacing: 1,
-                      ),
-                    ),
-                  ),
+          const SizedBox(height: 40),
 
-                  const SizedBox(height: 12),
-
-                  // Pose Name
-                  Text(
-                    pose.name,
-                    style: const TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  // Description
-                  Text(
-                    pose.description,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey[600],
-                      height: 1.5,
-                    ),
-                  ),
-
-                  const SizedBox(height: 32),
-
-                  // Enhanced Timer Display
-                  Center(
-                    child: Container(
-                      padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            categoryColor.withOpacity(0.1),
-                            categoryColor.withOpacity(0.05),
-                          ],
-                        ),
-                        borderRadius: BorderRadius.circular(24),
-                        boxShadow: [
-                          BoxShadow(
-                            color: categoryColor.withOpacity(0.2),
-                            blurRadius: 20,
-                            offset: const Offset(0, 8),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          // Timer icon
-                          Container(
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: categoryColor.withOpacity(0.2),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.timer_outlined,
-                              color: categoryColor,
-                              size: 32,
-                            ),
-                          ),
-
-                          const SizedBox(height: 20),
-
-                          // Time display
-                          Text(
-                            _formatTime(_remainingSeconds),
-                            style: TextStyle(
-                              fontSize: 64,
-                              fontWeight: FontWeight.bold,
-                              color: categoryColor,
-                              fontFeatures: const [
-                                FontFeature.tabularFigures(),
-                              ],
-                            ),
-                          ),
-
-                          const SizedBox(height: 8),
-
-                          Text(
-                            _isTimerRunning ? 'TIME REMAINING' : 'DURATION',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.grey[600],
-                              letterSpacing: 2,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 32),
-
-                  // Enhanced Timer Controls
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Reset Button
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.08),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: _resetTimer,
-                            borderRadius: BorderRadius.circular(16),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 24,
-                                vertical: 16,
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.refresh,
-                                    size: 24,
-                                    color: Colors.grey[700],
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    'Reset',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.grey[700],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(width: 16),
-
-                      // Start/Pause Button
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              categoryColor,
-                              categoryColor.withOpacity(0.8),
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: categoryColor.withOpacity(0.4),
-                              blurRadius: 15,
-                              offset: const Offset(0, 6),
-                            ),
-                          ],
-                        ),
-                        child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: _isTimerRunning ? _pauseTimer : _startTimer,
-                            borderRadius: BorderRadius.circular(16),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 32,
-                                vertical: 16,
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    _isTimerRunning ? Icons.pause : Icons.play_arrow,
-                                    size: 28,
-                                    color: Colors.white,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    _isTimerRunning ? 'Pause' : 'Start',
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
+          // Control buttons
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Play/Pause button
+              GestureDetector(
+                onTap: _startTimer,
+                child: Container(
+                  width: 64,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF40E0D0),
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF40E0D0).withOpacity(0.3),
+                        blurRadius: 16,
+                        offset: const Offset(0, 4),
                       ),
                     ],
                   ),
-
-                  const SizedBox(height: 40),
-
-                  // Instructions Card
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 10,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.info_outline, color: categoryColor, size: 24),
-                            const SizedBox(width: 8),
-                            const Text(
-                              'Instructions',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black87,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          pose.instructions,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            height: 1.6,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ],
-                    ),
+                  child: Icon(
+                    _isTimerRunning ? Icons.pause : Icons.play_arrow,
+                    color: Colors.white,
+                    size: 32,
                   ),
+                ),
+              ),
 
-                  const SizedBox(height: 16),
+              const SizedBox(width: 20),
 
-                  // Modifications Card
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 10,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.health_and_safety_outlined, color: categoryColor, size: 24),
-                            const SizedBox(width: 8),
-                            const Text(
-                              'Safety Tips',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black87,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        ...pose.modifications.map((mod) => Padding(
-                          padding: const EdgeInsets.only(bottom: 8),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+              // Stop button
+              GestureDetector(
+                onTap: _stopTimer,
+                child: Container(
+                  width: 64,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    color: Colors.black87,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(
+                    Icons.stop,
+                    color: Colors.white,
+                    size: 28,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 40),
+
+          // Mark as Completed button
+          if (!_isPoseCompleted)
+            Container(
+              width: double.infinity,
+              height: 56,
+              margin: const EdgeInsets.only(bottom: 12),
+              child: OutlinedButton.icon(
+                onPressed: () async {
+                  // Mark pose as completed
+                  final userId = Supabase.instance.client.auth.currentUser?.id;
+                  if (userId != null) {
+                    await _poseProgressService.markPoseCompleted(
+                      userId,
+                      widget.sessionLevel,
+                      widget.pose.id,
+                    );
+
+                    setState(() {
+                      _isPoseCompleted = true;
+                    });
+
+                    // Show success message
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Row(
                             children: [
-                              Icon(Icons.check_circle, color: categoryColor, size: 20),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Text(
-                                  mod,
-                                  style: const TextStyle(
-                                    fontSize: 15,
-                                    height: 1.5,
-                                    color: Colors.black87,
-                                  ),
+                              const Icon(Icons.check_circle, color: Colors.white),
+                              const SizedBox(width: 12),
+                              Text(
+                                'Pose marked as completed!',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                             ],
                           ),
-                        )),
-                      ],
-                    ),
+                          backgroundColor: const Color(0xFF40E0D0),
+                          duration: const Duration(seconds: 2),
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      );
+                    }
+                  }
+                },
+                icon: const Icon(Icons.check_circle_outline, size: 20),
+                label: Text(
+                  'Mark as Completed',
+                  style: GoogleFonts.poppins(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
                   ),
+                ),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: const Color(0xFF40E0D0),
+                  side: const BorderSide(
+                    color: Color(0xFF40E0D0),
+                    width: 2,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+              ),
+            ),
 
-                  const SizedBox(height: 24),
+          // Next/Complete button
+          SizedBox(
+            width: double.infinity,
+            height: 56,
+            child: ElevatedButton(
+              onPressed: () async {
+                // Mark pose as completed
+                final userId = Supabase.instance.client.auth.currentUser?.id;
+                if (userId != null) {
+                  await _poseProgressService.markPoseCompleted(
+                    userId,
+                    widget.sessionLevel,
+                    widget.pose.id,
+                  );
 
-                  // Action Buttons
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          onPressed: _loadingPoseStatus || _isPoseCompleted
-                              ? null
-                              : _onMarkPoseCompleted,
-                          icon: Icon(
-                            _isPoseCompleted ? Icons.check_circle : Icons.check_circle_outline,
-                            size: 20,
-                          ),
-                          label: Text(
-                            _isPoseCompleted ? 'Completed' : 'Mark Complete',
-                            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-                          ),
-                          style: OutlinedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            side: BorderSide(
-                              color: _isPoseCompleted ? Colors.green : categoryColor,
-                              width: 2,
-                            ),
-                            foregroundColor: _isPoseCompleted ? Colors.green : categoryColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                        ),
+                  setState(() {
+                    _isPoseCompleted = true;
+                  });
+                }
+
+                // Navigate to next pose or show completion
+                if (widget.currentIndex < widget.allPoses.length - 1) {
+                  // Has next pose
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PoseDetailScreen(
+                        pose: widget.allPoses[widget.currentIndex + 1],
+                        allPoses: widget.allPoses,
+                        currentIndex: widget.currentIndex + 1,
+                        sessionLevel: widget.sessionLevel,
                       ),
-                      if (widget.currentIndex < widget.allPoses.length - 1) ...[
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            onPressed: _goToNextPose,
-                            icon: const Icon(Icons.arrow_forward, size: 20),
-                            label: const Text('Next',
-                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                            style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              backgroundColor: categoryColor,
-                              foregroundColor: Colors.white,
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                    ),
+                  );
+                } else {
+                  // Last pose - show completion dialog
+                  _showCompletionDialog();
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF40E0D0),
+                foregroundColor: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+              child: Text(
+                widget.currentIndex < widget.allPoses.length - 1
+                    ? 'Next Pose'
+                    : 'Complete Session',
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showCompletionDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        title: Text(
+          '🎉 Congratulations!',
+          style: GoogleFonts.poppins(
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'You completed all poses in this session!',
+              style: GoogleFonts.poppins(
+                fontSize: 16,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
+            Icon(
+              Icons.check_circle,
+              color: const Color(0xFF40E0D0),
+              size: 64,
+            ),
+          ],
+        ),
+        actions: [
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close dialog
+                Navigator.of(context).pop(); // Go back to session list
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF40E0D0),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(
+                'Done',
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Full Video Player Screen
+class _FullVideoPlayerScreen extends StatefulWidget {
+  final VideoPlayerController controller;
+  final String poseName;
+
+  const _FullVideoPlayerScreen({
+    required this.controller,
+    required this.poseName,
+  });
+
+  @override
+  State<_FullVideoPlayerScreen> createState() => _FullVideoPlayerScreenState();
+}
+
+class _FullVideoPlayerScreenState extends State<_FullVideoPlayerScreen> {
+  bool _isPlaying = false;
+  bool _showControls = true;
+  Timer? _hideControlsTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _isPlaying = widget.controller.value.isPlaying;
+    widget.controller.addListener(_videoListener);
+    _startHideControlsTimer();
+  }
+
+  void _videoListener() {
+    if (mounted) {
+      setState(() {
+        _isPlaying = widget.controller.value.isPlaying;
+      });
+    }
+  }
+
+  void _startHideControlsTimer() {
+    _hideControlsTimer?.cancel();
+    _hideControlsTimer = Timer(const Duration(seconds: 3), () {
+      if (mounted && _isPlaying) {
+        setState(() {
+          _showControls = false;
+        });
+      }
+    });
+  }
+
+  void _toggleControls() {
+    setState(() {
+      _showControls = !_showControls;
+    });
+    if (_showControls) {
+      _startHideControlsTimer();
+    }
+  }
+
+  void _togglePlayPause() {
+    setState(() {
+      if (_isPlaying) {
+        widget.controller.pause();
+      } else {
+        widget.controller.play();
+      }
+      _isPlaying = !_isPlaying;
+    });
+    _startHideControlsTimer();
+  }
+
+  @override
+  void dispose() {
+    _hideControlsTimer?.cancel();
+    widget.controller.removeListener(_videoListener);
+    super.dispose();
+  }
+
+  String _formatDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    final minutes = twoDigits(duration.inMinutes.remainder(60));
+    final seconds = twoDigits(duration.inSeconds.remainder(60));
+    return '$minutes:$seconds';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: GestureDetector(
+        onTap: _toggleControls,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            // Video player
+            Center(
+              child: AspectRatio(
+                aspectRatio: widget.controller.value.aspectRatio,
+                child: VideoPlayer(widget.controller),
+              ),
+            ),
+
+            // Controls overlay
+            AnimatedOpacity(
+              opacity: _showControls ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 300),
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black.withOpacity(0.7),
+                      Colors.transparent,
+                      Colors.transparent,
+                      Colors.black.withOpacity(0.7),
                     ],
                   ),
+                ),
+                child: Column(
+                  children: [
+                    // Top bar
+                    SafeArea(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Row(
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.arrow_back, color: Colors.white),
+                              onPressed: () => Navigator.pop(context),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                widget.poseName,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
 
-                  const SizedBox(height: 16),
-                ],
+                    const Spacer(),
+
+                    // Play/Pause button
+                    Container(
+                      width: 72,
+                      height: 72,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.3),
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        icon: Icon(
+                          _isPlaying ? Icons.pause : Icons.play_arrow,
+                          size: 40,
+                          color: Colors.white,
+                        ),
+                        onPressed: _togglePlayPause,
+                      ),
+                    ),
+
+                    const Spacer(),
+
+                    // Bottom controls
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          // Progress bar
+                          VideoProgressIndicator(
+                            widget.controller,
+                            allowScrubbing: true,
+                            colors: const VideoProgressColors(
+                              playedColor: Color(0xFF40E0D0),
+                              bufferedColor: Colors.white30,
+                              backgroundColor: Colors.white12,
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                          ),
+
+                          // Time display
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                _formatDuration(widget.controller.value.position),
+                                style: GoogleFonts.poppins(
+                                  fontSize: 12,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Text(
+                                _formatDuration(widget.controller.value.duration),
+                                style: GoogleFonts.poppins(
+                                  fontSize: 12,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    SizedBox(height: MediaQuery.of(context).padding.bottom),
+                  ],
+                ),
               ),
             ),
           ],

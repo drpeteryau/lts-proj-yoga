@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'home_tab_screen.dart';
 import 'progress_screen.dart';
 import 'sounds_screen.dart';
@@ -38,38 +39,76 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           const MiniPlaybackBar(),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (index) => setState(() => _selectedIndex = index),
-        selectedItemColor: const Color(0xFF40E0D0),
-        unselectedItemColor: Colors.grey,
-        type: BottomNavigationBarType.fixed,
-        selectedFontSize: 12,
-        unselectedFontSize: 12,
-        backgroundColor: Colors.white,
-        elevation: 8,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildNavItem(0, Icons.home, 'Home'),
+                _buildNavItem(1, Icons.self_improvement, 'Sessions'),
+                _buildNavItem(2, Icons.track_changes, 'Progress'),
+                _buildNavItem(3, Icons.music_note, 'Sounds'),
+                _buildNavItem(4, Icons.person, 'Profile'),
+              ],
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.self_improvement),
-            label: 'Sessions',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.track_changes),
-            label: 'Progress',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.music_note),
-            label: 'Sounds',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(int index, IconData icon, String label) {
+    final isSelected = _selectedIndex == index;
+
+    return GestureDetector(
+      onTap: () => setState(() => _selectedIndex = index),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          // Glow effect when selected
+          boxShadow: isSelected
+              ? [
+            BoxShadow(
+              color: const Color(0xFF40E0D0).withOpacity(0.2),
+              blurRadius: 30,
+              spreadRadius: 1,
+              offset: const Offset(0, 5),
+            ),
+          ]
+              : null,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              color: isSelected ? const Color(0xFF40E0D0) : Colors.grey,
+              size: 24,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: GoogleFonts.poppins(
+                fontSize: 12,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                color: isSelected ? const Color(0xFF40E0D0) : Colors.grey,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

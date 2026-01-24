@@ -92,22 +92,64 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
   Widget _buildHeroSection() {
     return Stack(
       children: [
+        // Hero image with gradient
         SizedBox(
-          height: 320,
+          height: 200,
           width: double.infinity,
-          child: Image.network(
-            'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800',
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return Container(
-                color: Colors.grey[300],
-                child: const Icon(
-                  Icons.self_improvement,
-                  size: 100,
-                  color: Colors.grey,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              // Background image
+              Image.network(
+                'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800',
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: Colors.grey[300],
+                    child: const Icon(
+                      Icons.self_improvement,
+                      size: 100,
+                      color: Colors.grey,
+                    ),
+                  );
+                },
+              ),
+
+              // Bottom gradient overlay
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      Colors.transparent,
+                      Colors.black.withOpacity(0.5),
+                      Colors.black.withOpacity(0.8),
+                    ],
+                    stops: const [0.0, 0.4, 0.75, 1.0],
+                  ),
                 ),
-              );
-            },
+              ),
+
+              // Session title at bottom left
+              Positioned(
+                bottom: 20,
+                left: 20,
+                right: 20,
+                child: Text(
+                  widget.session.level,
+                  style: GoogleFonts.poppins(
+                    fontSize: 32,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                    height: 1.2,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
           ),
         ),
 
@@ -133,103 +175,11 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
             ),
           ),
         ),
-
-        // Favorite button
-        Positioned(
-          top: 16,
-          right: 16,
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: IconButton(
-              icon: Icon(
-                isFavorite ? Icons.favorite : Icons.favorite_border,
-                color: isFavorite ? Colors.red : Colors.black87,
-              ),
-              onPressed: () {
-                setState(() => isFavorite = !isFavorite);
-              },
-            ),
-          ),
-        ),
       ],
     );
   }
 
 
-  Widget _buildInstructorSection() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
-        children: [
-          // Instructor avatar
-          Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              color: const Color(0xFF40E0D0).withOpacity(0.2),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.person,
-              color: Color(0xFF40E0D0),
-              size: 28,
-            ),
-          ),
-
-          const SizedBox(width: 12),
-
-          // Instructor info
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Yoga Instructor',
-                  style: GoogleFonts.poppins(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  '5 years of experience',
-                  style: GoogleFonts.poppins(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.grey[600],
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // View profile button
-          TextButton(
-            onPressed: () {},
-            child: Text(
-              'View profile',
-              style: GoogleFonts.poppins(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: const Color(0xFF40E0D0),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildInfoCards() {
     return Padding(
@@ -277,6 +227,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
       ),
       child: Column(
         children: [
+
           Icon(
             icon,
             color: const Color(0xFF40E0D0),
@@ -311,6 +262,14 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text(
+            'About Session',
+            style: GoogleFonts.poppins(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: Colors.black87,
+            ),
+          ),
 
           const SizedBox(height: 12),
           Text(
@@ -529,6 +488,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const SizedBox(height: 8),
                 Text(
                   widget.session.title,
                   style: GoogleFonts.poppins(

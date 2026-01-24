@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/user_progress.dart';
 import '../services/progress_service.dart';
@@ -49,11 +50,27 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
     }
   }
 
+  // Helper method to safely get session counts as int
+  int _getSessionsCompleted(String level) {
+    if (_userProgress == null) return 0;
+
+    switch (level) {
+      case 'beginner':
+        return (_userProgress!.beginnerSessionsCompleted ?? 0) as int;
+      case 'intermediate':
+        return (_userProgress!.intermediateSessionsCompleted ?? 0) as int;
+      case 'advanced':
+        return (_userProgress!.advancedSessionsCompleted ?? 0) as int;
+      default:
+        return 0;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
       return Container(
-        color: const Color(0xFFF8F9FA),
+        color: Colors.white,
         child: const Center(
           child: CircularProgressIndicator(
             color: Color(0xFF40E0D0),
@@ -64,18 +81,27 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
 
     if (_error != null) {
       return Container(
-        color: const Color(0xFFF8F9FA),
+        color: Colors.white,
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Icon(Icons.error_outline, size: 64, color: Colors.red),
               const SizedBox(height: 16),
-              Text('Error: $_error'),
+              Text(
+                'Error loading progress',
+                style: GoogleFonts.poppins(fontSize: 16),
+              ),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: _loadUserProgress,
-                child: const Text('Retry'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF40E0D0),
+                ),
+                child: Text(
+                  'Retry',
+                  style: GoogleFonts.poppins(),
+                ),
               ),
             ],
           ),
@@ -84,7 +110,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
     }
 
     return Container(
-      color: const Color(0xFFF8F9FA),
+      color: Colors.white,
       child: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -95,48 +121,36 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                 const SizedBox(height: 12),
 
                 // Header
-                const Text(
+                Text(
                   'Choose Your',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
+                  style: GoogleFonts.poppins(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w300,
                     color: Colors.black87,
                   ),
                 ),
-                const Text(
-                  'Practice Level',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF40E0D0),
-                  ),
-                ),
-
-                const SizedBox(height: 12),
-
                 Text(
-                  'Complete sessions to unlock new levels',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey[600],
-                    height: 1.5,
+                  'Level',
+                  style: GoogleFonts.poppins(
+                    fontSize: 36,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
                   ),
                 ),
 
-                const SizedBox(height: 36),
+                const SizedBox(height: 32),
 
-                // Beginner Card (Always Unlocked)
+                // Beginner Card
                 _buildLevelCard(
                   context,
                   title: 'Beginner',
-                  subtitle: 'Chair yoga for gentle practice',
+                  subtitle: 'Chair Yoga',
                   description: 'Perfect for those just starting their yoga journey',
                   imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600',
                   color: const Color(0xFF40E0D0),
                   isLocked: false,
-                  sessionsCompleted: _userProgress?.beginnerSessionsCompleted ?? 0,
+                  sessionsCompleted: _getSessionsCompleted('beginner'),
                   onTap: () {
-                    // Navigate directly to first session
                     final session = YogaDataComplete.beginnerSessions.first;
                     Navigator.push(
                       context,
@@ -158,10 +172,10 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                   imageUrl: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=600',
                   color: const Color(0xFF35C9BA),
                   isLocked: !(_userProgress?.intermediateUnlocked ?? false),
-                  sessionsCompleted: _userProgress?.intermediateSessionsCompleted ?? 0,
-                  progress: _userProgress?.progressToIntermediate ?? 0.0,
+                  sessionsCompleted: _getSessionsCompleted('intermediate'),
+                  progress: (_userProgress?.progressToIntermediate ?? 0.0) as double,
                   requiredSessions: UserProgress.sessionsRequiredForIntermediate,
-                  currentLevelSessions: _userProgress?.beginnerSessionsCompleted ?? 0,
+                  currentLevelSessions: _getSessionsCompleted('beginner'),
                   onTap: () {
                     if (_userProgress?.intermediateUnlocked ?? false) {
                       final session = YogaDataComplete.intermediateSessions.first;
@@ -175,7 +189,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                       _showLockedDialog(
                         'Intermediate',
                         UserProgress.sessionsRequiredForIntermediate,
-                        _userProgress?.beginnerSessionsCompleted ?? 0,
+                        _getSessionsCompleted('beginner'),
                       );
                     }
                   },
@@ -192,10 +206,10 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                   imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600',
                   color: const Color(0xFF2AB5A5),
                   isLocked: !(_userProgress?.advancedUnlocked ?? false),
-                  sessionsCompleted: _userProgress?.advancedSessionsCompleted ?? 0,
-                  progress: _userProgress?.progressToAdvanced ?? 0.0,
+                  sessionsCompleted: _getSessionsCompleted('advanced'),
+                  progress: (_userProgress?.progressToAdvanced ?? 0.0) as double,
                   requiredSessions: UserProgress.sessionsRequiredForAdvanced,
-                  currentLevelSessions: _userProgress?.intermediateSessionsCompleted ?? 0,
+                  currentLevelSessions: _getSessionsCompleted('intermediate'),
                   needsIntermediate: !(_userProgress?.intermediateUnlocked ?? false),
                   onTap: () {
                     if (_userProgress?.advancedUnlocked ?? false) {
@@ -207,131 +221,27 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                         ),
                       );
                     } else {
-                      _showLockedDialog(
-                        'Advanced',
-                        UserProgress.sessionsRequiredForAdvanced,
-                        _userProgress?.intermediateSessionsCompleted ?? 0,
-                        needsIntermediate: !(_userProgress?.intermediateUnlocked ?? false),
-                      );
+                      if (!(_userProgress?.intermediateUnlocked ?? false)) {
+                        _showLockedDialog(
+                          'Advanced',
+                          UserProgress.sessionsRequiredForIntermediate,
+                          _getSessionsCompleted('beginner'),
+                          message: 'Unlock Intermediate level first!',
+                        );
+                      } else {
+                        _showLockedDialog(
+                          'Advanced',
+                          UserProgress.sessionsRequiredForAdvanced,
+                          _getSessionsCompleted('intermediate'),
+                        );
+                      }
                     }
                   },
                 ),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 40),
               ],
             ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _showLockedDialog(String level, int required, int current, {bool needsIntermediate = false}) {
-    showDialog(
-      context: context,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        child: Container(
-          padding: const EdgeInsets.all(28),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF40E0D0).withOpacity(0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.lock_outline,
-                  color: Color(0xFF40E0D0),
-                  size: 48,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                '$level Level',
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-              const SizedBox(height: 8),
-              if (needsIntermediate)
-                const Text(
-                  'Unlock Intermediate level first',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black54,
-                  ),
-                  textAlign: TextAlign.center,
-                )
-              else ...[
-                Text(
-                  'Complete ${required - current} more ${level == 'Advanced' ? 'Intermediate' : 'Beginner'} session${required - current == 1 ? '' : 's'}',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.black54,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 20),
-                Container(
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: FractionallySizedBox(
-                    alignment: Alignment.centerLeft,
-                    widthFactor: current / required,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF40E0D0),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  '$current / $required completed',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF40E0D0),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: const Text(
-                    'Got it',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-            ],
           ),
         ),
       ),
@@ -345,10 +255,10 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
         required String description,
         required String imageUrl,
         required Color color,
+        required bool isLocked,
+        required int sessionsCompleted,
         required VoidCallback onTap,
-        bool isLocked = false,
-        int sessionsCompleted = 0,
-        double progress = 0.0,
+        double? progress,
         int? requiredSessions,
         int? currentLevelSessions,
         bool needsIntermediate = false,
@@ -356,204 +266,265 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 220,
+        height: 200,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: isLocked
-                  ? Colors.grey.withOpacity(0.15)
-                  : color.withOpacity(0.2),
+              color: Colors.black.withOpacity(0.1),
               blurRadius: 15,
-              offset: const Offset(0, 4),
+              offset: const Offset(0, 5),
             ),
           ],
         ),
-        child: Stack(
-          children: [
-            // Background Image
-            ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: Container(
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              // Background image
+              Image.network(
+                imageUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: color.withOpacity(0.3),
+                  );
+                },
+              ),
+
+              // Gradient overlay
+              Container(
                 decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: NetworkImage(imageUrl),
-                    fit: BoxFit.cover,
-                    colorFilter: isLocked
-                        ? ColorFilter.mode(
-                      Colors.grey.withOpacity(0.3),
-                      BlendMode.saturation,
-                    )
-                        : null,
-                  ),
-                ),
-              ),
-            ),
-
-            // Gradient Overlay
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.black.withOpacity(isLocked ? 0.6 : 0.4),
-                    Colors.black.withOpacity(0.85),
-                  ],
-                ),
-              ),
-            ),
-
-            // Lock Icon Overlay
-            if (isLocked)
-              Positioned.fill(
-                child: Center(
-                  child: Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.5),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.lock_outline,
-                      size: 48,
-                      color: Colors.white,
-                    ),
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black.withOpacity(0.3),
+                      Colors.black.withOpacity(0.7),
+                    ],
                   ),
                 ),
               ),
 
-            // Content
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Top Row
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isLocked
-                              ? Colors.grey.withOpacity(0.9)
-                              : color.withOpacity(0.9),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          title.toUpperCase(),
-                          style: const TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            letterSpacing: 1,
-                          ),
-                        ),
-                      ),
-                      if (!isLocked && sessionsCompleted > 0)
+              // Lock overlay (darkens more when locked)
+              if (isLocked)
+                Container(
+                  color: Colors.black.withOpacity(0.5),
+                ),
+
+              // Content
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Top row: Badge and check/lock icon
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 12,
                             vertical: 6,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
+                            color: color,
+                            borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
-                            '$sessionsCompleted ✓',
-                            style: TextStyle(
+                            title.toUpperCase(),
+                            style: GoogleFonts.poppins(
                               fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              color: color,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                              letterSpacing: 1,
                             ),
                           ),
                         ),
-                    ],
-                  ),
+                        if (isLocked)
+                          Icon(
+                            Icons.lock_outline,
+                            color: Colors.white.withOpacity(0.9),
+                            size: 28,
+                          )
+                        else if (sessionsCompleted > 0)
+                          Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: color,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.check,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                          ),
+                      ],
+                    ),
 
-                  // Bottom Content
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+                    const Spacer(),
+
+                    // Locked state - show requirements clearly
+                    if (isLocked) ...[
+                      // Unlock message
+                      if (needsIntermediate)
+                        Text(
+                          'Unlock Intermediate first',
+                          style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        )
+                      else if (requiredSessions != null && currentLevelSessions != null)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Complete ${requiredSessions - currentLevelSessions} more',
+                              style: GoogleFonts.poppins(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              '$currentLevelSessions / $requiredSessions sessions',
+                              style: GoogleFonts.poppins(
+                                fontSize: 13,
+                                color: Colors.white.withOpacity(0.9),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                      const SizedBox(height: 12),
+
+                      // Progress bar
+                      if (progress != null && progress > 0 && !needsIntermediate)
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(4),
+                          child: LinearProgressIndicator(
+                            value: progress,
+                            backgroundColor: Colors.white.withOpacity(0.3),
+                            valueColor: AlwaysStoppedAnimation<Color>(color),
+                            minHeight: 6,
+                          ),
+                        ),
+                    ]
+                    // Unlocked state - show title and description
+                    else ...[
                       Text(
-                        title,
-                        style: const TextStyle(
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
+                        subtitle,
+                        style: GoogleFonts.poppins(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
                           color: Colors.white,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        subtitle,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.white70,
+                        description,
+                        style: GoogleFonts.poppins(
+                          fontSize: 13,
+                          color: Colors.white.withOpacity(0.9),
                         ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 12),
 
-                      // Progress bar for locked levels
-                      if (isLocked && requiredSessions != null && currentLevelSessions != null && !needsIntermediate) ...[
-                        Container(
-                          height: 6,
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.3),
-                            borderRadius: BorderRadius.circular(3),
-                          ),
-                          child: FractionallySizedBox(
-                            alignment: Alignment.centerLeft,
-                            widthFactor: progress,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(3),
-                              ),
-                            ),
-                          ),
-                        ),
+                      if (sessionsCompleted > 0) ...[
                         const SizedBox(height: 8),
                         Text(
-                          '$currentLevelSessions / $requiredSessions to unlock',
-                          style: const TextStyle(
+                          '$sessionsCompleted sessions completed',
+                          style: GoogleFonts.poppins(
                             fontSize: 12,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
+                            color: Colors.white.withOpacity(0.8),
                           ),
                         ),
-                      ] else if (!isLocked)
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.play_circle_filled,
-                              color: Colors.white,
-                              size: 16,
-                            ),
-                            const SizedBox(width: 6),
-                            const Text(
-                              'Start Practice',
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
+                      ],
                     ],
-                  ),
-                ],
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showLockedDialog(
+      String levelName,
+      int requiredSessions,
+      int currentSessions, {
+        String? message,
+      }) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        title: Row(
+          children: [
+            const Icon(Icons.lock_outline, color: Color(0xFF40E0D0)),
+            const SizedBox(width: 12),
+            Text(
+              '$levelName Locked',
+              style: GoogleFonts.poppins(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ],
         ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              message ??
+                  'Complete ${requiredSessions - currentSessions} more sessions to unlock this level.',
+              style: GoogleFonts.poppins(fontSize: 15),
+            ),
+            const SizedBox(height: 16),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: LinearProgressIndicator(
+                value: currentSessions / requiredSessions,
+                backgroundColor: Colors.grey[200],
+                valueColor: const AlwaysStoppedAnimation<Color>(
+                  Color(0xFF40E0D0),
+                ),
+                minHeight: 8,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '$currentSessions / $requiredSessions sessions',
+              style: GoogleFonts.poppins(
+                fontSize: 13,
+                color: Colors.grey[600],
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              'OK',
+              style: GoogleFonts.poppins(
+                color: const Color(0xFF40E0D0),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
