@@ -1,5 +1,6 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'dart:async';  // ← Add this line
 
 class GlobalAudioService extends ChangeNotifier {
   static final GlobalAudioService _instance = GlobalAudioService._internal();
@@ -32,14 +33,18 @@ class GlobalAudioService extends ChangeNotifier {
   AudioPlayer get audioPlayer => _audioPlayer;
 
   Future<void> initialize() async {
+    print('🎵 Initializing GlobalAudioService...');
+
     // Listen to player state changes
     _audioPlayer.onPlayerStateChanged.listen((state) {
+      print('🎵 Player state changed: $state');
       _isPlaying = state == PlayerState.playing;
       notifyListeners();
     });
 
     // Listen to duration changes
     _audioPlayer.onDurationChanged.listen((duration) {
+      print('🎵 Duration changed: $duration');
       _totalDuration = duration;
       notifyListeners();
     });
@@ -52,17 +57,25 @@ class GlobalAudioService extends ChangeNotifier {
 
     // Listen to completion
     _audioPlayer.onPlayerComplete.listen((event) {
+      print('🎵 Playback completed');
       _isPlaying = false;
       _currentPosition = Duration.zero;
 
       if (_isRepeating && _currentAudioUrl != null) {
         // Replay the current sound
-        _audioPlayer.seek(Duration.zero);
-        _audioPlayer.resume();
+        print('🎵 Repeating...');
+        playSound(
+          url: _currentAudioUrl!,
+          title: _currentSoundTitle!,
+          category: _currentSoundCategory!,
+          imageUrl: _currentSoundImageUrl!,
+        );
       } else {
         notifyListeners();
       }
     });
+
+    print('🎵 GlobalAudioService initialized successfully');
   }
 
   Future<void> playSound({
@@ -72,76 +85,126 @@ class GlobalAudioService extends ChangeNotifier {
     required String imageUrl,
   }) async {
     try {
+      print('🎵 Playing sound: $title');
+      print('🎵 URL: $url');
+
       // Stop current playback if any
       await _audioPlayer.stop();
 
-      // Set source and play
-      await _audioPlayer.setSourceUrl(url);
-      await _audioPlayer.setVolume(_volume);
-      await _audioPlayer.resume();
-
-      // Update state
+      // Update state BEFORE playing
       _currentAudioUrl = url;
       _currentSoundTitle = title;
       _currentSoundCategory = category;
       _currentSoundImageUrl = imageUrl;
-      _isPlaying = true;
 
+      // Set volume
+      await _audioPlayer.setVolume(_volume);
+
+      // Set release mode for looping if needed
+      await _audioPlayer.setReleaseMode(_isRepeating ? ReleaseMode.loop : ReleaseMode.release);
+
+      // Play using the correct API with timeout
+      await _audioPlayer.play(UrlSource(url)).timeout(
+        const Duration(seconds: 15),
+        onTimeout: () {
+          print('❌ Audio loading timed out after 15 seconds');
+          throw TimeoutException('Audio loading timed out');
+        },
+      );
+
+      _isPlaying = true;
       notifyListeners();
+
+      print('🎵 Sound playing successfully');
     } catch (e) {
-      print('Error playing sound: $e');
+      print('❌ Error playing sound: $e');
       _isPlaying = false;
+      // Clear the failed sound
+      _currentSoundTitle = null;
+      _currentSoundCategory = null;
+      _currentSoundImageUrl = null;
+      _currentAudioUrl = null;
       notifyListeners();
+      rethrow; // Rethrow so the UI can show the error
     }
   }
 
   Future<void> togglePlayPause() async {
-    if (_isPlaying) {
-      await _audioPlayer.pause();
-      _isPlaying = false;
-    } else {
-      await _audioPlayer.resume();
-      _isPlaying = true;
+    try {
+      if (_isPlaying) {
+        print('🎵 Pausing audio');
+        await _audioPlayer.pause();
+        _isPlaying = false;
+      } else {
+        print('🎵 Resuming audio');
+        await _audioPlayer.resume();
+        _isPlaying = true;
+      }
+      notifyListeners();
+    } catch (e) {
+      print('❌ Error toggling play/pause: $e');
     }
-    notifyListeners();
   }
 
   Future<void> stop() async {
-    await _audioPlayer.stop();
-    _isPlaying = false;
-    _currentPosition = Duration.zero;
-    notifyListeners();
+    try {
+      print('🎵 Stopping audio');
+      await _audioPlayer.stop();
+      _isPlaying = false;
+      _currentPosition = Duration.zero;
+      notifyListeners();
+    } catch (e) {
+      print('❌ Error stopping audio: $e');
+    }
   }
 
   Future<void> clearSound() async {
-    await _audioPlayer.stop();
-    _isPlaying = false;
-    _currentSoundTitle = null;
-    _currentSoundCategory = null;
-    _currentSoundImageUrl = null;
-    _currentAudioUrl = null;
-    _currentPosition = Duration.zero;
-    _totalDuration = Duration.zero;
-    notifyListeners();
+    try {
+      print('🎵 Clearing sound');
+      await _audioPlayer.stop();
+      _isPlaying = false;
+      _currentSoundTitle = null;
+      _currentSoundCategory = null;
+      _currentSoundImageUrl = null;
+      _currentAudioUrl = null;
+      _currentPosition = Duration.zero;
+      _totalDuration = Duration.zero;
+      notifyListeners();
+    } catch (e) {
+      print('❌ Error clearing sound: $e');
+    }
   }
 
   Future<void> setVolume(double volume) async {
-    _volume = volume.clamp(0.0, 1.0);
-    await _audioPlayer.setVolume(_volume);
-    notifyListeners();
+    try {
+      _volume = volume.clamp(0.0, 1.0);
+      await _audioPlayer.setVolume(_volume);
+      notifyListeners();
+    } catch (e) {
+      print('❌ Error setting volume: $e');
+    }
   }
 
   Future<void> seek(Duration position) async {
-    await _audioPlayer.seek(position);
-    notifyListeners();
+    try {
+      print('🎵 Seeking to: $position');
+      await _audioPlayer.seek(position);
+      notifyListeners();
+    } catch (e) {
+      print('❌ Error seeking: $e');
+    }
   }
 
   void toggleRepeat() {
     _isRepeating = !_isRepeating;
+    _audioPlayer.setReleaseMode(_isRepeating ? ReleaseMode.loop : ReleaseMode.release);
+    print('🎵 Repeat mode: $_isRepeating');
     notifyListeners();
   }
 
+  @override
   void dispose() {
+    print('🎵 Disposing GlobalAudioService');
     _audioPlayer.dispose();
     super.dispose();
   }

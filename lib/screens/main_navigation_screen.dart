@@ -24,21 +24,10 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     ProfileScreen(),
   ];
 
-  final List<String> _titles = const [
-    'Home',
-    'Sessions',
-    'Progress',
-    'Sounds',
-    'Profile',
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_titles[_selectedIndex]),
-        backgroundColor: const Color(0xFF40E0D0),
-      ),
+      backgroundColor: Colors.white,
       body: Column(
         children: [
           // Main content
@@ -57,6 +46,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         type: BottomNavigationBarType.fixed,
         selectedFontSize: 12,
         unselectedFontSize: 12,
+        backgroundColor: Colors.white,
+        elevation: 8,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
