@@ -103,6 +103,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
           .order('created_at', ascending: false)
           .limit(10);
 
+      if (!mounted) return;
       setState(() {
         _reflections = List<Map<String, dynamic>>.from(reflectionsResponse);
       });
@@ -118,8 +119,10 @@ class _ProgressScreenState extends State<ProgressScreen> {
       _totalSessions = totalSessions;
       _totalMinutes = totalMinutesConverted;
 
+      if (!mounted) return;
       setState(() => _isLoading = false);
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _error = e.toString();
         _isLoading = false;
@@ -187,9 +190,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
       );
     }
 
-    return Container(
-      color: Colors.white,
-      child: SafeArea(
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: Column(
@@ -737,53 +740,49 @@ class _ProgressScreenState extends State<ProgressScreen> {
     );
   }
 
-  void _showWellnessDialog() {
-    showDialog(
+  Future<void> _showWellnessDialog() async {
+    final saved = await showDialog<Map<String, dynamic>>(
       context: context,
-      builder: (context) => _WellnessCheckInDialog(
-        onSubmit: (data) async {
-          try {
-            final userId = supabase.auth.currentUser?.id;
-            if (userId == null) return;
-
-            await supabase.from('feedback').insert({
-              'user_id': userId,
-              'feedback_week': 1,
-              'fitness_improvement': data['bodyComfort'],
-              'flexibility_improvement': data['flexibility'],
-              'balance_rating': data['balance'],
-              'energy_level': data['energyLevel'],
-              'mental_wellbeing': data['mood'],
-              'daily_confidence': data['dailyConfidence'],
-              'body_connection': data['bodyConnection'],
-              'satisfaction_level': data['overallWellbeing'],
-              'additional_comments': data['notes'],
-              'created_at': DateTime.now().toIso8601String(),
-            });
-
-            if (!mounted) return;
-
-            Navigator.pop(context);
-
-            await _loadProgressData();
-
-            if (!mounted) return;
-
-            ScaffoldMessenger.of(this.context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  'Wellness check-in saved!',
-                  style: GoogleFonts.poppins(),
-                ),
-                backgroundColor: const Color(0xFF40E0D0),
-              ),
-            );
-          } catch (e) {
-            print("Insert failed: $e");
-          }
+      builder: (_) => _WellnessCheckInDialog(
+        onSubmit: (data) {
+          Navigator.of(context).pop(data); // return Map
         },
       ),
     );
+
+    if (saved == null) return;
+    if (!mounted) return; //
+
+    try {
+      final userId = supabase.auth.currentUser?.id;
+      if (userId == null) return;
+
+      await supabase.from('feedback').insert({
+        'user_id': userId,
+        'feedback_week': 1,
+        'fitness_improvement': saved['bodyComfort'],
+        'flexibility_improvement': saved['flexibility'],
+        'balance_rating': saved['balance'],
+        'energy_level': saved['energyLevel'],
+        'mental_wellbeing': saved['mood'],
+        'daily_confidence': saved['dailyConfidence'],
+        'body_connection': saved['bodyConnection'],
+        'satisfaction_level': saved['overallWellbeing'],
+        'additional_comments': saved['notes'],
+        'created_at': DateTime.now().toIso8601String(),
+      });
+
+      if (!mounted) return;
+
+      await _loadProgressData();
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Wellness check-in saved!')),
+      );
+    } catch (e) {
+      print("INSERT ERROR: $e");
+    }
   }
 
   void _showReflectionHistory() {
@@ -909,7 +908,6 @@ class _WellnessCheckInDialogState extends State<_WellnessCheckInDialog> {
                           'overallWellbeing': _overallWellbeing,
                           'notes': _notesController.text,
                         });
-                        Navigator.pop(context);
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
