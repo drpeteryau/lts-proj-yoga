@@ -4,6 +4,10 @@ import 'package:google_fonts/google_fonts.dart';
 import '../data/yoga_data.dart';
 import 'session_detail_screen.dart';
 import 'level_selection_screen.dart';
+import '../models/yoga_pose.dart';
+import '../models/yoga_session.dart';
+import 'pose_detail_screen.dart';
+
 
 class HomeTabScreen extends StatefulWidget {
   const HomeTabScreen({super.key});
@@ -16,6 +20,12 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
   String _userName = 'There';
   String _userEmail = '';
   int _selectedDayIndex = 2;
+  Map<String, int> _dailyMinutes = {}; // Store minutes by date
+  bool _isLoadingProgress = true;
+
+  // User progress for filtering poses
+  bool _intermediateUnlocked = false;
+  bool _advancedUnlocked = false;
 
   final List<Map<String, dynamic>> _weekDays = [];
 
@@ -23,7 +33,78 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
   void initState() {
     super.initState();
     _loadUserData();
+    _loadUserProgress();
     _generateWeekDays();
+    _loadDailyProgress();
+  }
+
+  Future<void> _loadUserProgress() async {
+    final userId = Supabase.instance.client.auth.currentUser?.id;
+    if (userId == null) return;
+
+    try {
+      final response = await Supabase.instance.client
+          .from('user_progress')
+          .select()
+          .eq('user_id', userId)
+          .maybeSingle();
+
+      if (response != null && mounted) {
+        setState(() {
+          _intermediateUnlocked = response['intermediate_unlocked'] ?? false;
+          _advancedUnlocked = response['advanced_unlocked'] ?? false;
+        });
+      }
+    } catch (e) {
+      print('Error loading user progress: $e');
+    }
+  }
+
+  Future<void> _loadDailyProgress() async {
+    final userId = Supabase.instance.client.auth.currentUser?.id;
+    if (userId == null) {
+      setState(() => _isLoadingProgress = false);
+      return;
+    }
+
+    try {
+      // Load pose activities from the last 7 days
+      final weekAgo = DateTime.now().subtract(const Duration(days: 7));
+      final response = await Supabase.instance.client
+          .from('pose_activity')
+          .select()
+          .eq('user_id', userId)
+          .gte('activity_date', weekAgo.toIso8601String().split('T')[0]);
+
+      // Group by date and sum duration
+      Map<String, int> minutesByDate = {};
+      for (var row in response) {
+        final date = row['activity_date'] as String;
+        final seconds = (row['duration_seconds'] ?? 0) as int;
+        minutesByDate[date] = (minutesByDate[date] ?? 0) + seconds;
+      }
+
+      // Convert seconds to minutes
+      _dailyMinutes = minutesByDate.map((date, seconds) =>
+          MapEntry(date, (seconds / 60).round())
+      );
+
+      // Update week days with real data
+      for (int i = 0; i < _weekDays.length; i++) {
+        final day = _weekDays[i];
+        final dateKey = day['dateKey'] as String;
+        _weekDays[i]['minutesCompleted'] = _dailyMinutes[dateKey] ?? 0;
+      }
+
+      if (mounted) {
+        setState(() => _isLoadingProgress = false);
+      }
+    } catch (e) {
+      print('Error loading daily progress: $e');
+      if (mounted) {
+        setState(() => _isLoadingProgress = false);
+      }
+    }
   }
 
   void _generateWeekDays() {
@@ -32,10 +113,13 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
 
     for (int i = 0; i < 5; i++) {
       final day = startOfWeek.add(Duration(days: i));
+      final dateKey = '${day.year}-${day.month.toString().padLeft(2, '0')}-${day.day.toString().padLeft(2, '0')}';
+
       _weekDays.add({
         'day': _getDayName(day.weekday),
         'date': day.day.toString(),
-        'minutesCompleted': i == 2 ? 30 : 0,
+        'dateKey': dateKey,
+        'minutesCompleted': 0, // Will be updated by _loadDailyProgress
         'isToday': i == 2,
       });
     }
@@ -473,32 +557,42 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
   }
 
   Widget _buildPosesGrid(BuildContext context) {
-    final poses = [
+    // Get real featured poses from yoga data
+    final featuredPoses = [
       {
-        'name': 'Mountain\nPose',
-        'level': 'Beginner',
-        'image': 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=400',
+        'pose': YogaData.beginnerMainStanding[3], // Warrior 1
+        'session': YogaData.beginnerSessions.first,
         'color': const Color(0xFF6B9BD1),
       },
       {
-        'name': 'Warrior\nPose',
-        'level': 'Intermediate',
-        'image': 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=400',
+        'pose': YogaData.intermediateMain[1], // Plank
+        'session': YogaData.intermediateSessions.first,
         'color': const Color(0xFFE8A0BF),
       },
       {
-        'name': 'Tree\nPose',
-        'level': 'Beginner',
-        'image': 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400',
+        'pose': YogaData.beginnerMainStanding[0], // Back and Chest Stretch
+        'session': YogaData.beginnerSessions.first,
         'color': const Color(0xFF9DD9D2),
       },
       {
-        'name': 'Child\'s\nPose',
-        'level': 'Beginner',
-        'image': 'https://images.unsplash.com/photo-1603988363607-e1e4a66962c6?w=400',
+        'pose': YogaData.intermediateMain[3], // Baby Cobra
+        'session': YogaData.intermediateSessions.first,
         'color': const Color(0xFFFFB997),
       },
     ];
+
+    // Filter poses based on unlocked levels
+    final availablePoses = featuredPoses.where((poseData) {
+      final session = poseData['session'] as YogaSession;
+      final level = session.level;
+      if (level == 'Beginner') return true;
+      if (level == 'Intermediate') return _intermediateUnlocked;
+      if (level == 'Advanced') return _advancedUnlocked;
+      return false;
+    }).toList();
+
+    // Show only first 4 poses
+    final displayPoses = availablePoses.take(4).toList();
 
     return GridView.builder(
       shrinkWrap: true,
@@ -509,15 +603,18 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
         mainAxisSpacing: 12,
         childAspectRatio: 0.85,
       ),
-      itemCount: poses.length,
+      itemCount: displayPoses.length,
       itemBuilder: (context, index) {
-        final pose = poses[index];
+        final item = displayPoses[index];
+        final pose = item['pose'] as YogaPose;
+        final session = item['session'] as YogaSession;
+        final color = item['color'] as Color;
+
         return _buildPoseCard(
           context,
-          pose['name'] as String,
-          pose['level'] as String,
-          pose['image'] as String,
-          pose['color'] as Color,
+          pose,
+          session,
+          color,
         );
       },
     );
@@ -525,17 +622,22 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
 
   Widget _buildPoseCard(
       BuildContext context,
-      String name,
-      String level,
-      String imageUrl,
+      YogaPose pose,
+      YogaSession session,
       Color badgeColor,
       ) {
     return GestureDetector(
       onTap: () {
+        // Navigate directly to pose detail screen
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const LevelSelectionScreen(),
+            builder: (context) => PoseDetailScreen(
+              pose: pose,
+              allPoses: session.allPoses,
+              currentIndex: session.allPoses.indexWhere((p) => p.id == pose.id),
+              sessionLevel: session.level,
+            ),
           ),
         );
       },
@@ -555,8 +657,9 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
           child: Stack(
             fit: StackFit.expand,
             children: [
+              // Background image
               Image.network(
-                imageUrl,
+                pose.imageUrl,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
@@ -591,55 +694,41 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
-                        level.toUpperCase(),
+                        session.level.toUpperCase(),
                         style: GoogleFonts.poppins(
                           fontSize: 10,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w700,
                           color: Colors.white,
-                          letterSpacing: 0.5,
+                          letterSpacing: 1,
                         ),
                       ),
                     ),
                     const Spacer(),
                     Text(
-                      name,
+                      pose.name,
                       style: GoogleFonts.poppins(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
                         color: Colors.white,
-                        height: 1.1,
+                        height: 1.2,
                       ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 4),
                     Row(
                       children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.9),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(
-                                Icons.play_arrow,
-                                size: 16,
-                                color: Colors.black87,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                'Practice',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                            ],
+                        const Icon(
+                          Icons.access_time,
+                          color: Colors.white70,
+                          size: 14,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '${pose.durationSeconds}s',
+                          style: GoogleFonts.poppins(
+                            fontSize: 12,
+                            color: Colors.white70,
                           ),
                         ),
                       ],

@@ -30,6 +30,10 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
   Timer? _timer;
   bool _isTimerRunning = false;
 
+  // Time tracking
+  int _secondsSpent = 0;
+  DateTime? _sessionStartTime;
+
   VideoPlayerController? _videoController;
   bool _isVideoInitialized = false;
   bool _isVideoPlaying = false;
@@ -42,6 +46,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
   void initState() {
     super.initState();
     _remainingSeconds = widget.pose.durationSeconds;
+    _sessionStartTime = DateTime.now();
     _loadPoseCompletion();
     _initializeVideo();
   }
@@ -120,7 +125,10 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
 
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_remainingSeconds > 0) {
-        setState(() => _remainingSeconds--);
+        setState(() {
+          _remainingSeconds--;
+          _secondsSpent++; // Track actual time spent
+        });
       } else {
         _completeTimer();
       }
@@ -147,15 +155,8 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
       _isPoseCompleted = true;
     });
 
-    // Save completion
-    final userId = Supabase.instance.client.auth.currentUser?.id;
-    if (userId != null) {
-      await _poseProgressService.markPoseCompleted(
-        userId,
-        widget.sessionLevel,
-        widget.pose.id,
-      );
-    }
+    // Save time spent and completion
+    await _savePoseProgress();
 
     // Move to next pose if available
     if (widget.currentIndex < widget.allPoses.length - 1) {
@@ -185,7 +186,44 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
   void dispose() {
     _timer?.cancel();
     _videoController?.dispose();
+
+    // Save progress when leaving the screen
+    if (_secondsSpent > 0) {
+      _savePoseProgress();
+    }
+
     super.dispose();
+  }
+
+  Future<void> _savePoseProgress() async {
+    final userId = Supabase.instance.client.auth.currentUser?.id;
+    if (userId == null) return;
+
+    try {
+      final supabase = Supabase.instance.client;
+
+      // Save to pose_activity table with time spent
+      await supabase.from('pose_activity').insert({
+        'user_id': userId,
+        'pose_id': widget.pose.id,
+        'pose_name': widget.pose.name,
+        'session_level': widget.sessionLevel,
+        'duration_seconds': _secondsSpent,
+        'completed_at': DateTime.now().toIso8601String(),
+        'activity_date': DateTime.now().toIso8601String().split('T')[0],
+      });
+
+      // Mark pose as completed
+      await _poseProgressService.markPoseCompleted(
+        userId,
+        widget.sessionLevel,
+        widget.pose.id,
+      );
+
+      print('✅ Saved pose progress: ${widget.pose.name}, ${_secondsSpent}s');
+    } catch (e) {
+      print('❌ Error saving pose progress: $e');
+    }
   }
 
   @override
@@ -496,7 +534,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Icon(
-                Icons.check_outlined,
+                Icons.check,
                 color: Color(0xFF40E0D0),
                 size: 20,
               ),
@@ -649,45 +687,38 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
               margin: const EdgeInsets.only(bottom: 12),
               child: OutlinedButton.icon(
                 onPressed: () async {
-                  // Mark pose as completed
-                  final userId = Supabase.instance.client.auth.currentUser?.id;
-                  if (userId != null) {
-                    await _poseProgressService.markPoseCompleted(
-                      userId,
-                      widget.sessionLevel,
-                      widget.pose.id,
-                    );
+                  // Save pose progress with time tracking
+                  await _savePoseProgress();
 
-                    setState(() {
-                      _isPoseCompleted = true;
-                    });
+                  setState(() {
+                    _isPoseCompleted = true;
+                  });
 
-                    // Show success message
-                    if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Row(
-                            children: [
-                              const Icon(Icons.check_circle, color: Colors.white),
-                              const SizedBox(width: 12),
-                              Text(
-                                'Pose marked as completed!',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                  // Show success message
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Row(
+                          children: [
+                            const Icon(Icons.check_circle, color: Colors.white),
+                            const SizedBox(width: 12),
+                            Text(
+                              'Pose marked as completed!',
+                              style: GoogleFonts.poppins(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
                               ),
-                            ],
-                          ),
-                          backgroundColor: const Color(0xFF40E0D0),
-                          duration: const Duration(seconds: 2),
-                          behavior: SnackBarBehavior.floating,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
+                            ),
+                          ],
                         ),
-                      );
-                    }
+                        backgroundColor: const Color(0xFF40E0D0),
+                        duration: const Duration(seconds: 2),
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    );
                   }
                 },
                 icon: const Icon(Icons.check_circle_outline, size: 20),
@@ -717,19 +748,12 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
             height: 56,
             child: ElevatedButton(
               onPressed: () async {
-                // Mark pose as completed
-                final userId = Supabase.instance.client.auth.currentUser?.id;
-                if (userId != null) {
-                  await _poseProgressService.markPoseCompleted(
-                    userId,
-                    widget.sessionLevel,
-                    widget.pose.id,
-                  );
+                // Save pose progress with time tracking
+                await _savePoseProgress();
 
-                  setState(() {
-                    _isPoseCompleted = true;
-                  });
-                }
+                setState(() {
+                  _isPoseCompleted = true;
+                });
 
                 // Navigate to next pose or show completion
                 if (widget.currentIndex < widget.allPoses.length - 1) {
