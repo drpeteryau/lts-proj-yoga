@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:intl/intl.dart';
+import 'dart:math';
+import 'dart:ui' as ui;
 
 class ProgressScreen extends StatefulWidget {
   const ProgressScreen({super.key});
@@ -101,7 +103,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
           .order('created_at', ascending: false)
           .limit(10);
 
-      _reflections = List<Map<String, dynamic>>.from(reflectionsResponse);
+      setState(() {
+        _reflections = List<Map<String, dynamic>>.from(reflectionsResponse);
+      });
 
       // Check if has check-in this week
       _hasCheckInThisWeek = _reflections.any((r) {
@@ -744,6 +748,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
 
             await supabase.from('feedback').insert({
               'user_id': userId,
+              'feedback_week': 1,
               'fitness_improvement': data['bodyComfort'],
               'flexibility_improvement': data['flexibility'],
               'balance_rating': data['balance'],
@@ -756,28 +761,25 @@ class _ProgressScreenState extends State<ProgressScreen> {
               'created_at': DateTime.now().toIso8601String(),
             });
 
-            _loadProgressData();
+            if (!mounted) return;
 
-            if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Wellness check-in saved!',
-                    style: GoogleFonts.poppins(),
-                  ),
-                  backgroundColor: const Color(0xFF40E0D0),
+            Navigator.pop(context);
+
+            await _loadProgressData();
+
+            if (!mounted) return;
+
+            ScaffoldMessenger.of(this.context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'Wellness check-in saved!',
+                  style: GoogleFonts.poppins(),
                 ),
-              );
-            }
+                backgroundColor: const Color(0xFF40E0D0),
+              ),
+            );
           } catch (e) {
-            if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Error: $e', style: GoogleFonts.poppins()),
-                  backgroundColor: Colors.red,
-                ),
-              );
-            }
+            print("Insert failed: $e");
           }
         },
       ),
@@ -846,14 +848,14 @@ class _WellnessCheckInDialogState extends State<_WellnessCheckInDialog> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    _buildRatingQuestion('Body Comfort', _bodyComfort, (v) => setState(() => _bodyComfort = v)),
-                    _buildRatingQuestion('Flexibility', _flexibility, (v) => setState(() => _flexibility = v)),
-                    _buildRatingQuestion('Balance', _balance, (v) => setState(() => _balance = v)),
-                    _buildRatingQuestion('Energy Level', _energyLevel, (v) => setState(() => _energyLevel = v)),
-                    _buildRatingQuestion('Mood', _mood, (v) => setState(() => _mood = v)),
-                    _buildRatingQuestion('Confidence', _dailyConfidence, (v) => setState(() => _dailyConfidence = v)),
-                    _buildRatingQuestion('Mind-Body Connection', _bodyConnection, (v) => setState(() => _bodyConnection = v)),
-                    _buildRatingQuestion('Overall Wellbeing', _overallWellbeing, (v) => setState(() => _overallWellbeing = v)),
+                    _buildRatingQuestion('How comfortable does your body feel when doing yoga?', _bodyComfort, (v) => setState(() => _bodyComfort = v)),
+                    _buildRatingQuestion('How would you rate your flexibility recently?', _flexibility, (v) => setState(() => _flexibility = v)),
+                    _buildRatingQuestion('How steady do you feel when standing or balancing?', _balance, (v) => setState(() => _balance = v)),
+                    _buildRatingQuestion('How is your overall energy level?', _energyLevel, (v) => setState(() => _energyLevel = v)),
+                    _buildRatingQuestion('How has your mood been lately?', _mood, (v) => setState(() => _mood = v)),
+                    _buildRatingQuestion('How confident do you feel doing your daily activities?', _dailyConfidence, (v) => setState(() => _dailyConfidence = v)),
+                    _buildRatingQuestion('How connected do you feel to your body during yoga practice?', _bodyConnection, (v) => setState(() => _bodyConnection = v)),
+                    _buildRatingQuestion('Overall, how have you been feeling in your body and mind?', _overallWellbeing, (v) => setState(() => _overallWellbeing = v)),
 
                     const SizedBox(height: 16),
 
@@ -922,7 +924,7 @@ class _WellnessCheckInDialogState extends State<_WellnessCheckInDialog> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF40E0D0),
                     ),
-                    child: Text('Submit', style: GoogleFonts.poppins()),
+                    child: Text('Submit', style: GoogleFonts.poppins(color: Colors.white,)),
                   ),
                 ),
               ],
@@ -947,34 +949,9 @@ class _WellnessCheckInDialogState extends State<_WellnessCheckInDialog> {
             ),
           ),
           const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: List.generate(5, (index) {
-              final rating = index + 1;
-              return GestureDetector(
-                onTap: () => onChanged(rating),
-                child: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: value == rating
-                        ? const Color(0xFF40E0D0)
-                        : Colors.grey[200],
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: Text(
-                      rating.toString(),
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: value == rating ? Colors.white : Colors.grey[600],
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            }),
+          WellnessGauge(
+            value: value ?? 0,
+            onChanged: onChanged,
           ),
         ],
       ),
@@ -1129,4 +1106,173 @@ class _ReflectionHistoryScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+class WellnessGauge extends StatelessWidget {
+  final int value;
+  final Function(int) onChanged;
+
+  const WellnessGauge({
+    super.key,
+    required this.value,
+    required this.onChanged,
+  });
+
+  double get angle {
+    if (value == 0) return -pi / 2;
+    return -pi / 2 + ((value - 1) / 4) * pi;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        SizedBox(
+          height: 160,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              CustomPaint(
+                size: const Size(240, 120),
+                painter: _GaugePainter(),
+              ),
+              Positioned.fill(
+                child: CustomPaint(
+                  painter: _EmojiPainter(),
+                ),
+              ),
+              Positioned(
+                bottom: 20, // ⬅ increase = lower, decrease = higher
+                child: Transform(
+                  alignment: Alignment.bottomCenter,
+                  transform: Matrix4.identity()..rotateZ(angle),
+                  child: CustomPaint(
+                    size: const Size(20, 65),
+                    painter: _NeedlePainter(),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: List.generate(5, (i) {
+            final index = i + 1;
+            return GestureDetector(
+              onTap: () => onChanged(index),
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: value == index
+                        ? Colors.green
+                        : Colors.grey.shade300,
+                  ),
+                ),
+                child: Text(
+                  "$index",
+                  style: GoogleFonts.poppins(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: value == index
+                        ? Colors.green
+                        : Colors.grey.shade600,
+                  ),
+                ),
+              ),
+            );
+          }),
+        ),
+      ],
+    );
+  }
+}
+
+class _GaugePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Rect.fromLTWH(0, 0, size.width, size.height * 2);
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 14;
+
+    final colors = [
+      Colors.red.shade300,
+      Colors.orange.shade300,
+      Colors.yellow.shade400,
+      Colors.green.shade300,
+      Colors.teal.shade300,
+    ];
+
+    double start = pi;
+    for (var c in colors) {
+      paint.color = c;
+      canvas.drawArc(rect, start, pi / 5, false, paint);
+      start += pi / 5;
+    }
+  }
+
+  @override
+  bool shouldRepaint(_) => false;
+}
+
+class _EmojiPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height);
+    final radius = size.width / 2.4;
+
+    final faces = ["😠", "😕", "😐", "🙂", "😄"];
+
+    for (int i = 0; i < 5; i++) {
+      final angle = pi + (i + 0.5) * (pi / 5);
+
+      final offset = Offset(
+        center.dx + radius * cos(angle),
+        center.dy + radius * sin(angle),
+      );
+
+      final textPainter = TextPainter(
+        text: TextSpan(
+          text: faces[i],
+          style: const TextStyle(fontSize: 22),
+        ),
+        textAlign: TextAlign.center,
+        textDirection: ui.TextDirection.ltr, // 🔒 forced
+      );
+
+      textPainter.layout();
+      textPainter.paint(
+        canvas,
+        offset -
+            Offset(textPainter.width / 2, textPainter.height / 2),
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_) => false;
+}
+
+class _NeedlePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.black
+      ..style = PaintingStyle.fill;
+
+    final path = Path();
+    path.moveTo(size.width / 2, 0);
+    path.lineTo(size.width * 0.35, size.height);
+    path.lineTo(size.width * 0.65, size.height);
+    path.close();
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(_) => false;
 }
