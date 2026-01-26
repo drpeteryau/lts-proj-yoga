@@ -29,6 +29,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
   late int _remainingSeconds;
   Timer? _timer;
   bool _isTimerRunning = false;
+  bool _alreadySaved = false;
 
   // Time tracking
   int _secondsSpent = 0;
@@ -49,6 +50,8 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
     _sessionStartTime = DateTime.now();
     _loadPoseCompletion();
     _initializeVideo();
+    _secondsSpent = 0;
+    _alreadySaved = false;
   }
 
   Future<void> _initializeVideo() async {
@@ -198,6 +201,8 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
   Future<void> _savePoseProgress() async {
     final userId = Supabase.instance.client.auth.currentUser?.id;
     if (userId == null) return;
+    if (_alreadySaved) return;
+    if (_secondsSpent <= 0) return;
 
     try {
       final supabase = Supabase.instance.client;

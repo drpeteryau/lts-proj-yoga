@@ -49,7 +49,6 @@ class _ProgressScreenState extends State<ProgressScreen> {
 
       print('🔍 DEBUG: Loading progress for user: $userId');
 
-      // Load pose activities (actual time tracking)
       final poseActivitiesResponse = await supabase
           .from('pose_activity')
           .select()
@@ -60,39 +59,61 @@ class _ProgressScreenState extends State<ProgressScreen> {
       print('🔍 DEBUG: First few records: ${poseActivitiesResponse.take(3).toList()}');
 
       _activityDays.clear();
-      int weekMinutes = 0;
-      int totalMinutes = 0;
-      int totalSessions = 0;
+
+      // Used to infer sessions
+      final Map<String, List<DateTime>> grouped = {};
+
+      int weekSeconds = 0;
+      int totalSeconds = 0;
 
       final now = DateTime.now();
-      final weekStart = now.subtract(Duration(days: now.weekday - 1));
+      final today = DateTime(now.year, now.month, now.day);
+      final weekStart = today.subtract(Duration(days: today.weekday - 1));
 
       print('🔍 DEBUG: Week starts on: ${DateFormat('yyyy-MM-dd').format(weekStart)}');
 
       // Process pose activities
       for (var row in poseActivitiesResponse) {
-        final date = DateTime.parse(row['completed_at']);
+        final raw = DateTime.parse(row['completed_at']).toLocal();
+        final date = DateTime(raw.year, raw.month, raw.day);
         final key = DateFormat('yyyy-MM-dd').format(date);
         _activityDays[key] = true;
-        totalSessions++;
+
+        final level = row['session_level'] as String;
+        final completedAt = raw;
+
+        grouped.putIfAbsent(level, () => []).add(completedAt);
 
         final durationSeconds = (row['duration_seconds'] ?? 0) as int;
-        // Don't round - accumulate seconds and convert at the end
-        totalMinutes += durationSeconds;
+        totalSeconds += durationSeconds;
 
         if (!date.isBefore(weekStart)) {
-          weekMinutes += durationSeconds;
-          print('🔍 DEBUG: Adding ${durationSeconds}s from ${key} to weekly total');
+          weekSeconds += durationSeconds;
+          print('🔍 DEBUG: Adding ${durationSeconds}s from $key to weekly total');
         }
       }
 
-      // Convert total seconds to minutes
-      final totalMinutesConverted = (totalMinutes / 60).round();
-      final weekMinutesConverted = (weekMinutes / 60).round();
+      // Infer sessions (30 min gap rule)
+      int sessionCount = 0;
 
-      print('🔍 DEBUG: Total sessions: $totalSessions');
-      print('🔍 DEBUG: Total seconds: $totalMinutes, Minutes: $totalMinutesConverted');
-      print('🔍 DEBUG: Weekly seconds: $weekMinutes, Minutes: $weekMinutesConverted');
+      grouped.forEach((level, times) {
+        times.sort();
+        DateTime? last;
+
+        for (final t in times) {
+          if (last == null || t.difference(last).inMinutes > 30) {
+            sessionCount++;
+          }
+          last = t;
+        }
+      });
+
+      final totalMinutesConverted = (totalSeconds / 60).ceil();
+      final weekMinutesConverted = (weekSeconds / 60).ceil();
+
+      print('🔍 DEBUG: Total sessions: $sessionCount');
+      print('🔍 DEBUG: Total seconds: $totalSeconds, Minutes: $totalMinutesConverted');
+      print('🔍 DEBUG: Weekly seconds: $weekSeconds, Minutes: $weekMinutesConverted');
       print('🔍 DEBUG: Activity days: ${_activityDays.keys.toList()}');
 
       // Load wellness reflections
@@ -104,11 +125,11 @@ class _ProgressScreenState extends State<ProgressScreen> {
           .limit(10);
 
       if (!mounted) return;
+
       setState(() {
         _reflections = List<Map<String, dynamic>>.from(reflectionsResponse);
       });
 
-      // Check if has check-in this week
       _hasCheckInThisWeek = _reflections.any((r) {
         final date = DateTime.parse(r['created_at']);
         return !date.isBefore(weekStart);
@@ -116,7 +137,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
 
       _currentStreak = _calculateStreak();
       _weeklyMinutes = weekMinutesConverted;
-      _totalSessions = totalSessions;
+      _totalSessions = sessionCount;
       _totalMinutes = totalMinutesConverted;
 
       if (!mounted) return;
