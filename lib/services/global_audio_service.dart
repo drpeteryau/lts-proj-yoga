@@ -1,6 +1,6 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'dart:async';  // ← Add this line
+import 'dart:async';
 
 class GlobalAudioService extends ChangeNotifier {
   static final GlobalAudioService _instance = GlobalAudioService._internal();

@@ -2,107 +2,108 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'login_screen.dart';
 import '../services/global_audio_service.dart';
-
+import '../services/notification_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
-    @override
+  @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-
   final GlobalAudioService _audioService = GlobalAudioService();
 
-    // ==============================
+  // ==============================
   //  Supabase Profile Loader
   // ==============================
 
   // These keep track of the user data pulled from Supabase
-Map<String, dynamic>? _profileData;
-bool _isLoadingProfile = true;
+  Map<String, dynamic>? _profileData;
+  bool _isLoadingProfile = true;
 
-@override
-void initState() {
-  super.initState();
-  _loadProfileData();
-}
+  @override
+  void initState() {
+    super.initState();
+    _loadProfileData();
+  }
 
-Future<void> _loadProfileData() async {
-  debugPrint('🔄 Loading profile data...');
+  Future<void> _loadProfileData() async {
+    debugPrint('🔄 Loading profile data...');
 
-  // Wait a short moment to let Supabase restore session
-  await Future.delayed(const Duration(milliseconds: 300));
-  final user = Supabase.instance.client.auth.currentUser;
+    // Wait a short moment to let Supabase restore session
+    await Future.delayed(const Duration(milliseconds: 300));
+    final user = Supabase.instance.client.auth.currentUser;
 
- if (user == null) {
-    debugPrint('⚠️ No Supabase user found — redirecting to login');
-    if (mounted) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const LoginScreen()),
-      );
+    if (user == null) {
+      debugPrint('⚠️ No Supabase user found — redirecting to login');
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
+        );
+      }
+      return;
     }
-    return;
+
+    try {
+      final response = await Supabase.instance.client
+          .from('profiles')
+          .select()
+          .eq('id', user.id)
+          .single();
+
+      debugPrint('✅ Profile data loaded: $response');
+
+      setState(() {
+        _profileData = response;
+        _isLoadingProfile = false;
+        _nameController.text = response['full_name'] ?? '';
+        _ageController.text = response['age']?.toString() ?? '';
+        _email = response['email'] ?? '';
+        _ageGroup = response['age_group'] ?? _ageGroup;
+        _experienceLevel = response['experience_level'] ?? _experienceLevel;
+        _preferredSessionLength =
+            response['preferred_session_length'] ?? _preferredSessionLength;
+        _preferredLanguage =
+            response['preferred_language'] ?? _preferredLanguage;
+        _soundEffectsEnabled =
+            response['sound_effects_enabled'] ?? _soundEffectsEnabled;
+        _volumeLevel =
+            (response['volume_level'] as num?)?.toDouble() ?? _volumeLevel;
+        _reminderTime = response['reminder_time'] ?? _reminderTime;
+        _dailyPracticeReminderEnabled = response['daily_practice_reminder'] ??
+            _dailyPracticeReminderEnabled;
+        _pushNotificationsEnabled =
+            response['push_notifications_enabled'] ?? _pushNotificationsEnabled;
+      });
+    } catch (e) {
+      debugPrint('Error loading profile: $e');
+      setState(() {
+        _isLoadingProfile = false;
+      });
+    }
   }
 
-  try {
-    final response = await Supabase.instance.client
-        .from('profiles')
-        .select()
-        .eq('id', user.id)
-        .single();
+  Future<void> _updateProfileField(String field, dynamic value) async {
+    final user = Supabase.instance.client.auth.currentUser;
+    if (user == null) return;
 
-        debugPrint('✅ Profile data loaded: $response');
-
-
-    setState(() {
-      _profileData = response;
-      _isLoadingProfile = false;
-      _nameController.text = response['full_name'] ?? '';
-      _ageController.text = response['age']?.toString() ?? '';
-      _email = response['email'] ?? ''; 
-      _ageGroup = response['age_group'] ?? _ageGroup;
-      _experienceLevel = response['experience_level'] ?? _experienceLevel;
-      _preferredSessionLength = response['preferred_session_length'] ?? _preferredSessionLength;
-      _preferredLanguage = response['preferred_language'] ?? _preferredLanguage;
-      _soundEffectsEnabled = response['sound_effects_enabled'] ?? _soundEffectsEnabled;
-      _volumeLevel = (response['volume_level'] as num?)?.toDouble() ?? _volumeLevel;
-      _reminderTime = response['reminder_time'] ?? _reminderTime;
-      _dailyPracticeReminderEnabled = response['daily_practice_reminder'] ?? _dailyPracticeReminderEnabled;
-      _pushNotificationsEnabled = response['push_notifications_enabled'] ?? _pushNotificationsEnabled;
-    });
-  } catch (e) {
-    debugPrint('Error loading profile: $e');
-     setState(() {
-      _isLoadingProfile = false;
-    });
+    try {
+      await Supabase.instance.client
+          .from('profiles')
+          .update({field: value}).eq('id', user.id);
+    } catch (e) {
+      debugPrint('Error updating $field: $e');
+    }
   }
-}
-
-Future<void> _updateProfileField(String field, dynamic value) async {
-  final user = Supabase.instance.client.auth.currentUser;
-  if (user == null) return;
-
-  try {
-    await Supabase.instance.client
-        .from('profiles')
-        .update({field: value})
-        .eq('id', user.id);
-  } catch (e) {
-    debugPrint('Error updating $field: $e');
-  }
-}
-
 
   static const Color _primaryColor = Color(0xFF40E0D0);
   static const Color _textColor = Colors.black87;
 
   String _email = '';
 
-
-    // --- 🔒 Secure Logout Function ---
+  // --- 🔒 Secure Logout Function ---
   Future<void> _signOut(BuildContext context) async {
     try {
       await Supabase.instance.client.auth.signOut();
@@ -120,7 +121,6 @@ Future<void> _updateProfileField(String field, dynamic value) async {
       );
     }
   }
-
 
   // Localization Data
   final Map<String, Map<String, String>> _localizedStrings = {
@@ -177,23 +177,20 @@ Future<void> _updateProfileField(String field, dynamic value) async {
 //  Toggles edit/view mode for the name & age fields
   bool _isEditing = false;
 
-
-final TextEditingController _nameController = TextEditingController();
-final TextEditingController _ageController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _ageController = TextEditingController();
 
 //  Helper function to auto-categorize age group
-String _getAgeGroup(int age) {
-  if (age < 18) return 'Under 18';
-  if (age <= 24) return '18–24 years';
-  if (age <= 34) return '25–34 years';
-  if (age <= 44) return '35–44 years';
-  if (age <= 54) return '45–54 years';
-  if (age <= 64) return '55–64 years';
-  if (age <= 74) return '65–74 years';
-  return '75+ years';
-}
-
-
+  String _getAgeGroup(int age) {
+    if (age < 18) return 'Under 18';
+    if (age <= 24) return '18–24 years';
+    if (age <= 34) return '25–34 years';
+    if (age <= 44) return '35–44 years';
+    if (age <= 54) return '45–54 years';
+    if (age <= 64) return '55–64 years';
+    if (age <= 74) return '65–74 years';
+    return '75+ years';
+  }
 
   // Helper getter to fetch localized string
   String _localizedText(String key) {
@@ -286,9 +283,8 @@ String _getAgeGroup(int age) {
                         option,
                         style: TextStyle(
                           color: isSelected ? _primaryColor : _textColor,
-                          fontWeight: isSelected
-                              ? FontWeight.bold
-                              : FontWeight.normal,
+                          fontWeight:
+                              isSelected ? FontWeight.bold : FontWeight.normal,
                         ),
                       ),
                       trailing: isSelected
@@ -450,34 +446,34 @@ String _getAgeGroup(int age) {
         const Divider(height: 1, color: Colors.black12),
         // Experience Level Dropdown
         _buildDropdownSetting(
-  label: _localizedText('setting_experience_level'),
-  value: _experienceLevel,
-  onTap: () => _showSelectionSheet(
-    title: _localizedText('sheet_select_experience'),
-    options: _experienceOptions,
-    currentValue: _experienceLevel,
-    onSelected: (newValue) {
-      setState(() => _experienceLevel = newValue);
-      _updateProfileField('experience_level', newValue); // 👈 Save to Supabase
-    },
-  ),
-),
+          label: _localizedText('setting_experience_level'),
+          value: _experienceLevel,
+          onTap: () => _showSelectionSheet(
+            title: _localizedText('sheet_select_experience'),
+            options: _experienceOptions,
+            currentValue: _experienceLevel,
+            onSelected: (newValue) {
+              setState(() => _experienceLevel = newValue);
+              _updateProfileField(
+                  'experience_level', newValue); // 👈 Save to Supabase
+            },
+          ),
+        ),
         const Divider(height: 1, color: Colors.black12),
         // Preferred Session Length Dropdown
-    _buildDropdownSetting(
-  label: _localizedText('setting_session_length'),
-  value: _preferredSessionLength,
-  onTap: () => _showSelectionSheet(
-    title: _localizedText('sheet_select_session'),
-    options: _sessionLengthOptions,
-    currentValue: _preferredSessionLength,
-    onSelected: (newValue) {
-      setState(() => _preferredSessionLength = newValue);
-      _updateProfileField('preferred_session_length', newValue);
-    },
-  ),
-),
-
+        _buildDropdownSetting(
+          label: _localizedText('setting_session_length'),
+          value: _preferredSessionLength,
+          onTap: () => _showSelectionSheet(
+            title: _localizedText('sheet_select_session'),
+            options: _sessionLengthOptions,
+            currentValue: _preferredSessionLength,
+            onSelected: (newValue) {
+              setState(() => _preferredSessionLength = newValue);
+              _updateProfileField('preferred_session_length', newValue);
+            },
+          ),
+        ),
       ],
     );
   }
@@ -493,10 +489,16 @@ String _getAgeGroup(int age) {
           label: _localizedText('setting_push_notifications'),
           subtitle: _localizedText('subtitle_push_notifications'),
           value: _pushNotificationsEnabled,
-         onChanged: (newValue) {
-          setState(() => _pushNotificationsEnabled = newValue);
-          _updateProfileField('push_notifications_enabled', newValue);
-        },
+          onChanged: (newValue) {
+            setState(() => _pushNotificationsEnabled = newValue);
+            _updateProfileField('push_notifications_enabled', newValue);
+            if (newValue == true) {
+              NotificationService().showNotification(
+                'HealYoga',
+                'Push notifications enabled!',
+              );
+            }
+          },
         ),
         const Divider(height: 1, color: Colors.black12),
         _buildToggleSetting(
@@ -504,33 +506,33 @@ String _getAgeGroup(int age) {
           subtitle: _localizedText('subtitle_daily_reminder'),
           value: _dailyPracticeReminderEnabled,
           onChanged: (newValue) {
-          setState(() => _dailyPracticeReminderEnabled = newValue);
-          _updateProfileField('daily_practice_reminder', newValue); // ✅ update Supabase
-        },
+            setState(() => _dailyPracticeReminderEnabled = newValue);
+            _updateProfileField(
+                'daily_practice_reminder', newValue); // ✅ update Supabase
+          },
         ),
         const Divider(height: 1, color: Colors.black12),
-       _buildDropdownSetting(
-  label: _localizedText('setting_reminder_time'),
-  value: _reminderTime,
-  onTap: () async {
-    final TimeOfDay? newTime = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
+        _buildDropdownSetting(
+          label: _localizedText('setting_reminder_time'),
+          value: _reminderTime,
+          onTap: () async {
+            final TimeOfDay? newTime = await showTimePicker(
+              context: context,
+              initialTime: TimeOfDay.now(),
+            );
 
-    if (newTime != null) {
-      final formattedTime = newTime.format(context);
+            if (newTime != null) {
+              final formattedTime = newTime.format(context);
 
-      setState(() {
-        _reminderTime = formattedTime;
-      });
+              setState(() {
+                _reminderTime = formattedTime;
+              });
 
-      // 🔥 Save to Supabase
-      _updateProfileField('reminder_time', formattedTime);
-    }
-  },
-),
-
+              // 🔥 Save to Supabase
+              _updateProfileField('reminder_time', formattedTime);
+            }
+          },
+        ),
       ],
     );
   }
@@ -563,10 +565,11 @@ String _getAgeGroup(int age) {
               ),
               Switch(
                 value: _soundEffectsEnabled,
-                 onChanged: (newValue) {
-                setState(() => _soundEffectsEnabled = newValue);
-                _updateProfileField('sound_effects_enabled', newValue); // ✅ update Supabase
-              },
+                onChanged: (newValue) {
+                  setState(() => _soundEffectsEnabled = newValue);
+                  _updateProfileField(
+                      'sound_effects_enabled', newValue); // ✅ update Supabase
+                },
                 activeColor: Colors.white,
                 activeTrackColor: _primaryColor,
                 inactiveThumbColor: Colors.white,
@@ -605,12 +608,12 @@ String _getAgeGroup(int age) {
                 divisions: 100,
                 activeColor: _primaryColor,
                 inactiveColor: _primaryColor.withOpacity(0.2),
-                 onChanged: (double newValue) {
-                setState(() => _volumeLevel = newValue);
-                _updateProfileField('volume_level', newValue);
+                onChanged: (double newValue) {
+                  setState(() => _volumeLevel = newValue);
+                  _updateProfileField('volume_level', newValue);
 
-                _audioService.setVolume(newValue);
-              },
+                  _audioService.setVolume(newValue);
+                },
               ),
             ),
           ],
@@ -626,22 +629,21 @@ String _getAgeGroup(int age) {
       title: _localizedText('card_language_region'),
       iconColor: _primaryColor,
       children: [
-_buildDropdownSetting(
-  label: _localizedText('setting_preferred_language'),
-  value: _preferredLanguage,
-  onTap: () => _showSelectionSheet(
-    title: _localizedText('sheet_select_language'),
-    options: _languageOptions,
-    currentValue: _preferredLanguage,
-    onSelected: (newValue) {
-      setState(() => _preferredLanguage = newValue);
+        _buildDropdownSetting(
+          label: _localizedText('setting_preferred_language'),
+          value: _preferredLanguage,
+          onTap: () => _showSelectionSheet(
+            title: _localizedText('sheet_select_language'),
+            options: _languageOptions,
+            currentValue: _preferredLanguage,
+            onSelected: (newValue) {
+              setState(() => _preferredLanguage = newValue);
 
-      // 🔥 Save to Supabase
-      _updateProfileField('preferred_language', newValue);
-    },
-  ),
-),
-
+              // 🔥 Save to Supabase
+              _updateProfileField('preferred_language', newValue);
+            },
+          ),
+        ),
       ],
     );
   }
@@ -649,10 +651,10 @@ _buildDropdownSetting(
   @override
   Widget build(BuildContext context) {
     if (_isLoadingProfile) {
-    return const Scaffold(
-      body: Center(child: CircularProgressIndicator()),
-    );
-  }
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -668,140 +670,142 @@ _buildDropdownSetting(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // --- Profile Header ---
-         Card(
-  margin: const EdgeInsets.symmetric(vertical: 12),
-  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-  elevation: 2,
-  child: Padding(
-    padding: const EdgeInsets.all(16),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              'Profile Details',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
-            TextButton(
-              onPressed: () async {
-                if (_isEditing) {
-                  // Save to Supabase when exiting edit mode
+              Card(
+                margin: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                elevation: 2,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Profile Details',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () async {
+                              if (_isEditing) {
+                                // Save to Supabase when exiting edit mode
 
-                  final newName = _nameController.text.trim();
-                  final newAge = int.tryParse(_ageController.text.trim());
-                  if (newName.isNotEmpty) {
-                    await _updateProfileField('full_name', newName);
-                  }
-                  if (newAge != null) {
-                    final ageGroup = _getAgeGroup(newAge);
-                    await _updateProfileField('age', newAge);
-                    await _updateProfileField('age_group', ageGroup);
-                    setState(() => _ageGroup = ageGroup);
-                  }
-                      // Show confirmation
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Profile updated successfully')),
-                        );
-                      }
-                    }
-  
-  // Toggle edit mode (this runs for both Edit and Save)
-  setState(() => _isEditing = !_isEditing);
+                                final newName = _nameController.text.trim();
+                                final newAge =
+                                    int.tryParse(_ageController.text.trim());
+                                if (newName.isNotEmpty) {
+                                  await _updateProfileField(
+                                      'full_name', newName);
+                                }
+                                if (newAge != null) {
+                                  final ageGroup = _getAgeGroup(newAge);
+                                  await _updateProfileField('age', newAge);
+                                  await _updateProfileField(
+                                      'age_group', ageGroup);
+                                  setState(() => _ageGroup = ageGroup);
+                                }
+                                // Show confirmation
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text(
+                                            'Profile updated successfully')),
+                                  );
+                                }
+                              }
 
-              },
-              child: Text(
-                _isEditing ? 'Save' : 'Edit',
-                style: const TextStyle(color: Color(0xFF40E0D0)),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
+                              // Toggle edit mode (this runs for both Edit and Save)
+                              setState(() => _isEditing = !_isEditing);
+                            },
+                            child: Text(
+                              _isEditing ? 'Save' : 'Edit',
+                              style: const TextStyle(color: Color(0xFF40E0D0)),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
 
-        // Full Name Field
-        TextField(
-          controller: _nameController,
-          enabled: _isEditing,
-          decoration: InputDecoration(
-          labelText: 'Full Name',
-          border: const OutlineInputBorder(),
-          fillColor: _isEditing ? Colors.white : Colors.grey.shade200,
-          filled: true,
-          ),
+                      // Full Name Field
+                      TextField(
+                        controller: _nameController,
+                        enabled: _isEditing,
+                        decoration: InputDecoration(
+                          labelText: 'Full Name',
+                          border: const OutlineInputBorder(),
+                          fillColor:
+                              _isEditing ? Colors.white : Colors.grey.shade200,
+                          filled: true,
+                        ),
+                      ),
+                      // ------------- EMAIL DISPLAY -------------
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0, left: 4.0),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.email_outlined,
+                                size: 18, color: Colors.grey),
+                            const SizedBox(width: 8),
+                            Flexible(
+                              child: Text(
+                                _email.isNotEmpty ? _email : 'No email linked',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
 
-        ),
-            // ------------- EMAIL DISPLAY -------------
-    Padding(
-      padding: const EdgeInsets.only(top: 8.0, left: 4.0),
-      child: Row(
-        children: [
-          const Icon(Icons.email_outlined, size: 18, color: Colors.grey),
-          const SizedBox(width: 8),
-          Flexible(
-            child: Text(
-              _email.isNotEmpty ? _email : 'No email linked',
-              style: const TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
-              ),
-            ),
-          ),
-        ],
-      ),
-    ),
-
-        const SizedBox(height: 12),
+                      const SizedBox(height: 12),
 //Age field
-TextField(
-  controller: _ageController,
-  enabled: _isEditing,
-  keyboardType: TextInputType.number,
-  decoration:  InputDecoration(
-    labelText: 'Age',
-    border: OutlineInputBorder(),
-  ),
-  onSubmitted: (newAgeString) {
-    final newAge = int.tryParse(newAgeString);
-    if (newAge != null) {
-      final ageGroup = _getAgeGroup(newAge);
+                      TextField(
+                        controller: _ageController,
+                        enabled: _isEditing,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          labelText: 'Age',
+                          border: OutlineInputBorder(),
+                        ),
+                        onSubmitted: (newAgeString) {
+                          final newAge = int.tryParse(newAgeString);
+                          if (newAge != null) {
+                            final ageGroup = _getAgeGroup(newAge);
 
-      // 👇 this updates your UI immediately
-      setState(() {
-        _ageGroup = ageGroup;
-      });
+                            // 👇 this updates your UI immediately
+                            setState(() {
+                              _ageGroup = ageGroup;
+                            });
 
-      // 👇 this saves to Supabase
-      _updateProfileField('age', newAge);
-      _updateProfileField('age_group', ageGroup);
-    }
-  },
-),
-if (_ageController.text.isNotEmpty)
-  Padding(
-    padding: const EdgeInsets.only(top: 8.0, left: 4.0),
-    child: Text(
-      'Age Group: $_ageGroup',
-      style: const TextStyle(
-        fontSize: 14,
-        color: Colors.grey,
-      ),
-    ),
-  ),
-
-
-
-      ],
-    ),
-  ),
-),
-
+                            // 👇 this saves to Supabase
+                            _updateProfileField('age', newAge);
+                            _updateProfileField('age_group', ageGroup);
+                          }
+                        },
+                      ),
+                      if (_ageController.text.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0, left: 4.0),
+                          child: Text(
+                            'Age Group: $_ageGroup',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
 
               const SizedBox(height: 24),
 
@@ -813,7 +817,7 @@ if (_ageController.text.isNotEmpty)
 
               const SizedBox(height: 20),
 
-                // --- 🔒 Logout Button ---
+              // --- 🔒 Logout Button ---
               ElevatedButton.icon(
                 onPressed: () => _signOut(context),
                 icon: const Icon(Icons.logout),
@@ -836,7 +840,8 @@ if (_ageController.text.isNotEmpty)
       ),
     );
   }
-    @override
+
+  @override
   void dispose() {
     _nameController.dispose();
     _ageController.dispose();
