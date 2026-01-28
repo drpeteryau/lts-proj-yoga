@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import '../services/notification_service.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -98,8 +99,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
       await supabase
           .from('profiles')
-          .update({'profile_image_url': imageUrl})
-          .eq('id', user.id);
+          .update({'profile_image_url': imageUrl}).eq('id', user.id);
 
       setState(() {
         _profileImageUrl = imageUrl;
@@ -128,8 +128,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       // 2️⃣ Remove URL from profile
       await supabase
           .from('profiles')
-          .update({'profile_image_url': null})
-          .eq('id', user.id);
+          .update({'profile_image_url': null}).eq('id', user.id);
 
       // 3️⃣ Update UI immediately
       setState(() {
@@ -181,22 +180,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
     setState(() => _isSaving = true);
 
-    await supabase
-        .from('profiles')
-        .update({
-          'full_name': _nameController.text.trim(),
-          'age': age,
-          'age_group': ageGroup,
-          'experience_level': _experienceLevel,
-          'preferred_session_length': _sessionLength,
-          'preferred_language': _language,
-          'push_notifications_enabled': _pushNotifications,
-          'daily_practice_reminder': _dailyPracticeReminder,
-          'reminder_time': _reminderTime,
-          'sound_effects_enabled': _soundEffectsEnabled,
-          'volume_level': _volumeLevel,
-        })
-        .eq('id', user.id);
+    await supabase.from('profiles').update({
+      'full_name': _nameController.text.trim(),
+      'age': age,
+      'age_group': ageGroup,
+      'experience_level': _experienceLevel,
+      'preferred_session_length': _sessionLength,
+      'preferred_language': _language,
+      'push_notifications_enabled': _pushNotifications,
+      'daily_practice_reminder': _dailyPracticeReminder,
+      'reminder_time': _reminderTime,
+      'sound_effects_enabled': _soundEffectsEnabled,
+      'volume_level': _volumeLevel,
+    }).eq('id', user.id);
 
     if (mounted) Navigator.pop(context);
   }
@@ -269,8 +265,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   Center(
                     child: TextButton.icon(
                       onPressed: _removeProfileImage,
-                      icon:
-                          const Icon(Icons.delete_outline, color: Colors.red),
+                      icon: const Icon(Icons.delete_outline, color: Colors.red),
                       label: const Text(
                         'Remove photo',
                         style: TextStyle(color: Colors.red),
@@ -316,10 +311,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   ],
                   (v) => setState(() => _sessionLength = v),
                 ),
-                _dropdown('Language', _language, [
-                  'English',
-                  'Mandarin',
-                ], (v) => setState(() => _language = v)),
+                _dropdown(
+                    'Language',
+                    _language,
+                    [
+                      'English',
+                      'Mandarin',
+                    ],
+                    (v) => setState(() => _language = v)),
               ],
             ),
 
@@ -327,35 +326,65 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               title: 'Notifications',
               children: [
                 SwitchListTile(
-                  title: const Text('Push Notifications'),
-                  value: _pushNotifications,
-                  activeColor: turquoise,
-                  onChanged: (v) => setState(() => _pushNotifications = v),
-                ),
+                    title: const Text('Push Notifications'),
+                    value: _pushNotifications,
+                    activeColor: turquoise,
+                    onChanged: (v) {
+                      setState(() => _pushNotifications = v);
+                      // Trigger the local notification if turned on
+                      if (v == true) {
+                        NotificationService().showNotification(
+                          title: 'HealYoga',
+                          body: 'Push notifications enabled! 🔔',
+                        );
+                      }
+                    }),
                 SwitchListTile(
-                  title: const Text('Daily Practice Reminder'),
-                  value: _dailyPracticeReminder,
-                  activeColor: turquoise,
-                  onChanged: (v) =>
-                      setState(() => _dailyPracticeReminder = v),
-                ),
+                    title: const Text('Daily Practice Reminder'),
+                    value: _dailyPracticeReminder,
+                    activeColor: turquoise,
+                    onChanged: (v) {
+                      setState(() => _dailyPracticeReminder = v);
+                      // Trigger the local notification if turned on
+                      if (v == true) {
+                        NotificationService().showNotification(
+                          title: 'Daily Reminder Enabled!',
+                          body: 'We will remind you every day to practice. 🌞',
+                        );
+                      }
+                    }),
                 ListTile(
                   title: const Text('Reminder Time'),
                   trailing: Text(
                     _reminderTime,
-                    style:
-                        const TextStyle(color: Color(0xFF6B8F8A)),
+                    style: const TextStyle(color: Color(0xFF6B8F8A)),
                   ),
                   onTap: () async {
                     final time = await showTimePicker(
                       context: context,
-                      initialTime:
-                          const TimeOfDay(hour: 9, minute: 0),
+                      initialTime: TimeOfDay.now(),
                     );
                     if (time != null) {
                       setState(() {
                         _reminderTime = time.format(context);
                       });
+
+                      if (_dailyPracticeReminder == true) {
+                        NotificationService().scheduleDailyNotification(
+                          id: 101, // Unique ID for this daily reminder
+                          title: 'Daily Practice Reminder',
+                          body: 'Time for your daily session! 🏃‍♀️',
+                          hour: time.hour,
+                          minute: time.minute,
+                        );
+
+                        NotificationService().showNotification(
+                          title: 'Reminder Time Set!',
+                          body: 'We will remind you every day at $_reminderTime 🕓',
+                        );
+                      } else {
+                        NotificationService().cancelNotification(101);
+                      }
                     }
                   },
                 ),
@@ -369,27 +398,23 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   title: const Text('Sound Effects'),
                   value: _soundEffectsEnabled,
                   activeColor: turquoise,
-                  onChanged: (v) =>
-                      setState(() => _soundEffectsEnabled = v),
+                  onChanged: (v) => setState(() => _soundEffectsEnabled = v),
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
                       'Volume',
-                      style:
-                          TextStyle(color: Color(0xFF6B8F8A)),
+                      style: TextStyle(color: Color(0xFF6B8F8A)),
                     ),
                     Slider(
                       value: _volumeLevel,
                       min: 0,
                       max: 1,
                       divisions: 10,
-                      label:
-                          '${(_volumeLevel * 100).round()}%',
+                      label: '${(_volumeLevel * 100).round()}%',
                       activeColor: turquoise,
-                      onChanged: (v) =>
-                          setState(() => _volumeLevel = v),
+                      onChanged: (v) => setState(() => _volumeLevel = v),
                     ),
                   ],
                 ),
@@ -450,8 +475,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         keyboardType: keyboardType,
         decoration: InputDecoration(
           labelText: label,
-          border:
-              OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         ),
       ),
     );
@@ -469,12 +493,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         value: value,
         decoration: InputDecoration(
           labelText: label,
-          border:
-              OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         ),
         items: items
-            .map((e) =>
-                DropdownMenuItem(value: e, child: Text(e)))
+            .map((e) => DropdownMenuItem(value: e, child: Text(e)))
             .toList(),
         onChanged: (v) => onChanged(v!),
       ),
