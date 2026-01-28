@@ -22,9 +22,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
   int _currentStreak = 0;
   int _totalSessions = 0;
   int _weeklyMinutes = 0;
-  int _weeklyGoal = 300;
+  final int _weeklyGoal = 300;
   int _totalMinutes = 0;
-  Map<String, bool> _activityDays = {};
+  final Map<String, bool> _activityDays = {};
   DateTime _currentMonth = DateTime.now();
 
   // Wellness data

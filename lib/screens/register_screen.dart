@@ -635,7 +635,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               Switch(
                 value: _pushNotifications,
                 onChanged: (val) => setState(() => _pushNotifications = val),
-                activeColor: const Color(0xFF40E0D0),
+                activeThumbColor: const Color(0xFF40E0D0),
               ),
             ],
           ),

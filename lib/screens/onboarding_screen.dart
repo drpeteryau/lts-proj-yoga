@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'main_navigation_screen.dart';
 import 'login_screen.dart';
 
 class OnboardingScreen extends StatelessWidget {
