@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'login_screen.dart';
 import '../services/global_audio_service.dart';
 import '../services/notification_service.dart';
+import 'package:intl/intl.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -334,7 +335,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: Colors.white,
+            activeThumbColor: Colors.white,
             activeTrackColor: _primaryColor,
             inactiveThumbColor: Colors.white,
             inactiveTrackColor: Colors.grey.shade300,
@@ -494,8 +495,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             _updateProfileField('push_notifications_enabled', newValue);
             if (newValue == true) {
               NotificationService().showNotification(
-                'HealYoga',
-                'Push notifications enabled!',
+                title: 'HealYoga',
+                body: 'Push notifications enabled!',
               );
             }
           },
@@ -509,6 +510,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
             setState(() => _dailyPracticeReminderEnabled = newValue);
             _updateProfileField(
                 'daily_practice_reminder', newValue); // ✅ update Supabase
+            if (newValue == true) {
+              NotificationService().showNotification(
+                title: 'Daily Reminder Enabled!',
+                body: 'We will remind you every day to practice.',
+              );
+              _updateProfileField('daily_practice_reminder', true);
+            } else {
+              NotificationService().cancelAllNotifications();
+              _updateProfileField('daily_practice_reminder', false);
+            }
           },
         ),
         const Divider(height: 1, color: Colors.black12),
@@ -530,6 +541,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               // 🔥 Save to Supabase
               _updateProfileField('reminder_time', formattedTime);
+
+              if (_dailyPracticeReminderEnabled == true) {
+                NotificationService().scheduleDailyNotification(
+                  id: 101, // Unique ID for this daily reminder
+                  title: 'Daily Practice Reminder',
+                  body: 'Time for your daily session!',
+                  hour: newTime.hour,
+                  minute: newTime.minute,
+                );
+
+                NotificationService().showNotification(
+                  title: 'Reminder Time Set!',
+                  body: 'We will remind you every day at $formattedTime',
+                );
+              } else {
+                NotificationService().cancelNotification(101);
+              }
             }
           },
         ),
@@ -570,7 +598,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _updateProfileField(
                       'sound_effects_enabled', newValue); // ✅ update Supabase
                 },
-                activeColor: Colors.white,
+                activeThumbColor: Colors.white,
                 activeTrackColor: _primaryColor,
                 inactiveThumbColor: Colors.white,
                 inactiveTrackColor: Colors.grey.shade300,

@@ -56,11 +56,11 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
 
     switch (level) {
       case 'beginner':
-        return (_userProgress!.beginnerSessionsCompleted ?? 0) as int;
+        return (_userProgress!.beginnerSessionsCompleted ?? 0);
       case 'intermediate':
-        return (_userProgress!.intermediateSessionsCompleted ?? 0) as int;
+        return (_userProgress!.intermediateSessionsCompleted ?? 0);
       case 'advanced':
-        return (_userProgress!.advancedSessionsCompleted ?? 0) as int;
+        return (_userProgress!.advancedSessionsCompleted ?? 0);
       default:
         return 0;
     }
@@ -173,7 +173,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                   color: const Color(0xFF35C9BA),
                   isLocked: !(_userProgress?.intermediateUnlocked ?? false),
                   sessionsCompleted: _getSessionsCompleted('intermediate'),
-                  progress: (_userProgress?.progressToIntermediate ?? 0.0) as double,
+                  progress: (_userProgress?.progressToIntermediate ?? 0.0),
                   requiredSessions: UserProgress.sessionsRequiredForIntermediate,
                   currentLevelSessions: _getSessionsCompleted('beginner'),
                   onTap: () {
@@ -207,7 +207,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                   color: const Color(0xFF2AB5A5),
                   isLocked: !(_userProgress?.advancedUnlocked ?? false),
                   sessionsCompleted: _getSessionsCompleted('advanced'),
-                  progress: (_userProgress?.progressToAdvanced ?? 0.0) as double,
+                  progress: (_userProgress?.progressToAdvanced ?? 0.0),
                   requiredSessions: UserProgress.sessionsRequiredForAdvanced,
                   currentLevelSessions: _getSessionsCompleted('intermediate'),
                   needsIntermediate: !(_userProgress?.intermediateUnlocked ?? false),

@@ -3,7 +3,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../data/yoga_data.dart';
 import 'session_detail_screen.dart';
-import 'level_selection_screen.dart';
 import '../models/yoga_pose.dart';
 import '../models/yoga_session.dart';
 import 'pose_detail_screen.dart';

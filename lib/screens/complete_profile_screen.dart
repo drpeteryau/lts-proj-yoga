@@ -228,7 +228,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen>
                               value: _pushNotifications,
                               onChanged: (v) =>
                                   setState(() => _pushNotifications = v),
-                              activeColor: turquoise,
+                              activeThumbColor: turquoise,
                             ),
                           ],
                         ),

@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import '../models/yoga_pose.dart';
 import 'dart:async';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../services/progress_service.dart';
 import '../services/pose_progress_service.dart';
 
 class PoseDetailScreen extends StatefulWidget {

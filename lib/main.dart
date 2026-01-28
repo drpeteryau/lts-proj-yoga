@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'screens/onboarding_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'screens/auth_gate.dart';
 import 'services/global_audio_service.dart';
