@@ -3,6 +3,7 @@ import 'screens/onboarding_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'screens/auth_gate.dart';
 import 'services/global_audio_service.dart'; // ⭐ ADD THIS
+import 'package:google_fonts/google_fonts.dart';
 
 
 Future<void> main() async {
@@ -38,11 +39,12 @@ class HealYogaApp extends StatelessWidget {
           primary: const Color(0xFF40E0D0),
           secondary: const Color(0xFF00796B),
         ),
-        textTheme: const TextTheme(
-          bodyLarge: TextStyle(fontSize: 16.0, color: Colors.black87),
-          titleLarge: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
-        ),
-        fontFamily: 'SF Pro Display', // iOS-style font
+  textTheme: GoogleFonts.poppinsTextTheme(
+    const TextTheme(
+      bodyLarge: TextStyle(fontSize: 16.0, color: Colors.black87),
+      titleLarge: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
+    ),
+  ),
       ),
       home: const AuthGate(),
     );

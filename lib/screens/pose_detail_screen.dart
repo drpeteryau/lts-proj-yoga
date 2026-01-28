@@ -25,11 +25,17 @@ class PoseDetailScreen extends StatefulWidget {
   State<PoseDetailScreen> createState() => _PoseDetailScreenState();
 }
 
+
+
 class _PoseDetailScreenState extends State<PoseDetailScreen> {
   late int _remainingSeconds;
   Timer? _timer;
   bool _isTimerRunning = false;
   bool _alreadySaved = false;
+
+  bool _showVideoControls = false;
+  Timer? _hideControlsTimer;
+
 
   // Time tracking
   int _secondsSpent = 0;
@@ -56,7 +62,9 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
 
   Future<void> _initializeVideo() async {
     _videoController = VideoPlayerController.networkUrl(
-      Uri.parse('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'),
+      Uri.parse(
+        'https://rkhmailqbmbijsfzhcch.supabase.co/storage/v1/object/public/pose-videos/beginner/NeckHeadShoulders.MOV',
+      ),
     );
 
     try {
@@ -70,18 +78,39 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
     } catch (e) {
       print('Error initializing video: $e');
     }
+    _videoController!.addListener(() {
+      if (!mounted) return;
+
+      final playing = _videoController!.value.isPlaying;
+      if (playing != _isVideoPlaying) {
+        setState(() {
+          _isVideoPlaying = playing;
+        });
+      }
+    });
   }
 
   void _toggleVideo() {
     if (_videoController == null || !_isVideoInitialized) return;
 
+    if (_videoController!.value.isPlaying) {
+      _videoController!.pause();
+    } else {
+      _videoController!.play();
+    }
+  }
+
+  void _showControlsTemporarily() {
     setState(() {
-      if (_isVideoPlaying) {
-        _videoController!.pause();
-        _isVideoPlaying = false;
-      } else {
-        _videoController!.play();
-        _isVideoPlaying = true;
+      _showVideoControls = true;
+    });
+
+    _hideControlsTimer?.cancel();
+    _hideControlsTimer = Timer(const Duration(seconds: 3), () {
+      if (mounted && _isVideoPlaying) {
+        setState(() {
+          _showVideoControls = false;
+        });
       }
     });
   }
@@ -188,6 +217,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
   @override
   void dispose() {
     _timer?.cancel();
+    _hideControlsTimer?.cancel();
     _videoController?.dispose();
 
     // Save progress when leaving the screen
@@ -224,6 +254,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
         widget.sessionLevel,
         widget.pose.id,
       );
+      _alreadySaved = true;
 
       print('✅ Saved pose progress: ${widget.pose.name}, ${_secondsSpent}s');
     } catch (e) {
@@ -248,8 +279,6 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-
-
                     // Video section
                     _buildVideoSection(),
 
@@ -270,13 +299,13 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
 
                     const SizedBox(height: 24),
 
+                    // Timer section
+                    _buildTimerSection(),
+
                     // Safety (Safety Tips)
                     _buildBenefits(),
 
                     const SizedBox(height: 28),
-
-                    // Timer section
-                    _buildTimerSection(),
 
                     // Completion status indicator
                     if (_isPoseCompleted)
@@ -370,52 +399,30 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
     );
   }
 
-  Widget _buildVideoSection() {
-    return GestureDetector(
-      onTap: () {
-        // Open full video player
-        if (_isVideoInitialized && _videoController != null) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => _FullVideoPlayerScreen(
-                controller: _videoController!,
-                poseName: widget.pose.name,
-              ),
-            ),
-          );
-        } else {
-          _toggleVideo();
-        }
-      },
-      child: Container(
-        height: 220,
-        decoration: BoxDecoration(
-          color: Colors.grey[200],
-          // No border radius - straight edges as requested
-        ),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            if (_isVideoInitialized && _videoController != null)
-              VideoPlayer(_videoController!)
-            else
-              Image.network(
-                widget.pose.imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: Colors.grey[300],
-                    child: const Icon(
-                      Icons.self_improvement,
-                      size: 80,
-                      color: Colors.grey,
-                    ),
-                  );
-                },
-              ),
+Widget _buildVideoSection() {
+  return GestureDetector(
+onTap: () {
+  _toggleVideo();
+  _showControlsTemporarily();
+},
 
-            // Play button overlay
+    child: Container(
+      height: 220,
+      color: Colors.grey[200],
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          // 🎥 Video
+          if (_isVideoInitialized && _videoController != null)
+            VideoPlayer(_videoController!)
+          else
+            Image.network(
+              widget.pose.imageUrl,
+              fit: BoxFit.cover,
+            ),
+
+          // ▶️ Play button (ONLY when paused)
+          if (!_isVideoPlaying)
             Center(
               child: Container(
                 width: 64,
@@ -425,56 +432,75 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
+                      color: Colors.black.withOpacity(0.25),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
                   ],
                 ),
-                child: Icon(
-                  _isVideoPlaying ? Icons.pause : Icons.play_arrow,
+                child: const Icon(
+                  Icons.play_arrow,
                   color: Colors.black87,
                   size: 36,
                 ),
               ),
             ),
 
-            // Video Tutorial badge
+          // ⏪ Scrub / rewind bar (ONLY when playing)
+            if (_isVideoInitialized && _showVideoControls)
             Positioned(
-              bottom: 16,
-              left: 16,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF40E0D0),
-                  borderRadius: BorderRadius.circular(8),
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: VideoProgressIndicator(
+                _videoController!,
+                allowScrubbing: true,
+                colors: const VideoProgressColors(
+                  playedColor: Color(0xFF40E0D0),
+                  bufferedColor: Colors.white38,
+                  backgroundColor: Colors.white24,
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.play_circle_outline,
-                      color: Colors.white,
-                      size: 16,
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      'Video Tutorial',
-                      style: GoogleFonts.poppins(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
+                padding: const EdgeInsets.symmetric(vertical: 8),
               ),
             ),
-          ],
-        ),
+
+          // 🏷 Video badge
+          Positioned(
+            bottom: 16,
+            left: 16,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: const Color(0xFF40E0D0),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.play_circle_outline,
+                    color: Colors.white,
+                    size: 16,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    'Video Tutorial',
+                    style: GoogleFonts.poppins(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   Widget _buildSanskritName() {
     return Text(
@@ -533,31 +559,29 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
           ),
         ),
         const SizedBox(height: 12),
-        ...safetyTips.map((tip) => Padding(
-          padding: const EdgeInsets.only(bottom: 8),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Icon(
-                Icons.check,
-                color: Color(0xFF40E0D0),
-                size: 20,
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  tip,
-                  style: GoogleFonts.poppins(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.grey[700],
-                    height: 1.5,
+        ...safetyTips.map(
+          (tip) => Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Icon(Icons.check, color: Color(0xFF40E0D0), size: 20),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    tip,
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.grey[700],
+                      height: 1.5,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        )),
+        ),
       ],
     );
   }
@@ -672,11 +696,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
                       ),
                     ],
                   ),
-                  child: const Icon(
-                    Icons.stop,
-                    color: Colors.white,
-                    size: 28,
-                  ),
+                  child: const Icon(Icons.stop, color: Colors.white, size: 28),
                 ),
               ),
             ],
@@ -736,10 +756,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
                 ),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: const Color(0xFF40E0D0),
-                  side: const BorderSide(
-                    color: Color(0xFF40E0D0),
-                    width: 2,
-                  ),
+                  side: const BorderSide(color: Color(0xFF40E0D0), width: 2),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
@@ -808,15 +825,10 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
           '🎉 Congratulations!',
-          style: GoogleFonts.poppins(
-            fontSize: 24,
-            fontWeight: FontWeight.w600,
-          ),
+          style: GoogleFonts.poppins(fontSize: 24, fontWeight: FontWeight.w600),
           textAlign: TextAlign.center,
         ),
         content: Column(
@@ -824,17 +836,11 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
           children: [
             Text(
               'You completed all poses in this session!',
-              style: GoogleFonts.poppins(
-                fontSize: 16,
-              ),
+              style: GoogleFonts.poppins(fontSize: 16),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
-            Icon(
-              Icons.check_circle,
-              color: const Color(0xFF40E0D0),
-              size: 64,
-            ),
+            Icon(Icons.check_circle, color: const Color(0xFF40E0D0), size: 64),
           ],
         ),
         actions: [
@@ -992,7 +998,10 @@ class _FullVideoPlayerScreenState extends State<_FullVideoPlayerScreen> {
                         child: Row(
                           children: [
                             IconButton(
-                              icon: const Icon(Icons.arrow_back, color: Colors.white),
+                              icon: const Icon(
+                                Icons.arrow_back,
+                                color: Colors.white,
+                              ),
                               onPressed: () => Navigator.pop(context),
                             ),
                             const SizedBox(width: 8),
@@ -1057,14 +1066,18 @@ class _FullVideoPlayerScreenState extends State<_FullVideoPlayerScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                _formatDuration(widget.controller.value.position),
+                                _formatDuration(
+                                  widget.controller.value.position,
+                                ),
                                 style: GoogleFonts.poppins(
                                   fontSize: 12,
                                   color: Colors.white,
                                 ),
                               ),
                               Text(
-                                _formatDuration(widget.controller.value.duration),
+                                _formatDuration(
+                                  widget.controller.value.duration,
+                                ),
                                 style: GoogleFonts.poppins(
                                   fontSize: 12,
                                   color: Colors.white,

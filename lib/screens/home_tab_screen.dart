@@ -8,7 +8,6 @@ import '../models/yoga_pose.dart';
 import '../models/yoga_session.dart';
 import 'pose_detail_screen.dart';
 
-
 class HomeTabScreen extends StatefulWidget {
   const HomeTabScreen({super.key});
 
@@ -19,6 +18,7 @@ class HomeTabScreen extends StatefulWidget {
 class _HomeTabScreenState extends State<HomeTabScreen> {
   String _userName = 'There';
   String _userEmail = '';
+  String? _profileImageUrl;
   int _selectedDayIndex = 2;
   Map<String, int> _dailyMinutes = {}; // Store minutes by date
   bool _isLoadingProgress = true;
@@ -85,8 +85,8 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
       }
 
       // Convert seconds to minutes
-      _dailyMinutes = minutesByDate.map((date, seconds) =>
-          MapEntry(date, (seconds / 60).round())
+      _dailyMinutes = minutesByDate.map(
+        (date, seconds) => MapEntry(date, (seconds / 60).round()),
       );
 
       // Update week days with real data
@@ -113,7 +113,8 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
 
     for (int i = 0; i < 5; i++) {
       final day = startOfWeek.add(Duration(days: i));
-      final dateKey = '${day.year}-${day.month.toString().padLeft(2, '0')}-${day.day.toString().padLeft(2, '0')}';
+      final dateKey =
+          '${day.year}-${day.month.toString().padLeft(2, '0')}-${day.day.toString().padLeft(2, '0')}';
 
       _weekDays.add({
         'day': _getDayName(day.weekday),
@@ -127,14 +128,22 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
 
   String _getDayName(int weekday) {
     switch (weekday) {
-      case 1: return 'Mon';
-      case 2: return 'Tue';
-      case 3: return 'Wed';
-      case 4: return 'Thu';
-      case 5: return 'Fri';
-      case 6: return 'Sat';
-      case 7: return 'Sun';
-      default: return '';
+      case 1:
+        return 'Mon';
+      case 2:
+        return 'Tue';
+      case 3:
+        return 'Wed';
+      case 4:
+        return 'Thu';
+      case 5:
+        return 'Fri';
+      case 6:
+        return 'Sat';
+      case 7:
+        return 'Sun';
+      default:
+        return '';
     }
   }
 
@@ -151,6 +160,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
         setState(() {
           _userName = (profile['full_name'] as String?) ?? 'There';
           _userEmail = user.email ?? '';
+          _profileImageUrl = profile['profile_image_url'];
         });
       }
     }
@@ -194,12 +204,20 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                           color: const Color(0xFF40E0D0).withOpacity(0.3),
                           width: 2,
                         ),
+                        image: _profileImageUrl != null
+                            ? DecorationImage(
+                                image: NetworkImage(_profileImageUrl!),
+                                fit: BoxFit.cover,
+                              )
+                            : null,
                       ),
-                      child: const Icon(
-                        Icons.person,
-                        color: Color(0xFF40E0D0),
-                        size: 28,
-                      ),
+                      child: _profileImageUrl == null
+                          ? const Icon(
+                              Icons.person,
+                              color: Color(0xFF40E0D0),
+                              size: 28,
+                            )
+                          : null,
                     ),
 
                     const SizedBox(width: 12),
@@ -250,7 +268,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                   'Welcome to Your\nYoga Session',
                   style: GoogleFonts.poppins(
                     fontSize: 32,
-                    fontWeight: FontWeight.w300,  // Light weight = minimal
+                    fontWeight: FontWeight.w300, // Light weight = minimal
                     height: 1.25,
                     letterSpacing: -0.3,
                     color: const Color(0xFF1A1A1A),
@@ -380,10 +398,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withOpacity(0.6),
-                    ],
+                    colors: [Colors.transparent, Colors.black.withOpacity(0.6)],
                   ),
                 ),
               ),
@@ -468,7 +483,6 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
     );
   }
 
-
   Widget _buildWeekCalendar() {
     return SizedBox(
       height: 90,
@@ -499,12 +513,12 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                 ),
                 boxShadow: isToday
                     ? [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.15),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ]
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.15),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ]
                     : [],
               ),
               child: Column(
@@ -610,22 +624,17 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
         final session = item['session'] as YogaSession;
         final color = item['color'] as Color;
 
-        return _buildPoseCard(
-          context,
-          pose,
-          session,
-          color,
-        );
+        return _buildPoseCard(context, pose, session, color);
       },
     );
   }
 
   Widget _buildPoseCard(
-      BuildContext context,
-      YogaPose pose,
-      YogaSession session,
-      Color badgeColor,
-      ) {
+    BuildContext context,
+    YogaPose pose,
+    YogaSession session,
+    Color badgeColor,
+  ) {
     return GestureDetector(
       onTap: () {
         // Navigate directly to pose detail screen
@@ -662,9 +671,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                 pose.imageUrl,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: badgeColor.withOpacity(0.3),
-                  );
+                  return Container(color: badgeColor.withOpacity(0.3));
                 },
               ),
               Container(
