@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import '../services/notification_service.dart';
+import 'package:volume_controller/volume_controller.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -380,7 +381,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
                         NotificationService().showNotification(
                           title: 'Reminder Time Set!',
-                          body: 'We will remind you every day at $_reminderTime 🕓',
+                          body:
+                              'We will remind you every day at $_reminderTime 🕓',
                         );
                       } else {
                         NotificationService().cancelNotification(101);
@@ -407,17 +409,61 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       'Volume',
                       style: TextStyle(color: Color(0xFF6B8F8A)),
                     ),
-                    Slider(
-                      value: _volumeLevel,
-                      min: 0,
-                      max: 1,
-                      divisions: 10,
-                      label: '${(_volumeLevel * 100).round()}%',
-                      activeColor: turquoise,
-                      onChanged: (v) => setState(() => _volumeLevel = v),
+                    Row(
+                      children: [
+                        // --- Mute Button ---
+                        IconButton(
+                          icon: Icon(
+                            _volumeLevel == 0
+                                ? Icons.volume_off
+                                : Icons.volume_mute,
+                            color: const Color(0xFF6B8F8A),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              double _previousVolume = 80.0; // Default previous volume
+                              if (_volumeLevel > 0) {
+                                _previousVolume = _volumeLevel; // Save current level
+                                _volumeLevel = 0;
+                              } else {
+                                _volumeLevel = _previousVolume; // Restore level
+                              }
+                              VolumeController.instance.setVolume(_volumeLevel);
+                            });
+                          },
+                        ),
+
+                        // --- The Slider ---
+                        Expanded(
+                          child: Slider(
+                            value: _volumeLevel,
+                            min: 0,
+                            max: 1,
+                            divisions: 10,
+                            label: '${(_volumeLevel * 100).round()}%',
+                            activeColor: turquoise,
+                            onChanged: (v) {
+                              setState(() => _volumeLevel = v);
+                              VolumeController.instance.setVolume(v);
+                            },
+                          ),
+                        ),
+
+                        // --- Max Button ---
+                        IconButton(
+                          icon: const Icon(Icons.volume_up,
+                              color: Color(0xFF6B8F8A)),
+                          onPressed: () {
+                            setState(() {
+                              _volumeLevel = 1.0;
+                              VolumeController.instance.setVolume(1.0);
+                            });
+                          },
+                        ),
+                      ],
                     ),
                   ],
-                ),
+                )
               ],
             ),
           ],
