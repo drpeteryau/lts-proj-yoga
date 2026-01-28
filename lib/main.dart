@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'screens/auth_gate.dart';
-import 'services/global_audio_service.dart'; // ⭐ ADD THIS
-import 'package:google_fonts/google_fonts.dart';
-
 import 'services/global_audio_service.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../services/notification_service.dart';
 
 Future<void> main() async {

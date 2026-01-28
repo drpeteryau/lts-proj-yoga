@@ -5,11 +5,8 @@
 list(APPEND FLUTTER_PLUGIN_LIST
   app_links
   audioplayers_windows
-<<<<<<< HEAD
   file_selector_windows
-=======
   permission_handler_windows
->>>>>>> ff1b78081005ef4f7807d93ae2000fad8caa5a59
   url_launcher_windows
 )
 
