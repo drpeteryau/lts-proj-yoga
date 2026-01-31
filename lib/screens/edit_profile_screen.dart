@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import '../services/notification_service.dart';
 import 'package:volume_controller/volume_controller.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -14,6 +15,9 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final supabase = Supabase.instance.client;
+
+  // Responsive helper
+  bool get isWeb => MediaQuery.of(context).size.width > 600;
 
   // Controllers
   final _nameController = TextEditingController();
@@ -31,14 +35,39 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   String _reminderTime = '9:00 AM';
   bool _soundEffectsEnabled = true;
   double _volumeLevel = 0.8;
+  double _previousVolume = 0.8; // Track previous volume for mute/unmute
 
   bool _isLoading = true;
   bool _isSaving = false;
+
+  // Audio player for feedback
+  final AudioPlayer _audioPlayer = AudioPlayer();
 
   @override
   void initState() {
     super.initState();
     _loadProfile();
+    _initVolumeController();
+  }
+
+  // ===================== INIT VOLUME =====================
+  Future<void> _initVolumeController() async {
+    // Get current system volume
+    final currentVolume = await VolumeController.instance.getVolume();
+    setState(() {
+      _volumeLevel = currentVolume;
+      _previousVolume = currentVolume;
+    });
+  }
+
+  // ===================== PLAY FEEDBACK SOUND =====================
+  Future<void> _playVolumeTestSound() async {
+    if (!_soundEffectsEnabled) return;
+
+    // Play a short beep sound at the current volume level
+    // You can replace this with your own sound file
+    await _audioPlayer.setVolume(_volumeLevel);
+    await _audioPlayer.play(AssetSource('sounds/chime.mp3')); // Make sure you have this asset
   }
 
   // ===================== LOAD PROFILE =====================
@@ -65,7 +94,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       _dailyPracticeReminder = profile['daily_practice_reminder'] ?? true;
       _reminderTime = profile['reminder_time'] ?? '9:00 AM';
       _soundEffectsEnabled = profile['sound_effects_enabled'] ?? true;
-      _volumeLevel = (profile['volume_level'] as num?)?.toDouble() ?? 0.8;
+
+      final savedVolume = (profile['volume_level'] as num?)?.toDouble() ?? 0.8;
+      setState(() {
+        _volumeLevel = savedVolume;
+        _previousVolume = savedVolume;
+      });
+
+      // Set system volume to saved preference
+      await VolumeController.instance.setVolume(savedVolume);
     }
 
     setState(() => _isLoading = false);
@@ -202,12 +239,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void dispose() {
     _nameController.dispose();
     _ageController.dispose();
+    _audioPlayer.dispose();
     super.dispose();
   }
 
   // ===================== UI =====================
   @override
   Widget build(BuildContext context) {
+
     const turquoise = Color(0xFF40E0D0);
 
     if (_isLoading) {
@@ -238,80 +277,93 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(isWeb ? 28 : 16),
         child: Column(
           children: [
-            // 🖼️ PROFILE IMAGE — TOP
-            _card(
-              children: [
-                Center(
-                  child: GestureDetector(
-                    onTap: _pickAndUploadImage,
-                    child: CircleAvatar(
-                      radius: 55,
-                      backgroundColor:
-                          const Color(0xFF40E0D0).withOpacity(0.15),
-                      backgroundImage: _profileImageUrl != null
-                          ? NetworkImage(_profileImageUrl!)
-                          : null,
-                      child: _profileImageUrl == null
-                          ? const Icon(Icons.camera_alt, size: 28)
-                          : null,
-                    ),
+            // ===================== PROFILE IMAGE =====================
+            Center(
+              child: Stack(
+                children: [
+                  CircleAvatar(
+                    radius: 60,
+                    backgroundColor: turquoise.withOpacity(0.2),
+                    backgroundImage: _profileImageUrl != null
+                        ? NetworkImage(_profileImageUrl!)
+                        : null,
+                    child: _profileImageUrl == null
+                        ? const Icon(Icons.person, size: 60, color: turquoise)
+                        : null,
                   ),
-                ),
-                // 🔴 REMOVE IMAGE BUTTON (only show if image exists)
-                if (_profileImageUrl != null) ...[
-                  const SizedBox(height: 8),
-                  Center(
-                    child: TextButton.icon(
-                      onPressed: _removeProfileImage,
-                      icon: const Icon(Icons.delete_outline, color: Colors.red),
-                      label: const Text(
-                        'Remove photo',
-                        style: TextStyle(color: Colors.red),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: PopupMenuButton<String>(
+                      icon: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: const BoxDecoration(
+                          color: turquoise,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.camera_alt,
+                            color: Colors.white, size: 20),
                       ),
+                      onSelected: (value) {
+                        if (value == 'upload') {
+                          _pickAndUploadImage();
+                        } else if (value == 'remove') {
+                          _removeProfileImage();
+                        }
+                      },
+                      itemBuilder: (context) => [
+                        const PopupMenuItem(
+                          value: 'upload',
+                          child: Row(
+                            children: [
+                              Icon(Icons.upload, color: Color(0xFF2E6F68)),
+                              SizedBox(width: 8),
+                              Text('Upload Photo'),
+                            ],
+                          ),
+                        ),
+                        if (_profileImageUrl != null)
+                          const PopupMenuItem(
+                            value: 'remove',
+                            child: Row(
+                              children: [
+                                Icon(Icons.delete, color: Colors.red),
+                                SizedBox(width: 8),
+                                Text('Remove Photo'),
+                              ],
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                 ],
-              ],
+              ),
             ),
+            const SizedBox(height: 24),
 
-            // 👤 NAME & AGE
+            // ===================== BASIC INFO =====================
             _card(
+              title: 'Basic Information',
               children: [
                 _textField('Full Name', _nameController),
-                _textField(
-                  'Age',
-                  _ageController,
-                  keyboardType: TextInputType.number,
-                ),
-              ],
-            ),
-
-            _card(
-              title: 'Preferences',
-              children: [
+                _textField('Age', _ageController,
+                    keyboardType: TextInputType.number),
+                _dropdown('Experience Level', _experienceLevel,
+                    ['Beginner', 'Intermediate', 'Advanced'],
+                        (v) => setState(() => _experienceLevel = v)),
                 _dropdown(
-                  'Experience Level',
-                  _experienceLevel,
-                  ['Beginner', 'Intermediate', 'Advanced'],
-                  (v) => setState(() => _experienceLevel = v),
-                ),
-                _dropdown(
-                  'Session Length',
-                  _sessionLength,
-                  [
-                    '5 minutes',
-                    '10 minutes',
-                    '15 minutes',
-                    '20 minutes',
-                    '30 minutes',
-                    '45 minutes',
-                    '60 minutes',
-                  ],
-                  (v) => setState(() => _sessionLength = v),
-                ),
+                    'Session Length',
+                    _sessionLength,
+                    [
+                      '15 minutes',
+                      '30 minutes',
+                      '45 minutes',
+                      '60 minutes',
+                    ],
+                        (v) => setState(() => _sessionLength = v)),
                 _dropdown(
                     'Language',
                     _language,
@@ -319,7 +371,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       'English',
                       'Mandarin',
                     ],
-                    (v) => setState(() => _language = v)),
+                        (v) => setState(() => _language = v)),
               ],
             ),
 
@@ -382,7 +434,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         NotificationService().showNotification(
                           title: 'Reminder Time Set!',
                           body:
-                              'We will remind you every day at $_reminderTime 🕓',
+                          'We will remind you every day at $_reminderTime 🕓',
                         );
                       } else {
                         NotificationService().cancelNotification(101);
@@ -402,68 +454,102 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   activeColor: turquoise,
                   onChanged: (v) => setState(() => _soundEffectsEnabled = v),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Volume',
-                      style: TextStyle(color: Color(0xFF6B8F8A)),
-                    ),
-                    Row(
-                      children: [
-                        // --- Mute Button ---
-                        IconButton(
-                          icon: Icon(
-                            _volumeLevel == 0
-                                ? Icons.volume_off
-                                : Icons.volume_mute,
-                            color: const Color(0xFF6B8F8A),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'System Volume',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xFF2E6F68),
+                            ),
                           ),
-                          onPressed: () {
-                            setState(() {
-                              double _previousVolume = 80.0; // Default previous volume
-                              if (_volumeLevel > 0) {
-                                _previousVolume = _volumeLevel; // Save current level
-                                _volumeLevel = 0;
-                              } else {
-                                _volumeLevel = _previousVolume; // Restore level
-                              }
-                              VolumeController.instance.setVolume(_volumeLevel);
-                            });
-                          },
-                        ),
-
-                        // --- The Slider ---
-                        Expanded(
-                          child: Slider(
-                            value: _volumeLevel,
-                            min: 0,
-                            max: 1,
-                            divisions: 10,
-                            label: '${(_volumeLevel * 100).round()}%',
-                            activeColor: turquoise,
-                            onChanged: (v) {
-                              setState(() => _volumeLevel = v);
-                              VolumeController.instance.setVolume(v);
+                          Text(
+                            '${(_volumeLevel * 100).round()}%',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Color(0xFF6B8F8A),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          // --- Mute Button ---
+                          IconButton(
+                            icon: Icon(
+                              _volumeLevel == 0
+                                  ? Icons.volume_off
+                                  : Icons.volume_mute,
+                              color: const Color(0xFF6B8F8A),
+                            ),
+                            onPressed: () async {
+                              setState(() {
+                                if (_volumeLevel > 0) {
+                                  _previousVolume = _volumeLevel;
+                                  _volumeLevel = 0;
+                                } else {
+                                  _volumeLevel = _previousVolume;
+                                }
+                              });
+                              await VolumeController.instance.setVolume(_volumeLevel);
+                              _playVolumeTestSound();
                             },
                           ),
-                        ),
 
-                        // --- Max Button ---
-                        IconButton(
-                          icon: const Icon(Icons.volume_up,
-                              color: Color(0xFF6B8F8A)),
-                          onPressed: () {
-                            setState(() {
-                              _volumeLevel = 1.0;
-                              VolumeController.instance.setVolume(1.0);
-                            });
-                          },
+                          // --- The Slider ---
+                          Expanded(
+                            child: Slider(
+                              value: _volumeLevel,
+                              min: 0,
+                              max: 1,
+                              divisions: 10,
+                              label: '${(_volumeLevel * 100).round()}%',
+                              activeColor: turquoise,
+                              onChanged: (v) async {
+                                setState(() => _volumeLevel = v);
+                                await VolumeController.instance.setVolume(v);
+                              },
+                              onChangeEnd: (v) {
+                                // Play feedback when user releases slider
+                                _playVolumeTestSound();
+                              },
+                            ),
+                          ),
+
+                          // --- Max Button ---
+                          IconButton(
+                            icon: const Icon(Icons.volume_up,
+                                color: Color(0xFF6B8F8A)),
+                            onPressed: () async {
+                              setState(() {
+                                _volumeLevel = 1.0;
+                              });
+                              await VolumeController.instance.setVolume(1.0);
+                              _playVolumeTestSound();
+                            },
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      const Text(
+                        'Adjusts your device system volume',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Color(0xFF9CA3AF),
+                          fontStyle: FontStyle.italic,
                         ),
-                      ],
-                    ),
-                  ],
-                )
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ],
@@ -476,7 +562,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget _card({String? title, required List<Widget> children}) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(isWeb ? 28 : 16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -510,10 +596,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Widget _textField(
-    String label,
-    TextEditingController controller, {
-    TextInputType keyboardType = TextInputType.text,
-  }) {
+      String label,
+      TextEditingController controller, {
+        TextInputType keyboardType = TextInputType.text,
+      }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: TextField(
@@ -528,11 +614,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Widget _dropdown(
-    String label,
-    String value,
-    List<String> items,
-    ValueChanged<String> onChanged,
-  ) {
+      String label,
+      String value,
+      List<String> items,
+      ValueChanged<String> onChanged,
+      ) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: DropdownButtonFormField<String>(

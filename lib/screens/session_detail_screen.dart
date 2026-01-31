@@ -16,6 +16,9 @@ class SessionDetailScreen extends StatefulWidget {
 
 class _SessionDetailScreenState extends State<SessionDetailScreen> {
   bool isFavorite = false;
+
+  // Responsive helper
+  bool get isWeb => MediaQuery.of(context).size.width > 600;
   Map<String, bool> poseProgress = {};
 
   @override
@@ -44,6 +47,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
@@ -543,7 +547,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
 
   Widget _buildJoinButton() {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(isWeb ? 40 : 20),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [

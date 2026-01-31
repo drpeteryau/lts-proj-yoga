@@ -35,6 +35,8 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
   bool _showVideoControls = false;
   Timer? _hideControlsTimer;
 
+  // Responsive helper
+  bool get isWeb => MediaQuery.of(context).size.width > 600;
 
   // Time tracking
   int _secondsSpent = 0;
@@ -274,7 +276,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
             // Scrollable content
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(20),
+                padding: EdgeInsets.all(isWeb ? 40 : 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -310,7 +312,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
                     if (_isPoseCompleted)
                       Container(
                         width: 310,
-                        padding: const EdgeInsets.all(16),
+                        padding: EdgeInsets.all(isWeb ? 28 : 16),
                         margin: const EdgeInsets.only(left: 30),
                         decoration: BoxDecoration(
                           color: const Color(0xFF40E0D0).withOpacity(0.1),
@@ -353,7 +355,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
 
   Widget _buildTopBar() {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(isWeb ? 28 : 16),
       child: Row(
         children: [
           // Back button
@@ -398,107 +400,107 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
     );
   }
 
-Widget _buildVideoSection() {
-  return GestureDetector(
-onTap: () {
-  _toggleVideo();
-  _showControlsTemporarily();
-},
+  Widget _buildVideoSection() {
+    return GestureDetector(
+      onTap: () {
+        _toggleVideo();
+        _showControlsTemporarily();
+      },
 
-    child: Container(
-      height: 220,
-      color: Colors.grey[200],
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          // 🎥 Video
-          if (_isVideoInitialized && _videoController != null)
-            VideoPlayer(_videoController!)
-          else
-            Image.network(
-              widget.pose.imageUrl,
-              fit: BoxFit.cover,
-            ),
+      child: Container(
+        height: 220,
+        color: Colors.grey[200],
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            // 🎥 Video
+            if (_isVideoInitialized && _videoController != null)
+              VideoPlayer(_videoController!)
+            else
+              Image.network(
+                widget.pose.imageUrl,
+                fit: BoxFit.cover,
+              ),
 
-          // ▶️ Play button (ONLY when paused)
-          if (!_isVideoPlaying)
-            Center(
+            // ▶️ Play button (ONLY when paused)
+            if (!_isVideoPlaying)
+              Center(
+                child: Container(
+                  width: 64,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.95),
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.25),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(
+                    Icons.play_arrow,
+                    color: Colors.black87,
+                    size: 36,
+                  ),
+                ),
+              ),
+
+            // ⏪ Scrub / rewind bar (ONLY when playing)
+            if (_isVideoInitialized && _showVideoControls)
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: VideoProgressIndicator(
+                  _videoController!,
+                  allowScrubbing: true,
+                  colors: const VideoProgressColors(
+                    playedColor: Color(0xFF40E0D0),
+                    bufferedColor: Colors.white38,
+                    backgroundColor: Colors.white24,
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                ),
+              ),
+
+            // 🏷 Video badge
+            Positioned(
+              bottom: 16,
+              left: 16,
               child: Container(
-                width: 64,
-                height: 64,
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.95),
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.25),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
+                  color: const Color(0xFF40E0D0),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.play_circle_outline,
+                      color: Colors.white,
+                      size: 16,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      'Video Tutorial',
+                      style: GoogleFonts.poppins(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
                     ),
                   ],
                 ),
-                child: const Icon(
-                  Icons.play_arrow,
-                  color: Colors.black87,
-                  size: 36,
-                ),
               ),
             ),
-
-          // ⏪ Scrub / rewind bar (ONLY when playing)
-            if (_isVideoInitialized && _showVideoControls)
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: VideoProgressIndicator(
-                _videoController!,
-                allowScrubbing: true,
-                colors: const VideoProgressColors(
-                  playedColor: Color(0xFF40E0D0),
-                  bufferedColor: Colors.white38,
-                  backgroundColor: Colors.white24,
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 8),
-              ),
-            ),
-
-          // 🏷 Video badge
-          Positioned(
-            bottom: 16,
-            left: 16,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                color: const Color(0xFF40E0D0),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(
-                    Icons.play_circle_outline,
-                    color: Colors.white,
-                    size: 16,
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    'Video Tutorial',
-                    style: GoogleFonts.poppins(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
 
   Widget _buildSanskritName() {
@@ -559,7 +561,7 @@ onTap: () {
         ),
         const SizedBox(height: 12),
         ...safetyTips.map(
-          (tip) => Padding(
+              (tip) => Padding(
             padding: const EdgeInsets.only(bottom: 8),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -892,6 +894,9 @@ class _FullVideoPlayerScreenState extends State<_FullVideoPlayerScreen> {
   bool _showControls = true;
   Timer? _hideControlsTimer;
 
+  // Responsive helper
+  bool get isWeb => MediaQuery.of(context).size.width > 600;
+
   @override
   void initState() {
     super.initState();
@@ -993,7 +998,7 @@ class _FullVideoPlayerScreenState extends State<_FullVideoPlayerScreen> {
                     // Top bar
                     SafeArea(
                       child: Padding(
-                        padding: const EdgeInsets.all(16),
+                        padding: EdgeInsets.all(isWeb ? 28 : 16),
                         child: Row(
                           children: [
                             IconButton(
@@ -1045,7 +1050,7 @@ class _FullVideoPlayerScreenState extends State<_FullVideoPlayerScreen> {
 
                     // Bottom controls
                     Padding(
-                      padding: const EdgeInsets.all(16),
+                      padding: EdgeInsets.all(isWeb ? 28 : 16),
                       child: Column(
                         children: [
                           // Progress bar

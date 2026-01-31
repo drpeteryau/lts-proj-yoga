@@ -118,53 +118,63 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isWeb = screenWidth > 600;
+
     return Container(
       color: Colors.white,
       child: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            _buildHeader(),
-
-            // Tab bar
-            _buildTabBar(),
-
-            // Tab content
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  _buildAllTab(),
-                  _buildRecentTab(),
-                  _buildSavedTab(),
-                  _buildFavoritesTab(),
-                ],
-              ),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: isWeb ? 1200 : double.infinity,
             ),
-          ],
+            child: Column(
+              children: [
+                // Header
+                _buildHeader(isWeb),
+
+                // Tab bar
+                _buildTabBar(isWeb),
+
+                // Tab content
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      _buildAllTab(isWeb),
+                      _buildRecentTab(isWeb),
+                      _buildSavedTab(isWeb),
+                      _buildFavoritesTab(isWeb),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(bool isWeb) {
     return Padding(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(isWeb ? 32 : 20),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: EdgeInsets.all(isWeb ? 12 : 8),
             decoration: BoxDecoration(
               color: const Color(0xFF40E0D0).withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(isWeb ? 16 : 12),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.music_note,
-              color: Color(0xFF40E0D0),
-              size: 28,
+              color: const Color(0xFF40E0D0),
+              size: isWeb ? 36 : 28,
             ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: isWeb ? 16 : 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -172,14 +182,14 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
                 Text(
                   'Welcome back,',
                   style: GoogleFonts.poppins(
-                    fontSize: 14,
+                    fontSize: isWeb ? 16 : 14,
                     color: Colors.grey[600],
                   ),
                 ),
                 Text(
                   'Find Your Peace',
                   style: GoogleFonts.poppins(
-                    fontSize: 22,
+                    fontSize: isWeb ? 28 : 22,
                     fontWeight: FontWeight.w600,
                     color: Colors.black87,
                   ),
@@ -190,7 +200,7 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
           IconButton(
             icon: const Icon(Icons.notifications_outlined),
             color: Colors.black54,
-            iconSize: 28,
+            iconSize: isWeb ? 32 : 28,
             onPressed: () {},
           ),
         ],
@@ -198,20 +208,20 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
     );
   }
 
-  Widget _buildTabBar() {
+  Widget _buildTabBar(bool isWeb) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
+      margin: EdgeInsets.symmetric(horizontal: isWeb ? 32 : 20),
       child: TabBar(
         controller: _tabController,
         isScrollable: true,
         labelColor: Colors.black87,
         unselectedLabelColor: Colors.grey[600],
         labelStyle: GoogleFonts.poppins(
-          fontSize: 15,
+          fontSize: isWeb ? 17 : 15,
           fontWeight: FontWeight.w600,
         ),
         unselectedLabelStyle: GoogleFonts.poppins(
-          fontSize: 15,
+          fontSize: isWeb ? 17 : 15,
           fontWeight: FontWeight.w400,
         ),
         indicator: UnderlineTabIndicator(
@@ -219,7 +229,7 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
             color: Color(0xFF40E0D0),
             width: 3,
           ),
-          insets: const EdgeInsets.symmetric(horizontal: 16),
+          insets: EdgeInsets.symmetric(horizontal: isWeb ? 20 : 16),
         ),
         tabs: const [
           Tab(text: 'All'),
@@ -231,12 +241,12 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
     );
   }
 
-  Widget _buildAllTab() {
+  Widget _buildAllTab(bool isWeb) {
     final popularSounds = sounds.where((s) => s.isPopular).toList();
     final otherSounds = sounds.where((s) => !s.isPopular).toList();
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(isWeb ? 32 : 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -244,113 +254,122 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
           Text(
             'Most Popular',
             style: GoogleFonts.poppins(
-              fontSize: 20,
+              fontSize: isWeb ? 22 : 18,
               fontWeight: FontWeight.w600,
               color: Colors.black87,
             ),
           ),
-          const SizedBox(height: 16),
-          SizedBox(
-            height: 200,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: popularSounds.length,
-              itemBuilder: (context, index) {
-                return _buildSoundCard(popularSounds[index], width: 160);
-              },
-            ),
-          ),
+          SizedBox(height: isWeb ? 20 : 16),
+          _buildSoundsGrid(popularSounds, isWeb),
 
-          const SizedBox(height: 32),
+          SizedBox(height: isWeb ? 40 : 30),
 
           // Latest Section
           Text(
             'Latest',
             style: GoogleFonts.poppins(
-              fontSize: 20,
+              fontSize: isWeb ? 22 : 18,
               fontWeight: FontWeight.w600,
               color: Colors.black87,
             ),
           ),
-          const SizedBox(height: 16),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              childAspectRatio: 0.85,
+          SizedBox(height: isWeb ? 20 : 16),
+          _buildLatestSoundsList(otherSounds, isWeb),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRecentTab(bool isWeb) {
+    return Padding(
+      padding: EdgeInsets.all(isWeb ? 32 : 20),
+      child: _recentSounds.isEmpty
+          ? _buildEmptyState('No recent sounds', isWeb)
+          : _buildSoundsGrid(_recentSounds, isWeb),
+    );
+  }
+
+  Widget _buildSavedTab(bool isWeb) {
+    return Padding(
+      padding: EdgeInsets.all(isWeb ? 32 : 20),
+      child: _savedSounds.isEmpty
+          ? _buildEmptyState('No saved sounds yet', isWeb)
+          : _buildSoundsGrid(_savedSounds, isWeb),
+    );
+  }
+
+  Widget _buildFavoritesTab(bool isWeb) {
+    return Padding(
+      padding: EdgeInsets.all(isWeb ? 32 : 20),
+      child: _favoriteSounds.isEmpty
+          ? _buildEmptyState('No favorite sounds yet', isWeb)
+          : _buildSoundsGrid(_favoriteSounds, isWeb),
+    );
+  }
+
+  Widget _buildEmptyState(String message, bool isWeb) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.music_note,
+            size: isWeb ? 80 : 60,
+            color: Colors.grey[300],
+          ),
+          SizedBox(height: isWeb ? 20 : 16),
+          Text(
+            message,
+            style: GoogleFonts.poppins(
+              fontSize: isWeb ? 18 : 16,
+              color: Colors.grey[600],
             ),
-            itemCount: otherSounds.length,
-            itemBuilder: (context, index) {
-              return _buildSoundCard(otherSounds[index]);
-            },
           ),
         ],
       ),
     );
   }
 
-  Widget _buildRecentTab() {
-    return _buildSoundsList(_recentSounds, emptyMessage: 'No recent sounds');
-  }
-
-  Widget _buildSavedTab() {
-    return _buildSoundsList(_savedSounds, emptyMessage: 'No saved sounds yet');
-  }
-
-  Widget _buildFavoritesTab() {
-    return _buildSoundsList(_favoriteSounds, emptyMessage: 'No favorite sounds yet');
-  }
-
-  Widget _buildSoundsList(List<MeditationSound> soundsList, {required String emptyMessage}) {
-    if (soundsList.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.music_note_outlined,
-              size: 64,
-              color: Colors.grey[300],
-            ),
-            const SizedBox(height: 16),
-            Text(
-              emptyMessage,
-              style: GoogleFonts.poppins(
-                fontSize: 16,
-                color: Colors.grey[600],
-              ),
-            ),
-          ],
+  Widget _buildLatestSoundsList(List<MeditationSound> soundsList, bool isWeb) {
+    // For web, show larger cards in a 2-column grid
+    if (isWeb) {
+      return GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 20,
+          mainAxisSpacing: 20,
+          childAspectRatio: 2.5,
         ),
+        itemCount: soundsList.length,
+        itemBuilder: (context, index) {
+          return _buildLargeHorizontalCard(soundsList[index], isWeb);
+        },
       );
     }
 
-    return GridView.builder(
-      padding: const EdgeInsets.all(20),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
-        childAspectRatio: 0.85,
+    // Mobile view - horizontal scroll
+    return SizedBox(
+      height: 200,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: soundsList.length,
+        itemBuilder: (context, index) {
+          return _buildLargeHorizontalCard(soundsList[index], isWeb);
+        },
       ),
-      itemCount: soundsList.length,
-      itemBuilder: (context, index) {
-        return _buildSoundCard(soundsList[index]);
-      },
     );
   }
 
-  Widget _buildSoundCard(MeditationSound sound, {double? width}) {
+  Widget _buildLargeHorizontalCard(MeditationSound sound, bool isWeb) {
     return GestureDetector(
       onTap: () => _playSound(sound),
       child: Container(
-        width: width,
-        margin: width != null ? const EdgeInsets.only(right: 16) : null,
+        width: isWeb ? null : 350,
+        margin: isWeb ? null : const EdgeInsets.only(right: 16),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(isWeb ? 24 : 20),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
@@ -360,7 +379,145 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(isWeb ? 24 : 20),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Image.network(
+                sound.imageUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: const Color(0xFF40E0D0).withOpacity(0.2),
+                    child: Icon(
+                      Icons.music_note,
+                      size: isWeb ? 80 : 60,
+                      color: const Color(0xFF40E0D0),
+                    ),
+                  );
+                },
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [
+                      Colors.black.withOpacity(0.8),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(isWeb ? 24 : 20),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(isWeb ? 16 : 12),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF40E0D0).withOpacity(0.9),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.play_arrow,
+                        color: Colors.white,
+                        size: isWeb ? 32 : 28,
+                      ),
+                    ),
+                    SizedBox(width: isWeb ? 20 : 16),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            sound.title,
+                            style: GoogleFonts.poppins(
+                              color: Colors.white,
+                              fontSize: isWeb ? 20 : 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            sound.category,
+                            style: GoogleFonts.poppins(
+                              color: Colors.white70,
+                              fontSize: isWeb ? 15 : 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          sound.isFavorite = !sound.isFavorite;
+                        });
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(isWeb ? 10 : 8),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.3),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          sound.isFavorite ? Icons.favorite : Icons.favorite_border,
+                          color: sound.isFavorite ? Colors.red : Colors.white,
+                          size: isWeb ? 24 : 20,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSoundsGrid(List<MeditationSound> soundsList, bool isWeb) {
+    // Determine cross axis count based on screen width
+    final crossAxisCount = isWeb ? 4 : 2;
+    final childAspectRatio = isWeb ? 0.75 : 0.85;
+
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossAxisCount,
+        crossAxisSpacing: isWeb ? 20 : 12,
+        mainAxisSpacing: isWeb ? 20 : 12,
+        childAspectRatio: childAspectRatio,
+      ),
+      itemCount: soundsList.length,
+      itemBuilder: (context, index) {
+        return _buildSoundCard(soundsList[index], isWeb);
+      },
+    );
+  }
+
+  Widget _buildSoundCard(MeditationSound sound, bool isWeb) {
+    return GestureDetector(
+      onTap: () => _playSound(sound),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(isWeb ? 24 : 20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(isWeb ? 24 : 20),
           child: Stack(
             fit: StackFit.expand,
             children: [
@@ -371,10 +528,10 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
                     color: const Color(0xFF40E0D0).withOpacity(0.2),
-                    child: const Icon(
+                    child: Icon(
                       Icons.music_note,
-                      size: 60,
-                      color: Color(0xFF40E0D0),
+                      size: isWeb ? 80 : 60,
+                      color: const Color(0xFF40E0D0),
                     ),
                   );
                 },
@@ -396,7 +553,7 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
 
               // Content
               Padding(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(isWeb ? 20 : 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -405,15 +562,15 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          padding: const EdgeInsets.all(8),
+                          padding: EdgeInsets.all(isWeb ? 12 : 8),
                           decoration: BoxDecoration(
                             color: const Color(0xFF40E0D0).withOpacity(0.9),
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.play_arrow,
                             color: Colors.white,
-                            size: 24,
+                            size: isWeb ? 28 : 24,
                           ),
                         ),
                         GestureDetector(
@@ -423,7 +580,7 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
                             });
                           },
                           child: Container(
-                            padding: const EdgeInsets.all(6),
+                            padding: EdgeInsets.all(isWeb ? 8 : 6),
                             decoration: BoxDecoration(
                               color: Colors.black.withOpacity(0.3),
                               shape: BoxShape.circle,
@@ -431,7 +588,7 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
                             child: Icon(
                               sound.isFavorite ? Icons.favorite : Icons.favorite_border,
                               color: sound.isFavorite ? Colors.red : Colors.white,
-                              size: 20,
+                              size: isWeb ? 22 : 20,
                             ),
                           ),
                         ),
@@ -445,13 +602,13 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
                       sound.title,
                       style: GoogleFonts.poppins(
                         color: Colors.white,
-                        fontSize: 18,
+                        fontSize: isWeb ? 20 : 18,
                         fontWeight: FontWeight.w600,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: isWeb ? 8 : 4),
 
                     // Duration and save button
                     Row(
@@ -459,17 +616,17 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
                       children: [
                         Row(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.access_time,
                               color: Colors.white,
-                              size: 16,
+                              size: isWeb ? 18 : 16,
                             ),
-                            const SizedBox(width: 4),
+                            SizedBox(width: isWeb ? 6 : 4),
                             Text(
                               sound.duration,
                               style: GoogleFonts.poppins(
                                 color: Colors.white,
-                                fontSize: 14,
+                                fontSize: isWeb ? 15 : 14,
                               ),
                             ),
                           ],
@@ -493,7 +650,7 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
                           child: Icon(
                             sound.isSaved ? Icons.bookmark : Icons.bookmark_border,
                             color: Colors.white,
-                            size: 20,
+                            size: isWeb ? 22 : 20,
                           ),
                         ),
                       ],
