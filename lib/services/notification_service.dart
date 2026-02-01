@@ -4,21 +4,22 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter/foundation.dart';
 
 class NotificationService {
+  // Singleton pattern
   static final NotificationService _instance = NotificationService._internal();
   factory NotificationService() => _instance;
   NotificationService._internal();
 
-  final FlutterLocalNotificationsPlugin notificationsPlugin = 
+  // Flutter local notifications plugin instance
+  final FlutterLocalNotificationsPlugin notificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
   // Initialize the notification service
   Future<void> init() async {
     tz.initializeTimeZones();
-    tz.setLocalLocation(tz.getLocation('Asia/Singapore'));
 
     const AndroidInitializationSettings androidSettings =
         AndroidInitializationSettings('@mipmap/ic_launcher');
-    
+
     const InitializationSettings settings = InitializationSettings(
       android: androidSettings,
     );
@@ -30,14 +31,29 @@ class NotificationService {
       },
     );
 
-    // Request notification permissions (Android 13+)
-    await notificationsPlugin.resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()?.requestNotificationsPermission();
-
-    // Create notification channels
+    await _requestPermissions();
     await _createNotificationChannels();
-    
+
     debugPrint('✅ Notification service initialized');
+  }
+
+  // Request necessary permissions for Android
+  Future<void> _requestPermissions() async {
+    final androidPlugin =
+        notificationsPlugin.resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
+
+    await androidPlugin?.requestNotificationsPermission();
+
+    try {
+      await androidPlugin?.requestExactAlarmsPermission();
+    } catch (_) {
+      debugPrint(
+        'requestExactAlarmsPermission not available — '
+        'update flutter_local_notifications.',
+      );
+    }
   }
 
   // Create notification channels for Android
@@ -54,18 +70,19 @@ class NotificationService {
 
     final androidPlugin = notificationsPlugin
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>();
+          AndroidFlutterLocalNotificationsPlugin
+        >();
 
     await androidPlugin?.createNotificationChannel(dailyChannel);
-    
+
     debugPrint('✅ Notification channels created');
   }
 
-  // Default notification details
+  // Returns the default [NotificationDetails] used across all notifications
   NotificationDetails _notificationDetails() {
     return const NotificationDetails(
       android: AndroidNotificationDetails(
-        'daily_yoga_reminder_channel', 
+        'daily_yoga_reminder_channel',
         'Daily Yoga Exercise Reminders',
         importance: Importance.max,
         priority: Priority.high,
@@ -76,15 +93,15 @@ class NotificationService {
 
   // Show an immediate notification
   Future<void> showNotification({
-    int id = 0, 
-    String? title, 
-    String? body, 
+    int id = 0,
+    String? title,
+    String? body,
     String? payload,
   }) async {
     await notificationsPlugin.show(
-      id, 
-      title, 
-      body, 
+      id,
+      title,
+      body,
       _notificationDetails(),
       payload: payload,
     );
@@ -95,8 +112,8 @@ class NotificationService {
     required int id,
     required String title,
     required String body,
-    required int hour,  // in 24-hour format (0-23)
-    required int minute,  // minute (0-59)
+    required int hour, // in 24-hour format (0-23)
+    required int minute, // minute (0-59)
   }) async {
     try {
       final scheduledTime = _nextInstanceOfTime(hour, minute);
@@ -112,7 +129,7 @@ class NotificationService {
             UILocalNotificationDateInterpretation.absoluteTime,
         matchDateTimeComponents: DateTimeComponents.time,
       );
-      
+
       debugPrint('🔔 Daily notification scheduled for: $scheduledTime');
     } catch (e) {
       debugPrint('❌ Error scheduling notification: $e');
@@ -123,13 +140,19 @@ class NotificationService {
   // If the time has passed today, returns tomorrow's time
   tz.TZDateTime _nextInstanceOfTime(int hour, int minute) {
     final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
-    tz.TZDateTime scheduledDate =
-        tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
-    
+    tz.TZDateTime scheduledDate = tz.TZDateTime(
+      tz.local,
+      now.year,
+      now.month,
+      now.day,
+      hour,
+      minute,
+    );
+
     if (scheduledDate.isBefore(now)) {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
-    
+
     return scheduledDate;
   }
 
