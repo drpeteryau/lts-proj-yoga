@@ -1,23 +1,23 @@
-# 🧘 HealYoga
+# HealYoga
 
-HealYoga is a Flutter-based mobile wellness application designed to encourage regular yoga practice through guided sessions, calming music, and progress tracking.  
+HealYoga is a Flutter-based mobile/web wellness application designed to encourage regular yoga practice through guided sessions, calming music, and progress tracking.  
 The app focuses on accessibility and simplicity, making it suitable for beginners, working adults, and elderly users.
 
 ---
 
-## ✨ Features
+## Features
 
-- 🧘 Guided yoga sessions (Beginner, Intermediate, Advanced)
-- 🎵 Calming music and white-noise support
-- 📊 Progress tracking (sessions completed, time practiced)
-- 🔐 User authentication (Google / Email / Social login)
-- 👤 Personal user profiles
-- 🔔 Gentle reminders and notifications
-- ♿ Accessibility-focused UI (readable fonts, simple navigation)
+- Guided yoga sessions (Beginner, Intermediate, Advanced)
+- Calming music and white-noise support
+- Progress tracking (sessions completed, time practiced)
+- User authentication (Google / Email / Social login)
+- Personal user profiles
+- Gentle reminders and notifications
+- Accessibility-focused UI (readable fonts, simple navigation)
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 - **Frontend:** Flutter (Dart)
 - **Backend:** Supabase (PostgreSQL, Auth, REST API)
@@ -27,7 +27,7 @@ The app focuses on accessibility and simplicity, making it suitable for beginner
 
 ---
 
-## 🚀 Deployment Process
+## Deployment Process
 
 HealYoga is currently in the development and testing phase.
 
@@ -41,7 +41,7 @@ demonstrations, and evaluation purposes.
 
 4. The application has not been published to the Google Play Store yet.
 
-## 1. 🚀 Getting Started
+## 1. Getting Started
 
 ### Prerequisites
 Make sure you have the following installed:
@@ -55,7 +55,7 @@ Check setup:
 flutter doctor
 ```
 
-## 2. 🚀 Installation & Run (For Code Testing)
+## 2. Installation & Run (For Code Testing)
 1. Clone the repository:
 ```bash
 git clone https://github.com/your-username/heal_yoga.git
@@ -82,8 +82,11 @@ adb install {YOURPATH}/app-release.apk
 ```
 (Ensure the terminal is opened in the same folder as the downloaded APK.)
 
+## 4. For web deployment 
+Access https://healyoga-web.web.app/
 
-## 4. 📱 Screenshots
+
+## 5. Screenshots
 
 | Login | Register |
 |-------|----------|
@@ -165,7 +168,7 @@ details within the application.
 Enables users to update their profile information and preferences to personalize
 their experience within HealYoga.
 
-## 5. 🧭 App Usage Guide
+## 6. App Usage Guide
 
 1. **User Authentication**  
    Users begin by registering a new account using their email address or
@@ -197,7 +200,7 @@ their experience within HealYoga.
    Users can view and update their personal profile and preferences at
    any time via the Profile section.
 
-## 6. 🧪 Testing
+## 7. Testing
 
 - Tested on Android Emulator (Pixel series)
 - Tested on physical Android devices
@@ -209,7 +212,7 @@ their experience within HealYoga.
   - Progress tracking
   - Notifications
  
-## 7. ⚠️ Known Limitations & Future Improvements
+## 8. Known Limitations & Future Improvements
 
 - The application is currently available for Android devices only for Applications
 - iOS users can access the application via the web version.
@@ -218,7 +221,7 @@ their experience within HealYoga.
   options such as adjustable font sizes, and expanded wellness analytics.
 
 
-## 8. 👥 Team Members
+## 9. Team Members
 
 - Kaam Yan Hye  
 - Natalie Narayanan  
@@ -226,7 +229,7 @@ their experience within HealYoga.
 - Daniel Soong  
 
 
-## 9. 📄 License
+## 10. License
 
 This project was developed for academic purposes as part of the CSC2101
 (PSD & Team Project) module.
