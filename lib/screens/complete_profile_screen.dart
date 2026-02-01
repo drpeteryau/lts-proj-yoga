@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'main_navigation_screen.dart';
+import '../services/global_audio_service.dart';
 
 class CompleteProfileScreen extends StatefulWidget {
   final String? fullName;
@@ -243,7 +244,10 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen>
                                 borderRadius: BorderRadius.circular(16),
                               ),
                             ),
-                            onPressed: _isLoading ? null : _saveProfile,
+                            onPressed: _isLoading ? null : () async {
+                              await GlobalAudioService.playClickSound();
+                              _saveProfile();
+                            },
                             child: _isLoading
                                 ? const CircularProgressIndicator(color: Colors.white)
                                 : const Text(
@@ -323,6 +327,9 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen>
                       DropdownMenuItem(value: item, child: Text(item)))
                   .toList(),
               onChanged: onChanged,
+              onTap: () {
+                GlobalAudioService.playClickSound();
+              },
             ),
           ),
         ],

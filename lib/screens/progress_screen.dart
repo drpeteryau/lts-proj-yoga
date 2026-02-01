@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:intl/intl.dart';
 import 'dart:math';
 import 'dart:ui' as ui;
+import '../services/global_audio_service.dart';
 
 class ProgressScreen extends StatefulWidget {
   const ProgressScreen({super.key});
@@ -201,7 +202,10 @@ class _ProgressScreenState extends State<ProgressScreen> {
               Text('Error loading progress', style: GoogleFonts.poppins(fontSize: 16)),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: _loadProgressData,
+                onPressed: () async {
+                  await GlobalAudioService.playClickSound();
+                  _loadProgressData();
+                },
                 style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF40E0D0)),
                 child: Text('Retry', style: GoogleFonts.poppins()),
               ),
@@ -414,7 +418,10 @@ class _ProgressScreenState extends State<ProgressScreen> {
             children: [
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed: _showWellnessDialog,
+                  onPressed: () async {
+                    await GlobalAudioService.playClickSound();
+                    _showWellnessDialog();
+                  },
                   icon: const Icon(Icons.add_circle_outline, size: 18),
                   label: Text(
                     'New Check-in',
@@ -430,7 +437,10 @@ class _ProgressScreenState extends State<ProgressScreen> {
               const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton.icon(
-                  onPressed: _showReflectionHistory,
+                  onPressed: () async {
+                    await GlobalAudioService.playClickSound();
+                    _showReflectionHistory();
+                  },
                   icon: const Icon(Icons.history, size: 18),
                   label: Text(
                     'View History',
@@ -606,7 +616,8 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.chevron_left, size: 20),
-                    onPressed: () {
+                    onPressed: () async {
+                      await GlobalAudioService.playClickSound();
                       setState(() {
                         _currentMonth = DateTime(
                           _currentMonth.year,
@@ -629,7 +640,8 @@ class _ProgressScreenState extends State<ProgressScreen> {
                   const SizedBox(width: 12),
                   IconButton(
                     icon: const Icon(Icons.chevron_right, size: 20),
-                    onPressed: () {
+                    onPressed: () async {
+                      await GlobalAudioService.playClickSound();
                       setState(() {
                         _currentMonth = DateTime(
                           _currentMonth.year,
@@ -902,14 +914,18 @@ class _WellnessCheckInDialogState extends State<_WellnessCheckInDialog> {
               children: [
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () async {
+                      await GlobalAudioService.playClickSound();
+                      Navigator.pop(context);
+                    },
                     child: Text('Cancel', style: GoogleFonts.poppins()),
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
+                      await GlobalAudioService.playClickSound();
                       if (_bodyComfort != null &&
                           _flexibility != null &&
                           _balance != null &&
@@ -993,7 +1009,10 @@ class _ReflectionHistoryScreen extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black87),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () async {
+            await GlobalAudioService.playClickSound();
+            Navigator.pop(context);
+          },
         ),
         title: Text(
           'Reflection History',

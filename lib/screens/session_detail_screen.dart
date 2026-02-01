@@ -4,6 +4,7 @@ import '../models/yoga_session.dart';
 import '../models/yoga_pose.dart';
 import 'pose_detail_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../services/global_audio_service.dart';
 
 class SessionDetailScreen extends StatefulWidget {
   final YogaSession session;
@@ -171,7 +172,10 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
             ),
             child: IconButton(
               icon: const Icon(Icons.arrow_back, color: Colors.black87),
-              onPressed: () => Navigator.pop(context),
+              onPressed: () async {
+                await GlobalAudioService.playClickSound();
+                Navigator.pop(context);
+              },
             ),
           ),
         ),
@@ -556,7 +560,8 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
       ),
       child: SafeArea(
         child: ElevatedButton(
-          onPressed: () {
+          onPressed: () async {
+            await GlobalAudioService.playClickSound();
             // Start the session - navigate to first pose
             if (widget.session.allPoses.isNotEmpty) {
               Navigator.push(

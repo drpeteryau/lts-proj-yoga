@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/global_audio_service.dart';
 import 'sounds_screen.dart';
+import '../services/global_audio_service.dart';
 
 class SoundPlayerScreen extends StatefulWidget {
   final MeditationSound sound;
@@ -66,7 +67,10 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
                     children: [
                       IconButton(
                         icon: const Icon(Icons.keyboard_arrow_down, size: 32),
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: () async {
+                          await GlobalAudioService.playClickSound();
+                          Navigator.pop(context);
+                        },
                         color: Colors.black87,
                       ),
                       const Text(
@@ -79,7 +83,9 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
                       ),
                       IconButton(
                         icon: const Icon(Icons.more_vert, size: 28),
-                        onPressed: () {},
+                        onPressed: () async {
+                          await GlobalAudioService.playClickSound();
+                        },
                         color: Colors.black87,
                       ),
                     ],
@@ -166,7 +172,8 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
                                   ? const Color(0xFFFFB5C2)
                                   : Colors.grey[400],
                             ),
-                            onPressed: () {
+                            onPressed: () async {
+                              await GlobalAudioService.playClickSound();
                               setState(() {
                                 _isFavorite = !_isFavorite;
                               });
@@ -252,7 +259,8 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
                               ? const Color(0xFF40E0D0)
                               : Colors.grey[400],
                         ),
-                        onPressed: () {
+                        onPressed: () async{
+                          await GlobalAudioService.playClickSound();
                           setState(() {
                             _isShuffling = !_isShuffling;
                           });
@@ -261,7 +269,10 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
                       IconButton(
                         icon: const Icon(Icons.skip_previous, size: 44),
                         color: Colors.black87,
-                        onPressed: _skipBackward,
+                        onPressed: () async {
+                          await GlobalAudioService.playClickSound();
+                          _skipBackward();
+                        },
                       ),
                       Container(
                         width: 80,
@@ -283,7 +294,8 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
                             size: 44,
                           ),
                           color: Colors.white,
-                          onPressed: () {
+                          onPressed: () async{
+                            await GlobalAudioService.playClickSound();
                             _audioService.togglePlayPause();
                           },
                         ),
@@ -291,7 +303,10 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
                       IconButton(
                         icon: const Icon(Icons.skip_next, size: 44),
                         color: Colors.black87,
-                        onPressed: _skipForward,
+                        onPressed: () async {
+                          await GlobalAudioService.playClickSound();
+                          _skipForward();
+                        },
                       ),
                       IconButton(
                         icon: Icon(
@@ -301,7 +316,8 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
                               ? const Color(0xFF40E0D0)
                               : Colors.grey[400],
                         ),
-                        onPressed: () {
+                        onPressed: () async {
+                          await GlobalAudioService.playClickSound();
                           _audioService.toggleRepeat();
                         },
                       ),
@@ -313,7 +329,8 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
 
                 // More Details Button
                 TextButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    await GlobalAudioService.playClickSound();
                     _showDetailsSheet(context);
                   },
                   child: const Row(

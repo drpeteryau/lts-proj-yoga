@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../data/yoga_data_complete.dart';
 import '../models/yoga_session.dart';
 import 'session_detail_screen.dart';
+import '../services/global_audio_service.dart';
 
 class AdvancedSessionsScreen extends StatelessWidget {
   const AdvancedSessionsScreen({super.key});
@@ -14,9 +15,11 @@ class AdvancedSessionsScreen extends StatelessWidget {
       backgroundColor: const Color(0xFFF0F9F8),
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () {
+              GlobalAudioService.playClickSound();
+              Navigator.pop(context);
+            }),
         title: const Text(
           'Advanced Sessions',
           style: TextStyle(
@@ -303,10 +306,12 @@ class AdvancedSessionsScreen extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
+                  GlobalAudioService.playClickSound();
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => SessionDetailScreen(session: session),
+                      builder: (context) =>
+                          SessionDetailScreen(session: session),
                     ),
                   );
                 },

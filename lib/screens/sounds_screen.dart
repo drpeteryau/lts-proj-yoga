@@ -191,7 +191,9 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
             icon: const Icon(Icons.notifications_outlined),
             color: Colors.black54,
             iconSize: 28,
-            onPressed: () {},
+            onPressed: () async {
+              await GlobalAudioService.playClickSound();
+            },
           ),
         ],
       ),
@@ -417,7 +419,8 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
                           ),
                         ),
                         GestureDetector(
-                          onTap: () {
+                          onTap: () async {
+                            await GlobalAudioService.playClickSound();
                             setState(() {
                               sound.isFavorite = !sound.isFavorite;
                             });
@@ -475,7 +478,8 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
                           ],
                         ),
                         GestureDetector(
-                          onTap: () {
+                          onTap: () async {
+                            await GlobalAudioService.playClickSound();
                             setState(() {
                               sound.isSaved = !sound.isSaved;
                             });

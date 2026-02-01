@@ -3,9 +3,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/user_progress.dart';
 import '../services/progress_service.dart';
-import '../data/yoga_data.dart';
 import '../data/yoga_data_complete.dart';
 import 'session_detail_screen.dart';
+import '../services/global_audio_service.dart';
 
 class LevelSelectionScreen extends StatefulWidget {
   const LevelSelectionScreen({super.key});
@@ -94,7 +94,10 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
               ),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: _loadUserProgress,
+                onPressed: () {
+                  GlobalAudioService.playClickSound();
+                  _loadUserProgress();
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF40E0D0),
                 ),
@@ -515,7 +518,10 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              GlobalAudioService.playClickSound();
+              Navigator.pop(context);
+            },
             child: Text(
               'OK',
               style: GoogleFonts.poppins(

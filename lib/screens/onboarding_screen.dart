@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'login_screen.dart';
+import '../services/global_audio_service.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
@@ -68,6 +69,7 @@ class OnboardingScreen extends StatelessWidget {
                 // Get Started Button
                 GestureDetector(
                   onTap: () {
+                    GlobalAudioService.playClickSound();
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(

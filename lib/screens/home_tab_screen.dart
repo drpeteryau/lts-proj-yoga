@@ -6,6 +6,7 @@ import 'session_detail_screen.dart';
 import '../models/yoga_pose.dart';
 import '../models/yoga_session.dart';
 import 'pose_detail_screen.dart';
+import '../services/global_audio_service.dart';
 
 class HomeTabScreen extends StatefulWidget {
   const HomeTabScreen({super.key});
@@ -252,7 +253,9 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                       icon: const Icon(Icons.notifications_outlined),
                       iconSize: 26,
                       color: Colors.black87,
-                      onPressed: () {},
+                      onPressed: () {
+                        GlobalAudioService.playClickSound();
+                      },
                     ),
                   ],
                 ),
@@ -321,7 +324,9 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                       ),
                     ),
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        GlobalAudioService.playClickSound();
+                      },
                       child: Text(
                         'See All',
                         style: GoogleFonts.poppins(
