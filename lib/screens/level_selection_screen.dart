@@ -68,6 +68,9 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isWeb = screenWidth > 600;
+
     if (_isLoading) {
       return Container(
         color: Colors.white,
@@ -113,143 +116,150 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
     }
 
     return Container(
-      color: Colors.white,
-      child: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 12),
+        color: Colors.white,
+        child: SafeArea(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: isWeb ? 1000 : double.infinity,
+                ),
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.all(isWeb ? 40.0 : 20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: isWeb ? 20 : 12),
 
-                // Header
-                Text(
-                  'Choose Your',
-                  style: GoogleFonts.poppins(
-                    fontSize: 28,
-                    fontWeight: FontWeight.w300,
-                    color: Colors.black87,
+                        // Header
+                        Text(
+                          'Choose Your',
+                          style: GoogleFonts.poppins(
+                            fontSize: isWeb ? 36 : 28,
+                            fontWeight: FontWeight.w300,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        Text(
+                          'Level',
+                          style: GoogleFonts.poppins(
+                            fontSize: isWeb ? 48 : 36,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black87,
+                          ),
+                        ),
+
+                        SizedBox(height: isWeb ? 48 : 32),
+
+                        // Beginner Card
+                        _buildLevelCard(
+                          context,
+                          title: 'Beginner',
+                          subtitle: 'Chair Yoga',
+                          description: 'Perfect for those just starting their yoga journey',
+                          imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600',
+                          color: const Color(0xFF40E0D0),
+                          isLocked: false,
+                          sessionsCompleted: _getSessionsCompleted('beginner'),
+                          onTap: () {
+                            GlobalAudioService.playClickSound();
+                            final session = YogaDataComplete.beginnerSessions.first;
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SessionDetailScreen(session: session),
+                              ),
+                            );
+                          },
+                        ),
+
+                        SizedBox(height: isWeb ? 28 : 20),
+
+                        // Intermediate Card
+                        _buildLevelCard(
+                          context,
+                          title: 'Intermediate',
+                          subtitle: 'Hatha yoga on the mat',
+                          description: 'Build strength with challenging sequences',
+                          imageUrl: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=600',
+                          color: const Color(0xFF35C9BA),
+                          isLocked: !(_userProgress?.intermediateUnlocked ?? false),
+                          sessionsCompleted: _getSessionsCompleted('intermediate'),
+                          progress: (_userProgress?.progressToIntermediate ?? 0.0),
+                          requiredSessions: UserProgress.sessionsRequiredForIntermediate,
+                          currentLevelSessions: _getSessionsCompleted('beginner'),
+                          onTap: () {
+                            if (_userProgress?.intermediateUnlocked ?? false) {                              
+                              GlobalAudioService.playClickSound();
+                              final session = YogaDataComplete.intermediateSessions.first;
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SessionDetailScreen(session: session),
+                                ),
+                              );
+                            } else {
+                              _showLockedDialog(
+                                'Intermediate',
+                                UserProgress.sessionsRequiredForIntermediate,
+                                _getSessionsCompleted('beginner'),
+                              );
+                            }
+                          },
+                        ),
+
+                        SizedBox(height: isWeb ? 28 : 20),
+
+                        // Advanced Card
+                        _buildLevelCard(
+                          context,
+                          title: 'Advanced',
+                          subtitle: 'Dynamic sun salutation flow',
+                          description: 'Challenge yourself with flowing sequences',
+                          imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600',
+                          color: const Color(0xFF2AB5A5),
+                          isLocked: !(_userProgress?.advancedUnlocked ?? false),
+                          sessionsCompleted: _getSessionsCompleted('advanced'),
+                          progress: (_userProgress?.progressToAdvanced ?? 0.0),
+                          requiredSessions: UserProgress.sessionsRequiredForAdvanced,
+                          currentLevelSessions: _getSessionsCompleted('intermediate'),
+                          needsIntermediate: !(_userProgress?.intermediateUnlocked ?? false),
+                          onTap: () {
+                            if (_userProgress?.advancedUnlocked ?? false) {
+                              GlobalAudioService.playClickSound();
+                              final session = YogaDataComplete.advancedSessions.first;
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SessionDetailScreen(session: session),
+                                ),
+                              );
+                            } else {
+                              if (!(_userProgress?.intermediateUnlocked ?? false)) {
+                                _showLockedDialog(
+                                  'Advanced',
+                                  UserProgress.sessionsRequiredForIntermediate,
+                                  _getSessionsCompleted('beginner'),
+                                  message: 'Unlock Intermediate level first!',
+                                );
+                              } else {
+                                _showLockedDialog(
+                                  'Advanced',
+                                  UserProgress.sessionsRequiredForAdvanced,
+                                  _getSessionsCompleted('intermediate'),
+                                );
+                              }
+                            }
+                          },
+                        ),
+
+                        const SizedBox(height: 40),
+                      ],
+                    ),
                   ),
                 ),
-                Text(
-                  'Level',
-                  style: GoogleFonts.poppins(
-                    fontSize: 36,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
-                  ),
-                ),
-
-                const SizedBox(height: 32),
-
-                // Beginner Card
-                _buildLevelCard(
-                  context,
-                  title: 'Beginner',
-                  subtitle: 'Chair Yoga',
-                  description: 'Perfect for those just starting their yoga journey',
-                  imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600',
-                  color: const Color(0xFF40E0D0),
-                  isLocked: false,
-                  sessionsCompleted: _getSessionsCompleted('beginner'),
-                  onTap: () {
-                    final session = YogaDataComplete.beginnerSessions.first;
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SessionDetailScreen(session: session),
-                      ),
-                    );
-                  },
-                ),
-
-                const SizedBox(height: 20),
-
-                // Intermediate Card
-                _buildLevelCard(
-                  context,
-                  title: 'Intermediate',
-                  subtitle: 'Hatha yoga on the mat',
-                  description: 'Build strength with challenging sequences',
-                  imageUrl: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=600',
-                  color: const Color(0xFF35C9BA),
-                  isLocked: !(_userProgress?.intermediateUnlocked ?? false),
-                  sessionsCompleted: _getSessionsCompleted('intermediate'),
-                  progress: (_userProgress?.progressToIntermediate ?? 0.0),
-                  requiredSessions: UserProgress.sessionsRequiredForIntermediate,
-                  currentLevelSessions: _getSessionsCompleted('beginner'),
-                  onTap: () {
-                    if (_userProgress?.intermediateUnlocked ?? false) {
-                      final session = YogaDataComplete.intermediateSessions.first;
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => SessionDetailScreen(session: session),
-                        ),
-                      );
-                    } else {
-                      _showLockedDialog(
-                        'Intermediate',
-                        UserProgress.sessionsRequiredForIntermediate,
-                        _getSessionsCompleted('beginner'),
-                      );
-                    }
-                  },
-                ),
-
-                const SizedBox(height: 20),
-
-                // Advanced Card
-                _buildLevelCard(
-                  context,
-                  title: 'Advanced',
-                  subtitle: 'Dynamic sun salutation flow',
-                  description: 'Challenge yourself with flowing sequences',
-                  imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600',
-                  color: const Color(0xFF2AB5A5),
-                  isLocked: !(_userProgress?.advancedUnlocked ?? false),
-                  sessionsCompleted: _getSessionsCompleted('advanced'),
-                  progress: (_userProgress?.progressToAdvanced ?? 0.0),
-                  requiredSessions: UserProgress.sessionsRequiredForAdvanced,
-                  currentLevelSessions: _getSessionsCompleted('intermediate'),
-                  needsIntermediate: !(_userProgress?.intermediateUnlocked ?? false),
-                  onTap: () {
-                    if (_userProgress?.advancedUnlocked ?? false) {
-                      final session = YogaDataComplete.advancedSessions.first;
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => SessionDetailScreen(session: session),
-                        ),
-                      );
-                    } else {
-                      if (!(_userProgress?.intermediateUnlocked ?? false)) {
-                        _showLockedDialog(
-                          'Advanced',
-                          UserProgress.sessionsRequiredForIntermediate,
-                          _getSessionsCompleted('beginner'),
-                          message: 'Unlock Intermediate level first!',
-                        );
-                      } else {
-                        _showLockedDialog(
-                          'Advanced',
-                          UserProgress.sessionsRequiredForAdvanced,
-                          _getSessionsCompleted('intermediate'),
-                        );
-                      }
-                    }
-                  },
-                ),
-
-                const SizedBox(height: 40),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+              ),)));
+        }
 
   Widget _buildLevelCard(
       BuildContext context, {
@@ -458,6 +468,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
         ),
       ),
     );
+
   }
 
   void _showLockedDialog(

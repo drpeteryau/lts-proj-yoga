@@ -51,378 +51,419 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isWeb = screenWidth > 600;
+
     return Scaffold(
       backgroundColor: const Color(0xFFFFF5F5),
       body: SafeArea(
-        child: AnimatedBuilder(
-          animation: _audioService,
-          builder: (context, child) {
-            return Column(
-              children: [
-                // Top Bar
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.keyboard_arrow_down, size: 32),
-                        onPressed: () async {
-                          await GlobalAudioService.playClickSound();
-                          Navigator.pop(context);
-                        },
-                        color: Colors.black87,
-                      ),
-                      const Text(
-                        'Now Playing',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.more_vert, size: 28),
-                        onPressed: () async {
-                          await GlobalAudioService.playClickSound();
-                        },
-                        color: Colors.black87,
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 20),
-
-                // Album Art
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 40),
-                  child: AspectRatio(
-                    aspectRatio: 1,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            blurRadius: 20,
-                            offset: const Offset(0, 10),
-                          ),
-                        ],
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(30),
-                        child: Image.network(
-                          widget.sound.imageUrl,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              color: const Color(0xFF40E0D0).withOpacity(0.2),
-                              child: const Icon(
-                                Icons.music_note,
-                                size: 100,
-                                color: Color(0xFF40E0D0),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-
-                const Spacer(),
-
-                // Song Info
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 40),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: isWeb ? 800 : double.infinity,
+            ),
+            child: AnimatedBuilder(
+              animation: _audioService,
+              builder: (context, child) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: isWeb ? 40 : 0),
                   child: Column(
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  widget.sound.title,
-                                  style: const TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  widget.sound.category,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          IconButton(
-                            icon: Icon(
-                              _isFavorite ? Icons.favorite : Icons.favorite_border,
-                              size: 32,
-                              color: _isFavorite
-                                  ? const Color(0xFFFFB5C2)
-                                  : Colors.grey[400],
-                            ),
-                            onPressed: () async {
-                              await GlobalAudioService.playClickSound();
-                              setState(() {
-                                _isFavorite = !_isFavorite;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 32),
-
-                // Progress slider
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32),
-                  child: Column(
-                    children: [
-                      SliderTheme(
-                        data: SliderTheme.of(context).copyWith(
-                          trackHeight: 3,
-                          thumbShape: const RoundSliderThumbShape(
-                            enabledThumbRadius: 8,
-                          ),
-                          overlayShape: const RoundSliderOverlayShape(
-                            overlayRadius: 16,
-                          ),
-                          activeTrackColor: const Color(0xFF40E0D0),
-                          inactiveTrackColor: Colors.grey[300],
-                          thumbColor: const Color(0xFF40E0D0),
-                          overlayColor: const Color(0xFF40E0D0).withOpacity(0.2),
-                        ),
-                        child: Slider(
-                          value: _audioService.currentPosition.inSeconds.toDouble(),
-                          min: 0,
-                          max: _audioService.totalDuration.inSeconds.toDouble() > 0
-                              ? _audioService.totalDuration.inSeconds.toDouble()
-                              : 1.0,
-                          onChanged: (value) {
-                            _audioService.seek(Duration(seconds: value.toInt()));
-                          },
-                        ),
-                      ),
+                      // Top Bar
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        padding: EdgeInsets.all(isWeb ? 24 : 20),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              _audioService.formatTime(_audioService.currentPosition),
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey[600],
+                            IconButton(
+                              icon: Icon(
+                                Icons.keyboard_arrow_down,
+                                size: isWeb ? 36 : 32,
                               ),
+                              onPressed: () => Navigator.pop(context),
+                              color: Colors.black87,
                             ),
                             Text(
-                              _audioService.formatTime(_audioService.totalDuration),
+                              'Now Playing',
                               style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey[600],
+                                fontSize: isWeb ? 24 : 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
                               ),
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                Icons.more_vert,
+                                size: isWeb ? 32 : 28,
+                              ),
+                              onPressed: () {},
+                              color: Colors.black87,
                             ),
                           ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
 
-                const SizedBox(height: 32),
+                      SizedBox(height: isWeb ? 40 : 20),
 
-                // Playback Controls
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 40),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                        icon: Icon(
-                          Icons.shuffle,
-                          size: 28,
-                          color: _isShuffling
-                              ? const Color(0xFF40E0D0)
-                              : Colors.grey[400],
+                      // Album Art
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: isWeb ? 80 : 40,
                         ),
-                        onPressed: () async{
-                          await GlobalAudioService.playClickSound();
-                          setState(() {
-                            _isShuffling = !_isShuffling;
-                          });
-                        },
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.skip_previous, size: 44),
-                        color: Colors.black87,
-                        onPressed: () async {
-                          await GlobalAudioService.playClickSound();
-                          _skipBackward();
-                        },
-                      ),
-                      Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFFB5C2),
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0xFFFFB5C2).withOpacity(0.4),
-                              blurRadius: 20,
-                              offset: const Offset(0, 8),
+                        child: AspectRatio(
+                          aspectRatio: 1,
+                          child: Container(
+                            constraints: BoxConstraints(
+                              maxWidth: isWeb ? 500 : double.infinity,
+                              maxHeight: isWeb ? 500 : double.infinity,
                             ),
-                          ],
-                        ),
-                        child: IconButton(
-                          icon: Icon(
-                            _audioService.isPlaying ? Icons.pause : Icons.play_arrow,
-                            size: 44,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(isWeb ? 40 : 30),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.2),
+                                  blurRadius: isWeb ? 30 : 20,
+                                  offset: const Offset(0, 10),
+                                ),
+                              ],
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(isWeb ? 40 : 30),
+                              child: Image.network(
+                                widget.sound.imageUrl,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    color: const Color(0xFF40E0D0).withOpacity(0.2),
+                                    child: Icon(
+                                      Icons.music_note,
+                                      size: isWeb ? 120 : 100,
+                                      color: const Color(0xFF40E0D0),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
                           ),
-                          color: Colors.white,
-                          onPressed: () async{
-                            await GlobalAudioService.playClickSound();
-                            _audioService.togglePlayPause();
-                          },
                         ),
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.skip_next, size: 44),
-                        color: Colors.black87,
-                        onPressed: () async {
-                          await GlobalAudioService.playClickSound();
-                          _skipForward();
-                        },
-                      ),
-                      IconButton(
-                        icon: Icon(
-                          Icons.repeat,
-                          size: 28,
-                          color: _audioService.isRepeating
-                              ? const Color(0xFF40E0D0)
-                              : Colors.grey[400],
+
+                      const Spacer(),
+
+                      // Song Info
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: isWeb ? 60 : 40,
                         ),
-                        onPressed: () async {
-                          await GlobalAudioService.playClickSound();
-                          _audioService.toggleRepeat();
-                        },
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        widget.sound.title,
+                                        style: TextStyle(
+                                          fontSize: isWeb ? 32 : 24,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                      SizedBox(height: isWeb ? 10 : 6),
+                                      Text(
+                                        widget.sound.category,
+                                        style: TextStyle(
+                                          fontSize: isWeb ? 20 : 16,
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: Icon(
+                                    _isFavorite ? Icons.favorite : Icons.favorite_border,
+                                    size: isWeb ? 40 : 32,
+                                    color: _isFavorite
+                                        ? const Color(0xFFFFB5C2)
+                                        : Colors.grey[400],
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _isFavorite = !_isFavorite;
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
+
+                      SizedBox(height: isWeb ? 48 : 32),
+
+                      // Progress slider
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: isWeb ? 48 : 32,
+                        ),
+                        child: Column(
+                          children: [
+                            SliderTheme(
+                              data: SliderTheme.of(context).copyWith(
+                                trackHeight: isWeb ? 4 : 3,
+                                thumbShape: RoundSliderThumbShape(
+                                  enabledThumbRadius: isWeb ? 10 : 8,
+                                ),
+                                overlayShape: RoundSliderOverlayShape(
+                                  overlayRadius: isWeb ? 20 : 16,
+                                ),
+                                activeTrackColor: const Color(0xFF40E0D0),
+                                inactiveTrackColor: Colors.grey[300],
+                                thumbColor: const Color(0xFF40E0D0),
+                                overlayColor: const Color(0xFF40E0D0).withOpacity(0.2),
+                              ),
+                              child: Slider(
+                                value: _audioService.currentPosition.inSeconds.toDouble(),
+                                min: 0,
+                                max: _audioService.totalDuration.inSeconds.toDouble() > 0
+                                    ? _audioService.totalDuration.inSeconds.toDouble()
+                                    : 1.0,
+                                onChanged: (value) {
+                                  _audioService.seek(Duration(seconds: value.toInt()));
+                                },
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: isWeb ? 12 : 8,
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    _audioService.formatTime(_audioService.currentPosition),
+                                    style: TextStyle(
+                                      fontSize: isWeb ? 16 : 14,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                  Text(
+                                    _audioService.formatTime(_audioService.totalDuration),
+                                    style: TextStyle(
+                                      fontSize: isWeb ? 16 : 14,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      SizedBox(height: isWeb ? 48 : 32),
+
+                      // Playback Controls
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: isWeb ? 60 : 40,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            IconButton(
+                              icon: Icon(
+                                Icons.shuffle,
+                                size: isWeb ? 32 : 28,
+                                color: _isShuffling
+                                    ? const Color(0xFF40E0D0)
+                                    : Colors.grey[400],
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _isShuffling = !_isShuffling;
+                                });
+                              },
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                Icons.skip_previous,
+                                size: isWeb ? 52 : 44,
+                              ),
+                              color: Colors.black87,
+                              onPressed: _skipBackward,
+                            ),
+                            Container(
+                              width: isWeb ? 100 : 80,
+                              height: isWeb ? 100 : 80,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFFFB5C2),
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(0xFFFFB5C2).withOpacity(0.4),
+                                    blurRadius: isWeb ? 30 : 20,
+                                    offset: const Offset(0, 8),
+                                  ),
+                                ],
+                              ),
+                              child: IconButton(
+                                icon: Icon(
+                                  _audioService.isPlaying ? Icons.pause : Icons.play_arrow,
+                                  size: isWeb ? 52 : 44,
+                                ),
+                                color: Colors.white,
+                                onPressed: () {
+                                  _audioService.togglePlayPause();
+                                },
+                              ),
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                Icons.skip_next,
+                                size: isWeb ? 52 : 44,
+                              ),
+                              color: Colors.black87,
+                              onPressed: _skipForward,
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                Icons.repeat,
+                                size: isWeb ? 32 : 28,
+                                color: _audioService.isRepeating
+                                    ? const Color(0xFF40E0D0)
+                                    : Colors.grey[400],
+                              ),
+                              onPressed: () {
+                                _audioService.toggleRepeat();
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      SizedBox(height: isWeb ? 48 : 32),
+
+                      // More Details Button
+                      TextButton(
+                        onPressed: () {
+                          _showDetailsSheet(context, isWeb);
+                        },
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.keyboard_arrow_up,
+                              color: const Color(0xFF40E0D0),
+                              size: isWeb ? 24 : 20,
+                            ),
+                            SizedBox(width: isWeb ? 6 : 4),
+                            Text(
+                              'More details',
+                              style: TextStyle(
+                                fontSize: isWeb ? 18 : 16,
+                                color: const Color(0xFF40E0D0),
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      SizedBox(height: isWeb ? 48 : 32),
                     ],
                   ),
-                ),
-
-                const SizedBox(height: 32),
-
-                // More Details Button
-                TextButton(
-                  onPressed: () async {
-                    await GlobalAudioService.playClickSound();
-                    _showDetailsSheet(context);
-                  },
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.keyboard_arrow_up,
-                        color: Color(0xFF40E0D0),
-                      ),
-                      SizedBox(width: 4),
-                      Text(
-                        'More details',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Color(0xFF40E0D0),
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 32),
-              ],
-            );
-          },
+                );
+              },
+            ),
+          ),
         ),
       ),
     );
   }
 
-  void _showDetailsSheet(BuildContext context) {
+  void _showDetailsSheet(BuildContext context, bool isWeb) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(isWeb ? 40 : 30),
+        ),
       ),
       builder: (context) {
         return Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: EdgeInsets.all(isWeb ? 32 : 24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Center(
                 child: Container(
-                  width: 40,
-                  height: 4,
+                  width: isWeb ? 50 : 40,
+                  height: isWeb ? 5 : 4,
                   decoration: BoxDecoration(
                     color: Colors.grey[300],
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
-              const Text(
+              SizedBox(height: isWeb ? 32 : 24),
+              Text(
                 'About This Sound',
                 style: TextStyle(
-                  fontSize: 24,
+                  fontSize: isWeb ? 28 : 24,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,
                 ),
               ),
-              const SizedBox(height: 16),
-              _buildDetailRow(Icons.category, 'Category', widget.sound.category),
-              const SizedBox(height: 12),
-              _buildDetailRow(Icons.access_time, 'Duration', widget.sound.duration),
-              const SizedBox(height: 12),
-              _buildDetailRow(Icons.info_outline, 'Type', 'Meditation & Relaxation'),
-              const SizedBox(height: 24),
-              const Text(
+              SizedBox(height: isWeb ? 24 : 16),
+              _buildDetailRow(
+                Icons.category,
+                'Category',
+                widget.sound.category,
+                isWeb,
+              ),
+              SizedBox(height: isWeb ? 16 : 12),
+              _buildDetailRow(
+                Icons.access_time,
+                'Duration',
+                widget.sound.duration,
+                isWeb,
+              ),
+              SizedBox(height: isWeb ? 16 : 12),
+              _buildDetailRow(
+                Icons.info_outline,
+                'Type',
+                'Meditation & Relaxation',
+                isWeb,
+              ),
+              SizedBox(height: isWeb ? 32 : 24),
+              Text(
                 'Benefits',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: isWeb ? 22 : 18,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,
                 ),
               ),
-              const SizedBox(height: 12),
-              const Text(
+              SizedBox(height: isWeb ? 16 : 12),
+              Text(
                 '• Reduces stress and anxiety\n'
                     '• Improves focus and concentration\n'
                     '• Promotes better sleep\n'
                     '• Enhances overall well-being',
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: isWeb ? 18 : 16,
                   height: 1.6,
                   color: Colors.black87,
                 ),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: isWeb ? 32 : 24),
             ],
           ),
         );
@@ -430,22 +471,26 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
     );
   }
 
-  Widget _buildDetailRow(IconData icon, String label, String value) {
+  Widget _buildDetailRow(IconData icon, String label, String value, bool isWeb) {
     return Row(
       children: [
-        Icon(icon, color: const Color(0xFF40E0D0), size: 24),
-        const SizedBox(width: 12),
+        Icon(
+          icon,
+          color: const Color(0xFF40E0D0),
+          size: isWeb ? 28 : 24,
+        ),
+        SizedBox(width: isWeb ? 16 : 12),
         Text(
           '$label: ',
           style: TextStyle(
-            fontSize: 16,
+            fontSize: isWeb ? 18 : 16,
             color: Colors.grey[600],
           ),
         ),
         Text(
           value,
-          style: const TextStyle(
-            fontSize: 16,
+          style: TextStyle(
+            fontSize: isWeb ? 18 : 16,
             fontWeight: FontWeight.w600,
             color: Colors.black87,
           ),

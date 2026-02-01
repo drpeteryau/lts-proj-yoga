@@ -181,6 +181,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isWeb = screenWidth > 600;
+
     if (_isLoading) {
       return Container(
         color: Colors.white,
@@ -216,58 +219,64 @@ class _ProgressScreenState extends State<ProgressScreen> {
     }
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header
-              Text(
-                'Your Progress',
-                style: GoogleFonts.poppins(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: isWeb ? 1200 : double.infinity,
+              ),
+              child: SingleChildScrollView(
+                padding: EdgeInsets.all(isWeb ? 40 : 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Header
+                    Text(
+                      'Your Progress',
+                      style: GoogleFonts.poppins(
+                        fontSize: isWeb ? 36 : 28,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Track your journey to wellness',
+                      style: GoogleFonts.poppins(
+                        fontSize: isWeb ? 18 : 14,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+
+                    SizedBox(height: isWeb ? 48 : 32),
+
+                    // Stats Overview
+                    _buildStatsOverview(),
+
+                    SizedBox(height: isWeb ? 36 : 24),
+
+                    // Wellness Check-in Card
+                    _buildWellnessCheckInCard(),
+
+                    const SizedBox(height: 24),
+
+                    // Weekly Progress
+                    _buildWeeklyProgress(),
+
+                    const SizedBox(height: 24),
+
+                    // Practice Calendar
+                    _buildPracticeCalendar(),
+
+                    const SizedBox(height: 20),
+                  ],
                 ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                'Track your journey to wellness',
-                style: GoogleFonts.poppins(
-                  fontSize: 14,
-                  color: Colors.grey[600],
-                ),
-              ),
-
-              const SizedBox(height: 32),
-
-              // Stats Overview
-              _buildStatsOverview(),
-
-              const SizedBox(height: 24),
-
-              // Wellness Check-in Card
-              _buildWellnessCheckInCard(),
-
-              const SizedBox(height: 24),
-
-              // Weekly Progress
-              _buildWeeklyProgress(),
-
-              const SizedBox(height: 24),
-
-              // Practice Calendar
-              _buildPracticeCalendar(),
-
-              const SizedBox(height: 20),
-            ],
+            ),
           ),
-        ),
-      ),
-    );
-  }
+        ));
+    }
 
   Widget _buildStatsOverview() {
     return Container(
@@ -851,6 +860,9 @@ class _WellnessCheckInDialogState extends State<_WellnessCheckInDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isWeb = screenWidth > 600;
+
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Container(
@@ -1002,6 +1014,9 @@ class _ReflectionHistoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isWeb = screenWidth > 600;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -1163,6 +1178,9 @@ class WellnessGauge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isWeb = screenWidth > 600;
+
     return Column(
       children: [
         SizedBox(

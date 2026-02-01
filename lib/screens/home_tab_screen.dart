@@ -86,7 +86,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
 
       // Convert seconds to minutes
       _dailyMinutes = minutesByDate.map(
-        (date, seconds) => MapEntry(date, (seconds / 60).round()),
+            (date, seconds) => MapEntry(date, (seconds / 60).round()),
       );
 
       // Update week days with real data
@@ -179,208 +179,162 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isWeb = screenWidth > 600;
+
     return Container(
       color: const Color(0xFFF5F5F5),
       child: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 20),
-
-              // Profile header with greeting
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: isWeb ? 1200 : double.infinity,
+            ),
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: isWeb ? 40 : 20,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Profile picture
-                    Container(
-                      width: 56,
-                      height: 56,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: const Color(0xFF40E0D0).withOpacity(0.2),
-                        border: Border.all(
-                          color: const Color(0xFF40E0D0).withOpacity(0.3),
-                          width: 2,
-                        ),
-                        image: _profileImageUrl != null
-                            ? DecorationImage(
-                                image: NetworkImage(_profileImageUrl!),
-                                fit: BoxFit.cover,
-                              )
-                            : null,
-                      ),
-                      child: _profileImageUrl == null
-                          ? const Icon(
-                              Icons.person,
-                              color: Color(0xFF40E0D0),
-                              size: 28,
+                    SizedBox(height: isWeb ? 40 : 20),
+
+                    // Profile header with greeting
+                    Row(
+                      children: [
+                        // Profile picture
+                        Container(
+                          width: isWeb ? 72 : 56,
+                          height: isWeb ? 72 : 56,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: const Color(0xFF40E0D0).withOpacity(0.2),
+                            border: Border.all(
+                              color: const Color(0xFF40E0D0).withOpacity(0.3),
+                              width: 2,
+                            ),
+                            image: _profileImageUrl != null
+                                ? DecorationImage(
+                              image: NetworkImage(_profileImageUrl!),
+                              fit: BoxFit.cover,
                             )
-                          : null,
-                    ),
-
-                    const SizedBox(width: 12),
-
-                    // Greeting text with minimal font
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            _getGreeting(),
-                            style: GoogleFonts.poppins(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.grey[600],
-                            ),
+                                : null,
                           ),
-                          const SizedBox(height: 2),
-                          Text(
-                            _userName,
-                            style: GoogleFonts.poppins(
-                              fontSize: 19,
-                              fontWeight: FontWeight.w500,
-                              color: const Color(0xFF1A1A1A),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // Notification bell
-                    IconButton(
-                      icon: const Icon(Icons.notifications_outlined),
-                      iconSize: 26,
-                      color: Colors.black87,
-                      onPressed: () {
-                        GlobalAudioService.playClickSound();
-                      },
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 28),
-
-              // Welcome title with minimal font (Poppins Light)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Text(
-                  'Welcome to Your\nYoga Session',
-                  style: GoogleFonts.poppins(
-                    fontSize: 32,
-                    fontWeight: FontWeight.w300, // Light weight = minimal
-                    height: 1.25,
-                    letterSpacing: -0.3,
-                    color: const Color(0xFF1A1A1A),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 24),
-
-              // Featured class card
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: _buildFeaturedClassCard(context),
-              ),
-
-              const SizedBox(height: 24),
-
-              const SizedBox(height: 28),
-
-              // Week calendar header
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Text(
-                  'Keep up the good work!',
-                  style: GoogleFonts.poppins(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w400,
-                    color: const Color(0xFF1A1A1A),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              _buildWeekCalendar(),
-
-              const SizedBox(height: 32),
-
-              // Practice Your Poses Section
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Practice Your Poses',
-                      style: GoogleFonts.poppins(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w400,
-                        color: const Color(0xFF1A1A1A),
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        GlobalAudioService.playClickSound();
-                      },
-                      child: Text(
-                        'See All',
-                        style: GoogleFonts.poppins(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: const Color(0xFF40E0D0),
+                          child: _profileImageUrl == null
+                              ? Icon(
+                            Icons.person,
+                            color: const Color(0xFF40E0D0),
+                            size: isWeb ? 36 : 28,
+                          )
+                              : null,
                         ),
+
+                        const SizedBox(width: 16),
+
+                        // Greeting text with minimal font
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                _getGreeting(),
+                                style: GoogleFonts.poppins(
+                                  fontSize: isWeb ? 16 : 13,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                _userName,
+                                style: GoogleFonts.poppins(
+                                  fontSize: isWeb ? 28 : 19,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black87,
+                                  height: 1.2,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // Notification icon
+                        IconButton(
+                          icon: Icon(
+                            Icons.notifications_outlined,
+                            size: isWeb ? 32 : 24,
+                          ),
+                          color: Colors.grey[700],
+                          onPressed: () {},
+                        ),
+                      ],
+                    ),
+
+                    SizedBox(height: isWeb ? 50 : 30),
+
+                    // Session card
+                    _buildSessionCard(context, isWeb),
+
+                    SizedBox(height: isWeb ? 50 : 30),
+
+                    // "Keep up the good work" section
+                    Text(
+                      'Keep up the good work!',
+                      style: GoogleFonts.poppins(
+                        fontSize: isWeb ? 24 : 20,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
                       ),
                     ),
+
+                    SizedBox(height: isWeb ? 24 : 16),
+
+                    // Week days horizontal scroll
+                    _buildWeekDaysRow(isWeb),
+
+                    SizedBox(height: isWeb ? 50 : 30),
+
+                    // Poses grid
+                    _buildPosesGrid(context, isWeb),
+
+                    SizedBox(height: isWeb ? 40 : 20),
                   ],
                 ),
               ),
-
-              const SizedBox(height: 16),
-
-              // Poses grid
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: _buildPosesGrid(context),
-              ),
-
-              const SizedBox(height: 100),
-            ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildFeaturedClassCard(BuildContext context) {
+  Widget _buildSessionCard(BuildContext context, bool isWeb) {
     return GestureDetector(
       onTap: () {
-        final session = YogaData.beginnerSessions.first;
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => SessionDetailScreen(session: session),
+            builder: (context) => SessionDetailScreen(
+              session: YogaData.beginnerSessions.first,
+            ),
           ),
         );
       },
       child: Container(
-        height: 200,
+        height: isWeb ? 280 : 200,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(isWeb ? 30 : 24),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withOpacity(0.15),
               blurRadius: 20,
-              offset: const Offset(0, 8),
+              offset: const Offset(0, 10),
             ),
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(isWeb ? 30 : 24),
           child: Stack(
             fit: StackFit.expand,
             children: [
@@ -389,11 +343,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Color(0xFF9D7FEA), Color(0xFFB8A4F0)],
-                      ),
-                    ),
+                    color: const Color(0xFF40E0D0).withOpacity(0.3),
                   );
                 },
               ),
@@ -402,53 +352,71 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [Colors.transparent, Colors.black.withOpacity(0.6)],
+                    colors: [
+                      Colors.black.withOpacity(0.3),
+                      Colors.black.withOpacity(0.6),
+                    ],
                   ),
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(20),
+                padding: EdgeInsets.all(isWeb ? 32 : 24),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    const Spacer(),
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 7,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isWeb ? 16 : 12,
+                        vertical: isWeb ? 10 : 8,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Colors.white.withOpacity(0.9),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
                         'Day 1',
                         style: GoogleFonts.poppins(
-                          fontSize: 13,
+                          fontSize: isWeb ? 16 : 13,
                           fontWeight: FontWeight.w600,
                           color: Colors.black87,
                         ),
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    SizedBox(height: isWeb ? 16 : 12),
                     Text(
                       'Do 7 Exercises in\nOnly 6 Minutes',
                       style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
+                        fontSize: isWeb ? 28 : 20,
+                        fontWeight: FontWeight.w700,
                         color: Colors.white,
                         height: 1.3,
                       ),
                     ),
-                    const SizedBox(height: 12),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 10,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(25),
+                    SizedBox(height: isWeb ? 20 : 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        GlobalAudioService.playClickSound();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SessionDetailScreen(
+                              session: YogaData.beginnerSessions.first,
+                            ),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF40E0D0),
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: isWeb ? 32 : 24,
+                          vertical: isWeb ? 16 : 12,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -456,23 +424,14 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                           Text(
                             'Start',
                             style: GoogleFonts.poppins(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black87,
+                              fontSize: isWeb ? 18 : 15,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.all(4),
-                            decoration: const BoxDecoration(
-                              color: Color(0xFF9D7FEA),
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              Icons.arrow_forward,
-                              color: Colors.white,
-                              size: 16,
-                            ),
+                          SizedBox(width: isWeb ? 12 : 8),
+                          Icon(
+                            Icons.arrow_forward,
+                            size: isWeb ? 20 : 16,
                           ),
                         ],
                       ),
@@ -487,12 +446,11 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
     );
   }
 
-  Widget _buildWeekCalendar() {
+  Widget _buildWeekDaysRow(bool isWeb) {
     return SizedBox(
-      height: 90,
+      height: isWeb ? 100 : 80,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 20),
         itemCount: _weekDays.length,
         itemBuilder: (context, index) {
           final day = _weekDays[index];
@@ -501,28 +459,33 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
 
           return GestureDetector(
             onTap: () {
+              GlobalAudioService.playClickSound();
               setState(() {
                 _selectedDayIndex = index;
               });
             },
             child: Container(
-              width: 70,
-              margin: const EdgeInsets.only(right: 12),
+              width: isWeb ? 90 : 75,
+              margin: EdgeInsets.only(
+                right: isWeb ? 16 : 12,
+              ),
               decoration: BoxDecoration(
                 color: isToday ? Colors.black87 : Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: isToday ? Colors.black87 : Colors.grey[300]!,
-                  width: 1.5,
+                borderRadius: BorderRadius.circular(isWeb ? 20 : 16),
+                border: isToday
+                    ? null
+                    : Border.all(
+                  color: Colors.grey[300]!,
+                  width: 1,
                 ),
                 boxShadow: isToday
                     ? [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.15),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ]
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.15),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
                     : [],
               ),
               child: Column(
@@ -531,16 +494,16 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                   Text(
                     day['day'] as String,
                     style: GoogleFonts.poppins(
-                      fontSize: 13,
+                      fontSize: isWeb ? 15 : 13,
                       fontWeight: FontWeight.w400,
                       color: isToday ? Colors.white70 : Colors.grey[600],
                     ),
                   ),
-                  const SizedBox(height: 6),
+                  SizedBox(height: isWeb ? 8 : 6),
                   Text(
                     day['date'] as String,
                     style: GoogleFonts.poppins(
-                      fontSize: 24,
+                      fontSize: isWeb ? 28 : 24,
                       fontWeight: FontWeight.w600,
                       color: isToday ? Colors.white : Colors.black87,
                     ),
@@ -548,9 +511,9 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                   const SizedBox(height: 4),
                   if (minutesCompleted > 0)
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 6,
-                        vertical: 2,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isWeb ? 8 : 6,
+                        vertical: isWeb ? 4 : 2,
                       ),
                       decoration: BoxDecoration(
                         color: const Color(0xFF40E0D0),
@@ -559,7 +522,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                       child: Text(
                         '$minutesCompleted min',
                         style: GoogleFonts.poppins(
-                          fontSize: 10,
+                          fontSize: isWeb ? 11 : 10,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
                         ),
@@ -574,7 +537,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
     );
   }
 
-  Widget _buildPosesGrid(BuildContext context) {
+  Widget _buildPosesGrid(BuildContext context, bool isWeb) {
     // Get real featured poses from yoga data
     final featuredPoses = [
       {
@@ -612,14 +575,18 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
     // Show only first 4 poses
     final displayPoses = availablePoses.take(4).toList();
 
+    // Determine cross axis count based on screen width
+    final crossAxisCount = isWeb ? 4 : 2;
+    final childAspectRatio = isWeb ? 0.75 : 0.85;
+
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        childAspectRatio: 0.85,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossAxisCount,
+        crossAxisSpacing: isWeb ? 20 : 12,
+        mainAxisSpacing: isWeb ? 20 : 12,
+        childAspectRatio: childAspectRatio,
       ),
       itemCount: displayPoses.length,
       itemBuilder: (context, index) {
@@ -628,19 +595,21 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
         final session = item['session'] as YogaSession;
         final color = item['color'] as Color;
 
-        return _buildPoseCard(context, pose, session, color);
+        return _buildPoseCard(context, pose, session, color, isWeb);
       },
     );
   }
 
   Widget _buildPoseCard(
-    BuildContext context,
-    YogaPose pose,
-    YogaSession session,
-    Color badgeColor,
-  ) {
+      BuildContext context,
+      YogaPose pose,
+      YogaSession session,
+      Color badgeColor,
+      bool isWeb,
+      ) {
     return GestureDetector(
       onTap: () {
+        GlobalAudioService.playClickSound();
         // Navigate directly to pose detail screen
         Navigator.push(
           context,
@@ -656,7 +625,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
       },
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(isWeb ? 24 : 20),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.08),
@@ -666,7 +635,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(isWeb ? 24 : 20),
           child: Stack(
             fit: StackFit.expand,
             children: [
@@ -691,14 +660,14 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(isWeb ? 20 : 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 5,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isWeb ? 12 : 10,
+                        vertical: isWeb ? 6 : 5,
                       ),
                       decoration: BoxDecoration(
                         color: badgeColor,
@@ -707,7 +676,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                       child: Text(
                         session.level.toUpperCase(),
                         style: GoogleFonts.poppins(
-                          fontSize: 10,
+                          fontSize: isWeb ? 11 : 10,
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
                           letterSpacing: 1,
@@ -718,7 +687,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                     Text(
                       pose.name,
                       style: GoogleFonts.poppins(
-                        fontSize: 16,
+                        fontSize: isWeb ? 18 : 16,
                         fontWeight: FontWeight.w600,
                         color: Colors.white,
                         height: 1.2,
@@ -726,19 +695,19 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: isWeb ? 8 : 4),
                     Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.access_time,
                           color: Colors.white70,
-                          size: 14,
+                          size: isWeb ? 16 : 14,
                         ),
-                        const SizedBox(width: 4),
+                        SizedBox(width: isWeb ? 6 : 4),
                         Text(
                           '${pose.durationSeconds}s',
                           style: GoogleFonts.poppins(
-                            fontSize: 12,
+                            fontSize: isWeb ? 14 : 12,
                             color: Colors.white70,
                           ),
                         ),

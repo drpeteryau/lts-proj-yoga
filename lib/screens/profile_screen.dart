@@ -53,69 +53,71 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
-Future<void> _loadStats() async {
-  final userId = supabase.auth.currentUser?.id;
-  if (userId == null) return;
+  Future<void> _loadStats() async {
+    final userId = supabase.auth.currentUser?.id;
+    if (userId == null) return;
 
-  final activities = await supabase
-      .from('pose_activity')
-      .select('duration_seconds, completed_at')
-      .eq('user_id', userId)
-      .order('completed_at', ascending: false);
+    final activities = await supabase
+        .from('pose_activity')
+        .select('duration_seconds, completed_at')
+        .eq('user_id', userId)
+        .order('completed_at', ascending: false);
 
-  int totalSeconds = 0;
-  final Set<String> activeDays = {};
-  final List<DateTime> times = [];
+    int totalSeconds = 0;
+    final Set<String> activeDays = {};
+    final List<DateTime> times = [];
 
-  for (final row in activities) {
-    totalSeconds += (row['duration_seconds'] ?? 0) as int;
+    for (final row in activities) {
+      totalSeconds += (row['duration_seconds'] ?? 0) as int;
 
-    final date = DateTime.parse(row['completed_at']).toLocal();
-    final dayKey = '${date.year}-${date.month}-${date.day}';
-    activeDays.add(dayKey);
+      final date = DateTime.parse(row['completed_at']).toLocal();
+      final dayKey = '${date.year}-${date.month}-${date.day}';
+      activeDays.add(dayKey);
 
-    times.add(date);
-  }
-
-  // Sessions (30-min gap rule, same as ProgressScreen)
-  int sessions = 0;
-  times.sort();
-  DateTime? last;
-
-  for (final t in times) {
-    if (last == null || t.difference(last).inMinutes > 30) {
-      sessions++;
+      times.add(date);
     }
-    last = t;
-  }
 
-  // Daily streak
-  int streak = 0;
-  DateTime check = DateTime.now();
+    // Sessions (30-min gap rule, same as ProgressScreen)
+    int sessions = 0;
+    times.sort();
+    DateTime? last;
 
-  while (true) {
-    final key = '${check.year}-${check.month}-${check.day}';
-    if (activeDays.contains(key)) {
-      streak++;
-      check = check.subtract(const Duration(days: 1));
-    } else {
-      break;
+    for (final t in times) {
+      if (last == null || t.difference(last).inMinutes > 30) {
+        sessions++;
+      }
+      last = t;
     }
+
+    // Daily streak
+    int streak = 0;
+    DateTime check = DateTime.now();
+
+    while (true) {
+      final key = '${check.year}-${check.month}-${check.day}';
+      if (activeDays.contains(key)) {
+        streak++;
+        check = check.subtract(const Duration(days: 1));
+      } else {
+        break;
+      }
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      _totalSessions = sessions;
+      _totalMinutes = (totalSeconds / 60).ceil();
+      _dailyStreak = streak;
+      _weeklyStreak = 0; // optional – can compute later
+    });
   }
-
-  if (!mounted) return;
-
-  setState(() {
-    _totalSessions = sessions;
-    _totalMinutes = (totalSeconds / 60).ceil();
-    _dailyStreak = streak;
-    _weeklyStreak = 0; // optional – can compute later
-  });
-}
-
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isWeb = screenWidth > 600;
+
     if (_isLoading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
@@ -127,7 +129,10 @@ Future<void> _loadStats() async {
     return Scaffold(
       backgroundColor: background,
       appBar: AppBar(
-        title: const Text('Profile'),
+        title: Text(
+          'Profile',
+          style: TextStyle(fontSize: isWeb ? 24 : 20),
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
@@ -141,170 +146,244 @@ Future<void> _loadStats() async {
               _loadProfile();
               _loadStats();
             },
-            child: const Text('Edit'),
+            child: Text(
+              'Edit',
+              style: TextStyle(fontSize: isWeb ? 18 : 16),
+            ),
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            _card(
-              child: Column(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                        colors: [
-                          turquoise.withOpacity(0.6),
-                          turquoise.withOpacity(0.2),
-                        ],
+      body: Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: isWeb ? 1000 : double.infinity,
+          ),
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(isWeb ? 40 : 20),
+            child: Column(
+              children: [
+                _card(
+                  isWeb,
+                  child: Column(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: LinearGradient(
+                            colors: [
+                              turquoise.withOpacity(0.6),
+                              turquoise.withOpacity(0.2),
+                            ],
+                          ),
+                        ),
+                        padding: EdgeInsets.all(isWeb ? 4 : 3),
+                        child: CircleAvatar(
+                          radius: isWeb ? 60 : 38,
+                          backgroundImage: imageUrl != null
+                              ? NetworkImage(imageUrl)
+                              : null,
+                          child: imageUrl == null
+                              ? Icon(
+                            Icons.person,
+                            size: isWeb ? 48 : 36,
+                          )
+                              : null,
+                        ),
+                      ),
+                      SizedBox(height: isWeb ? 20 : 12),
+                      Text(
+                        name,
+                        style: TextStyle(
+                          fontSize: isWeb ? 28 : 20,
+                          fontWeight: FontWeight.bold,
+                          color: textDark,
+                        ),
+                      ),
+                      Text(
+                        email,
+                        style: TextStyle(
+                          color: textMuted,
+                          fontSize: isWeb ? 16 : 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                SizedBox(height: isWeb ? 32 : 20),
+
+                // Stats Row - responsive layout
+                isWeb
+                    ? Row(
+                  children: [
+                    _statCard(
+                      'Sessions',
+                      _totalSessions.toString(),
+                      isWeb,
+                    ),
+                    _statCard(
+                      'Minutes',
+                      _totalMinutes.toString(),
+                      isWeb,
+                    ),
+                    _statCard(
+                      'Daily 🔥',
+                      _dailyStreak.toString(),
+                      isWeb,
+                      highlight: true,
+                    ),
+                  ],
+                )
+                    : Row(
+                  children: [
+                    _statCard(
+                      'Sessions',
+                      _totalSessions.toString(),
+                      isWeb,
+                    ),
+                    _statCard(
+                      'Minutes',
+                      _totalMinutes.toString(),
+                      isWeb,
+                    ),
+                    _statCard(
+                      'Daily 🔥',
+                      _dailyStreak.toString(),
+                      isWeb,
+                      highlight: true,
+                    ),
+                  ],
+                ),
+
+                SizedBox(height: isWeb ? 24 : 16),
+
+                _section(
+                  isWeb,
+                  title: 'Streak Summary',
+                  children: [
+                    _infoRow(
+                      'Weekly Active Weeks',
+                      _weeklyStreak.toString(),
+                      isWeb,
+                    ),
+                  ],
+                ),
+
+                SizedBox(height: isWeb ? 24 : 16),
+
+                _section(
+                  isWeb,
+                  title: 'Preferences',
+                  children: [
+                    _infoRow(
+                      'Experience Level',
+                      _profile?['experience_level'] ?? '-',
+                      isWeb,
+                    ),
+                    _infoRow(
+                      'Session Length',
+                      _profile?['preferred_session_length'] ?? '-',
+                      isWeb,
+                    ),
+                    _infoRow(
+                      'Language',
+                      _profile?['preferred_language'] ?? '-',
+                      isWeb,
+                    ),
+                  ],
+                ),
+
+                SizedBox(height: isWeb ? 24 : 16),
+
+                _section(
+                  isWeb,
+                  title: 'Notifications',
+                  children: [
+                    _infoRow(
+                      'Push Notifications',
+                      _profile?['push_notifications_enabled'] == true
+                          ? 'Enabled'
+                          : 'Disabled',
+                      isWeb,
+                    ),
+                    _infoRow(
+                      'Daily Reminder',
+                      _profile?['daily_practice_reminder'] == true
+                          ? 'Enabled'
+                          : 'Disabled',
+                      isWeb,
+                    ),
+                    if (_profile?['daily_practice_reminder'] == true)
+                      _infoRow(
+                        'Reminder Time',
+                        _profile?['reminder_time']?.toString() ?? '-',
+                        isWeb,
+                      ),
+                    _infoRow(
+                      'Sound Effects',
+                      _profile?['sound_effects_enabled'] == true
+                          ? 'Enabled'
+                          : 'Disabled',
+                      isWeb,
+                    ),
+                  ],
+                ),
+
+                // 🔴 LOGOUT BUTTON – FULL WIDTH
+                SizedBox(height: isWeb ? 48 : 32),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      await GlobalAudioService.playClickSound();
+                      await supabase.auth.signOut(scope: SignOutScope.global);
+
+                      if (!mounted) return;
+
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (_) => const AuthGate()),
+                            (route) => false,
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      padding: EdgeInsets.symmetric(
+                        vertical: isWeb ? 18 : 14,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(isWeb ? 16 : 14),
                       ),
                     ),
-                    padding: const EdgeInsets.all(3),
-                    child: CircleAvatar(
-                      radius: 38,
-                      backgroundImage: imageUrl != null
-                          ? NetworkImage(imageUrl)
-                          : null,
-                      child: imageUrl == null
-                          ? const Icon(Icons.person, size: 36)
-                          : null,
+                    child: Text(
+                      'LOG OUT',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: isWeb ? 18 : 16,
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  Text(
-                    name,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: textDark,
-                    ),
-                  ),
-                  Text(email, style: const TextStyle(color: textMuted)),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            Row(
-              children: [
-                _statCard('Sessions', _totalSessions.toString()),
-                _statCard('Minutes', _totalMinutes.toString()),
-                _statCard('Daily 🔥', _dailyStreak.toString(), highlight: true),
+                ),
+                SizedBox(height: isWeb ? 60 : 40),
               ],
             ),
-
-            const SizedBox(height: 16),
-
-            _section(
-              title: 'Streak Summary',
-              children: [
-                _infoRow('Weekly Active Weeks', _weeklyStreak.toString()),
-              ],
-            ),
-
-            const SizedBox(height: 16),
-
-            _section(
-              title: 'Preferences',
-              children: [
-                _infoRow(
-                  'Experience Level',
-                  _profile?['experience_level'] ?? '-',
-                ),
-                _infoRow(
-                  'Session Length',
-                  _profile?['preferred_session_length'] ?? '-',
-                ),
-                _infoRow('Language', _profile?['preferred_language'] ?? '-'),
-              ],
-            ),
-
-            const SizedBox(height: 16),
-
-            _section(
-              title: 'Notifications',
-              children: [
-                _infoRow(
-                  'Push Notifications',
-                  _profile?['push_notifications_enabled'] == true
-                      ? 'Enabled'
-                      : 'Disabled',
-                ),
-                _infoRow(
-                  'Daily Reminder',
-                  _profile?['daily_practice_reminder'] == true
-                      ? 'Enabled'
-                      : 'Disabled',
-                ),
-                if (_profile?['daily_practice_reminder'] == true)
-                  _infoRow(
-                    'Reminder Time',
-                    _profile?['reminder_time']?.toString() ?? '-',
-                  ),
-                _infoRow(
-                  'Sound Effects',
-                  _profile?['sound_effects_enabled'] == true
-                      ? 'Enabled'
-                      : 'Disabled',
-                ),
-              ],
-            ),
-
-            // 🔴 LOGOUT BUTTON — FULL WIDTH
-            const SizedBox(height: 32),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () async {
-                  await GlobalAudioService.playClickSound();
-                  await supabase.auth.signOut(scope: SignOutScope.global);
-
-                  if (!mounted) return;
-
-                  Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (_) => const AuthGate()),
-                    (route) => false,
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                ),
-                child: const Text(
-                  'LOG OUT',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 40),
-          ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _card({required Widget child}) {
+  Widget _card(bool isWeb, {required Widget child}) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(isWeb ? 32 : 20),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(isWeb ? 24 : 20),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            blurRadius: isWeb ? 15 : 10,
+            offset: Offset(0, isWeb ? 6 : 4),
           ),
         ],
       ),
@@ -312,17 +391,21 @@ Future<void> _loadStats() async {
     );
   }
 
-  Widget _section({required String title, required List<Widget> children}) {
+  Widget _section(
+      bool isWeb, {
+        required String title,
+        required List<Widget> children,
+      }) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(isWeb ? 24 : 16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(isWeb ? 20 : 16),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 3),
+            blurRadius: isWeb ? 12 : 8,
+            offset: Offset(0, isWeb ? 4 : 3),
           ),
         ],
       ),
@@ -331,54 +414,76 @@ Future<void> _loadStats() async {
         children: [
           Text(
             title,
-            style: const TextStyle(
-              fontSize: 16,
+            style: TextStyle(
+              fontSize: isWeb ? 20 : 16,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF2E6F68),
+              color: const Color(0xFF2E6F68),
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: isWeb ? 16 : 12),
           ...children,
         ],
       ),
     );
   }
 
-  Widget _statCard(String label, String value, {bool highlight = false}) {
+  Widget _statCard(
+      String label,
+      String value,
+      bool isWeb, {
+        bool highlight = false,
+      }) {
     return Expanded(
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 6),
-        padding: const EdgeInsets.all(16),
+        margin: EdgeInsets.symmetric(horizontal: isWeb ? 8 : 6),
+        padding: EdgeInsets.all(isWeb ? 24 : 16),
         decoration: BoxDecoration(
           color: highlight ? const Color(0xFFFFF4EC) : const Color(0xFFF7FFFE),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0xFF40E0D0).withOpacity(0.25)),
+          borderRadius: BorderRadius.circular(isWeb ? 20 : 16),
+          border: Border.all(
+            color: const Color(0xFF40E0D0).withOpacity(0.25),
+          ),
         ),
         child: Column(
           children: [
             Text(
               value,
-              style: const TextStyle(
-                fontSize: 18,
+              style: TextStyle(
+                fontSize: isWeb ? 24 : 18,
                 fontWeight: FontWeight.bold,
                 color: textDark,
               ),
             ),
-            Text(label, style: const TextStyle(color: textMuted)),
+            Text(
+              label,
+              style: TextStyle(
+                color: textMuted,
+                fontSize: isWeb ? 15 : 13,
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _infoRow(String label, String value) {
+  Widget _infoRow(String label, String value, bool isWeb) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: EdgeInsets.only(bottom: isWeb ? 12 : 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label),
-          Text(value, style: const TextStyle(color: textMuted)),
+          Text(
+            label,
+            style: TextStyle(fontSize: isWeb ? 16 : 14),
+          ),
+          Text(
+            value,
+            style: TextStyle(
+              color: textMuted,
+              fontSize: isWeb ? 16 : 14,
+            ),
+          ),
         ],
       ),
     );
