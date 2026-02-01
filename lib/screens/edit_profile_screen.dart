@@ -1,8 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import '../services/notification_service.dart';
+import '../services/global_audio_service.dart';
 import 'package:volume_controller/volume_controller.dart';
 import 'package:audioplayers/audioplayers.dart';
 import '../services/global_audio_service.dart';
@@ -41,8 +43,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   bool _isLoading = true;
   bool _isSaving = false;
 
-  // Audio player for feedback
-  final AudioPlayer _audioPlayer = AudioPlayer();
+  // volume_controller has no web implementation — skip all its calls on web
+  static const bool _isWebPlatform = kIsWeb;
 
   @override
   void initState() {
@@ -53,22 +55,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   // ===================== INIT VOLUME =====================
   Future<void> _initVolumeController() async {
-    // Get current system volume
+    if (_isWebPlatform) return; // no native volume plugin on web
     final currentVolume = await VolumeController.instance.getVolume();
     setState(() {
       _volumeLevel = currentVolume;
       _previousVolume = currentVolume;
     });
-  }
-
-  // ===================== PLAY FEEDBACK SOUND =====================
-  Future<void> _playVolumeTestSound() async {
-    if (!_soundEffectsEnabled) return;
-
-    // Play a short beep sound at the current volume level
-    // You can replace this with your own sound file
-    await _audioPlayer.setVolume(_volumeLevel);
-    await _audioPlayer.play(AssetSource('sounds/chime.mp3')); // Make sure you have this asset
   }
 
   // ===================== LOAD PROFILE =====================
@@ -102,8 +94,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         _previousVolume = savedVolume;
       });
 
-      // Set system volume to saved preference
-      await VolumeController.instance.setVolume(savedVolume);
+      // Set system volume to saved preference (native only)
+      if (!_isWebPlatform) {
+        await VolumeController.instance.setVolume(savedVolume);
+      }
+      // Apply to app audio player on all platforms
+      await GlobalAudioService().setVolume(savedVolume);
     }
 
     setState(() => _isLoading = false);
@@ -122,13 +118,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
     if (pickedFile == null) return;
 
-    final file = File(pickedFile.path);
     final filePath = '${user.id}/profile.jpg';
 
     try {
-      await supabase.storage
-          .from('avatars')
-          .upload(filePath, file, fileOptions: const FileOptions(upsert: true));
+      if (_isWebPlatform) {
+        // Web: dart:io File doesn't exist — read as bytes directly
+        final bytes = await pickedFile.readAsBytes();
+        await supabase.storage
+            .from('avatars')
+            .uploadBinary(filePath, bytes, fileOptions: const FileOptions(upsert: true));
+      } else {
+        // Native: use File as before
+        final file = File(pickedFile.path);
+        await supabase.storage
+            .from('avatars')
+            .upload(filePath, file, fileOptions: const FileOptions(upsert: true));
+      }
 
       // ✅ Get public URL + cache buster
       final rawUrl = supabase.storage.from('avatars').getPublicUrl(filePath);
@@ -240,7 +245,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void dispose() {
     _nameController.dispose();
     _ageController.dispose();
-    _audioPlayer.dispose();
     super.dispose();
   }
 
@@ -476,9 +480,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
-                            'System Volume',
-                            style: TextStyle(
+                          Text(
+                            _isWebPlatform ? 'App Volume' : 'System Volume',
+                            style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
                               color: Color(0xFF2E6F68),
@@ -513,8 +517,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   _volumeLevel = _previousVolume;
                                 }
                               });
-                              await VolumeController.instance.setVolume(_volumeLevel);
-                              _playVolumeTestSound();
+                              if (!_isWebPlatform) {
+                                await VolumeController.instance.setVolume(_volumeLevel);
+                              }
+                              await GlobalAudioService().setVolume(_volumeLevel);
                             },
                           ),
 
@@ -529,11 +535,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               activeColor: turquoise,
                               onChanged: (v) async {
                                 setState(() => _volumeLevel = v);
-                                await VolumeController.instance.setVolume(v);
-                              },
-                              onChangeEnd: (v) {
-                                // Play feedback when user releases slider
-                                _playVolumeTestSound();
+                                if (!_isWebPlatform) {
+                                  await VolumeController.instance.setVolume(v);
+                                }
+                                await GlobalAudioService().setVolume(v);
                               },
                             ),
                           ),
@@ -546,16 +551,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               setState(() {
                                 _volumeLevel = 1.0;
                               });
-                              await VolumeController.instance.setVolume(1.0);
-                              _playVolumeTestSound();
+                              if (!_isWebPlatform) {
+                                await VolumeController.instance.setVolume(1.0);
+                              }
+                              await GlobalAudioService().setVolume(1.0);
                             },
                           ),
                         ],
                       ),
                       const SizedBox(height: 4),
-                      const Text(
-                        'Adjusts your device system volume',
-                        style: TextStyle(
+                      Text(
+                        _isWebPlatform
+                            ? 'Adjusts volume for sounds in this app'
+                            : 'Adjusts your device system volume',
+                        style: const TextStyle(
                           fontSize: 12,
                           color: Color(0xFF9CA3AF),
                           fontStyle: FontStyle.italic,

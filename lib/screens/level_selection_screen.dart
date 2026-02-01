@@ -121,7 +121,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
             child: Center(
               child: ConstrainedBox(
                 constraints: BoxConstraints(
-                  maxWidth: isWeb ? 1000 : double.infinity,
+                  maxWidth: isWeb ? 1200 : double.infinity,
                 ),
                 child: SingleChildScrollView(
                   child: Padding(
@@ -129,7 +129,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(height: isWeb ? 20 : 12),
+                        SizedBox(height: isWeb ?5 : 12),
 
                         // Header
                         Text(

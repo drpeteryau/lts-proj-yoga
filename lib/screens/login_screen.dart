@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -70,7 +71,7 @@ class _LoginScreenState extends State<LoginScreen>
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (_) => const MainNavigationScreen()),
-          (route) => false,
+              (route) => false,
         );
       }
     } catch (e) {
@@ -86,9 +87,24 @@ class _LoginScreenState extends State<LoginScreen>
   Future<void> _signInWithGoogle() async {
     setState(() => _isLoading = true);
     try {
+      if (kIsWeb) {
+        // Web: use Supabase's redirect-based OAuth.
+        // google_sign_in's signIn() can't reliably return an idToken on web,
+        // and it sends a redirect_uri that doesn't match what Google expects.
+        // Supabase handles the full OAuth dance server-side and redirects back.
+        await Supabase.instance.client.auth.signInWithOAuth(
+          OAuthProvider.google,
+          redirectTo: '${Uri.base.origin}',
+        );
+        // Browser redirects away - AuthGate's onAuthStateChange picks up the
+        // new session when the page reloads back here.
+        return;
+      }
+
+      // Native: existing google_sign_in flow (works fine on Android/iOS)
       final GoogleSignIn googleSignIn = GoogleSignIn(
         clientId:
-            '337226396229-ns81hak1k1v6vbseb7e4r1n3tokcm9p7.apps.googleusercontent.com', // 👈 use the new Web Client ID
+        '337226396229-ns81hak1k1v6vbseb7e4r1n3tokcm9p7.apps.googleusercontent.com',
       );
 
       final googleUser = await googleSignIn.signIn();
@@ -118,51 +134,45 @@ class _LoginScreenState extends State<LoginScreen>
 
       final user = response.session!.user;
 
-    // 🧠 Fetch profile data for this user
-final data = await supabase
-    .from('profiles')
-    .select()
-    .eq('id', user.id)
-    .maybeSingle();
+      final data = await supabase
+          .from('profiles')
+          .select()
+          .eq('id', user.id)
+          .maybeSingle();
 
-print('🔍 Supabase profile lookup: $data');
+      final bool isIncomplete = data == null ||
+          data['full_name'] == null ||
+          (data['full_name'] as String).trim().isEmpty ||
+          data['age'] == null;
 
-// ✅ Check if the profile is missing required info
-final bool isIncomplete = data == null ||
-    data['full_name'] == null ||
-    (data['full_name'] as String).trim().isEmpty ||
-    data['age'] == null;
+      if (!mounted) return;
 
-if (!mounted) return; // Prevent setState after dispose errors
-
-if (isIncomplete) {
-  print('🪷 Incomplete profile detected — redirecting to CompleteProfileScreen');
-  Navigator.pushReplacement(
-    context,
-    MaterialPageRoute(
-      builder: (_) => CompleteProfileScreen(
-        fullName: googleUser.displayName ?? '',
-        email: googleUser.email,
-      ),
-    ),
-  );
-} else {
-  print('🌿 Profile complete — redirecting to MainNavigationScreen');
-  Navigator.pushReplacement(
-    context,
-    MaterialPageRoute(builder: (_) => const MainNavigationScreen()),
-  );
-}
-if (mounted) {
-  setState(() => _isLoading = false);
-}
+      if (isIncomplete) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => CompleteProfileScreen(
+              fullName: googleUser.displayName ?? '',
+              email: googleUser.email,
+            ),
+          ),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const MainNavigationScreen()),
+        );
+      }
+      if (mounted) setState(() => _isLoading = false);
 
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Google Sign-In failed: $e')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Google Sign-In failed: $e')),
+        );
+      }
     } finally {
-      setState(() => _isLoading = false);
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -257,15 +267,15 @@ if (mounted) {
                             },
                             child: _isLoading
                                 ? const CircularProgressIndicator(
-                                    color: Colors.white)
+                                color: Colors.white)
                                 : const Text(
-                                    'Log In',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
-                                  ),
+                              'Log In',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
                         ),
 
@@ -276,9 +286,23 @@ if (mounted) {
                           width: double.infinity,
                           height: 50,
                           child: OutlinedButton.icon(
-                            icon: Image.network(
-                              'https://developers.google.com/identity/images/g-logo.png',
+                            icon: Container(
+                              width: 24,
                               height: 24,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.grey.shade100,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'G',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.blue.shade600,
+                                  ),
+                                ),
+                              ),
                             ),
                             label: const Text(
                               'Sign in with Google',
@@ -335,7 +359,7 @@ if (mounted) {
   Widget _buildField(
       IconData icon, String label, TextEditingController controller,
       {bool obscureText = false,
-      TextInputType keyboardType = TextInputType.text}) {
+        TextInputType keyboardType = TextInputType.text}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: TextField(

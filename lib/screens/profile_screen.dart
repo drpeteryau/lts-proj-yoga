@@ -162,174 +162,242 @@ class _ProfileScreenState extends State<ProfileScreen> {
             padding: EdgeInsets.all(isWeb ? 40 : 20),
             child: Column(
               children: [
-                _card(
-                  isWeb,
-                  child: Column(
+                // ── WEB: 2-column grid layout ──
+                // ── MOBILE: single-column stack (unchanged) ──
+                if (isWeb) ...[
+                  // Row 1: Avatar card (fixed width) | Stats + Streak (right column)
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: LinearGradient(
-                            colors: [
-                              turquoise.withOpacity(0.6),
-                              turquoise.withOpacity(0.2),
+                      // Avatar card – fixed width
+                      SizedBox(
+                        width: 300,
+                        child: _card(
+                          isWeb,
+                          child: Column(
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      turquoise.withOpacity(0.6),
+                                      turquoise.withOpacity(0.2),
+                                    ],
+                                  ),
+                                ),
+                                padding: const EdgeInsets.all(4),
+                                child: CircleAvatar(
+                                  radius: 60,
+                                  backgroundImage: imageUrl != null
+                                      ? NetworkImage(imageUrl)
+                                      : null,
+                                  child: imageUrl == null
+                                      ? const Icon(Icons.person, size: 48)
+                                      : null,
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              Text(
+                                name,
+                                style: const TextStyle(
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.bold,
+                                  color: textDark,
+                                ),
+                              ),
+                              Text(
+                                email,
+                                style: const TextStyle(
+                                  color: textMuted,
+                                  fontSize: 16,
+                                ),
+                              ),
                             ],
                           ),
                         ),
-                        padding: EdgeInsets.all(isWeb ? 4 : 3),
-                        child: CircleAvatar(
-                          radius: isWeb ? 60 : 38,
-                          backgroundImage: imageUrl != null
-                              ? NetworkImage(imageUrl)
-                              : null,
-                          child: imageUrl == null
-                              ? Icon(
-                            Icons.person,
-                            size: isWeb ? 48 : 36,
-                          )
-                              : null,
-                        ),
                       ),
-                      SizedBox(height: isWeb ? 20 : 12),
-                      Text(
-                        name,
-                        style: TextStyle(
-                          fontSize: isWeb ? 28 : 20,
-                          fontWeight: FontWeight.bold,
-                          color: textDark,
-                        ),
-                      ),
-                      Text(
-                        email,
-                        style: TextStyle(
-                          color: textMuted,
-                          fontSize: isWeb ? 16 : 14,
+
+                      const SizedBox(width: 24),
+
+                      // Right column: Stats row on top, Streak Summary below
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Row(
+                              children: [
+                                _statCard('Sessions', _totalSessions.toString(), isWeb),
+                                _statCard('Minutes', _totalMinutes.toString(), isWeb),
+                                _statCard('Daily 🔥', _dailyStreak.toString(), isWeb, highlight: true),
+                              ],
+                            ),
+
+                            const SizedBox(height: 24),
+
+                            // Streak summary fills the remaining right-column width
+                            _section(
+                              isWeb,
+                              title: 'Streak Summary',
+                              children: [
+                                _infoRow('Weekly Active Weeks', _weeklyStreak.toString(), isWeb),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                ),
 
-                SizedBox(height: isWeb ? 32 : 20),
+                  const SizedBox(height: 24),
 
-                // Stats Row - responsive layout
-                isWeb
-                    ? Row(
-                  children: [
-                    _statCard(
-                      'Sessions',
-                      _totalSessions.toString(),
-                      isWeb,
-                    ),
-                    _statCard(
-                      'Minutes',
-                      _totalMinutes.toString(),
-                      isWeb,
-                    ),
-                    _statCard(
-                      'Daily 🔥',
-                      _dailyStreak.toString(),
-                      isWeb,
-                      highlight: true,
-                    ),
-                  ],
-                )
-                    : Row(
-                  children: [
-                    _statCard(
-                      'Sessions',
-                      _totalSessions.toString(),
-                      isWeb,
-                    ),
-                    _statCard(
-                      'Minutes',
-                      _totalMinutes.toString(),
-                      isWeb,
-                    ),
-                    _statCard(
-                      'Daily 🔥',
-                      _dailyStreak.toString(),
-                      isWeb,
-                      highlight: true,
-                    ),
-                  ],
-                ),
+                  // Row 2: Preferences | Notifications
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: _section(
+                          isWeb,
+                          title: 'Preferences',
+                          children: [
+                            _infoRow('Experience Level', _profile?['experience_level'] ?? '-', isWeb),
+                            _infoRow('Session Length', _profile?['preferred_session_length'] ?? '-', isWeb),
+                            _infoRow('Language', _profile?['preferred_language'] ?? '-', isWeb),
+                          ],
+                        ),
+                      ),
 
-                SizedBox(height: isWeb ? 24 : 16),
+                      const SizedBox(width: 24),
 
-                _section(
-                  isWeb,
-                  title: 'Streak Summary',
-                  children: [
-                    _infoRow(
-                      'Weekly Active Weeks',
-                      _weeklyStreak.toString(),
-                      isWeb,
+                      Expanded(
+                        child: _section(
+                          isWeb,
+                          title: 'Notifications',
+                          children: [
+                            _infoRow(
+                              'Push Notifications',
+                              _profile?['push_notifications_enabled'] == true ? 'Enabled' : 'Disabled',
+                              isWeb,
+                            ),
+                            _infoRow(
+                              'Daily Reminder',
+                              _profile?['daily_practice_reminder'] == true ? 'Enabled' : 'Disabled',
+                              isWeb,
+                            ),
+                            if (_profile?['daily_practice_reminder'] == true)
+                              _infoRow('Reminder Time', _profile?['reminder_time']?.toString() ?? '-', isWeb),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ] else ...[
+                  // ── MOBILE: single column, unchanged order ──
+                  _card(
+                    isWeb,
+                    child: Column(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                              colors: [
+                                turquoise.withOpacity(0.6),
+                                turquoise.withOpacity(0.2),
+                              ],
+                            ),
+                          ),
+                          padding: const EdgeInsets.all(3),
+                          child: CircleAvatar(
+                            radius: 38,
+                            backgroundImage: imageUrl != null
+                                ? NetworkImage(imageUrl)
+                                : null,
+                            child: imageUrl == null
+                                ? const Icon(Icons.person, size: 36)
+                                : null,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          name,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: textDark,
+                          ),
+                        ),
+                        Text(
+                          email,
+                          style: const TextStyle(
+                            color: textMuted,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
 
-                SizedBox(height: isWeb ? 24 : 16),
+                  const SizedBox(height: 20),
 
-                _section(
-                  isWeb,
-                  title: 'Preferences',
-                  children: [
-                    _infoRow(
-                      'Experience Level',
-                      _profile?['experience_level'] ?? '-',
-                      isWeb,
-                    ),
-                    _infoRow(
-                      'Session Length',
-                      _profile?['preferred_session_length'] ?? '-',
-                      isWeb,
-                    ),
-                    _infoRow(
-                      'Language',
-                      _profile?['preferred_language'] ?? '-',
-                      isWeb,
-                    ),
-                  ],
-                ),
+                  Row(
+                    children: [
+                      _statCard('Sessions', _totalSessions.toString(), isWeb),
+                      _statCard('Minutes', _totalMinutes.toString(), isWeb),
+                      _statCard('Daily 🔥', _dailyStreak.toString(), isWeb, highlight: true),
+                    ],
+                  ),
 
-                SizedBox(height: isWeb ? 24 : 16),
+                  const SizedBox(height: 16),
 
-                _section(
-                  isWeb,
-                  title: 'Notifications',
-                  children: [
-                    _infoRow(
-                      'Push Notifications',
-                      _profile?['push_notifications_enabled'] == true
-                          ? 'Enabled'
-                          : 'Disabled',
-                      isWeb,
-                    ),
-                    _infoRow(
-                      'Daily Reminder',
-                      _profile?['daily_practice_reminder'] == true
-                          ? 'Enabled'
-                          : 'Disabled',
-                      isWeb,
-                    ),
-                    if (_profile?['daily_practice_reminder'] == true)
+                  _section(
+                    isWeb,
+                    title: 'Streak Summary',
+                    children: [
+                      _infoRow('Weekly Active Weeks', _weeklyStreak.toString(), isWeb),
+                    ],
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  _section(
+                    isWeb,
+                    title: 'Preferences',
+                    children: [
+                      _infoRow('Experience Level', _profile?['experience_level'] ?? '-', isWeb),
+                      _infoRow('Session Length', _profile?['preferred_session_length'] ?? '-', isWeb),
+                      _infoRow('Language', _profile?['preferred_language'] ?? '-', isWeb),
+                    ],
+                  ),
+
+                  const SizedBox(height: 16),
+
+                   _section(
+                    isWeb,
+                    title: 'Notifications',
+                    children: [
                       _infoRow(
-                        'Reminder Time',
-                        _profile?['reminder_time']?.toString() ?? '-',
+                        'Push Notifications',
+                        _profile?['push_notifications_enabled'] == true ? 'Enabled' : 'Disabled',
                         isWeb,
                       ),
-                    _infoRow(
-                      'Sound Effects',
-                      _profile?['sound_effects_enabled'] == true
-                          ? 'Enabled'
-                          : 'Disabled',
-                      isWeb,
-                    ),
-                  ],
-                ),
+                      _infoRow(
+                        'Daily Reminder',
+                        _profile?['daily_practice_reminder'] == true ? 'Enabled' : 'Disabled',
+                        isWeb,
+                      ),
+                      if (_profile?['daily_practice_reminder'] == true)
+                        _infoRow('Reminder Time', _profile?['reminder_time']?.toString() ?? '-', isWeb),
+                      _infoRow(
+                        'Sound Effects',
+                        _profile?['sound_effects_enabled'] == true ? 'Enabled' : 'Disabled',
+                        isWeb,
+                      ),
+                    ],
+                  ),
+                ],
 
-                // 🔴 LOGOUT BUTTON – FULL WIDTH
+                // Logout – full width on both platforms
                 SizedBox(height: isWeb ? 48 : 32),
                 SizedBox(
                   width: double.infinity,
@@ -337,9 +405,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     onPressed: () async {
                       await GlobalAudioService.playClickSound();
                       await supabase.auth.signOut(scope: SignOutScope.global);
-
                       if (!mounted) return;
-
                       Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(builder: (_) => const AuthGate()),
                             (route) => false,
@@ -347,9 +413,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
-                      padding: EdgeInsets.symmetric(
-                        vertical: isWeb ? 18 : 14,
-                      ),
+                      padding: EdgeInsets.symmetric(vertical: isWeb ? 18 : 14),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(isWeb ? 16 : 14),
                       ),
@@ -366,6 +430,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 SizedBox(height: isWeb ? 60 : 40),
               ],
+            
             ),
           ),
         ),

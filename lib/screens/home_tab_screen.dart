@@ -183,7 +183,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
     final isWeb = screenWidth > 600;
 
     return Container(
-      color: const Color(0xFFF5F5F5),
+      color: const Color(0xFFFFFFFF),
       child: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -232,7 +232,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
 
                         const SizedBox(width: 16),
 
-                        // Greeting text with minimal font
+                        // Greeting text
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -290,7 +290,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
 
                     SizedBox(height: isWeb ? 24 : 16),
 
-                    // Week days horizontal scroll
+                    // Week days - stretches on web, scrolls on mobile
                     _buildWeekDaysRow(isWeb),
 
                     SizedBox(height: isWeb ? 50 : 30),
@@ -363,7 +363,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                 padding: EdgeInsets.all(isWeb ? 32 : 24),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Container(
                       padding: EdgeInsets.symmetric(
@@ -393,7 +393,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                         height: 1.3,
                       ),
                     ),
-                    SizedBox(height: isWeb ? 20 : 16),
+                    const Spacer(),
                     ElevatedButton(
                       onPressed: () {
                         GlobalAudioService.playClickSound();
@@ -447,8 +447,86 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
   }
 
   Widget _buildWeekDaysRow(bool isWeb) {
+    // On web: Row where each day card stretches equally across full width
+    // On mobile: horizontal scrolling ListView with fixed-width cards
+    if (isWeb) {
+      return Row(
+        children: List.generate(_weekDays.length, (index) {
+          final day = _weekDays[index];
+          final isToday = day['isToday'] as bool;
+          final minutesCompleted = day['minutesCompleted'] as int;
+
+          return Expanded(
+            child: Container(
+              margin: EdgeInsets.only(right: index < _weekDays.length - 1 ? 12 : 0),
+              height: 120,
+              decoration: BoxDecoration(
+                color: isToday ? Colors.black87 : Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                border: isToday
+                    ? null
+                    : Border.all(color: Colors.grey[300]!, width: 1),
+                boxShadow: isToday
+                    ? [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.15),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
+                    : [],
+              ),
+              child: GestureDetector(
+                onTap: () => setState(() => _selectedDayIndex = index),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      day['day'] as String,
+                      style: GoogleFonts.poppins(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w400,
+                        color: isToday ? Colors.white70 : Colors.grey[600],
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      day['date'] as String,
+                      style: GoogleFonts.poppins(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w600,
+                        color: isToday ? Colors.white : Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    if (minutesCompleted > 0)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF40E0D0),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          '$minutesCompleted min',
+                          style: GoogleFonts.poppins(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }),
+      );
+    }
+
+    // Mobile: horizontal scrolling ListView
     return SizedBox(
-      height: isWeb ? 100 : 80,
+      height: 80,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: _weekDays.length,
@@ -465,19 +543,14 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
               });
             },
             child: Container(
-              width: isWeb ? 90 : 75,
-              margin: EdgeInsets.only(
-                right: isWeb ? 16 : 12,
-              ),
+              width: 75,
+              margin: const EdgeInsets.only(right: 12),
               decoration: BoxDecoration(
                 color: isToday ? Colors.black87 : Colors.white,
-                borderRadius: BorderRadius.circular(isWeb ? 20 : 16),
+                borderRadius: BorderRadius.circular(16),
                 border: isToday
                     ? null
-                    : Border.all(
-                  color: Colors.grey[300]!,
-                  width: 1,
-                ),
+                    : Border.all(color: Colors.grey[300]!, width: 1),
                 boxShadow: isToday
                     ? [
                   BoxShadow(
@@ -494,16 +567,16 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                   Text(
                     day['day'] as String,
                     style: GoogleFonts.poppins(
-                      fontSize: isWeb ? 15 : 13,
+                      fontSize: 13,
                       fontWeight: FontWeight.w400,
                       color: isToday ? Colors.white70 : Colors.grey[600],
                     ),
                   ),
-                  SizedBox(height: isWeb ? 8 : 6),
+                  const SizedBox(height: 6),
                   Text(
                     day['date'] as String,
                     style: GoogleFonts.poppins(
-                      fontSize: isWeb ? 28 : 24,
+                      fontSize: 24,
                       fontWeight: FontWeight.w600,
                       color: isToday ? Colors.white : Colors.black87,
                     ),
@@ -511,10 +584,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                   const SizedBox(height: 4),
                   if (minutesCompleted > 0)
                     Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: isWeb ? 8 : 6,
-                        vertical: isWeb ? 4 : 2,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
                         color: const Color(0xFF40E0D0),
                         borderRadius: BorderRadius.circular(8),
@@ -522,7 +592,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                       child: Text(
                         '$minutesCompleted min',
                         style: GoogleFonts.poppins(
-                          fontSize: isWeb ? 11 : 10,
+                          fontSize: 10,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
                         ),
@@ -546,8 +616,8 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
         'color': const Color(0xFF6B9BD1),
       },
       {
-        'pose': YogaData.intermediateMain[1], // Plank
-        'session': YogaData.intermediateSessions.first,
+        'pose': YogaData.beginnerMainStanding[1], // Plank
+        'session': YogaData.beginnerSessions.first,
         'color': const Color(0xFFE8A0BF),
       },
       {
@@ -556,8 +626,8 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
         'color': const Color(0xFF9DD9D2),
       },
       {
-        'pose': YogaData.intermediateMain[3], // Baby Cobra
-        'session': YogaData.intermediateSessions.first,
+        'pose': YogaData.beginnerMainStanding[3], // Baby Cobra
+        'session': YogaData.beginnerSessions.first,
         'color': const Color(0xFFFFB997),
       },
     ];
@@ -575,9 +645,8 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
     // Show only first 4 poses
     final displayPoses = availablePoses.take(4).toList();
 
-    // Determine cross axis count based on screen width
+    // Web: 4 columns in a single row. Mobile: 2x2 grid.
     final crossAxisCount = isWeb ? 4 : 2;
-    final childAspectRatio = isWeb ? 0.75 : 0.85;
 
     return GridView.builder(
       shrinkWrap: true,
@@ -586,7 +655,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
         crossAxisCount: crossAxisCount,
         crossAxisSpacing: isWeb ? 20 : 12,
         mainAxisSpacing: isWeb ? 20 : 12,
-        childAspectRatio: childAspectRatio,
+        childAspectRatio: isWeb ? 0.78 : 0.85,
       ),
       itemCount: displayPoses.length,
       itemBuilder: (context, index) {
