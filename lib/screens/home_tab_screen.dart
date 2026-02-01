@@ -6,6 +6,7 @@ import 'session_detail_screen.dart';
 import '../models/yoga_pose.dart';
 import '../models/yoga_session.dart';
 import 'pose_detail_screen.dart';
+import '../services/global_audio_service.dart';
 
 class HomeTabScreen extends StatefulWidget {
   const HomeTabScreen({super.key});
@@ -395,6 +396,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                     const Spacer(),
                     ElevatedButton(
                       onPressed: () {
+                        GlobalAudioService.playClickSound();
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -534,7 +536,12 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
           final minutesCompleted = day['minutesCompleted'] as int;
 
           return GestureDetector(
-            onTap: () => setState(() => _selectedDayIndex = index),
+            onTap: () {
+              GlobalAudioService.playClickSound();
+              setState(() {
+                _selectedDayIndex = index;
+              });
+            },
             child: Container(
               width: 75,
               margin: const EdgeInsets.only(right: 12),
@@ -671,6 +678,8 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
       ) {
     return GestureDetector(
       onTap: () {
+        GlobalAudioService.playClickSound();
+        // Navigate directly to pose detail screen
         Navigator.push(
           context,
           MaterialPageRoute(

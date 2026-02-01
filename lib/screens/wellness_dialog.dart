@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/global_audio_service.dart';
 
 void showSeniorFriendlyWellnessDialog({
   required BuildContext context,
@@ -247,13 +248,15 @@ void showSeniorFriendlyWellnessDialog({
             ),
             actions: [
               TextButton(
-                onPressed: () {
+                onPressed: () async {
+                  await GlobalAudioService.playClickSound();
                   Navigator.pop(dialogContext);
                 },
                 child: const Text('Skip for Now', style: TextStyle(color: Colors.grey, fontSize: 15)),
               ),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
+                  await GlobalAudioService.playClickSound();
                   // Validate all required fields
                   if (localBodyComfort == null ||
                       localFlexibility == null ||

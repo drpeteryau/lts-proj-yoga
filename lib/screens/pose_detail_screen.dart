@@ -5,6 +5,7 @@ import '../models/yoga_pose.dart';
 import 'dart:async';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/pose_progress_service.dart';
+import '../services/global_audio_service.dart';
 
 class PoseDetailScreen extends StatefulWidget {
   final YogaPose pose;
@@ -366,7 +367,10 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
             ),
             child: IconButton(
               icon: const Icon(Icons.arrow_back, color: Colors.black87),
-              onPressed: () => Navigator.pop(context),
+              onPressed: () async {
+                await GlobalAudioService.playClickSound();
+                Navigator.pop(context);
+              },
             ),
           ),
 
@@ -392,7 +396,10 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
             ),
             child: IconButton(
               icon: const Icon(Icons.close, color: Colors.black87),
-              onPressed: () => Navigator.pop(context),
+              onPressed: () async {
+                await GlobalAudioService.playClickSound();
+                Navigator.pop(context);
+              },
             ),
           ),
         ],
@@ -655,7 +662,10 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
             children: [
               // Play/Pause button
               GestureDetector(
-                onTap: _startTimer,
+                onTap: () async {
+                  await GlobalAudioService.playClickSound();
+                  _startTimer();
+                },
                 child: Container(
                   width: 64,
                   height: 64,
@@ -682,7 +692,10 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
 
               // Stop button
               GestureDetector(
-                onTap: _stopTimer,
+                onTap: () async {
+                  await GlobalAudioService.playClickSound();
+                  _stopTimer();
+                },
                 child: Container(
                   width: 64,
                   height: 64,
@@ -713,6 +726,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
               margin: const EdgeInsets.only(bottom: 12),
               child: OutlinedButton.icon(
                 onPressed: () async {
+                  await GlobalAudioService.playClickSound();
                   // Save pose progress with time tracking
                   await _savePoseProgress();
 
@@ -771,6 +785,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
             height: 56,
             child: ElevatedButton(
               onPressed: () async {
+                await GlobalAudioService.playClickSound();
                 // Save pose progress with time tracking
                 await _savePoseProgress();
 
@@ -848,7 +863,8 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
+                await GlobalAudioService.playClickSound();
                 Navigator.of(context).pop(); // Close dialog
                 Navigator.of(context).pop(); // Go back to session list
               },
@@ -964,7 +980,10 @@ class _FullVideoPlayerScreenState extends State<_FullVideoPlayerScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: GestureDetector(
-        onTap: _toggleControls,
+        onTap: () async {
+          await GlobalAudioService.playClickSound();
+          _toggleControls();
+        },
         child: Stack(
           fit: StackFit.expand,
           children: [
@@ -1006,7 +1025,10 @@ class _FullVideoPlayerScreenState extends State<_FullVideoPlayerScreen> {
                                 Icons.arrow_back,
                                 color: Colors.white,
                               ),
-                              onPressed: () => Navigator.pop(context),
+                              onPressed: () async {
+                                await GlobalAudioService.playClickSound();
+                                Navigator.pop(context);
+                              },
                             ),
                             const SizedBox(width: 8),
                             Expanded(
@@ -1042,7 +1064,10 @@ class _FullVideoPlayerScreenState extends State<_FullVideoPlayerScreen> {
                           size: 40,
                           color: Colors.white,
                         ),
-                        onPressed: _togglePlayPause,
+                        onPressed: () async {
+                          await GlobalAudioService.playClickSound();
+                          _togglePlayPause();
+                        },
                       ),
                     ),
 

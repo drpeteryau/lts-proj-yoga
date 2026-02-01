@@ -6,6 +6,8 @@ import 'package:image_picker/image_picker.dart';
 import '../services/notification_service.dart';
 import '../services/global_audio_service.dart';
 import 'package:volume_controller/volume_controller.dart';
+import 'package:audioplayers/audioplayers.dart';
+import '../services/global_audio_service.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -268,7 +270,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: _isSaving ? null : _saveProfile,
+            onPressed: _isSaving ? null : () async {
+              GlobalAudioService.playClickSound();
+              _saveProfile();
+            },
             child: const Text(
               'Save',
               style: TextStyle(
@@ -362,6 +367,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     _sessionLength,
                     [
                       '15 minutes',
+                      '20 minutes',
                       '30 minutes',
                       '45 minutes',
                       '60 minutes',
@@ -384,8 +390,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 SwitchListTile(
                     title: const Text('Push Notifications'),
                     value: _pushNotifications,
-                    activeColor: turquoise,
+                    activeThumbColor: turquoise,
                     onChanged: (v) {
+                      GlobalAudioService.playClickSound();
                       setState(() => _pushNotifications = v);
                       // Trigger the local notification if turned on
                       if (v == true) {
@@ -398,8 +405,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 SwitchListTile(
                     title: const Text('Daily Practice Reminder'),
                     value: _dailyPracticeReminder,
-                    activeColor: turquoise,
+                    activeThumbColor: turquoise,
                     onChanged: (v) {
+                      GlobalAudioService.playClickSound();
                       setState(() => _dailyPracticeReminder = v);
                       // Trigger the local notification if turned on
                       if (v == true) {
@@ -416,6 +424,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     style: const TextStyle(color: Color(0xFF6B8F8A)),
                   ),
                   onTap: () async {
+                    GlobalAudioService.playClickSound();
                     final time = await showTimePicker(
                       context: context,
                       initialTime: TimeOfDay.now(),
@@ -454,8 +463,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 SwitchListTile(
                   title: const Text('Sound Effects'),
                   value: _soundEffectsEnabled,
-                  activeColor: turquoise,
-                  onChanged: (v) => setState(() => _soundEffectsEnabled = v),
+                  activeThumbColor: turquoise,
+                  onChanged: (v) {
+                    setState(() => _soundEffectsEnabled = v);
+                    GlobalAudioService.isSoundEffectsEnabled = v;
+                    if (v) {
+                      GlobalAudioService.playClickSound();
+                    }
+                  }
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -617,6 +632,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           labelText: label,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         ),
+        onTap: () {
+          GlobalAudioService.playClickSound();          
+        },
       ),
     );
   }
@@ -630,7 +648,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: DropdownButtonFormField<String>(
-        value: value,
+        initialValue: value,
         decoration: InputDecoration(
           labelText: label,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
@@ -638,7 +656,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         items: items
             .map((e) => DropdownMenuItem(value: e, child: Text(e)))
             .toList(),
-        onChanged: (v) => onChanged(v!),
+        onChanged: (v) {
+        GlobalAudioService.playClickSound();
+        onChanged(v!);
+      }
       ),
     );
   }

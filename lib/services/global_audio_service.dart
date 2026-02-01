@@ -9,6 +9,19 @@ class GlobalAudioService extends ChangeNotifier {
 
   final AudioPlayer _audioPlayer = AudioPlayer();
 
+  // for sound effects like button clicks 
+  static final AudioPlayer _effectPlayer = AudioPlayer();
+  static bool isSoundEffectsEnabled = true;
+  static Future<void> playClickSound() async {
+  try {
+      if (isSoundEffectsEnabled) {
+        _effectPlayer.resume();    
+      }
+  } catch (e) {
+    debugPrint("Error playing click sound: $e");
+  }
+}
+
   bool _isPlaying = false;
   String? _currentSoundTitle;
   String? _currentSoundCategory;
@@ -74,6 +87,11 @@ class GlobalAudioService extends ChangeNotifier {
         notifyListeners();
       }
     });
+
+    // Setting the player to low latency mode is key for UI sounds
+    await _effectPlayer.setReleaseMode(ReleaseMode.stop); 
+    // Pre-load the click source into memory
+    await _effectPlayer.setSource(AssetSource('audio/click.mp3'));
 
     print('🎵 GlobalAudioService initialized successfully');
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'edit_profile_screen.dart';
 import 'auth_gate.dart';
+import '../services/global_audio_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -137,6 +138,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         actions: [
           TextButton(
             onPressed: () async {
+              await GlobalAudioService.playClickSound();
               await Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const EditProfileScreen()),
@@ -370,7 +372,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   const SizedBox(height: 16),
 
-                  _section(
+                   _section(
                     isWeb,
                     title: 'Notifications',
                     children: [
@@ -386,6 +388,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       if (_profile?['daily_practice_reminder'] == true)
                         _infoRow('Reminder Time', _profile?['reminder_time']?.toString() ?? '-', isWeb),
+                      _infoRow(
+                        'Sound Effects',
+                        _profile?['sound_effects_enabled'] == true ? 'Enabled' : 'Disabled',
+                        isWeb,
+                      ),
                     ],
                   ),
                 ],
@@ -396,6 +403,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () async {
+                      await GlobalAudioService.playClickSound();
                       await supabase.auth.signOut(scope: SignOutScope.global);
                       if (!mounted) return;
                       Navigator.of(context).pushAndRemoveUntil(
@@ -422,6 +430,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 SizedBox(height: isWeb ? 60 : 40),
               ],
+            
             ),
           ),
         ),

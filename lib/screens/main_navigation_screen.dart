@@ -6,6 +6,7 @@ import 'sounds_screen.dart';
 import 'profile_screen.dart';
 import 'level_selection_screen.dart';
 import '../widgets/mini_playback_bar.dart';
+import '../services/global_audio_service.dart';
 
 class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
@@ -188,7 +189,10 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     final isSelected = _selectedIndex == index;
 
     return GestureDetector(
-      onTap: () => setState(() => _selectedIndex = index),
+      onTap: () async {
+        await GlobalAudioService.playClickSound();
+        setState(() => _selectedIndex = index);
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(

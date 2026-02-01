@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../data/yoga_data.dart';
 import '../models/yoga_session.dart';
 import 'session_detail_screen.dart';
+import '../services/global_audio_service.dart';
 
 class BeginnerSessionsScreen extends StatelessWidget {
   const BeginnerSessionsScreen({super.key});
@@ -14,9 +15,11 @@ class BeginnerSessionsScreen extends StatelessWidget {
       backgroundColor: const Color(0xFFF0F9F8), // Light turquoise background
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () {
+              GlobalAudioService.playClickSound();
+              Navigator.pop(context);
+            }),
         title: const Text(
           'Beginner Sessions',
           style: TextStyle(
@@ -169,10 +172,12 @@ class BeginnerSessionsScreen extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
+                  GlobalAudioService.playClickSound();
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => SessionDetailScreen(session: session),
+                      builder: (context) =>
+                          SessionDetailScreen(session: session),
                     ),
                   );
                 },
@@ -208,12 +213,12 @@ class BeginnerSessionsScreen extends StatelessWidget {
   }
 
   Widget _buildPoseSection(
-      BuildContext context, {
-        required IconData icon,
-        required String title,
-        required int poseCount,
-        required Color color,
-      }) {
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required int poseCount,
+    required Color color,
+  }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(

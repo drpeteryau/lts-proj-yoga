@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'main_navigation_screen.dart';
 import 'login_screen.dart';
+import '../services/global_audio_service.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -36,7 +36,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       );
       return;
     }
-    
+
     // Basic email validation
     if (!email.contains('@') || !email.contains('.')) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -44,7 +44,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       );
       return;
     }
-    
+
     // Validate password
     final password = _passwordController.text;
     if (password.isEmpty) {
@@ -53,7 +53,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       );
       return;
     }
-    
+
     // Password requirements validation
     if (password.length < 8) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -64,7 +64,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       );
       return;
     }
-    
+
     if (!password.contains(RegExp(r'[A-Z]'))) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -74,7 +74,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       );
       return;
     }
-    
+
     if (!password.contains(RegExp(r'[a-z]'))) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -84,7 +84,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       );
       return;
     }
-    
+
     if (!password.contains(RegExp(r'[0-9]'))) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -94,11 +94,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
       );
       return;
     }
-    
+
     if (!password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Password must contain at least 1 special character (!@#\$%^&*...)'),
+          content: Text(
+              'Password must contain at least 1 special character (!@#\$%^&*...)'),
           duration: Duration(seconds: 3),
         ),
       );
@@ -211,23 +212,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
         );
         return;
       }
-      
+
       final age = int.tryParse(_ageController.text.trim());
       if (age == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please enter a valid age (numbers only)')),
+          const SnackBar(
+              content: Text('Please enter a valid age (numbers only)')),
         );
         return;
       }
-      
+
       if (age < 1 || age > 120) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please enter a valid age between 1 and 120')),
+          const SnackBar(
+              content: Text('Please enter a valid age between 1 and 120')),
         );
         return;
       }
     }
-    
+
     if (_currentStep < 2) {
       setState(() => _currentStep++);
     }
@@ -333,7 +336,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     if (_currentStep > 0)
                       Expanded(
                         child: OutlinedButton(
-                          onPressed: _isLoading ? null : _previousStep,
+                          onPressed: _isLoading
+                              ? null
+                              : () async {
+                                  await GlobalAudioService.playClickSound();
+                                  _previousStep();
+                                },
                           style: OutlinedButton.styleFrom(
                             backgroundColor: Colors.red,
                             padding: const EdgeInsets.symmetric(vertical: 16),
@@ -356,7 +364,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: ElevatedButton(
                         onPressed: _isLoading
                             ? null
-                            : (_currentStep < 2 ? _nextStep : _register),
+                            : () async {
+                                await GlobalAudioService.playClickSound();
+                                _currentStep < 2 ? _nextStep() : _register();
+                              },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: turquoise,
                           padding: const EdgeInsets.symmetric(vertical: 16),
@@ -374,7 +385,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 ),
                               )
                             : Text(
-                                _currentStep < 2 ? 'Continue' : 'Create Account',
+                                _currentStep < 2
+                                    ? 'Continue'
+                                    : 'Create Account',
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 16,
@@ -392,11 +405,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 TextButton(
                   onPressed: _isLoading
                       ? null
-                      : () => Navigator.pushReplacement(
+                      : () async {
+                          await GlobalAudioService.playClickSound();
+                          Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
                                 builder: (_) => const LoginScreen()),
-                          ),
+                          );
+                        },
                   child: const Text(
                     'Already have an account? Log in',
                     style: TextStyle(
@@ -467,9 +483,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 : Text(
                     '${step + 1}',
                     style: TextStyle(
-                      color: isActive
-                          ? const Color(0xFF40E0D0)
-                          : Colors.white70,
+                      color:
+                          isActive ? const Color(0xFF40E0D0) : Colors.white70,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -590,7 +605,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
             '20 minutes',
             '30 minutes'
           ],
-          onChanged: (value) => setState(() => _preferredSessionLength = value!),
+          onChanged: (value) =>
+              setState(() => _preferredSessionLength = value!),
         ),
         const SizedBox(height: 16),
         _buildDropdownCard(
@@ -677,7 +693,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
           icon: Icons.lock_outline,
           label: 'Password',
           controller: _passwordController,
-          hint: 'Min 8 chars: 1 uppercase, 1 lowercase, 1 number, 1 special char',
+          hint:
+              'Min 8 chars: 1 uppercase, 1 lowercase, 1 number, 1 special char',
           obscureText: true,
         ),
         const SizedBox(height: 16),
@@ -693,7 +710,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
             children: [
               Row(
                 children: [
-                  Icon(Icons.info_outline, color: Colors.blue.shade700, size: 20),
+                  Icon(Icons.info_outline,
+                      color: Colors.blue.shade700, size: 20),
                   const SizedBox(width: 8),
                   Text(
                     'Password Requirements:',
@@ -764,9 +782,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFF40E0D0), width: 2.5),
+              borderSide:
+                  const BorderSide(color: Color(0xFF40E0D0), width: 2.5),
             ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           ),
         ),
       ],
@@ -823,6 +843,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     return DropdownMenuItem(value: item, child: Text(item));
                   }).toList(),
                   onChanged: _isLoading ? null : onChanged,
+                  onTap: () async {
+                    await GlobalAudioService.playClickSound();
+                  },
                 ),
               ],
             ),
@@ -837,7 +860,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
       padding: const EdgeInsets.only(left: 8, top: 4),
       child: Row(
         children: [
-          Icon(Icons.check_circle_outline, size: 14, color: Colors.blue.shade700),
+          Icon(Icons.check_circle_outline,
+              size: 14, color: Colors.blue.shade700),
           const SizedBox(width: 6),
           Text(
             text,

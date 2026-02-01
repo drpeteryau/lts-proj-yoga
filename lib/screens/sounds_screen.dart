@@ -574,7 +574,8 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
                           ),
                         ),
                         GestureDetector(
-                          onTap: () {
+                          onTap: () async {
+                            await GlobalAudioService.playClickSound();
                             setState(() {
                               sound.isFavorite = !sound.isFavorite;
                             });
@@ -632,7 +633,8 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
                           ],
                         ),
                         GestureDetector(
-                          onTap: () {
+                          onTap: () async {
+                            await GlobalAudioService.playClickSound();
                             setState(() {
                               sound.isSaved = !sound.isSaved;
                             });

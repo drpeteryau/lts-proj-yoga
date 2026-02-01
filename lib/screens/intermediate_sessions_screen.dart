@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../data/yoga_data_complete.dart';
 import '../models/yoga_session.dart';
 import 'session_detail_screen.dart';
+import '../services/global_audio_service.dart';
 
 class IntermediateSessionsScreen extends StatelessWidget {
   const IntermediateSessionsScreen({super.key});
@@ -15,7 +16,10 @@ class IntermediateSessionsScreen extends StatelessWidget {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            GlobalAudioService.playClickSound();
+            Navigator.pop(context);
+          } 
         ),
         title: const Text(
           'Intermediate Sessions',
@@ -159,6 +163,7 @@ class IntermediateSessionsScreen extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
+                  GlobalAudioService.playClickSound();
                   Navigator.push(
                     context,
                     MaterialPageRoute(
