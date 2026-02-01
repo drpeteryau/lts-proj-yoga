@@ -34,8 +34,26 @@ Make sure you have the following installed:
 - Flutter SDK
 - Dart SDK
 - Android Studio / VS Code
-- Android Emulator or physical device
+- Android Emulator or physical device or IOS device
 
 Check setup:
 ```bash
 flutter doctor
+
+
+## Installation & Run
+1. Clone the repository:
+```bash
+git clone git clone https://github.com/your-username/heal_yoga.git
+2. Navigate into the project directory:
+```bash
+cd heal_yoga
+3. Install dependencies:
+```bash
+flutter pub get
+4. Run the application via emulator or web
+```bash
+flutter run
+
+
+
