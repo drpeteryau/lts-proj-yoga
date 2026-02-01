@@ -1,16 +1,41 @@
-# heal_yoga
+# 🧘 HealYoga
 
-A new Flutter project.
+HealYoga is a Flutter-based mobile wellness application designed to encourage regular yoga practice through guided sessions, calming music, and progress tracking.  
+The app focuses on accessibility and simplicity, making it suitable for beginners, working adults, and elderly users.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## ✨ Features
 
-A few resources to get you started if this is your first Flutter project:
+- 🧘 Guided yoga sessions (Beginner, Intermediate, Advanced)
+- 🎵 Calming music and white-noise support
+- 📊 Progress tracking (sessions completed, time practiced)
+- 🔐 User authentication (Google / Email / Social login)
+- 👤 Personal user profiles
+- 🔔 Gentle reminders and notifications
+- ♿ Accessibility-focused UI (readable fonts, simple navigation)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 🛠 Tech Stack
+
+- **Frontend:** Flutter (Dart)
+- **Backend:** Supabase (PostgreSQL, Auth, REST API)
+- **Authentication:** Supabase Auth
+- **State Management:** (add if used, e.g. Provider / Riverpod)
+- **Platform:** Android (Web / iOS – if applicable)
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+Make sure you have the following installed:
+- Flutter SDK
+- Dart SDK
+- Android Studio / VS Code
+- Android Emulator or physical device
+
+Check setup:
+```bash
+flutter doctor
