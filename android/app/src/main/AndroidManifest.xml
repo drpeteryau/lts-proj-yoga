@@ -13,9 +13,10 @@
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
 
-         <meta-data
-        android:name="com.google.android.gms.client.id"
-        android:value="337226396229-6pjiqm66kg7n424s0c2hmd2s99pvd8pl.apps.googleusercontent.com" />
+<meta-data
+    android:name="com.google.android.gms.client_id"
+    android:value="560422185617-eu567e66mm2944vrmcdsu0d0pvb36ko4.apps.googleusercontent.com" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

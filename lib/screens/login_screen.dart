@@ -102,9 +102,9 @@ class _LoginScreenState extends State<LoginScreen>
 
       // Native: existing google_sign_in flow (works fine on Android/iOS)
       final GoogleSignIn googleSignIn = GoogleSignIn(
-        clientId:
-        '337226396229-ns81hak1k1v6vbseb7e4r1n3tokcm9p7.apps.googleusercontent.com',
-      );
+        serverClientId:
+            '560422185617-eu567e66mm2944vrmcdsu0d0pvb36ko4.apps.googleusercontent.com',
+            scopes: ['email', 'profile'],);
 
       final googleUser = await googleSignIn.signIn();
       if (googleUser == null) {
