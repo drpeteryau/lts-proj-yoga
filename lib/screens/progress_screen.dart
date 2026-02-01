@@ -15,6 +15,8 @@ class ProgressScreen extends StatefulWidget {
 class _ProgressScreenState extends State<ProgressScreen> {
   final supabase = Supabase.instance.client;
 
+  bool get isWeb => MediaQuery.of(context).size.width > 600;
+
   bool _isLoading = true;
   String? _error;
 
@@ -247,23 +249,39 @@ class _ProgressScreenState extends State<ProgressScreen> {
 
                     SizedBox(height: isWeb ? 48 : 32),
 
-                    // Stats Overview
-                    _buildStatsOverview(),
+                    // On web: 2-column layout to use horizontal space properly.
+                    // On mobile: single column, same order as before.
+                    if (isWeb) ...[
+                      // Row 1: Stats | Wellness
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(child: _buildStatsOverview()),
+                          const SizedBox(width: 24),
+                          Expanded(child: _buildWellnessCheckInCard()),
+                        ],
+                      ),
 
-                    SizedBox(height: isWeb ? 36 : 24),
+                      const SizedBox(height: 24),
 
-                    // Wellness Check-in Card
-                    _buildWellnessCheckInCard(),
-
-                    const SizedBox(height: 24),
-
-                    // Weekly Progress
-                    _buildWeeklyProgress(),
-
-                    const SizedBox(height: 24),
-
-                    // Practice Calendar
-                    _buildPracticeCalendar(),
+                      // Row 2: Weekly Progress | Calendar
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(child: _buildWeeklyProgress()),
+                          const SizedBox(width: 24),
+                          Expanded(child: _buildPracticeCalendar()),
+                        ],
+                      ),
+                    ] else ...[
+                      _buildStatsOverview(),
+                      const SizedBox(height: 24),
+                      _buildWellnessCheckInCard(),
+                      const SizedBox(height: 24),
+                      _buildWeeklyProgress(),
+                      const SizedBox(height: 24),
+                      _buildPracticeCalendar(),
+                    ],
 
                     const SizedBox(height: 20),
                   ],
@@ -272,7 +290,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
             ),
           ),
         ));
-    }
+  }
 
   Widget _buildStatsOverview() {
     return Container(
@@ -591,7 +609,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
 
   Widget _buildPracticeCalendar() {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(isWeb ? 28 : 20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
@@ -606,7 +624,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
               Text(
                 'Calendar',
                 style: GoogleFonts.poppins(
-                  fontSize: 18,
+                  fontSize: isWeb ? 22 : 18,
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
                 ),
@@ -614,7 +632,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
               Row(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.chevron_left, size: 20),
+                    icon: Icon(Icons.chevron_left, size: isWeb ? 24 : 20),
                     onPressed: () {
                       setState(() {
                         _currentMonth = DateTime(
@@ -631,13 +649,13 @@ class _ProgressScreenState extends State<ProgressScreen> {
                   Text(
                     DateFormat('MMM yyyy').format(_currentMonth),
                     style: GoogleFonts.poppins(
-                      fontSize: 14,
+                      fontSize: isWeb ? 16 : 14,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                   const SizedBox(width: 12),
                   IconButton(
-                    icon: const Icon(Icons.chevron_right, size: 20),
+                    icon: Icon(Icons.chevron_right, size: isWeb ? 24 : 20),
                     onPressed: () {
                       setState(() {
                         _currentMonth = DateTime(
@@ -657,11 +675,22 @@ class _ProgressScreenState extends State<ProgressScreen> {
 
           const SizedBox(height: 16),
 
-          // Weekday headers
+          // Weekday headers — stretch on web, fixed on mobile
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: ['M', 'T', 'W', 'T', 'F', 'S', 'S']
-                .map((day) => SizedBox(
+                .map((day) => isWeb
+                ? Expanded(
+              child: Text(
+                day,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.poppins(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey[600],
+                ),
+              ),
+            )
+                : SizedBox(
               width: 36,
               child: Text(
                 day,
@@ -703,6 +732,41 @@ class _ProgressScreenState extends State<ProgressScreen> {
     int offset = firstDay.weekday - 1;
     if (offset < 0) offset = 6;
 
+    // Web: proper 7-column grid, fixed row height so circles stay compact
+    if (isWeb) {
+      List<Widget> rows = [];
+      int cellIndex = 0;
+
+      while (cellIndex < offset + daysInMonth) {
+        List<Widget> rowCells = [];
+        for (int col = 0; col < 7; col++) {
+          if (cellIndex < offset) {
+            rowCells.add(const Expanded(child: SizedBox()));
+          } else {
+            final day = cellIndex - offset + 1;
+            if (day > daysInMonth) {
+              rowCells.add(const Expanded(child: SizedBox()));
+            } else {
+              final date = DateTime(_currentMonth.year, _currentMonth.month, day);
+              final key = DateFormat('yyyy-MM-dd').format(date);
+              final hasActivity = _activityDays[key] == true;
+              final isToday = DateFormat('yyyy-MM-dd').format(DateTime.now()) == key;
+
+              rowCells.add(Expanded(
+                child: _buildCalendarDay(day, hasActivity, isToday),
+              ));
+            }
+          }
+          cellIndex++;
+        }
+        rows.add(SizedBox(height: 44, child: Row(children: rowCells)));
+        rows.add(const SizedBox(height: 4));
+      }
+
+      return Column(children: rows);
+    }
+
+    // Mobile: original Wrap layout with fixed 36px circles
     List<Widget> dayWidgets = [];
 
     for (int i = 0; i < offset; i++) {
@@ -726,9 +790,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
   }
 
   Widget _buildCalendarDay(int day, bool hasActivity, bool isToday) {
-    return Container(
-      width: 36,
-      height: 36,
+    final Widget circle = Container(
+      width: isWeb ? 40 : 36,
+      height: isWeb ? 40 : 36,
       decoration: BoxDecoration(
         color: hasActivity ? const Color(0xFF40E0D0) : Colors.grey[100],
         shape: BoxShape.circle,
@@ -738,13 +802,21 @@ class _ProgressScreenState extends State<ProgressScreen> {
         child: Text(
           day.toString(),
           style: GoogleFonts.poppins(
-            fontSize: 13,
+            fontSize: isWeb ? 15 : 13,
             fontWeight: FontWeight.w500,
             color: hasActivity ? Colors.white : Colors.grey[600],
           ),
         ),
       ),
     );
+
+    // Web: center the fixed-size circle inside the Expanded column cell
+    if (isWeb) {
+      return Center(child: circle);
+    }
+
+    // Mobile: the circle IS the widget (fixed 36x36, used inside Wrap)
+    return circle;
   }
 
   Widget _buildLegend(String label, Color color) {
