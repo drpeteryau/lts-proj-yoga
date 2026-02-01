@@ -41,7 +41,7 @@ demonstrations, and evaluation purposes.
 
 4. The application has not been published to the Google Play Store yet.
 
-## 🚀 Getting Started
+## 1. 🚀 Getting Started
 
 ### Prerequisites
 Make sure you have the following installed:
@@ -55,7 +55,7 @@ Check setup:
 flutter doctor
 ```
 
-## 🚀 Installation & Run (For Code Testing)
+## 2. 🚀 Installation & Run (For Code Testing)
 1. Clone the repository:
 ```bash
 git clone https://github.com/your-username/heal_yoga.git
@@ -73,7 +73,7 @@ flutter pub get
 flutter run
 ```
 
-## Installation & Run (For Deployment)
+## 3. Installation & Run (For Deployment)
 1. Download the apk file from
 https://drive.google.com/file/d/1kzjriKISg28ypxwUsrl8vBSdVKIaDSFv/view?usp=sharing
 2. Install it via adb while having a emulator or physical phone with you
@@ -82,6 +82,73 @@ adb install {YOURPATH}/app-release.apk
 ```
 (Ensure the terminal is opened in the same folder as the downloaded APK.)
 
+
+## 4. 📱 Screenshots
+
+| Login | Register |
+|-------|----------|
+| ![Login Screen](screenshots/login.png) | ![Register Screen](screenshots/register1.png) |
+
+**Login Screen**  
+Users can sign in to HealYoga using multiple authentication methods, including
+Google Sign-In or email and password. This allows returning users to securely
+access their personalized yoga sessions, progress records, and profile data.
+
+**Register Screen**  
+New users can register for an account using their email address and password.
+Once registered, users can log in to the application and begin using all core
+features of HealYoga.
+
+---
+
+| Home Screen | Start Workout |
+|-------------|----------------|
+| ![Home Screen](screenshots/home.png) | ![Start Workout](screenshots/startworkout.png) |
+
+**Home Screen**  
+The home screen provides quick access to daily yoga challenges and recommended
+sessions, allowing users to quickly start a workout with minimal effort.
+
+**Start Workout**  
+This screen allows users to preview the selected yoga session and begin the
+guided workout, showing session duration and exercise details.
+
+
+| Sessions | Workout Progress |
+|----------|------------------|
+| ![Sessions](screenshots/sessions.png) | ![Workout Progress](screenshots/workoutprogress.png) |
+
+**Sessions Screen**  
+Displays available yoga exercises categorized by difficulty level, enabling
+users to explore and choose suitable sessions.
+
+**Workout Progress**  
+Shows real-time progress during a yoga session, guiding users through exercises
+with timers and completion indicators.
+
+| Calming Sounds | Progress Tracking |
+|----------------|------------------|
+| ![Calming Sounds](screenshots/sound1.png) | ![Progress Tracking](screenshots/progress1.png)<br>![Progress2](screenshots/progress2.png) |
+
+**Calming Sounds**  
+Provides a collection of white noise and relaxing ambient sounds that users
+can play independently or alongside yoga sessions to enhance relaxation.
+
+**Progress Tracking**  
+Displays users’ completed yoga sessions and overall practice progress, helping
+them monitor consistency and stay motivated.
+
+| Profile | Edit Profile |
+|---------|--------------|
+| ![Profile Screen](screenshots/profile.png) | ![Edit Profile](screenshots/editprofile1.png) |
+
+**Profile Screen**  
+Allows users to view their personal information, preferences, and account
+details within the application.
+
+**Edit Profile**  
+Enables users to update their profile information and preferences to personalize
+their experience within HealYoga.
 
 
 
