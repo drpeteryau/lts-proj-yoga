@@ -57,6 +57,8 @@ Check setup:
 flutter doctor
 ```
 
+---
+
 ## 2. Installation & Run (For Code Testing)
 1. Clone the repository:
 ```bash
@@ -75,6 +77,8 @@ flutter pub get
 flutter run
 ```
 
+---
+
 ## 3. Installation & Run (For Deployment)
 1. Download the apk file from
 https://drive.google.com/file/d/1kzjriKISg28ypxwUsrl8vBSdVKIaDSFv/view?usp=sharing
@@ -87,6 +91,7 @@ adb install {YOURPATH}/app-release.apk
 ## 4. For web deployment 
 Access https://healyoga-web.web.app/
 
+---
 
 ## 5. Screenshots
 
@@ -124,6 +129,7 @@ total duration, number of poses, and intensity, along with a brief description
 and session overview to help users understand what to expect before joining
 the class.
 
+---
 
 | Sessions | Workout Progress |
 |----------|------------------|
@@ -142,6 +148,8 @@ showing real-time exercise progress, timers, and completion indicators. This
 screen helps users stay on track during the workout while clearly indicating
 current progress and remaining exercises within the session.
 
+---
+
 | Calming Sounds | Progress Tracking |
 |----------------|------------------|
 | ![Calming Sounds](screenshots/sound1.png) | ![Progress Tracking](screenshots/progress1.png)<br>![Progress2](screenshots/progress2.png) |
@@ -158,6 +166,8 @@ their wellness journey, including daily streaks, total practice time, completed
 sessions, and weekly goals. It also features a wellness check-in function, badge
 system, and calendar view to encourage consistency and long-term engagement.
 
+---
+
 | Profile | Edit Profile |
 |---------|--------------|
 | ![Profile Screen](screenshots/profile.png) | ![Edit Profile](screenshots/editprofile1.png) |
@@ -169,6 +179,8 @@ details within the application.
 **Edit Profile**  
 Enables users to update their profile information and preferences to personalize
 their experience within HealYoga.
+
+---
 
 ## 6. App Usage Guide
 
@@ -202,6 +214,8 @@ their experience within HealYoga.
    Users can view and update their personal profile and preferences at
    any time via the Profile section.
 
+---
+
 ## 7. Testing
 
 - Tested on Android Emulator (Pixel series)
@@ -213,7 +227,9 @@ their experience within HealYoga.
   - Calming sounds
   - Progress tracking
   - Notifications
- 
+
+---
+
 ## 8. Known Limitations & Future Improvements
 
 - The application is currently available for Android devices only for Applications
@@ -222,6 +238,7 @@ their experience within HealYoga.
 - Future enhancements may include additional yoga levels, accessibility
   options such as adjustable font sizes, and expanded wellness analytics.
 
+---
 
 ## 9. Team Members
 
@@ -230,6 +247,7 @@ their experience within HealYoga.
 - Jocasta Tan  
 - Daniel Soong  
 
+---
 
 ## 10. License
 
