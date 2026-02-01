@@ -41,6 +41,8 @@ demonstrations, and evaluation purposes.
 
 4. The application has not been published to the Google Play Store yet.
 
+---
+
 ## 1. Getting Started
 
 ### Prerequisites
