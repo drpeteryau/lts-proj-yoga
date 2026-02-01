@@ -106,12 +106,18 @@ features of HealYoga.
 | ![Home Screen](screenshots/home.png) | ![Start Workout](screenshots/startworkout.png) |
 
 **Home Screen**  
-The home screen provides quick access to daily yoga challenges and recommended
-sessions, allowing users to quickly start a workout with minimal effort.
+The Home Screen serves as the main dashboard of HealYoga, greeting users with
+personalized recommendations and daily workout prompts. It highlights quick
+start options for beginner-friendly yoga sessions, displays short-duration
+workouts to reduce entry barriers, and provides easy navigation to other core
+features of the application.
 
 **Start Workout**  
-This screen allows users to preview the selected yoga session and begin the
-guided workout, showing session duration and exercise details.
+The Start Workout screen allows users to preview a selected yoga session before
+beginning the workout. It presents key session details such as difficulty level,
+total duration, number of poses, and intensity, along with a brief description
+and session overview to help users understand what to expect before joining
+the class.
 
 
 | Sessions | Workout Progress |
@@ -119,24 +125,33 @@ guided workout, showing session duration and exercise details.
 | ![Sessions](screenshots/sessions.png) | ![Workout Progress](screenshots/workoutprogress.png) |
 
 **Sessions Screen**  
-Displays available yoga exercises categorized by difficulty level, enabling
-users to explore and choose suitable sessions.
+The Sessions screen displays a structured catalogue of yoga exercises organized
+by difficulty level, allowing users to explore and select workouts that match
+their experience and physical ability. Each session includes visual previews
+and duration information to help users make informed choices before starting
+a workout.
 
 **Workout Progress**  
-Shows real-time progress during a yoga session, guiding users through exercises
-with timers and completion indicators.
+The Workout Progress screen guides users through an active yoga session by
+showing real-time exercise progress, timers, and completion indicators. This
+screen helps users stay on track during the workout while clearly indicating
+current progress and remaining exercises within the session.
 
 | Calming Sounds | Progress Tracking |
 |----------------|------------------|
 | ![Calming Sounds](screenshots/sound1.png) | ![Progress Tracking](screenshots/progress1.png)<br>![Progress2](screenshots/progress2.png) |
 
 **Calming Sounds**  
-Provides a collection of white noise and relaxing ambient sounds that users
-can play independently or alongside yoga sessions to enhance relaxation.
+The Calming Sounds feature provides a curated library of white noise and ambient
+audio such as ocean waves, rainfall, and meditation sounds. Users can browse
+sounds by category, mark favourites, and play audio independently or in
+conjunction with yoga sessions to support relaxation, focus, and stress relief.
 
 **Progress Tracking**  
-Displays users’ completed yoga sessions and overall practice progress, helping
-them monitor consistency and stay motivated.
+The Progress Tracking screen presents users with a comprehensive overview of
+their wellness journey, including daily streaks, total practice time, completed
+sessions, and weekly goals. It also features a wellness check-in function, badge
+system, and calendar view to encourage consistency and long-term engagement.
 
 | Profile | Edit Profile |
 |---------|--------------|
@@ -149,6 +164,74 @@ details within the application.
 **Edit Profile**  
 Enables users to update their profile information and preferences to personalize
 their experience within HealYoga.
+
+## 5. 🧭 App Usage Guide
+
+1. **User Authentication**  
+   Users begin by registering a new account using their email address or
+   logging in using Google Sign-In or email and password.
+
+2. **Home Dashboard**  
+   Upon successful login, users are greeted with the Home Screen, which
+   provides personalized workout recommendations and quick access to
+   beginner-friendly yoga sessions.
+
+3. **Starting a Yoga Session**  
+   Users can start a workout directly from the Home Screen or browse
+   available sessions by difficulty level. Session details are shown
+   before the workout begins.
+
+4. **Workout Guidance**  
+   During a session, the app guides users through exercises using timers
+   and progress indicators to ensure a smooth and structured experience.
+
+5. **Relaxation and Recovery**  
+   Users can access calming sounds such as white noise and ambient audio
+   to relax during or after workouts.
+
+6. **Progress Monitoring**  
+   Users can track their completed sessions, practice duration, streaks,
+   and wellness check-ins through the Progress Tracking feature.
+
+7. **Profile Management**  
+   Users can view and update their personal profile and preferences at
+   any time via the Profile section.
+
+## 6. 🧪 Testing
+
+- Tested on Android Emulator (Pixel series)
+- Tested on physical Android devices
+- Tested on Web Version (Phone / PC)
+- Manual functional testing conducted on:
+  - Authentication
+  - Yoga sessions
+  - Calming sounds
+  - Progress tracking
+  - Notifications
+ 
+## 7. ⚠️ Known Limitations & Future Improvements
+
+- The application is currently available for Android devices only for Applications
+- iOS users can access the application via the web version.
+- Public deployment to the Google Play Store is planned for a future phase.
+- Future enhancements may include additional yoga levels, accessibility
+  options such as adjustable font sizes, and expanded wellness analytics.
+
+
+## 8. 👥 Team Members
+
+- Kaam Yan Hye  
+- Natalie Narayanan  
+- Jocasta Tan  
+- Daniel Soong  
+
+
+## 9. 📄 License
+
+This project was developed for academic purposes as part of the CSC2101
+(PSD & Team Project) module.
+
+
 
 
 
