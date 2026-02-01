@@ -27,6 +27,20 @@ The app focuses on accessibility and simplicity, making it suitable for beginner
 
 ---
 
+## 🚀 Deployment Process
+
+HealYoga is currently in the development and testing phase.
+
+1. Developers clone the repository and run the app locally during development.
+2. A release APK is generated using:
+```bash
+flutter build apk
+```
+3. The generated APK (app-release.apk) is used for internal testing,
+demonstrations, and evaluation purposes.
+
+4. The application has not been published to the Google Play Store yet.
+
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -41,7 +55,7 @@ Check setup:
 flutter doctor
 ```
 
-## 🚀 Installation & Run
+## 🚀 Installation & Run (For Code Testing)
 1. Clone the repository:
 ```bash
 git clone https://github.com/your-username/heal_yoga.git
@@ -58,6 +72,16 @@ flutter pub get
 ```bash
 flutter run
 ```
+
+## Installation & Run (For Deployment)
+1. Download the apk file from
+https://drive.google.com/file/d/1kzjriKISg28ypxwUsrl8vBSdVKIaDSFv/view?usp=sharing
+2. Install it via adb while having a emulator or physical phone with you
+```bash
+adb install {YOURPATH}/app-release.apk
+```
+(Ensure the terminal is opened in the same folder as the downloaded APK.)
+
 
 
 
