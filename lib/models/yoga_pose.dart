@@ -1,7 +1,7 @@
 class YogaPose {
   final String id;
-  final String name;
-  final String description;
+  final String nameKey;
+  final String descriptionKey;
   final String imageUrl;
   final int durationSeconds;
   final List<String> modifications;
@@ -10,8 +10,8 @@ class YogaPose {
 
   YogaPose({
     required this.id,
-    required this.name,
-    required this.description,
+    required this.nameKey,
+    required this.descriptionKey,
     required this.imageUrl,
     required this.durationSeconds,
     required this.modifications,

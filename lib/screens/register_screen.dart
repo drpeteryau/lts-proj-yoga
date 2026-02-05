@@ -4,6 +4,7 @@ import 'package:lottie/lottie.dart';
 import 'main_navigation_screen.dart';
 import 'login_screen.dart';
 import '../services/global_audio_service.dart';
+import '../l10n/app_localizations.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -18,7 +19,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _nameController = TextEditingController();
   final _ageController = TextEditingController();
 
-  String _experienceLevel = 'Beginner';
+  final String _experienceLevel = 'Beginner';
   String _preferredSessionLength = '15 minutes';
   String _preferredLanguage = 'English';
   bool _pushNotifications = true;
@@ -32,7 +33,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final email = _emailController.text.trim();
     if (email.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter your email')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.errEmailEmpty)),
       );
       return;
     }
@@ -40,7 +41,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     // Basic email validation
     if (!email.contains('@') || !email.contains('.')) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a valid email address')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.errEmailInvalid)),
       );
       return;
     }
@@ -49,7 +50,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final password = _passwordController.text;
     if (password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a password')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.errPasswordEmpty)),
       );
       return;
     }
@@ -175,7 +176,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Welcome, ${_nameController.text.trim()}! 🌿'),
+            content: Text(
+              AppLocalizations.of(context)!.welcomeName(_nameController.text.trim())),
             backgroundColor: const Color(0xFF40E0D0),
           ),
         );
@@ -208,7 +210,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       // Step 1: Validate name and age
       if (_nameController.text.trim().isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please enter your full name')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.errNameEmpty)),
         );
         return;
       }
@@ -216,16 +218,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
       final age = int.tryParse(_ageController.text.trim());
       if (age == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Please enter a valid age (numbers only)')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.errAgeEmpty)),
         );
         return;
       }
 
       if (age < 1 || age > 120) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Please enter a valid age between 1 and 120')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.errAgeRange)),
         );
         return;
       }
@@ -278,8 +278,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: 10),
 
-                const Text(
-                  'Begin Your Wellness Journey',
+                Text(
+                  AppLocalizations.of(context)!.registerTitle,
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.bold,
@@ -288,8 +288,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 10),
-                const Text(
-                  'Create your account to get started',
+                Text(
+                  AppLocalizations.of(context)!.registerSubtitle,
                   style: TextStyle(
                     color: Colors.white70,
                     fontSize: 16,
@@ -302,11 +302,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _buildStepIndicator(0, 'Personal'),
+                    _buildStepIndicator(0, AppLocalizations.of(context)!.stepPersonal),
                     _buildStepLine(0),
-                    _buildStepIndicator(1, 'Preferences'),
+                    _buildStepIndicator(1, AppLocalizations.of(context)!.stepPreferences),
                     _buildStepLine(1),
-                    _buildStepIndicator(2, 'Account'),
+                    _buildStepIndicator(2, AppLocalizations.of(context)!.stepAccount),
                   ],
                 ),
                 const SizedBox(height: 25),
@@ -349,8 +349,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               borderRadius: BorderRadius.circular(16),
                             ),
                           ),
-                          child: const Text(
-                            'Back',
+                          child: Text(
+                            AppLocalizations.of(context)!.back,
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 16,
@@ -386,8 +386,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               )
                             : Text(
                                 _currentStep < 2
-                                    ? 'Continue'
-                                    : 'Create Account',
+                                    ? AppLocalizations.of(context)!.continueButton
+                                    : AppLocalizations.of(context)!.createAccount,
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 16,
@@ -413,8 +413,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 builder: (_) => const LoginScreen()),
                           );
                         },
-                  child: const Text(
-                    'Already have an account? Log in',
+                  child: Text(
+                    AppLocalizations.of(context)!.alreadyHaveAccount,
                     style: TextStyle(
                       color: Colors.black87,
                       fontWeight: FontWeight.w600,
@@ -530,8 +530,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          '👋 Let\'s Get to Know You',
+        Text(
+          AppLocalizations.of(context)!.getToknowYou,
           style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.bold,
@@ -539,8 +539,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ),
         const SizedBox(height: 8),
-        const Text(
-          'Tell us a bit about yourself',
+        Text(
+          AppLocalizations.of(context)!.tellUsAbout,
           style: TextStyle(
             fontSize: 14,
             color: Colors.black54,
@@ -549,16 +549,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
         const SizedBox(height: 24),
         _buildIconField(
           icon: Icons.person_outline,
-          label: 'Full Name',
+          label: AppLocalizations.of(context)!.fullName,
           controller: _nameController,
-          hint: 'Enter your name',
+          hint: AppLocalizations.of(context)!.nameHint,
         ),
         const SizedBox(height: 16),
         _buildIconField(
           icon: Icons.cake_outlined,
-          label: 'Age',
+          label: AppLocalizations.of(context)!.age,
           controller: _ageController,
-          hint: 'Enter your age',
+          hint: AppLocalizations.of(context)!.ageHint,
           keyboardType: TextInputType.number,
         ),
       ],
@@ -569,8 +569,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          '⚙️ Your Preferences',
+        Text(
+          AppLocalizations.of(context)!.yourPreferences,
           style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.bold,
@@ -578,8 +578,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ),
         const SizedBox(height: 8),
-        const Text(
-          'Customize your yoga experience',
+        Text(
+          AppLocalizations.of(context)!.customizeYoga,
           style: TextStyle(
             fontSize: 14,
             color: Colors.black54,
@@ -588,15 +588,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
         const SizedBox(height: 24),
         _buildDropdownCard(
           icon: Icons.fitness_center,
-          label: 'Experience Level',
-          value: _experienceLevel,
+          label: AppLocalizations.of(context)!.experienceLevel,
+          // value: _experienceLevel,
+          value: 'Beginner',
           items: const ['Beginner', 'Intermediate', 'Advanced'],
-          onChanged: (value) => setState(() => _experienceLevel = value!),
+          // onChanged: (value) => setState(() => _experienceLevel = value!),
+          onChanged: null,
         ),
         const SizedBox(height: 16),
         _buildDropdownCard(
           icon: Icons.timer_outlined,
-          label: 'Session Length',
+          label: AppLocalizations.of(context)!.sessionLength,
           value: _preferredSessionLength,
           items: const [
             '5 minutes',
@@ -611,7 +613,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         const SizedBox(height: 16),
         _buildDropdownCard(
           icon: Icons.language,
-          label: 'Language',
+          label: AppLocalizations.of(context)!.language,
           value: _preferredLanguage,
           items: const ['English', 'Mandarin'],
           onChanged: (value) => setState(() => _preferredLanguage = value!),
@@ -638,9 +640,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               ),
               const SizedBox(width: 12),
-              const Expanded(
+              Expanded(
                 child: Text(
-                  'Enable Notifications',
+                  AppLocalizations.of(context)!.enableNotifications,
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
@@ -664,8 +666,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          '🔐 Secure Your Account',
+        Text(
+          AppLocalizations.of(context)!.secureAccount,
           style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.bold,
@@ -673,8 +675,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ),
         const SizedBox(height: 8),
-        const Text(
-          'Create your login credentials',
+        Text(
+          AppLocalizations.of(context)!.createCredentials,
           style: TextStyle(
             fontSize: 14,
             color: Colors.black54,
@@ -683,18 +685,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
         const SizedBox(height: 24),
         _buildIconField(
           icon: Icons.email_outlined,
-          label: 'Email',
+          label: AppLocalizations.of(context)!.email,
           controller: _emailController,
-          hint: 'your.email@example.com',
+          hint: AppLocalizations.of(context)!.emailHint,
           keyboardType: TextInputType.emailAddress,
         ),
         const SizedBox(height: 16),
         _buildIconField(
           icon: Icons.lock_outline,
-          label: 'Password',
+          label: AppLocalizations.of(context)!.password,
           controller: _passwordController,
           hint:
-              'Min 8 chars: 1 uppercase, 1 lowercase, 1 number, 1 special char',
+              AppLocalizations.of(context)!.passwordHint,
           obscureText: true,
         ),
         const SizedBox(height: 16),
@@ -714,7 +716,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       color: Colors.blue.shade700, size: 20),
                   const SizedBox(width: 8),
                   Text(
-                    'Password Requirements:',
+                    AppLocalizations.of(context)!.passwordReqTitle,
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
@@ -724,11 +726,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ],
               ),
               const SizedBox(height: 6),
-              _buildPasswordRequirement('At least 8 characters'),
-              _buildPasswordRequirement('1 uppercase letter (A-Z)'),
-              _buildPasswordRequirement('1 lowercase letter (a-z)'),
-              _buildPasswordRequirement('1 number (0-9)'),
-              _buildPasswordRequirement('1 special character (!@#\$%...)'),
+              _buildPasswordRequirement(AppLocalizations.of(context)!.reqLength),
+              _buildPasswordRequirement(AppLocalizations.of(context)!.reqUpper),
+              _buildPasswordRequirement(AppLocalizations.of(context)!.reqLower),
+              _buildPasswordRequirement(AppLocalizations.of(context)!.reqNumber),
+              _buildPasswordRequirement(AppLocalizations.of(context)!.reqSpecial),
             ],
           ),
         ),
@@ -798,7 +800,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     required String label,
     required String value,
     required List<String> items,
-    required ValueChanged<String?> onChanged,
+    required ValueChanged<String?>? onChanged,
   }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
@@ -840,7 +842,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     color: Colors.black87,
                   ),
                   items: items.map((item) {
-                    return DropdownMenuItem(value: item, child: Text(item));
+                    String displayLabel;
+                    // Map the internal value to the localized string
+                    switch (item) {
+                      case 'Beginner': displayLabel = AppLocalizations.of(context)!.beginner; break;
+                      case '5 minutes': displayLabel = AppLocalizations.of(context)!.min5; break;
+                      case '10 minutes': displayLabel = AppLocalizations.of(context)!.min10; break;
+                      case '15 minutes': displayLabel = AppLocalizations.of(context)!.min15; break;
+                      case '20 minutes': displayLabel = AppLocalizations.of(context)!.min20; break;
+                      case '30 minutes': displayLabel = AppLocalizations.of(context)!.min30; break;
+                      case 'English': displayLabel = AppLocalizations.of(context)!.english; break;
+                      case 'Mandarin': displayLabel = AppLocalizations.of(context)!.mandarin; break;
+                      default: displayLabel = item;
+                    }
+
+                    return DropdownMenuItem(value: item, child: Text(displayLabel));
                   }).toList(),
                   onChanged: _isLoading ? null : onChanged,
                   onTap: () async {

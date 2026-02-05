@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../services/global_audio_service.dart';
 import '../screens/sound_player_screen.dart';
 import '../screens/sounds_screen.dart';
+import '../utils/sound_localization_helper.dart';
 
 class MiniPlaybackBar extends StatelessWidget {
   const MiniPlaybackBar({super.key});
@@ -26,9 +27,9 @@ class MiniPlaybackBar extends StatelessWidget {
               MaterialPageRoute(
                 builder: (context) => SoundPlayerScreen(
                   sound: MeditationSound(
-                    title: audioService.currentSoundTitle ?? '',
-                    category: audioService.currentSoundCategory ?? '',
-                    duration: audioService.formatTime(audioService.totalDuration),
+                    titleKey: SoundLocalizationHelper.getTitleKey(context, audioService.currentSoundTitle),
+                    categoryKey: SoundLocalizationHelper.getCategoryKey(context, audioService.currentSoundCategory),
+                    durationMinutes: audioService.totalDuration.inMinutes,
                     imageUrl: audioService.currentSoundImageUrl ?? '',
                     audioUrl: audioService.currentAudioUrl ?? '',
                   ),

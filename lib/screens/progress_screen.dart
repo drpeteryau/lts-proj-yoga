@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'dart:math';
 import 'dart:ui' as ui;
 import '../services/global_audio_service.dart';
+import '../l10n/app_localizations.dart';
 
 class ProgressScreen extends StatefulWidget {
   const ProgressScreen({super.key});
@@ -174,11 +175,11 @@ class _ProgressScreenState extends State<ProgressScreen> {
   }
 
   String _getCurrentBadge() {
-    if (_weeklyMinutes >= 240) return 'Platinum';
-    if (_weeklyMinutes >= 180) return 'Gold';
-    if (_weeklyMinutes >= 120) return 'Silver';
-    if (_weeklyMinutes >= 60) return 'Bronze';
-    return 'None';
+    if (_weeklyMinutes >= 240) return AppLocalizations.of(context)!.platinum;
+    if (_weeklyMinutes >= 180) return AppLocalizations.of(context)!.gold;
+    if (_weeklyMinutes >= 120) return AppLocalizations.of(context)!.silver;
+    if (_weeklyMinutes >= 60) return AppLocalizations.of(context)!.bronze;
+    return AppLocalizations.of(context)!.none;
   }
 
   @override
@@ -235,7 +236,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                   children: [
                     // Header
                     Text(
-                      'Your Progress',
+                      AppLocalizations.of(context)!.progressHeader,
                       style: GoogleFonts.poppins(
                         fontSize: isWeb ? 36 : 28,
                         fontWeight: FontWeight.w600,
@@ -244,7 +245,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Track your journey to wellness',
+                      AppLocalizations.of(context)!.progressSubtitle,
                       style: GoogleFonts.poppins(
                         fontSize: isWeb ? 18 : 14,
                         color: Colors.grey[600],
@@ -317,14 +318,14 @@ class _ProgressScreenState extends State<ProgressScreen> {
               Expanded(child: _buildStatItem(
                 icon: Icons.local_fire_department,
                 value: _currentStreak.toString(),
-                label: 'Day Streak',
+                label: AppLocalizations.of(context)!.dayStreak,
                 color: const Color(0xFFFF6B6B),
               )),
               Container(width: 1, height: 50, color: Colors.grey[300]),
               Expanded(child: _buildStatItem(
                 icon: Icons.self_improvement,
                 value: _totalSessions.toString(),
-                label: 'Sessions',
+                label: AppLocalizations.of(context)!.sessions,
                 color: const Color(0xFF40E0D0),
               )),
             ],
@@ -337,14 +338,14 @@ class _ProgressScreenState extends State<ProgressScreen> {
               Expanded(child: _buildStatItem(
                 icon: Icons.access_time,
                 value: _totalMinutes.toString(),
-                label: 'Total Minutes',
+                label: AppLocalizations.of(context)!.totalMinutes,
                 color: const Color(0xFF9D7FEA),
               )),
               Container(width: 1, height: 50, color: Colors.grey[300]),
               Expanded(child: _buildStatItem(
                 icon: Icons.emoji_events,
                 value: _getCurrentBadge(),
-                label: 'This Week',
+                label: AppLocalizations.of(context)!.thisWeek,
                 color: const Color(0xFFFFD700),
               )),
             ],
@@ -415,7 +416,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Wellness Check-in',
+                      AppLocalizations.of(context)!.wellnessDialogTitle,
                       style: GoogleFonts.poppins(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
@@ -424,8 +425,8 @@ class _ProgressScreenState extends State<ProgressScreen> {
                     ),
                     Text(
                       _hasCheckInThisWeek
-                          ? 'Checked in this week ✓'
-                          : 'Share how you\'re feeling',
+                          ? AppLocalizations.of(context)!.checkedInMsg
+                          : AppLocalizations.of(context)!.shareFeeling,
                       style: GoogleFonts.poppins(
                         fontSize: 13,
                         color: _hasCheckInThisWeek
@@ -451,7 +452,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                   },
                   icon: const Icon(Icons.add_circle_outline, size: 18),
                   label: Text(
-                    'New Check-in',
+                    AppLocalizations.of(context)!.newCheckIn,
                     style: GoogleFonts.poppins(fontSize: 14),
                   ),
                   style: OutlinedButton.styleFrom(
@@ -470,7 +471,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                   },
                   icon: const Icon(Icons.history, size: 18),
                   label: Text(
-                    'View History',
+                    AppLocalizations.of(context)!.viewHistory,
                     style: GoogleFonts.poppins(fontSize: 14),
                   ),
                   style: ElevatedButton.styleFrom(
@@ -502,7 +503,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'This Week',
+            AppLocalizations.of(context)!.thisWeek,
             style: GoogleFonts.poppins(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -516,7 +517,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '$_weeklyMinutes min',
+                AppLocalizations.of(context)!.minShort(_weeklyMinutes),
                 style: GoogleFonts.poppins(
                   fontSize: 24,
                   fontWeight: FontWeight.w600,
@@ -524,7 +525,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 ),
               ),
               Text(
-                'Goal: $_weeklyGoal min',
+                AppLocalizations.of(context)!.weeklyGoal(_weeklyGoal),
                 style: GoogleFonts.poppins(
                   fontSize: 14,
                   color: Colors.grey[600],
@@ -549,7 +550,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
 
           // Badges
           Text(
-            'Weekly Badges',
+            AppLocalizations.of(context)!.weeklyBadges,
             style: GoogleFonts.poppins(
               fontSize: 14,
               fontWeight: FontWeight.w600,
@@ -562,10 +563,10 @@ class _ProgressScreenState extends State<ProgressScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildBadge('Bronze', 60, Icons.emoji_events, const Color(0xFFCD7F32)),
-              _buildBadge('Silver', 120, Icons.emoji_events, const Color(0xFFC0C0C0)),
-              _buildBadge('Gold', 180, Icons.emoji_events, const Color(0xFFFFD700)),
-              _buildBadge('Platinum', 240, Icons.diamond, const Color(0xFF40E0D0)),
+              _buildBadge(AppLocalizations.of(context)!.bronze, 60, Icons.emoji_events, const Color(0xFFCD7F32)),
+              _buildBadge(AppLocalizations.of(context)!.silver, 120, Icons.emoji_events, const Color(0xFFC0C0C0)),
+              _buildBadge(AppLocalizations.of(context)!.gold, 180, Icons.emoji_events, const Color(0xFFFFD700)),
+              _buildBadge(AppLocalizations.of(context)!.platinum, 240, Icons.diamond, const Color(0xFF40E0D0)),
             ],
           ),
         ],
@@ -607,7 +608,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
           ),
         ),
         Text(
-          '${minutes}m',
+          AppLocalizations.of(context)!.minutesCount(minutes),
           style: GoogleFonts.poppins(
             fontSize: 10,
             color: Colors.grey[500],
@@ -632,7 +633,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Calendar',
+                AppLocalizations.of(context)!.calendar,
                 style: GoogleFonts.poppins(
                   fontSize: isWeb ? 22 : 18,
                   fontWeight: FontWeight.w600,
@@ -658,7 +659,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                   ),
                   const SizedBox(width: 12),
                   Text(
-                    DateFormat('MMM yyyy').format(_currentMonth),
+                    DateFormat.yMMM(Localizations.localeOf(context).toString()).format(_currentMonth),
                     style: GoogleFonts.poppins(
                       fontSize: isWeb ? 16 : 14,
                       fontWeight: FontWeight.w500,
@@ -726,9 +727,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildLegend('Practice', const Color(0xFF40E0D0)),
+              _buildLegend(AppLocalizations.of(context)!.practice, const Color(0xFF40E0D0)),
               const SizedBox(width: 20),
-              _buildLegend('Rest day', Colors.grey[200]!),
+              _buildLegend(AppLocalizations.of(context)!.restDay, Colors.grey[200]!),
             ],
           ),
         ],
@@ -892,7 +893,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Wellness check-in saved!')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.checkInSaved)),
       );
     } catch (e) {
       print("INSERT ERROR: $e");
@@ -944,7 +945,7 @@ class _WellnessCheckInDialogState extends State<_WellnessCheckInDialog> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Wellness Check-in',
+              AppLocalizations.of(context)!.wellnessDialogTitle,
               style: GoogleFonts.poppins(
                 fontSize: 22,
                 fontWeight: FontWeight.w600,
@@ -952,7 +953,7 @@ class _WellnessCheckInDialogState extends State<_WellnessCheckInDialog> {
             ),
             const SizedBox(height: 8),
             Text(
-              'How are you feeling today?',
+              AppLocalizations.of(context)!.wellnessDialogSubtitle,
               style: GoogleFonts.poppins(
                 fontSize: 14,
                 color: Colors.grey[600],
@@ -964,14 +965,14 @@ class _WellnessCheckInDialogState extends State<_WellnessCheckInDialog> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    _buildRatingQuestion('How comfortable does your body feel when doing yoga?', _bodyComfort, (v) => setState(() => _bodyComfort = v)),
-                    _buildRatingQuestion('How would you rate your flexibility recently?', _flexibility, (v) => setState(() => _flexibility = v)),
-                    _buildRatingQuestion('How steady do you feel when standing or balancing?', _balance, (v) => setState(() => _balance = v)),
-                    _buildRatingQuestion('How is your overall energy level?', _energyLevel, (v) => setState(() => _energyLevel = v)),
-                    _buildRatingQuestion('How has your mood been lately?', _mood, (v) => setState(() => _mood = v)),
-                    _buildRatingQuestion('How confident do you feel doing your daily activities?', _dailyConfidence, (v) => setState(() => _dailyConfidence = v)),
-                    _buildRatingQuestion('How connected do you feel to your body during yoga practice?', _bodyConnection, (v) => setState(() => _bodyConnection = v)),
-                    _buildRatingQuestion('Overall, how have you been feeling in your body and mind?', _overallWellbeing, (v) => setState(() => _overallWellbeing = v)),
+                    _buildRatingQuestion(AppLocalizations.of(context)!.qBodyComfort, _bodyComfort, (v) => setState(() => _bodyComfort = v)),
+                    _buildRatingQuestion(AppLocalizations.of(context)!.qFlexibility, _flexibility, (v) => setState(() => _flexibility = v)),
+                    _buildRatingQuestion(AppLocalizations.of(context)!.qBalance, _balance, (v) => setState(() => _balance = v)),
+                    _buildRatingQuestion(AppLocalizations.of(context)!.qEnergy, _energyLevel, (v) => setState(() => _energyLevel = v)),
+                    _buildRatingQuestion(AppLocalizations.of(context)!.qMood, _mood, (v) => setState(() => _mood = v)),
+                    _buildRatingQuestion(AppLocalizations.of(context)!.qConfidence, _dailyConfidence, (v) => setState(() => _dailyConfidence = v)),
+                    _buildRatingQuestion(AppLocalizations.of(context)!.qBodyConnection, _bodyConnection, (v) => setState(() => _bodyConnection = v)),
+                    _buildRatingQuestion(AppLocalizations.of(context)!.qOverall, _overallWellbeing, (v) => setState(() => _overallWellbeing = v)),
 
                     const SizedBox(height: 16),
 
@@ -979,7 +980,7 @@ class _WellnessCheckInDialogState extends State<_WellnessCheckInDialog> {
                       controller: _notesController,
                       maxLines: 3,
                       decoration: InputDecoration(
-                        labelText: 'Notes (optional)',
+                        labelText: AppLocalizations.of(context)!.notesOptional,
                         labelStyle: GoogleFonts.poppins(fontSize: 14),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -1002,7 +1003,7 @@ class _WellnessCheckInDialogState extends State<_WellnessCheckInDialog> {
                       await GlobalAudioService.playClickSound();
                       Navigator.pop(context);
                     },
-                    child: Text('Cancel', style: GoogleFonts.poppins()),
+                    child: Text(AppLocalizations.of(context)!.cancel, style: GoogleFonts.poppins()),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -1033,7 +1034,7 @@ class _WellnessCheckInDialogState extends State<_WellnessCheckInDialog> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(
-                              'Please rate all categories',
+                              AppLocalizations.of(context)!.rateAllError,
                               style: GoogleFonts.poppins(),
                             ),
                           ),
@@ -1043,7 +1044,7 @@ class _WellnessCheckInDialogState extends State<_WellnessCheckInDialog> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF40E0D0),
                     ),
-                    child: Text('Submit', style: GoogleFonts.poppins(color: Colors.white,)),
+                    child: Text(AppLocalizations.of(context)!.submit, style: GoogleFonts.poppins(color: Colors.white,)),
                   ),
                 ),
               ],
@@ -1102,7 +1103,7 @@ class _ReflectionHistoryScreen extends StatelessWidget {
           },
         ),
         title: Text(
-          'Reflection History',
+          AppLocalizations.of(context)!.reflectionHistory,
           style: GoogleFonts.poppins(
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -1118,7 +1119,7 @@ class _ReflectionHistoryScreen extends StatelessWidget {
             Icon(Icons.favorite_border, size: 64, color: Colors.grey[300]),
             const SizedBox(height: 16),
             Text(
-              'No reflections yet',
+              AppLocalizations.of(context)!.noReflections,
               style: GoogleFonts.poppins(
                 fontSize: 16,
                 color: Colors.grey[600],
@@ -1154,7 +1155,7 @@ class _ReflectionHistoryScreen extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      DateFormat('MMM dd, yyyy').format(date),
+                      DateFormat.yMMMd(Localizations.localeOf(context).toString()).format(date),
                       style: GoogleFonts.poppins(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -1164,14 +1165,14 @@ class _ReflectionHistoryScreen extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 12),
-                _buildReflectionItem('Body Comfort', reflection['fitness_improvement']),
-                _buildReflectionItem('Flexibility', reflection['flexibility_improvement']),
-                _buildReflectionItem('Balance', reflection['balance_rating']),
-                _buildReflectionItem('Energy', reflection['energy_level']),
-                _buildReflectionItem('Mood', reflection['mental_wellbeing']),
-                _buildReflectionItem('Confidence', reflection['daily_confidence']),
-                _buildReflectionItem('Mind-Body', reflection['body_connection']),
-                _buildReflectionItem('Wellbeing', reflection['satisfaction_level']),
+                _buildReflectionItem(AppLocalizations.of(context)!.bodyComfort, reflection['fitness_improvement']),
+                _buildReflectionItem(AppLocalizations.of(context)!.flexibility, reflection['flexibility_improvement']),
+                _buildReflectionItem(AppLocalizations.of(context)!.balance, reflection['balance_rating']),
+                _buildReflectionItem(AppLocalizations.of(context)!.energy, reflection['energy_level']),
+                _buildReflectionItem(AppLocalizations.of(context)!.mood, reflection['mental_wellbeing']),
+                _buildReflectionItem(AppLocalizations.of(context)!.confidence, reflection['daily_confidence']),
+                _buildReflectionItem(AppLocalizations.of(context)!.mindBody, reflection['body_connection']),
+                _buildReflectionItem(AppLocalizations.of(context)!.wellbeing, reflection['satisfaction_level']),
 
                 if (reflection['additional_comments'] != null &&
                     reflection['additional_comments'].toString().isNotEmpty) ...[
@@ -1179,7 +1180,7 @@ class _ReflectionHistoryScreen extends StatelessWidget {
                   const Divider(),
                   const SizedBox(height: 8),
                   Text(
-                    'Notes:',
+                    AppLocalizations.of(context)!.notes,
                     style: GoogleFonts.poppins(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,

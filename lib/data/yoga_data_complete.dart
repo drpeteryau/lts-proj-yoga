@@ -12,8 +12,8 @@ class YogaDataComplete {
   static final List<YogaPose> beginnerWarmupSitting = [
     YogaPose(
       id: 'bw_sit_01',
-      name: 'Head, Neck and Shoulders Stretch',
-      description: 'Gentle seated stretches releasing neck and shoulder tension.',
+      nameKey: 'yogaHeadNeckShoulders',
+      descriptionKey: 'yogaDescHeadNeck',
       imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=500',
       durationSeconds: 180,
       modifications: [
@@ -27,8 +27,8 @@ class YogaDataComplete {
     ),
     YogaPose(
       id: 'bw_sit_02',
-      name: 'Straight Arms Rotation',
-      description: 'Arm rotations to warm up shoulders and upper back.',
+      nameKey: 'yogaStraightArms',
+      descriptionKey: 'yogaDescStraightArms',
       imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=500',
       durationSeconds: 60,
       modifications: ['Keep elbows straight', 'Smooth controlled movement'],
@@ -38,8 +38,8 @@ class YogaDataComplete {
     ),
     YogaPose(
       id: 'bw_sit_03',
-      name: 'Bent Arm Rotation',
-      description: 'Shoulder mobility exercise with bent elbows.',
+      nameKey: 'yogaBentArms',
+      descriptionKey: 'yogaDescBentArms',
       imageUrl: 'https://images.unsplash.com/photo-1588286840104-8957b019727f?w=500',
       durationSeconds: 60,
       modifications: ['Keep fingers on shoulders', 'Slow controlled rolls'],
@@ -49,8 +49,8 @@ class YogaDataComplete {
     ),
     YogaPose(
       id: 'bw_sit_04',
-      name: 'Shoulders Lateral Stretch',
-      description: 'Side-body stretch improving flexibility.',
+      nameKey: 'yogaShouldersLateral',
+      descriptionKey: 'yogaDescShouldersLateral',
       imageUrl: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=500',
       durationSeconds: 120,
       modifications: ['Keep buttocks down', 'Face forward'],
@@ -60,8 +60,8 @@ class YogaDataComplete {
     ),
     YogaPose(
       id: 'bw_sit_05',
-      name: 'Shoulders & Torso Twist',
-      description: 'A gentle detoxifying twist.',
+      nameKey: 'yogaShouldersTorsoTwist',
+      descriptionKey: 'yogaDescShouldersTorsoTwist',
       imageUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500',
       durationSeconds: 120,
       modifications: ['Keep hips stable', 'Keep shoulders level'],
@@ -71,8 +71,8 @@ class YogaDataComplete {
     ),
     YogaPose(
       id: 'bw_sit_06',
-      name: 'Leg Raise (Bent)',
-      description: 'Strengthen legs and activate core.',
+      nameKey: 'yogaLegRaiseBent',
+      descriptionKey: 'yogaDescLegRaiseBent',
       imageUrl: 'https://images.unsplash.com/photo-1603988363607-e1e4a66962c6?w=500',
       durationSeconds: 90,
       modifications: ['Use chair back for support', 'Keep back straight'],
@@ -82,8 +82,8 @@ class YogaDataComplete {
     ),
     YogaPose(
       id: 'bw_sit_07',
-      name: 'Leg Raise (Straight)',
-      description: 'Straight-leg lift for advanced strength.',
+      nameKey: 'yogaLegRaiseStraight',
+      descriptionKey: 'yogaDescLegRaiseStraight',
       imageUrl: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=500',
       durationSeconds: 90,
       modifications: ['Begin with bent-knee version', 'Use chair for support'],
@@ -93,8 +93,8 @@ class YogaDataComplete {
     ),
     YogaPose(
       id: 'bw_sit_08',
-      name: 'Goddess Pose — Torso Twist',
-      description: 'Wide-leg seated pose for mobility.',
+      nameKey: 'yogaGoddessTwist',
+      descriptionKey: 'yogaDescGoddessTwist',
       imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=500',
       durationSeconds: 120,
       modifications: ['Align knees with toes', 'Keep hips grounded'],
@@ -104,8 +104,8 @@ class YogaDataComplete {
     ),
     YogaPose(
       id: 'bw_sit_09',
-      name: 'Goddess Pose — Leg Strengthening',
-      description: 'Strengthening variation of seated Goddess.',
+      nameKey: 'yogaGoddessStrength',
+      descriptionKey: 'yogaDescGoddessStrength',
       imageUrl: 'https://images.unsplash.com/photo-1599447292326-e6daae7ae9cb?w=500',
       durationSeconds: 120,
       modifications: ['Keep torso upright', 'Use chair for balance'],
@@ -123,8 +123,8 @@ class YogaDataComplete {
   static final List<YogaPose> beginnerMainStanding = [
     YogaPose(
       id: 'bw_main_01',
-      name: 'Back and Chest Stretch',
-      description: 'L-shape stretch improving upper-body flexibility.',
+      nameKey: 'yogaBackChestStretch',
+      descriptionKey: 'yogaDescBackChestStretch',
       imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=500',
       durationSeconds: 120,
       modifications: ['Keep arms and legs straight', 'Engage core'],
@@ -134,8 +134,8 @@ class YogaDataComplete {
     ),
     YogaPose(
       id: 'bw_main_02',
-      name: 'Standing Crunch',
-      description: 'Dynamic core-strengthening movement.',
+      nameKey: 'yogaStandingCrunch',
+      descriptionKey: 'yogaDescStandingCrunch',
       imageUrl: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=500',
       durationSeconds: 150,
       modifications: ['Avoid during pregnancy', 'Move slowly'],
@@ -145,8 +145,8 @@ class YogaDataComplete {
     ),
     YogaPose(
       id: 'bw_main_03',
-      name: 'Warrior 3 (Supported)',
-      description: 'Balance and strength with chair support.',
+      nameKey: 'yogaWarrior3Supported',
+      descriptionKey: 'yogaDescWarrior3Supported',
       imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=500',
       durationSeconds: 120,
       modifications: ['Keep one hand on chair', 'Maintain a straight line'],
@@ -156,8 +156,8 @@ class YogaDataComplete {
     ),
     YogaPose(
       id: 'bw_main_04',
-      name: 'Warrior 1 (Supported)',
-      description: 'Beginner-friendly Warrior stance.',
+      nameKey: 'yogaWarrior1Supported',
+      descriptionKey: 'yogaDescWarrior1Supported',
       imageUrl: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=500',
       durationSeconds: 120,
       modifications: ['Shorten stance', 'Square hips'],
@@ -167,8 +167,8 @@ class YogaDataComplete {
     ),
     YogaPose(
       id: 'bw_main_05',
-      name: 'Warrior 2 (Supported)',
-      description: 'Side-facing warrior for hip opening.',
+      nameKey: 'yogaWarrior2Supported',
+      descriptionKey: 'yogaDescWarrior2Supported',
       imageUrl: 'https://images.unsplash.com/photo-1599447292326-e6daae7ae9cb?w=500',
       durationSeconds: 120,
       modifications: ['Align knee with toes', 'Level shoulders'],
@@ -178,8 +178,8 @@ class YogaDataComplete {
     ),
     YogaPose(
       id: 'bw_main_06',
-      name: 'Triangle Pose (Supported)',
-      description: 'Deep side-body extension.',
+      nameKey: 'yogaTriangleSupported',
+      descriptionKey: 'yogaDescTriangleSupported',
       imageUrl: 'https://images.unsplash.com/photo-1588286840104-8957b019727f?w=500',
       durationSeconds: 120,
       modifications: ['Use block', 'Keep hips forward'],
@@ -189,8 +189,8 @@ class YogaDataComplete {
     ),
     YogaPose(
       id: 'bw_main_07',
-      name: 'Reverse Warrior 2',
-      description: 'Back-arching warrior stretch.',
+      nameKey: 'yogaReverseWarrior2',
+      descriptionKey: 'yogaDescReverseWarrior2',
       imageUrl: 'https://images.unsplash.com/photo-1603988363607-e1e4a66962c6?w=500',
       durationSeconds: 120,
       modifications: ['Keep front knee bent', 'Choose gaze direction'],
@@ -200,8 +200,8 @@ class YogaDataComplete {
     ),
     YogaPose(
       id: 'bw_main_08',
-      name: 'Side Angle Pose (Supported)',
-      description: 'Strengthens legs and opens ribs.',
+      nameKey: 'yogaSideAngleSupported',
+      descriptionKey: 'yogaDescSideAngleSupported',
       imageUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500',
       durationSeconds: 120,
       modifications: ['Use block', 'Tuck tailbone slightly'],
@@ -219,8 +219,8 @@ class YogaDataComplete {
   static final List<YogaPose> beginnerCooldown = [
     YogaPose(
       id: 'bw_cd_01',
-      name: 'Gentle Breathing',
-      description: 'Full-body relaxation and calm breathing.',
+      nameKey: 'yogaGentleBreathing',
+      descriptionKey: 'yogaDescGentleBreathing',
       imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=500',
       durationSeconds: 180,
       modifications: ['Sit or lie down', 'Close eyes if comfortable'],
@@ -238,10 +238,9 @@ class YogaDataComplete {
   static final List<YogaSession> beginnerSessions = [
     YogaSession(
       id: 'beginner_1',
-      title: 'Gentle Chair Yoga',
-      level: 'Beginner',
-      description:
-      'A gentle introduction suitable for seniors or those wanting a slow, supported practice. Includes full seated warmup and supported standing postures.',
+      titleKey: 'yogaSessionGentleChair',
+      levelKey: 'Beginner',
+      descriptionKey: 'yogaDescGentleChair',
       totalDurationMinutes: 35,
       warmupPoses: beginnerWarmupSitting,
       mainPoses: beginnerMainStanding,
@@ -249,10 +248,9 @@ class YogaDataComplete {
     ),
     YogaSession(
       id: 'beginner_2',
-      title: 'Morning Mobility',
-      level: 'Beginner',
-      description:
-      'A light morning routine focusing on joint mobility, breathing, and supported strength work.',
+      titleKey: 'yogaSessionMorningMobility',
+      levelKey: 'Beginner',
+      descriptionKey: 'yogaDescMorningMobility',
       totalDurationMinutes: 20,
       warmupPoses: beginnerWarmupSitting.take(5).toList(),
       mainPoses: beginnerMainStanding.take(4).toList(),
@@ -260,10 +258,9 @@ class YogaDataComplete {
     ),
     YogaSession(
       id: 'beginner_3',
-      title: 'Warrior Series',
-      level: 'Beginner',
-      description:
-      'A confidence-building sequence exploring Warrior I, II, and supporting transitions.',
+      titleKey: 'yogaSessionWarriorSeries',
+      levelKey: 'Beginner',
+      descriptionKey: 'yogaDescWarriorSeries',
       totalDurationMinutes: 25,
       warmupPoses: beginnerWarmupSitting.take(4).toList(),
       mainPoses: beginnerMainStanding.sublist(3, 8).toList(),
@@ -279,8 +276,8 @@ class YogaDataComplete {
 static final List<YogaPose> intermediateMain = [
   YogaPose(
     id: 'int_main_01',
-    name: 'Downward Dog',
-    description: 'A foundational inverted V pose that stretches the full body.',
+    nameKey: 'yogaDownwardDog',
+    descriptionKey: 'yogaDescDownwardDog',
     imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=500',
     durationSeconds: 120,
     modifications: [
@@ -293,8 +290,8 @@ static final List<YogaPose> intermediateMain = [
   ),
   YogaPose(
     id: 'int_main_02',
-    name: 'Plank Pose',
-    description: 'Full-body strength builder engaging core, arms, and legs.',
+    nameKey: 'yogaPlank',
+    descriptionKey: 'yogaDescPlank',
     imageUrl: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=500',
     durationSeconds: 90,
     modifications: [
@@ -307,8 +304,8 @@ static final List<YogaPose> intermediateMain = [
   ),
   YogaPose(
     id: 'int_main_03',
-    name: 'Eight-Point Pose (Ashtangasana)',
-    description: 'Strength-building pose lowering chest, chin, knees and toes.',
+    nameKey: 'yogaEightPointPose',
+    descriptionKey: 'yogaDescEightPoint',
     imageUrl: 'https://images.unsplash.com/photo-1588286840104-8957b019727f?w=500',
     durationSeconds: 90,
     modifications: [
@@ -321,8 +318,8 @@ static final List<YogaPose> intermediateMain = [
   ),
   YogaPose(
     id: 'int_main_04',
-    name: 'Baby Cobra',
-    description: 'Gentle backbend strengthening upper back and spine.',
+    nameKey: 'yogaBabyCobra',
+    descriptionKey: 'yogaDescBabyCobra',
     imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=500',
     durationSeconds: 90,
     modifications: [
@@ -335,8 +332,8 @@ static final List<YogaPose> intermediateMain = [
   ),
   YogaPose(
     id: 'int_main_05',
-    name: 'Full Cobra Pose',
-    description: 'A stronger chest-opening backbend engaging the whole body.',
+    nameKey: 'yogaFullCobra',
+    descriptionKey: 'yogaDescFullCobra',
     imageUrl: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=500',
     durationSeconds: 90,
     modifications: [
@@ -358,8 +355,8 @@ static final List<YogaPose> intermediateMain = [
 static final List<YogaPose> intermediateCooldown = [
   YogaPose(
     id: 'int_cd_01',
-    name: 'Gentle Breathing',
-    description: 'Cooldown breathing to settle heart rate and calm the mind.',
+    nameKey: 'yogaGentleBreathing',
+    descriptionKey: 'Cooldown breathing to settle heart rate and calm the mind.',
     imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=500',
     durationSeconds: 180,
     modifications: ['Sit or lie down', 'Close eyes if comfortable'],
@@ -377,10 +374,9 @@ static final List<YogaPose> intermediateCooldown = [
 static final List<YogaSession> intermediateSessions = [
   YogaSession(
     id: 'intermediate_1',
-    title: 'Hatha Fundamentals',
-    level: 'Intermediate',
-    description:
-    'A classic mat-based Hatha sequence focusing on alignment, breath, and full-body engagement. Ideal for practitioners ready to move beyond chair support.',
+    titleKey: 'yogaSessionHathaFundamentals',
+    levelKey: 'Intermediate',
+    descriptionKey: 'yogaDescHathaFundamentals',
     totalDurationMinutes: 30,
     warmupPoses: [], // intermediate warmup intentionally minimal
     mainPoses: intermediateMain,
@@ -388,10 +384,9 @@ static final List<YogaSession> intermediateSessions = [
   ),
   YogaSession(
     id: 'intermediate_2',
-    title: 'Core Strength Builder',
-    level: 'Intermediate',
-    description:
-    'A short but powerful session focusing on Plank, Eight-Point Pose, and controlled transitions. Boosts core strength and shoulder stability.',
+    titleKey: 'yogaSessionCoreStrength',
+    levelKey: 'Intermediate',
+    descriptionKey: 'yogaDescCoreStrength',
     totalDurationMinutes: 20,
     warmupPoses: [],
     mainPoses: intermediateMain.take(3).toList(),
@@ -399,10 +394,9 @@ static final List<YogaSession> intermediateSessions = [
   ),
   YogaSession(
     id: 'intermediate_3',
-    title: 'Backbend Flow',
-    level: 'Intermediate',
-    description:
-    'A spine-strengthening sequence moving from Eight-Point Pose into Baby Cobra and Full Cobra. Builds confidence in backbending.',
+    titleKey: 'yogaSessionBackbendFlow',
+    levelKey: 'Intermediate',
+    descriptionKey: 'yogaDescBackbendFlow',
     totalDurationMinutes: 25,
     warmupPoses: [],
     mainPoses: intermediateMain.sublist(2).toList(),
@@ -417,9 +411,8 @@ static final List<YogaSession> intermediateSessions = [
   static final List<YogaPose> advancedFlow = [
     YogaPose(
       id: 'adv_main_01',
-      name: 'Sun Salutation Flow',
-      description:
-      'A dynamic sequence linking breath and movement. Builds strength, heat, coordination, and stamina.',
+      nameKey: 'yogaSunSalutation',
+      descriptionKey: 'yogaDescSunSalutation',
       imageUrl: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=500',
       durationSeconds: 300, // 5 minutes
       modifications: [
@@ -462,8 +455,8 @@ Repeat for 5–10 rounds or to your ability level.
   static final List<YogaPose> advancedCooldown = [
     YogaPose(
       id: 'adv_cd_01',
-      name: 'Gentle Breathing',
-      description: 'Final calming breathwork to restore balance after a strong flow.',
+      nameKey: 'yogaGentleBreathing',
+      descriptionKey: 'Final calming breathwork to restore balance after a strong flow.',
       imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=500',
       durationSeconds: 180,
       modifications: ['Sit upright or lie flat', 'Place cushion under knees'],
@@ -481,10 +474,9 @@ Repeat for 5–10 rounds or to your ability level.
   static final List<YogaSession> advancedSessions = [
     YogaSession(
       id: 'advanced_1',
-      title: 'Sun Salutation Flow',
-      level: 'Advanced',
-      description:
-      'A dynamic mat-based flow designed to synchronise breath and movement. This session builds endurance and full-body strength through repeated Sun Salutation cycles.',
+      titleKey: 'yogaSessionSunSalutation',
+      levelKey: 'Advanced',
+      descriptionKey: 'yogaDescSunSalutationSession',
       totalDurationMinutes: 15,
       warmupPoses: [], // advanced users begin with direct dynamic flow
       mainPoses: advancedFlow,
@@ -492,10 +484,9 @@ Repeat for 5–10 rounds or to your ability level.
     ),
     YogaSession(
       id: 'advanced_2',
-      title: 'Extended Flow Practice',
-      level: 'Advanced',
-      description:
-      'A deeper and longer Sun Salutation practice — ideal for experienced practitioners wanting a continuous challenge with breath-led movement.',
+      titleKey: 'yogaSessionExtendedFlow',
+      levelKey: 'Advanced',
+      descriptionKey: 'yogaDescExtendedFlow',
       totalDurationMinutes: 25,
       warmupPoses: [],
       mainPoses: advancedFlow,

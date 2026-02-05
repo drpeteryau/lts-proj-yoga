@@ -6,6 +6,7 @@ import '../services/progress_service.dart';
 import '../data/yoga_data_complete.dart';
 import 'session_detail_screen.dart';
 import '../services/global_audio_service.dart';
+import '../l10n/app_localizations.dart';
 
 class LevelSelectionScreen extends StatefulWidget {
   const LevelSelectionScreen({super.key});
@@ -92,7 +93,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
               const Icon(Icons.error_outline, size: 64, color: Colors.red),
               const SizedBox(height: 16),
               Text(
-                'Error loading progress',
+                AppLocalizations.of(context)!.errorLoadingProgress,
                 style: GoogleFonts.poppins(fontSize: 16),
               ),
               const SizedBox(height: 16),
@@ -105,7 +106,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                   backgroundColor: const Color(0xFF40E0D0),
                 ),
                 child: Text(
-                  'Retry',
+                  AppLocalizations.of(context)!.retry,
                   style: GoogleFonts.poppins(),
                 ),
               ),
@@ -133,7 +134,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
 
                         // Header
                         Text(
-                          'Choose Your',
+                          AppLocalizations.of(context)!.chooseYour,
                           style: GoogleFonts.poppins(
                             fontSize: isWeb ? 36 : 28,
                             fontWeight: FontWeight.w300,
@@ -141,7 +142,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                           ),
                         ),
                         Text(
-                          'Level',
+                          AppLocalizations.of(context)!.level,
                           style: GoogleFonts.poppins(
                             fontSize: isWeb ? 48 : 36,
                             fontWeight: FontWeight.w600,
@@ -154,9 +155,9 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                         // Beginner Card
                         _buildLevelCard(
                           context,
-                          title: 'Beginner',
-                          subtitle: 'Chair Yoga',
-                          description: 'Perfect for those just starting their yoga journey',
+                          title: AppLocalizations.of(context)!.beginnerTitle,
+                          subtitle: AppLocalizations.of(context)!.beginnerSubtitle,
+                          description: AppLocalizations.of(context)!.beginnerDesc,
                           imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600',
                           color: const Color(0xFF40E0D0),
                           isLocked: false,
@@ -178,9 +179,9 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                         // Intermediate Card
                         _buildLevelCard(
                           context,
-                          title: 'Intermediate',
-                          subtitle: 'Hatha yoga on the mat',
-                          description: 'Build strength with challenging sequences',
+                          title: AppLocalizations.of(context)!.intermediateTitle,
+                          subtitle: AppLocalizations.of(context)!.intermediateSubtitle,
+                          description: AppLocalizations.of(context)!.intermediateDesc,
                           imageUrl: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=600',
                           color: const Color(0xFF35C9BA),
                           isLocked: !(_userProgress?.intermediateUnlocked ?? false),
@@ -200,7 +201,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                               );
                             } else {
                               _showLockedDialog(
-                                'Intermediate',
+                                AppLocalizations.of(context)!.intermediateTitle,
                                 UserProgress.sessionsRequiredForIntermediate,
                                 _getSessionsCompleted('beginner'),
                               );
@@ -213,9 +214,9 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                         // Advanced Card
                         _buildLevelCard(
                           context,
-                          title: 'Advanced',
-                          subtitle: 'Dynamic sun salutation flow',
-                          description: 'Challenge yourself with flowing sequences',
+                          title: AppLocalizations.of(context)!.advancedTitle,
+                          subtitle: AppLocalizations.of(context)!.advancedSubtitle,
+                          description: AppLocalizations.of(context)!.advancedDesc,
                           imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600',
                           color: const Color(0xFF2AB5A5),
                           isLocked: !(_userProgress?.advancedUnlocked ?? false),
@@ -237,14 +238,14 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                             } else {
                               if (!(_userProgress?.intermediateUnlocked ?? false)) {
                                 _showLockedDialog(
-                                  'Advanced',
+                                  AppLocalizations.of(context)!.advancedTitle,
                                   UserProgress.sessionsRequiredForIntermediate,
                                   _getSessionsCompleted('beginner'),
-                                  message: 'Unlock Intermediate level first!',
+                                  message: AppLocalizations.of(context)!.unlockIntermediateFirst,
                                 );
                               } else {
                                 _showLockedDialog(
-                                  'Advanced',
+                                  AppLocalizations.of(context)!.advancedTitle,
                                   UserProgress.sessionsRequiredForAdvanced,
                                   _getSessionsCompleted('intermediate'),
                                 );
@@ -384,7 +385,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                       // Unlock message
                       if (needsIntermediate)
                         Text(
-                          'Unlock Intermediate first',
+                          AppLocalizations.of(context)!.unlockIntermediateFirst,
                           style: GoogleFonts.poppins(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -396,7 +397,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Complete ${requiredSessions - currentLevelSessions} more',
+                              AppLocalizations.of(context)!.completeMore(requiredSessions - currentLevelSessions),
                               style: GoogleFonts.poppins(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
@@ -405,7 +406,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              '$currentLevelSessions / $requiredSessions sessions',
+                              AppLocalizations.of(context)!.sessionsProgress(currentLevelSessions, requiredSessions),
                               style: GoogleFonts.poppins(
                                 fontSize: 13,
                                 color: Colors.white.withOpacity(0.9),
@@ -452,7 +453,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                       if (sessionsCompleted > 0) ...[
                         const SizedBox(height: 8),
                         Text(
-                          '$sessionsCompleted sessions completed',
+                          AppLocalizations.of(context)!.sessionsCompletedCount(sessionsCompleted),
                           style: GoogleFonts.poppins(
                             fontSize: 12,
                             color: Colors.white.withOpacity(0.8),
@@ -488,7 +489,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
             const Icon(Icons.lock_outline, color: Color(0xFF40E0D0)),
             const SizedBox(width: 12),
             Text(
-              '$levelName Locked',
+              AppLocalizations.of(context)!.lockedLevelTitle(levelName),
               style: GoogleFonts.poppins(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
@@ -502,7 +503,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
           children: [
             Text(
               message ??
-                  'Complete ${requiredSessions - currentSessions} more sessions to unlock this level.',
+              AppLocalizations.of(context)!.completeSessionsToUnlock(requiredSessions - currentSessions),
               style: GoogleFonts.poppins(fontSize: 15),
             ),
             const SizedBox(height: 16),
@@ -519,7 +520,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              '$currentSessions / $requiredSessions sessions',
+              AppLocalizations.of(context)!.sessionsProgress(currentSessions, requiredSessions),
               style: GoogleFonts.poppins(
                 fontSize: 13,
                 color: Colors.grey[600],
@@ -534,7 +535,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
               Navigator.pop(context);
             },
             child: Text(
-              'OK',
+              AppLocalizations.of(context)!.ok,
               style: GoogleFonts.poppins(
                 color: const Color(0xFF40E0D0),
                 fontWeight: FontWeight.w600,

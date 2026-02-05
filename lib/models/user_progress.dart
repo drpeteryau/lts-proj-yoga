@@ -50,6 +50,12 @@ class UserProgress {
            intermediateSessionsCompleted >= sessionsRequiredForAdvanced;
   }
 
+  String get experienceLevelName {
+    if (advancedUnlocked) return 'Advanced';
+    if (intermediateUnlocked) return 'Intermediate';
+    return 'Beginner';
+  }
+
   // Convert to/from Map for Supabase
   Map<String, dynamic> toJson() {
     return {

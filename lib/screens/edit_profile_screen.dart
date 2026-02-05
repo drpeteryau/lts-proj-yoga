@@ -6,8 +6,8 @@ import 'package:image_picker/image_picker.dart';
 import '../services/notification_service.dart';
 import '../services/global_audio_service.dart';
 import 'package:volume_controller/volume_controller.dart';
-import 'package:audioplayers/audioplayers.dart';
-import '../services/global_audio_service.dart';
+import '../main.dart';
+import '../l10n/app_localizations.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -80,6 +80,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       _experienceLevel = profile['experience_level'] ?? 'Beginner';
       _sessionLength = profile['preferred_session_length'] ?? '15 minutes';
       _language = profile['preferred_language'] ?? 'English';
+      appLocale.value = _language == 'Mandarin' ? const Locale('zh') : const Locale('en');
 
       _pushNotifications = profile['push_notifications_enabled'] ?? true;
       _profileImageUrl = profile['profile_image_url'];
@@ -151,11 +152,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Profile image updated')));
+      ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.photoUpdated)));
     } catch (e) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('Upload failed: $e')));
+      ).showSnackBar(SnackBar(content: Text('${AppLocalizations.of(context)!.photoFail}: $e')));
     }
   }
 
@@ -197,7 +198,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final age = int.tryParse(_ageController.text.trim());
     if (_nameController.text.trim().isEmpty || age == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Name and age are required')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.validationError)),
       );
       return;
     }
@@ -264,8 +265,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         iconTheme: const IconThemeData(color: Color(0xFF1F3D3A)),
-        title: const Text(
-          'Edit Profile',
+        title: Text(
+          AppLocalizations.of(context)!.editProfile,
           style: TextStyle(color: Color(0xFF1F3D3A)),
         ),
         actions: [
@@ -274,8 +275,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               GlobalAudioService.playClickSound();
               _saveProfile();
             },
-            child: const Text(
-              'Save',
+            child: Text(
+              AppLocalizations.of(context)!.save,
               style: TextStyle(
                 color: Color(0xFF40E0D0),
                 fontWeight: FontWeight.w600,
@@ -323,24 +324,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         }
                       },
                       itemBuilder: (context) => [
-                        const PopupMenuItem(
+                        PopupMenuItem(
                           value: 'upload',
                           child: Row(
                             children: [
                               Icon(Icons.upload, color: Color(0xFF2E6F68)),
                               SizedBox(width: 8),
-                              Text('Upload Photo'),
+                              Text(AppLocalizations.of(context)!.uploadPhoto),
                             ],
                           ),
                         ),
                         if (_profileImageUrl != null)
-                          const PopupMenuItem(
+                          PopupMenuItem(
                             value: 'remove',
                             child: Row(
                               children: [
                                 Icon(Icons.delete, color: Colors.red),
                                 SizedBox(width: 8),
-                                Text('Remove Photo'),
+                                Text(AppLocalizations.of(context)!.removePhoto),
                               ],
                             ),
                           ),
@@ -354,41 +355,58 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
             // ===================== BASIC INFO =====================
             _card(
-              title: 'Basic Information',
+              title: AppLocalizations.of(context)!.basicInfo,
               children: [
-                _textField('Full Name', _nameController),
-                _textField('Age', _ageController,
+                _textField(AppLocalizations.of(context)!.fullName, _nameController),
+                _textField(AppLocalizations.of(context)!.age, _ageController,
                     keyboardType: TextInputType.number),
-                _dropdown('Experience Level', _experienceLevel,
-                    ['Beginner', 'Intermediate', 'Advanced'],
-                        (v) => setState(() => _experienceLevel = v)),
+                // _dropdown(AppLocalizations.of(context)!.experienceLevel, _experienceLevel,
+                //     ['Beginner', 'Intermediate', 'Advanced'],
+                //         (v) => setState(() => _experienceLevel = v)),
                 _dropdown(
-                    'Session Length',
+                    AppLocalizations.of(context)!.sessionLength,
                     _sessionLength,
                     [
+                      '5 minutes',
+                      '10 minutes',
                       '15 minutes',
                       '20 minutes',
-                      '30 minutes',
-                      '45 minutes',
-                      '60 minutes',
+                      '30 minutes'
                     ],
-                        (v) => setState(() => _sessionLength = v)),
+                    (v) => setState(() => _sessionLength = v),
+                    itemLabelBuilder: (value) {
+                      if (value == '5 minutes') return AppLocalizations.of(context)!.min5;
+                      if (value == '10 minutes') return AppLocalizations.of(context)!.min10;                      
+                      if (value == '15 minutes') return AppLocalizations.of(context)!.min15;
+                      if (value == '20 minutes') return AppLocalizations.of(context)!.min20;
+                      if (value == '30 minutes') return AppLocalizations.of(context)!.min30;
+                        return value;
+                    }), 
                 _dropdown(
-                    'Language',
+                    AppLocalizations.of(context)!.language,
                     _language,
                     [
                       'English',
                       'Mandarin',
                     ],
-                        (v) => setState(() => _language = v)),
+                    (v) {
+                      setState(() => _language = v);
+                      appLocale.value = v == 'Mandarin' ? const Locale('zh') : const Locale('en');
+                    },
+                    itemLabelBuilder: (value) {
+                      if (value == 'English') return AppLocalizations.of(context)!.english;
+                      if (value == 'Mandarin') return AppLocalizations.of(context)!.mandarin;
+                        return value;
+                    },                
+                  ),
               ],
             ),
 
             _card(
-              title: 'Notifications',
+              title: AppLocalizations.of(context)!.notifications,
               children: [
                 SwitchListTile(
-                    title: const Text('Push Notifications'),
+                    title: Text(AppLocalizations.of(context)!.pushNotifications),
                     value: _pushNotifications,
                     activeThumbColor: turquoise,
                     onChanged: (v) {
@@ -398,12 +416,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       if (v == true) {
                         NotificationService().showNotification(
                           title: 'HealYoga',
-                          body: 'Push notifications enabled! 🔔',
+                          body: AppLocalizations.of(context)!.pushEnabledMsg,
                         );
                       }
                     }),
                 SwitchListTile(
-                    title: const Text('Daily Practice Reminder'),
+                    title: Text(AppLocalizations.of(context)!.dailyReminder),
                     value: _dailyPracticeReminder,
                     activeThumbColor: turquoise,
                     onChanged: (v) {
@@ -412,13 +430,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       // Trigger the local notification if turned on
                       if (v == true) {
                         NotificationService().showNotification(
-                          title: 'Daily Reminder Enabled!',
-                          body: 'We will remind you every day to practice. 🌞',
+                          title: AppLocalizations.of(context)!.dailyReminderEnabled,
+                          body: '${AppLocalizations.of(context)!.dailyEnabledMsg} $_reminderTime',
                         );
                       }
                     }),
                 ListTile(
-                  title: const Text('Reminder Time'),
+                  title: Text(AppLocalizations.of(context)!.reminderTime),
                   trailing: Text(
                     _reminderTime,
                     style: const TextStyle(color: Color(0xFF6B8F8A)),
@@ -437,17 +455,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       if (_dailyPracticeReminder == true) {
                         NotificationService().scheduleDailyNotification(
                           id: 101, // Unique ID for this daily reminder
-                          title: 'Daily Practice Reminder',
-                          body: 'Time for your daily session! 🏃‍♀️',
+                          title: AppLocalizations.of(context)!.dailyReminderNotification,
+                          body: AppLocalizations.of(context)!.dailyReminderBody,
                           hour: time.hour,
                           minute: time.minute,
                         );
 
-                        NotificationService().showNotification(
-                          title: 'Reminder Time Set!',
-                          body:
-                          'We will remind you every day at $_reminderTime 🕓',
-                        );
+                        // NotificationService().showNotification(
+                        //   title: 'Reminder Time Set!',
+                        //   body:
+                        //   'We will remind you every day at $_reminderTime 🕓',
+                        // );
                       } else {
                         NotificationService().cancelNotification(101);
                       }
@@ -458,10 +476,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
 
             _card(
-              title: 'Sound',
+              title: AppLocalizations.of(context)!.sound,
               children: [
                 SwitchListTile(
-                  title: const Text('Sound Effects'),
+                  title: Text(AppLocalizations.of(context)!.soundEffects),
                   value: _soundEffectsEnabled,
                   activeThumbColor: turquoise,
                   onChanged: (v) {
@@ -481,7 +499,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            _isWebPlatform ? 'App Volume' : 'System Volume',
+                            _isWebPlatform ? AppLocalizations.of(context)!.appVolume : AppLocalizations.of(context)!.systemVolume,
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
@@ -562,8 +580,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       const SizedBox(height: 4),
                       Text(
                         _isWebPlatform
-                            ? 'Adjusts volume for sounds in this app'
-                            : 'Adjusts your device system volume',
+                            ? AppLocalizations.of(context)!.appVolumeDesc
+                            : AppLocalizations.of(context)!.systemVolumeDesc,
                         style: const TextStyle(
                           fontSize: 12,
                           color: Color(0xFF9CA3AF),
@@ -643,8 +661,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       String label,
       String value,
       List<String> items,
-      ValueChanged<String> onChanged,
-      ) {
+      ValueChanged<String> onChanged, {
+      String Function(String)? itemLabelBuilder,
+      }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: DropdownButtonFormField<String>(
@@ -653,13 +672,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           labelText: label,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         ),
-        items: items
-            .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-            .toList(),
+        items: items.map((e) {
+        return DropdownMenuItem(
+          value: e,
+          child: Text(itemLabelBuilder != null ? itemLabelBuilder(e) : e),
+        );
+      }).toList(),
         onChanged: (v) {
-        GlobalAudioService.playClickSound();
-        onChanged(v!);
-      }
+          if (v != null) {
+            GlobalAudioService.playClickSound();
+            onChanged(v);
+          }
+        }
       ),
     );
   }

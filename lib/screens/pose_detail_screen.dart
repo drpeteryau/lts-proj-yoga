@@ -6,6 +6,8 @@ import 'dart:async';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/pose_progress_service.dart';
 import '../services/global_audio_service.dart';
+import '../l10n/app_localizations.dart';
+import '../utils/yoga_localization_helper.dart';
 
 class PoseDetailScreen extends StatefulWidget {
   final YogaPose pose;
@@ -24,8 +26,6 @@ class PoseDetailScreen extends StatefulWidget {
   @override
   State<PoseDetailScreen> createState() => _PoseDetailScreenState();
 }
-
-
 
 class _PoseDetailScreenState extends State<PoseDetailScreen> {
   late int _remainingSeconds;
@@ -243,7 +243,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
       await supabase.from('pose_activity').insert({
         'user_id': userId,
         'pose_id': widget.pose.id,
-        'pose_name': widget.pose.name,
+        'pose_name': YogaLocalizationHelper.getPoseName(context, widget.pose.nameKey),
         'session_level': widget.sessionLevel,
         'duration_seconds': _secondsSpent,
         'completed_at': DateTime.now().toIso8601String(),
@@ -258,7 +258,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
       );
       _alreadySaved = true;
 
-      print('✅ Saved pose progress: ${widget.pose.name}, ${_secondsSpent}s');
+      print('✅ Saved pose progress: ${YogaLocalizationHelper.getPoseName(context, widget.pose.nameKey)}, ${_secondsSpent}s');
     } catch (e) {
       print('❌ Error saving pose progress: $e');
     }
@@ -333,7 +333,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
-                                'Completed',
+                                AppLocalizations.of(context)!.completed,
                                 style: GoogleFonts.poppins(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -378,7 +378,10 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
 
           // Progress indicator
           Text(
-            '${widget.currentIndex + 1} of ${widget.allPoses.length}',
+            AppLocalizations.of(context)!.poseProgress(
+              widget.currentIndex + 1,
+              widget.allPoses.length,
+            ),
             style: GoogleFonts.poppins(
               fontSize: 16,
               fontWeight: FontWeight.w500,
@@ -413,7 +416,6 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
         _toggleVideo();
         _showControlsTemporarily();
       },
-
       child: Container(
         height: 220,
         color: Colors.grey[200],
@@ -477,7 +479,8 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
               bottom: 16,
               left: 16,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
                   color: const Color(0xFF40E0D0),
                   borderRadius: BorderRadius.circular(8),
@@ -492,7 +495,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      'Video Tutorial',
+                      AppLocalizations.of(context)!.videoTutorial,
                       style: GoogleFonts.poppins(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -509,10 +512,9 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
     );
   }
 
-
   Widget _buildSanskritName() {
     return Text(
-      'BEGINNER',
+      YogaLocalizationHelper.getSessionLevel(context, widget.sessionLevel),
       style: GoogleFonts.poppins(
         fontSize: 14,
         fontWeight: FontWeight.w400,
@@ -524,7 +526,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
 
   Widget _buildPoseTitle() {
     return Text(
-      widget.pose.name,
+      YogaLocalizationHelper.getPoseName(context, widget.pose.nameKey),
       style: GoogleFonts.poppins(
         fontSize: 28,
         fontWeight: FontWeight.w600,
@@ -536,7 +538,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
 
   Widget _buildDescription() {
     return Text(
-      widget.pose.description,
+      YogaLocalizationHelper.getPoseDescription(context, widget.pose.descriptionKey),
       style: GoogleFonts.poppins(
         fontSize: 15,
         fontWeight: FontWeight.w400,
@@ -548,18 +550,18 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
 
   Widget _buildBenefits() {
     final safetyTips = [
-      'Keep your knees slightly bent to avoid joint strain',
-      'Engage your core muscles throughout the pose',
-      'Don\'t force your heels to touch the ground',
-      'Breathe deeply and avoid holding your breath',
-      'Exit the pose slowly if you feel any pain',
+      AppLocalizations.of(context)!.tip1,
+      AppLocalizations.of(context)!.tip2,
+      AppLocalizations.of(context)!.tip3,
+      AppLocalizations.of(context)!.tip4,
+      AppLocalizations.of(context)!.tip5,
     ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Safety Tips',
+          AppLocalizations.of(context)!.safetyTips,
           style: GoogleFonts.poppins(
             fontSize: 20,
             fontWeight: FontWeight.w600,
@@ -568,7 +570,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
         ),
         const SizedBox(height: 12),
         ...safetyTips.map(
-              (tip) => Padding(
+          (tip) => Padding(
             padding: const EdgeInsets.only(bottom: 8),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -743,7 +745,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
                             const Icon(Icons.check_circle, color: Colors.white),
                             const SizedBox(width: 12),
                             Text(
-                              'Pose marked as completed!',
+                              AppLocalizations.of(context)!.poseMarkedSuccess,
                               style: GoogleFonts.poppins(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
@@ -763,7 +765,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
                 },
                 icon: const Icon(Icons.check_circle_outline, size: 20),
                 label: Text(
-                  'Mark as Completed',
+                  AppLocalizations.of(context)!.markAsCompleted,
                   style: GoogleFonts.poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -822,8 +824,8 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
               ),
               child: Text(
                 widget.currentIndex < widget.allPoses.length - 1
-                    ? 'Next Pose'
-                    : 'Complete Session',
+                    ? AppLocalizations.of(context)!.nextPose
+                    : AppLocalizations.of(context)!.completeSession,
                 style: GoogleFonts.poppins(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -843,7 +845,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
-          '🎉 Congratulations!',
+          AppLocalizations.of(context)!.congratulations,
           style: GoogleFonts.poppins(fontSize: 24, fontWeight: FontWeight.w600),
           textAlign: TextAlign.center,
         ),
@@ -851,7 +853,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'You completed all poses in this session!',
+              AppLocalizations.of(context)!.sessionCompleteDesc,
               style: GoogleFonts.poppins(fontSize: 16),
               textAlign: TextAlign.center,
             ),
@@ -877,7 +879,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
                 ),
               ),
               child: Text(
-                'Done',
+                AppLocalizations.of(context)!.done,
                 style: GoogleFonts.poppins(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,

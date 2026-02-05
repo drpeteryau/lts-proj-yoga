@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../data/yoga_data.dart';
+import '../data/yoga_data_complete.dart';
 import 'session_detail_screen.dart';
 import '../models/yoga_pose.dart';
 import '../models/yoga_session.dart';
 import 'pose_detail_screen.dart';
 import '../services/global_audio_service.dart';
+import '../l10n/app_localizations.dart';
+import '../utils/yoga_localization_helper.dart';
+import 'package:intl/intl.dart';
 
 class HomeTabScreen extends StatefulWidget {
   const HomeTabScreen({super.key});
@@ -16,7 +19,7 @@ class HomeTabScreen extends StatefulWidget {
 }
 
 class _HomeTabScreenState extends State<HomeTabScreen> {
-  String _userName = 'There';
+  String _userName = '';
   String _userEmail = '';
   String? _profileImageUrl;
   int _selectedDayIndex = 2;
@@ -86,7 +89,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
 
       // Convert seconds to minutes
       _dailyMinutes = minutesByDate.map(
-            (date, seconds) => MapEntry(date, (seconds / 60).round()),
+        (date, seconds) => MapEntry(date, (seconds / 60).round()),
       );
 
       // Update week days with real data
@@ -169,11 +172,11 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
   String _getGreeting() {
     final hour = DateTime.now().hour;
     if (hour < 12) {
-      return 'Good Morning';
+      return AppLocalizations.of(context)!.goodMorning;
     } else if (hour < 17) {
-      return 'Good Afternoon';
+      return AppLocalizations.of(context)!.goodAfternoon;
     } else {
-      return 'Good Evening';
+      return AppLocalizations.of(context)!.goodEvening;
     }
   }
 
@@ -181,6 +184,12 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isWeb = screenWidth > 600;
+
+    String getDayName(int weekday) {
+      final date = DateTime(2024, 1, weekday); // Jan 2024 1st was a Monday
+      return DateFormat.E(Localizations.localeOf(context).toString())
+          .format(date);
+    }
 
     return Container(
       color: const Color(0xFFFFFFFF),
@@ -216,17 +225,17 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                             ),
                             image: _profileImageUrl != null
                                 ? DecorationImage(
-                              image: NetworkImage(_profileImageUrl!),
-                              fit: BoxFit.cover,
-                            )
+                                    image: NetworkImage(_profileImageUrl!),
+                                    fit: BoxFit.cover,
+                                  )
                                 : null,
                           ),
                           child: _profileImageUrl == null
                               ? Icon(
-                            Icons.person,
-                            color: const Color(0xFF40E0D0),
-                            size: isWeb ? 36 : 28,
-                          )
+                                  Icons.person,
+                                  color: const Color(0xFF40E0D0),
+                                  size: isWeb ? 36 : 28,
+                                )
                               : null,
                         ),
 
@@ -280,7 +289,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
 
                     // "Keep up the good work" section
                     Text(
-                      'Keep up the good work!',
+                      AppLocalizations.of(context)!.keepUpWork,
                       style: GoogleFonts.poppins(
                         fontSize: isWeb ? 24 : 20,
                         fontWeight: FontWeight.w600,
@@ -316,7 +325,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
           context,
           MaterialPageRoute(
             builder: (context) => SessionDetailScreen(
-              session: YogaData.beginnerSessions.first,
+              session: YogaDataComplete.beginnerSessions.first,
             ),
           ),
         );
@@ -375,7 +384,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        'Day 1',
+                        AppLocalizations.of(context)!.dayCount(1),
                         style: GoogleFonts.poppins(
                           fontSize: isWeb ? 16 : 13,
                           fontWeight: FontWeight.w600,
@@ -385,7 +394,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                     ),
                     SizedBox(height: isWeb ? 16 : 12),
                     Text(
-                      'Do 7 Exercises in\nOnly 6 Minutes',
+                      AppLocalizations.of(context)!.mainSessionTitle,
                       style: GoogleFonts.poppins(
                         fontSize: isWeb ? 28 : 20,
                         fontWeight: FontWeight.w700,
@@ -401,7 +410,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => SessionDetailScreen(
-                              session: YogaData.beginnerSessions.first,
+                              session: YogaDataComplete.beginnerSessions.first,
                             ),
                           ),
                         );
@@ -422,7 +431,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            'Start',
+                            AppLocalizations.of(context)!.start,
                             style: GoogleFonts.poppins(
                               fontSize: isWeb ? 18 : 15,
                               fontWeight: FontWeight.w600,
@@ -458,7 +467,8 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
 
           return Expanded(
             child: Container(
-              margin: EdgeInsets.only(right: index < _weekDays.length - 1 ? 12 : 0),
+              margin:
+                  EdgeInsets.only(right: index < _weekDays.length - 1 ? 12 : 0),
               height: 120,
               decoration: BoxDecoration(
                 color: isToday ? Colors.black87 : Colors.white,
@@ -468,12 +478,12 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                     : Border.all(color: Colors.grey[300]!, width: 1),
                 boxShadow: isToday
                     ? [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.15),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ]
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.15),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ]
                     : [],
               ),
               child: GestureDetector(
@@ -501,13 +511,15 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                     const SizedBox(height: 4),
                     if (minutesCompleted > 0)
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
                           color: const Color(0xFF40E0D0),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
-                          '$minutesCompleted min',
+                          AppLocalizations.of(context)!
+                              .minShort(minutesCompleted),
                           style: GoogleFonts.poppins(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
@@ -553,12 +565,12 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                     : Border.all(color: Colors.grey[300]!, width: 1),
                 boxShadow: isToday
                     ? [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.15),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ]
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.15),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ]
                     : [],
               ),
               child: Column(
@@ -584,13 +596,15 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                   const SizedBox(height: 4),
                   if (minutesCompleted > 0)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
                         color: const Color(0xFF40E0D0),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        '$minutesCompleted min',
+                        AppLocalizations.of(context)!
+                            .minShort(minutesCompleted),
                         style: GoogleFonts.poppins(
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
@@ -611,23 +625,24 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
     // Get real featured poses from yoga data
     final featuredPoses = [
       {
-        'pose': YogaData.beginnerMainStanding[3], // Warrior 1
-        'session': YogaData.beginnerSessions.first,
+        'pose': YogaDataComplete.beginnerMainStanding[3], // Warrior 1
+        'session': YogaDataComplete.beginnerSessions.first,
         'color': const Color(0xFF6B9BD1),
       },
       {
-        'pose': YogaData.beginnerMainStanding[1], // Plank
-        'session': YogaData.beginnerSessions.first,
+        'pose': YogaDataComplete.beginnerMainStanding[1], // Plank
+        'session': YogaDataComplete.beginnerSessions.first,
         'color': const Color(0xFFE8A0BF),
       },
       {
-        'pose': YogaData.beginnerMainStanding[0], // Back and Chest Stretch
-        'session': YogaData.beginnerSessions.first,
+        'pose':
+            YogaDataComplete.beginnerMainStanding[0], // Back and Chest Stretch
+        'session': YogaDataComplete.beginnerSessions.first,
         'color': const Color(0xFF9DD9D2),
       },
       {
-        'pose': YogaData.beginnerMainStanding[3], // Baby Cobra
-        'session': YogaData.beginnerSessions.first,
+        'pose': YogaDataComplete.beginnerMainStanding[5], // Triangle Pose
+        'session': YogaDataComplete.beginnerSessions.first,
         'color': const Color(0xFFFFB997),
       },
     ];
@@ -635,7 +650,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
     // Filter poses based on unlocked levels
     final availablePoses = featuredPoses.where((poseData) {
       final session = poseData['session'] as YogaSession;
-      final level = session.level;
+      final level = session.levelKey;
       if (level == 'Beginner') return true;
       if (level == 'Intermediate') return _intermediateUnlocked;
       if (level == 'Advanced') return _advancedUnlocked;
@@ -670,12 +685,12 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
   }
 
   Widget _buildPoseCard(
-      BuildContext context,
-      YogaPose pose,
-      YogaSession session,
-      Color badgeColor,
-      bool isWeb,
-      ) {
+    BuildContext context,
+    YogaPose pose,
+    YogaSession session,
+    Color badgeColor,
+    bool isWeb,
+  ) {
     return GestureDetector(
       onTap: () {
         GlobalAudioService.playClickSound();
@@ -687,7 +702,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
               pose: pose,
               allPoses: session.allPoses,
               currentIndex: session.allPoses.indexWhere((p) => p.id == pose.id),
-              sessionLevel: session.level,
+              sessionLevel: session.levelKey,
             ),
           ),
         );
@@ -743,7 +758,9 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
-                        session.level.toUpperCase(),
+                        YogaLocalizationHelper.getSessionLevel(
+                                context, session.levelKey)
+                            .toUpperCase(),
                         style: GoogleFonts.poppins(
                           fontSize: isWeb ? 11 : 10,
                           fontWeight: FontWeight.w700,
@@ -754,7 +771,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                     ),
                     const Spacer(),
                     Text(
-                      pose.name,
+                      YogaLocalizationHelper.getPoseName(context, pose.nameKey),
                       style: GoogleFonts.poppins(
                         fontSize: isWeb ? 18 : 16,
                         fontWeight: FontWeight.w600,
@@ -774,7 +791,8 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                         ),
                         SizedBox(width: isWeb ? 6 : 4),
                         Text(
-                          '${pose.durationSeconds}s',
+                          AppLocalizations.of(context)!
+                              .poseDurationSeconds(pose.durationSeconds),
                           style: GoogleFonts.poppins(
                             fontSize: isWeb ? 14 : 12,
                             color: Colors.white70,

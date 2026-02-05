@@ -1,0 +1,549 @@
+{
+  "registerTitle": "Begin Your Wellness Journey",
+  "registerSubtitle": "Create your account to get started",
+  "stepPersonal": "Personal",
+  "stepPreferences": "Preferences",
+  "stepAccount": "Account",
+  "getToknowYou": "👋 Let's Get to Know You",
+  "tellUsAbout": "Tell us a bit about yourself",
+  "yourPreferences": "⚙️ Your Preferences",
+  "customizeYoga": "Customize your yoga experience",
+  "secureAccount": "🔐 Secure Your Account",
+  "createCredentials": "Create your login credentials",
+  "passwordReqTitle": "Password Requirements:",
+  "reqLength": "At least 8 characters",
+  "reqUpper": "1 uppercase letter (A-Z)",
+  "reqLower": "1 lowercase letter (a-z)",
+  "reqNumber": "1 number (0-9)",
+  "reqSpecial": "1 special character (!@#$%...)",
+  "alreadyHaveAccount": "Already have an account? Log in",
+  "back": "Back",
+  "createAccount": "Create Account",
+  "nameHint": "Enter your name",
+  "ageHint": "Enter your age",
+  "emailHint": "your.email@example.com",
+  "passwordHint": "Min 8 chars: 1 uppercase, 1 lowercase, 1 number, 1 special char",
+  "errEmailEmpty": "Please enter your email",
+  "errEmailInvalid": "Please enter a valid email address",
+  "errPasswordEmpty": "Please enter a password",
+  "errNameEmpty": "Please enter your full name",
+  "errAgeEmpty": "Please enter a valid age (numbers only)",
+  "errAgeRange": "Please enter a valid age between 1 and 120",
+  "checkEmailMsg": "Please check your email to confirm your account",
+  "welcomeName": "Welcome, {name}! 🌿",
+  "@welcomeName": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+
+  "completeProfileTitle": "Complete Your Profile 🌸",
+  "completeProfileSubtitle": "Just a few quick details to personalize your yoga journey.",
+  "preferredLanguage": "Preferred Language",
+  "enterValidAge": "Please enter a valid age",
+  "profileCompleted": "Profile completed 🌿",
+  "saveProfileFailed": "Failed to save profile: {error}",
+  "@saveProfileFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "enableNotifications": "Enable Notifications",
+  "continueButton": "Continue",
+  "under18": "Under 18",
+  "ageRange": "{start}-{end} years",
+  "@ageRange": {
+    "placeholders": {
+      "start": { "type": "int" },
+      "end": { "type": "int" }
+    }
+  },
+  
+  "welcomeBack": "Welcome Back 🧘‍♀️",
+  "loginSubtitle": "Log in to continue your healing journey.",
+  "email": "Email",
+  "password": "Password",
+  "logIn": "Log In",
+  "signInWithGoogle": "Sign in with Google",
+  "dontHaveAccount": "Don't have an account? Register",
+  "fillRequiredFields": "Please fill in all required fields",
+  "loginSuccess": "Welcome back 🌿",
+  "loginFailed": "Login failed: {error}",
+  "@loginFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "googleSignInFailed": "Google Sign-In failed: {error}",
+  "@googleSignInFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+
+  
+  "onboardingHeading": "Feel stronger",
+  "onboardingDesc": "Learn from the world's best yoga\ncoaches anytime at home or on\nthe go.",
+  "letsExplore": "Let's explore",
+
+  
+  "navHome": "Home",
+  "navSessions": "Sessions",
+  "navProgress": "Progress",
+  "navSounds": "Sounds",
+  "navProfile": "Profile",
+
+  
+  "goodMorning": "Good Morning",
+  "goodAfternoon": "Good Afternoon",
+  "goodEvening": "Good Evening",
+  "dayCount": "Day {number}",
+  "@dayCount": {
+    "placeholders": {
+      "number": { "type": "int" }
+    }
+  },
+  "mainSessionTitle": "Do 7 Exercises in\nOnly 6 Minutes",
+  "start": "Start",
+  "keepUpWork": "Keep up the good work!",
+  "minShort": "{count} min",
+  "@minShort": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "poseDurationSeconds": "{seconds} seconds",
+  "@poseDurationSeconds": {
+    "placeholders": {
+      "seconds": { "type": "int" }
+    }
+  },
+  "durationFormat": "{minutes} min",
+  "@durationFormat": {
+    "placeholders": {
+      "minutes": { "type": "int"}
+    }
+  },
+  "mon": "Mon",
+  "tue": "Tue",
+  "wed": "Wed",
+  "thu": "Thu",
+  "fri": "Fri",
+  "sat": "Sat",
+  "sun": "Sun",
+
+  
+  "chooseYour": "Choose Your",
+  "level": "Level",
+  "beginnerSubtitle": "Chair Yoga",
+  "beginnerDesc": "Perfect for those just starting their yoga journey",
+  "intermediateSubtitle": "Hatha yoga on the mat",
+  "intermediateDesc": "Build strength with challenging sequences",
+  "advancedSubtitle": "Dynamic sun salutation flow",
+  "advancedDesc": "Challenge yourself with flowing sequences",
+  "lockedLevelTitle": "{levelName} Locked",
+  "@lockedLevelTitle": {
+    "placeholders": {
+      "levelName": { "type": "String" }
+    }
+  },
+  "completeMore": "Complete {count} more",
+  "@completeMore": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "completeSessionsToUnlock": "Complete {count} more",
+  "@completeSessionsToUnlock": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "unlockIntermediateFirst": "Unlock Intermediate first",
+  "sessionsProgress": "{current} / {required} sessions",
+  "@sessionsProgress": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "required": { "type": "int" }
+    }
+  },
+  "sessionsCompletedCount": "{count} sessions completed",
+  "@sessionsCompletedCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "errorLoadingProgress": "Error loading progress",
+  "retry": "Retry",
+  "ok": "OK",
+
+
+  "beginnerTitle": "Beginner Sessions",
+  "warmup": "Warm-up",
+  "mainPractice": "Main Practice",
+  "cooldown": "Cool-down",
+  "viewDetails": "View Details",
+  "poseCount": "{count, plural, =1{1 pose} other{{count} poses}}",
+  "@poseCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "sessionsCompleted": "{count, plural, =1{1 session completed} other{{count} sessions completed}}",
+  "@sessionsCompleted": {
+    "description": "Text showing how many sessions a user has finished",
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "intermediateTitle": "Intermediate Sessions",
+  "hathaPractice": "Hatha Practice",
+  "startSession": "Start Session",
+
+  "advancedTitle": "Advanced Sessions",
+  "dynamicFlowNotice": "Dynamic flow practice. Move with your breath.",
+  "advancedLabel": "ADVANCED",
+  "minutesCount": "{count} minutes",
+  "@minutesCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "highIntensity": "High intensity",
+  "sunSalutationTitle": "Sun Salutation Flow",
+  "repeatRounds": "Repeat 5-10 rounds • One breath, one movement",
+  "beginFlow": "Begin Flow",
+  "step1": "1. Downward Dog",
+  "step2": "2. Plank",
+  "step3": "3. Eight-Point Pose",
+  "step4": "4. Baby Cobra",
+  "step5": "5. Full Cobra",
+  "step6": "6. Return to Downward Dog",
+
+  
+  "yogaHeadNeckShoulders": "Head, Neck and Shoulders Stretch",
+  "yogaStraightArms": "Straight Arms Rotation",
+  "yogaBentArms": "Bent Arm Rotation",
+  "yogaShouldersLateral": "Shoulders Lateral Stretch",
+  "yogaShouldersTorsoTwist": "Shoulders & Torso Twist",
+  "yogaLegRaiseBent": "Leg Raise (Bent)",
+  "yogaLegRaiseStraight": "Leg Raise (Straight)",
+  "yogaGoddessTwist": "Goddess Pose — Torso Twist",
+  "yogaGoddessStrength": "Goddess Pose — Leg Strengthening",
+  "yogaBackChestStretch": "Back and Chest Stretch",
+  "yogaStandingCrunch": "Standing Crunch",
+  "yogaWarrior3Supported": "Warrior 3 (Supported)",
+  "yogaWarrior1Supported": "Warrior 1 (Supported)",
+  "yogaWarrior2Supported": "Warrior 2 (Supported)",
+  "yogaTriangleSupported": "Triangle Pose (Supported)",
+  "yogaReverseWarrior2": "Reverse Warrior 2",
+  "yogaSideAngleSupported": "Side Angle Pose (Supported)",
+  "yogaGentleBreathing": "Gentle Breathing",
+  "yogaDownwardDog": "Downward Dog",
+  "yogaPlank": "Plank Pose",
+  "yogaEightPoint": "Eight-Point Pose (Ashtangasana)",
+  "yogaBabyCobra": "Baby Cobra",
+  "yogaFullCobra": "Full Cobra Pose",
+  "yogaSunSalutation": "Sun Salutation Flow",
+  "yogaSessionGentleChair": "Gentle Chair Yoga",
+  "yogaSessionMorningMobility": "Morning Mobility",
+  "yogaSessionWarriorSeries": "Warrior Series",
+  "yogaSessionHathaFundamentals": "Hatha Fundamentals",
+  "yogaSessionCoreStrength": "Core Strength Builder",
+  "yogaSessionBackbendFlow": "Backbend Flow",
+  "yogaSessionSunSalutation": "Sun Salutation Flow",
+  "yogaSessionExtendedFlow": "Extended Flow Practice",
+  "yogaDescHeadNeck": "Gentle seated stretches releasing neck and shoulder tension.",
+  "yogaDescGentleChair": "A gentle introduction suitable for seniors or those wanting a slow, supported practice.",
+  "yogaDescMorningMobility": "A light morning routine focusing on joint mobility, breathing, and supported strength work.",
+  "yogaDescWarriorSeries": "A confidence-building sequence exploring Warrior I, II, and supporting transitions.",
+  "yogaDescHathaFundamentals": "A classic mat-based Hatha sequence focusing on alignment, breath, and full-body engagement. Ideal for practitioners ready to move beyond chair support.",
+  "yogaDescCoreStrength": "A short but powerful session focusing on Plank, Eight-Point Pose, and controlled transitions. Boosts core strength and shoulder stability.",
+  "yogaDescBackbendFlow": "A spine-strengthening sequence moving from Eight-Point Pose into Baby Cobra and Full Cobra. Builds confidence in backbending.",
+  "yogaDescSunSalutationSession": "A dynamic mat-based flow designed to synchronise breath and movement. This session builds endurance and full-body strength through repeated Sun Salutation cycles.",
+  "yogaDescExtendedFlow": "A deeper and longer Sun Salutation practice — ideal for experienced practitioners wanting a continuous challenge with breath-led movement.",
+  "yogaDescStraightArms": "Arm rotations to warm up shoulders and upper back.",
+  "yogaDescBentArms": "Shoulder mobility exercise with bent elbows.",
+  "yogaDescShouldersLateral": "Side-body stretch improving flexibility.",
+  "yogaDescShouldersTorsoTwist": "A gentle detoxifying twist.",
+  "yogaDescLegRaiseBent": "Strengthen legs and activate core.",
+  "yogaDescLegRaiseStraight": "Straight-leg lift for advanced strength.",
+  "yogaDescGoddessTwist": "Wide-leg seated pose for mobility.",
+  "yogaDescGoddessStrength": "Strengthening variation of seated Goddess.",
+  "yogaDescBackChestStretch": "L-shape stretch improving upper-body flexibility.",
+  "yogaDescStandingCrunch": "Dynamic core-strengthening movement.",
+  "yogaDescWarrior3Supported": "Balance and strength with chair support.",
+  "yogaDescWarrior1Supported": "Beginner-friendly Warrior stance.",
+  "yogaDescWarrior2Supported": "Side-facing warrior for hip opening.",
+  "yogaDescTriangleSupported": "Deep side-body extension.",
+  "yogaDescReverseWarrior2": "Back-arching warrior stretch.",
+  "yogaDescSideAngleSupported": "Strengthens legs and opens ribs.",
+  "yogaDescGentleBreathing": "Full-body relaxation and calm breathing.",
+  "yogaDescDownwardDog": "A foundational inverted V pose that stretches the full body.",
+  "yogaDescPlank": "Full-body strength builder engaging core, arms, and legs.",
+  "yogaDescEightPoint": "Strength-building pose lowering chest, chin, knees and toes.",
+  "yogaDescBabyCobra": "Gentle backbend strengthening upper back and spine.",
+  "yogaDescFullCobra": "A stronger chest-opening backbend engaging the whole body.",
+  "yogaDescSunSalutation": "A dynamic sequence linking breath and movement. Builds strength, heat, coordination, and stamina.",
+
+  
+  "duration": "Duration",
+  "poses": "Poses",
+  "intensity": "Intensity",
+  "low": "Low",
+  "aboutSession": "About Session",
+  "sessionOverview": "Session Overview",
+  "joinClass": "Join Class",
+  "dayNumber": "Day {number}",
+  "@dayNumber": {
+    "placeholders": {
+      "number": { "type": "int" }
+    }
+  },
+  "minsLabel": "{count} Mins",
+  "@minsLabel": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  
+  "poseProgress": "{current} of {total}",
+  "@poseProgress": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "videoTutorial": "Video Tutorial",
+  "safetyTips": "Safety Tips",
+  "tip1": "Keep your knees slightly bent to avoid joint strain",
+  "tip2": "Engage your core muscles throughout the pose",
+  "tip3": "Don't force your heels to touch the ground",
+  "tip4": "Breathe deeply and avoid holding your breath",
+  "tip5": "Exit the pose slowly if you feel any pain",
+  "markAsCompleted": "Mark as Completed",
+  "completed": "Completed",
+  "poseMarkedSuccess": "Pose marked as completed!",
+  "nextPose": "Next Pose",
+  "completeSession": "Complete Session",
+  "congratulations": "🎉 Congratulations!",
+  "sessionCompleteDesc": "You completed all poses in this session!",
+  "done": "Done",
+
+  
+  "progressHeader": "Your Progress",
+  "progressSubtitle": "Track your journey to wellness",
+  "dayStreak": "Day Streak",
+  "totalMinutes": "Total Minutes",
+  "thisWeek": "This Week",
+  "weeklyGoal": "Goal: {goal} min",
+  "@weeklyGoal": {
+    "placeholders": {
+      "goal": { "type": "int" }
+    }
+  },
+  "weeklyBadges": "Weekly Badges",
+  "checkedInMsg": "Checked in this week ✓",
+  "shareFeeling": "Share how you're feeling",
+  "newCheckIn": "New Check-in",
+  "viewHistory": "View History",
+  "calendar": "Calendar",
+  "practice": "Practice",
+  "restDay": "Rest day",
+  "wellnessDialogTitle": "Wellness Check-in",
+  "wellnessDialogSubtitle": "How are you feeling today?",
+  "qBodyComfort": "How comfortable does your body feel when doing yoga?",
+  "qFlexibility": "How would you rate your flexibility recently?",
+  "qBalance": "How steady do you feel when standing or balancing?",
+  "qEnergy": "How is your overall energy level?",
+  "qMood": "How has your mood been lately?",
+  "qConfidence": "How confident do you feel doing your daily activities?",
+  "qBodyConnection": "How connected do you feel to your body during yoga practice?",
+  "qOverall": "Overall, how have you been feeling in your body and mind?",
+  "notesOptional": "Notes (optional)",
+  "cancel": "Cancel",
+  "submit": "Submit",
+  "notes": "Notes: ",
+  "rateAllError": "Please rate all categories",
+  "checkInSaved": "Wellness check-in saved!",
+  "reflectionHistory": "Reflection History",
+  "noReflections": "No reflections yet",
+  "platinum": "Platinum",
+  "gold": "Gold",
+  "silver": "Silver",
+  "bronze": "Bronze",
+  "none": "None",
+
+  
+  "section1Title": "Section 1 – Physical Comfort & Mobility",
+  "section2Title": "Section 2 – Energy & Mood",
+  "section3Title": "Section 3 – Awareness & Confidence",
+  "section4Title": "⭐ Overall Wellbeing",
+  "qBodyComfortFull": "1️⃣ How comfortable does your body feel during movement?",
+  "optComfort1": "Not comfortable",    
+  "optComfort2": "Slightly comfortable",
+  "optComfort3": "Moderately comfortable",
+  "optComfort4": "Very comfortable",
+  "optComfort5": "Extremely comfortable",
+  "qFlexibilityFull": "2️⃣ How would you describe your flexibility recently?",
+  "optFlexibility1": "Much stiffer", 
+  "optFlexibility2": "A little stiff", 
+  "optFlexibility3": "About the same", 
+  "optFlexibility4": "A bit more flexible", 
+  "optFlexibility5": "Much more flexible",
+  "qBalanceFull": "3️⃣ How steady do you feel when standing or balancing?",
+  "optBalance1": "Not steady at all", 
+  "optBalance2": "Slightly steady", 
+  "optBalance3": "Moderately steady", 
+  "optBalance4": "Very steady", 
+  "optBalance5": "Extremely steady",
+  "qEnergyFull": "4️⃣ How is your overall energy level?",
+  "optEnergy1": "Very low", 
+  "optEnergy2": "Low", 
+  "optEnergy3": "Average", 
+  "optEnergy4": "Good", 
+  "optEnergy5": "Very good",
+  "qMoodFull": "5️⃣ How has your mood been lately?",
+  "optMood1": "Often stressed or down", 
+  "optMood2": "Sometimes stressed", 
+  "optMood3": "Mostly okay", 
+  "optMood4": "Mostly positive", 
+  "optMood5": "Very positive and calm",
+  "qConfidenceFull": "6️⃣ How confident do you feel performing daily activities?",
+  "optConfidence1": "Not confident", 
+  "optConfidence2": "Slightly confident", 
+  "optConfidence3": "Somewhat confident", 
+  "optConfidence4": "Confident", 
+  "optConfidence5": "Very confident",
+  "qBodyConnectionFull": "7️⃣ How connected do you feel to your body during yoga practice?",
+  "optConnection1": "Not connected", 
+  "optConnection2": "A little connected", 
+  "optConnection3": "Moderately connected", 
+  "optConnection4": "Very connected", 
+  "optConnection5": "Deeply connected",
+  "qOverallFull": "8️⃣ Overall, how would you rate your wellbeing this month?",
+  "optOverall1": "Poor", 
+  "optOverall2": "Fair", 
+  "optOverall3": "Good", 
+  "optOverall4": "Very good", 
+  "optOverall5": "Excellent",
+  "monthlyReflections": "💭 Monthly Reflections (Optional)",
+  "shareImprovements": "Share specific improvements you've noticed:",
+  "labelBalance": "🧘 Balance Improvements",
+  "hintBalance": "e.g., I can stand on one leg longer...",
+  "labelPosture": "🪑 Posture Improvements",
+  "hintPosture": "e.g., My back feels straighter...",
+  "labelConsistency": "📅 Consistency & Habits",
+  "hintConsistency": "e.g., I practice every morning now...",
+  "labelOther": "💬 Other Thoughts",
+  "hintOther": "Any other improvements or notes...",
+  "skipForNow": "Skip for Now",
+  "submitCheckIn": "Submit Check-in",
+  "validationErrorCheckIn": "Please answer all required questions before submitting",
+  "bodyComfort": "Body Comfort",
+  "flexibility": "Flexibility",
+  "balance": "Balance",
+  "energy": "Energy",
+  "mood": "Mood",
+  "confidence": "Confidence",
+  "mindBody": "Mind-Body",
+  "wellbeing": "Wellbeing",
+
+  
+  "nowPlaying": "Now Playing",
+  "moreDetails": "More details",
+  "aboutThisSound": "About This Sound",
+  "category": "Category",
+  "type": "Type",
+  "meditationType": "Meditation & Relaxation",
+  "benefits": "Benefits",
+  "soundBenefit1": "• Reduces stress and anxiety",
+  "soundBenefit2": "• Improves focus and concentration",
+  "soundBenefit3": "• Promotes better sleep",
+  "soundBenefit4": "• Enhances overall well-being",
+
+  
+  "welcomeBackSounds": "Welcome back,",
+  "findYourPeace": "Find Your Peace",
+  "tabAll": "All",
+  "tabRecent": "Recent",
+  "tabSaved": "Saved",
+  "tabFavorites": "Favorites",
+  "mostPopular": "Most Popular",
+  "latest": "Latest",
+  "noRecentSounds": "No recent sounds",
+  "noSavedSounds": "No saved sounds yet",
+  "noFavoriteSounds": "No favorite sounds yet",
+  "savedSuccess": "Saved!",
+  "removedFromSaved": "Removed from saved",
+  "audioLoadError": "Failed to load audio. Please try another one.",
+
+  
+  "soundOceanWaves": "Ocean Waves",
+  "soundForestRain": "Forest Rain",
+  "soundTibetanBowls": "Tibetan Bowls",
+  "soundPeacefulPiano": "Peaceful Piano",
+  "soundMountainStream": "Mountain Stream",
+  "soundWindChimes": "Wind Chimes",
+  "soundGentleThunder": "Gentle Thunder",
+  "soundSingingBirds": "Singing Birds",
+  "categoryNature": "Nature",
+  "categoryMeditation": "Meditation",
+  "categoryAmbient": "Ambient",
+
+
+  "profileTitle": "Profile",
+  "edit": "Edit",
+  "sessions": "Sessions",
+  "minutesLabel": "Minutes",
+  "daily": "Daily 🔥",
+  "streakSummary": "Streak Summary",
+  "weeklyActive": "Weekly Active Weeks",
+  "preferences": "Preferences",
+  "enabled": "Enabled",
+  "disabled": "Disabled",
+  "logout": "LOG OUT",
+
+
+  "editProfile": "Edit Profile",
+  "save": "Save",
+  "uploadPhoto": "Upload Photo",
+  "removePhoto": "Remove Photo",
+  "photoUpdated": "Profile image updated",
+  "photoRemoved": "Profile image removed",
+  "photoFail": "Upload failed",
+  "basicInfo": "Basic Information",
+  "fullName": "Full Name",
+  "age": "Age",
+  "experienceLevel": "Experience Level",
+  "sessionLength": "Session Length",
+  "language": "Language",
+  "notifications": "Notifications",
+  "pushNotifications": "Push Notifications",
+  "pushEnabledMsg": "Push notifications enabled! 🔔",
+  "dailyReminder": "Daily Practice Reminder",
+  "dailyReminderEnabled": "Daily Reminder Enabled!",
+  "dailyEnabledMsg": "We will remind you every day to practice. 🌞",
+  "reminderTime": "Reminder Time",
+  "dailyReminderNotification": "Daily Practice Reminder",
+  "dailyReminderBody": "Time for your daily session! 🏃‍♀️",
+  "sound": "Sound",
+  "soundEffects": "Sound Effects",
+  "appVolume": "App Volume",
+  "systemVolume": "System Volume",
+  "appVolumeDesc": "Adjusts volume for sounds in this app",
+  "systemVolumeDesc": "Adjusts your device system volume",
+  "validationError": "Name and age are required",
+  "beginner": "Beginner",
+  "intermediate": "Intermediate",
+  "advanced": "Advanced",
+  "min5": "5 minutes",
+  "min10": "10 minutes",
+  "min15": "15 minutes",
+  "min20": "20 minutes",
+  "min30": "30 minutes",
+  "english": "English",
+  "mandarin": "Mandarin"
+}

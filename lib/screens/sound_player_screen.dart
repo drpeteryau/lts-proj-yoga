@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../services/global_audio_service.dart';
 import 'sounds_screen.dart';
-import '../services/global_audio_service.dart';
+import '../l10n/app_localizations.dart';
+import '../utils/sound_localization_helper.dart';
 
 class SoundPlayerScreen extends StatefulWidget {
   final MeditationSound sound;
@@ -16,32 +17,51 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
   late GlobalAudioService _audioService;
   bool _isFavorite = false;
   bool _isShuffling = false;
+  bool _hasStartedPlayback = false;
 
   @override
   void initState() {
     super.initState();
     _audioService = GlobalAudioService();
+  }
 
-    // If this sound isn't already playing, play it
-    if (_audioService.currentSoundTitle != widget.sound.title) {
-      _audioService.playSound(
-        url: widget.sound.audioUrl,
-        title: widget.sound.title,
-        category: widget.sound.category,
-        imageUrl: widget.sound.imageUrl,
-      );
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Only run once
+    if (!_hasStartedPlayback) {
+      _hasStartedPlayback = true;
+
+      final translatedTitle = SoundLocalizationHelper.getSoundTitle(context, widget.sound.titleKey);
+      final translatedCategory =
+          SoundLocalizationHelper.getSoundCategory(context, widget.sound.categoryKey);
+
+      // If this sound isn't already playing, play it
+      if (_audioService.currentSoundTitle != translatedTitle) {
+        _audioService.playSound(
+          url: widget.sound.audioUrl,
+          title: translatedTitle,
+          category: translatedCategory,
+          imageUrl: widget.sound.imageUrl,
+        );
+      }
     }
   }
 
+  
+
   void _skipForward() async {
-    final newPosition = _audioService.currentPosition + const Duration(seconds: 15);
+    final newPosition =
+        _audioService.currentPosition + const Duration(seconds: 15);
     if (newPosition < _audioService.totalDuration) {
       await _audioService.seek(newPosition);
     }
   }
 
   void _skipBackward() async {
-    final newPosition = _audioService.currentPosition - const Duration(seconds: 15);
+    final newPosition =
+        _audioService.currentPosition - const Duration(seconds: 15);
     if (newPosition > Duration.zero) {
       await _audioService.seek(newPosition);
     } else {
@@ -73,7 +93,8 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
                   // slider ~56, controls ~100, details btn ~48, padding ~80
                   final fixedHeight = 436.0;
                   // Album art gets what's left, clamped between 180 and 320
-                  final artSize = (screenHeight - fixedHeight).clamp(180.0, 320.0);
+                  final artSize =
+                      (screenHeight - fixedHeight).clamp(180.0, 320.0);
 
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 40),
@@ -86,12 +107,13 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             IconButton(
-                              icon: const Icon(Icons.keyboard_arrow_down, size: 32),
+                              icon: const Icon(Icons.keyboard_arrow_down,
+                                  size: 32),
                               onPressed: () => Navigator.pop(context),
                               color: Colors.black87,
                             ),
-                            const Text(
-                              'Now Playing',
+                            Text(
+                              AppLocalizations.of(context)!.nowPlaying,
                               style: TextStyle(
                                 fontSize: 22,
                                 fontWeight: FontWeight.bold,
@@ -129,7 +151,8 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) {
                                 return Container(
-                                  color: const Color(0xFF40E0D0).withOpacity(0.2),
+                                  color:
+                                      const Color(0xFF40E0D0).withOpacity(0.2),
                                   child: Icon(
                                     Icons.music_note,
                                     size: artSize * 0.4,
@@ -153,7 +176,7 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    widget.sound.title,
+                                    SoundLocalizationHelper.getSoundTitle(context, widget.sound.titleKey),
                                     style: const TextStyle(
                                       fontSize: 26,
                                       fontWeight: FontWeight.bold,
@@ -162,7 +185,7 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    widget.sound.category,
+                                    SoundLocalizationHelper.getSoundCategory(context, widget.sound.categoryKey),
                                     style: TextStyle(
                                       fontSize: 16,
                                       color: Colors.grey[600],
@@ -172,13 +195,16 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
                               ),
                               IconButton(
                                 icon: Icon(
-                                  _isFavorite ? Icons.favorite : Icons.favorite_border,
+                                  _isFavorite
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
                                   size: 32,
                                   color: _isFavorite
                                       ? const Color(0xFFFFB5C2)
                                       : Colors.grey[400],
                                 ),
-                                onPressed: () => setState(() => _isFavorite = !_isFavorite),
+                                onPressed: () =>
+                                    setState(() => _isFavorite = !_isFavorite),
                               ),
                             ],
                           ),
@@ -194,34 +220,47 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
                               SliderTheme(
                                 data: SliderTheme.of(context).copyWith(
                                   trackHeight: 4,
-                                  thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
-                                  overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
+                                  thumbShape: const RoundSliderThumbShape(
+                                      enabledThumbRadius: 8),
+                                  overlayShape: const RoundSliderOverlayShape(
+                                      overlayRadius: 16),
                                   activeTrackColor: const Color(0xFF40E0D0),
                                   inactiveTrackColor: Colors.grey[300],
                                   thumbColor: const Color(0xFF40E0D0),
-                                  overlayColor: const Color(0xFF40E0D0).withOpacity(0.2),
+                                  overlayColor:
+                                      const Color(0xFF40E0D0).withOpacity(0.2),
                                 ),
                                 child: Slider(
-                                  value: _audioService.currentPosition.inSeconds.toDouble(),
+                                  value: _audioService.currentPosition.inSeconds
+                                      .toDouble(),
                                   min: 0,
-                                  max: _audioService.totalDuration.inSeconds.toDouble() > 0
-                                      ? _audioService.totalDuration.inSeconds.toDouble()
+                                  max: _audioService.totalDuration.inSeconds
+                                              .toDouble() >
+                                          0
+                                      ? _audioService.totalDuration.inSeconds
+                                          .toDouble()
                                       : 1.0,
                                   onChanged: (value) {
-                                    _audioService.seek(Duration(seconds: value.toInt()));
+                                    _audioService
+                                        .seek(Duration(seconds: value.toInt()));
                                   },
                                 ),
                               ),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    _audioService.formatTime(_audioService.currentPosition),
-                                    style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+                                    _audioService.formatTime(
+                                        _audioService.currentPosition),
+                                    style: TextStyle(
+                                        fontSize: 13, color: Colors.grey[600]),
                                   ),
                                   Text(
-                                    _audioService.formatTime(_audioService.totalDuration),
-                                    style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+                                    _audioService.formatTime(
+                                        _audioService.totalDuration),
+                                    style: TextStyle(
+                                        fontSize: 13, color: Colors.grey[600]),
                                   ),
                                 ],
                               ),
@@ -243,7 +282,8 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
                                     ? const Color(0xFF40E0D0)
                                     : Colors.grey[400],
                               ),
-                              onPressed: () => setState(() => _isShuffling = !_isShuffling),
+                              onPressed: () =>
+                                  setState(() => _isShuffling = !_isShuffling),
                             ),
                             const SizedBox(width: 8),
                             IconButton(
@@ -260,7 +300,8 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
                                 shape: BoxShape.circle,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: const Color(0xFFFFB5C2).withOpacity(0.4),
+                                    color: const Color(0xFFFFB5C2)
+                                        .withOpacity(0.4),
                                     blurRadius: 20,
                                     offset: const Offset(0, 6),
                                   ),
@@ -268,11 +309,14 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
                               ),
                               child: IconButton(
                                 icon: Icon(
-                                  _audioService.isPlaying ? Icons.pause : Icons.play_arrow,
+                                  _audioService.isPlaying
+                                      ? Icons.pause
+                                      : Icons.play_arrow,
                                   size: 36,
                                 ),
                                 color: Colors.white,
-                                onPressed: () => _audioService.togglePlayPause(),
+                                onPressed: () =>
+                                    _audioService.togglePlayPause(),
                               ),
                             ),
                             const SizedBox(width: 8),
@@ -300,13 +344,14 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
                         // More Details Button
                         TextButton(
                           onPressed: () => _showDetailsSheet(context, true),
-                          child: const Row(
+                          child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.keyboard_arrow_up, color: Color(0xFF40E0D0), size: 20),
+                              Icon(Icons.keyboard_arrow_up,
+                                  color: Color(0xFF40E0D0), size: 20),
                               SizedBox(width: 4),
                               Text(
-                                'More details',
+                                AppLocalizations.of(context)!.moreDetails,
                                 style: TextStyle(
                                   fontSize: 15,
                                   color: Color(0xFF40E0D0),
@@ -335,12 +380,13 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             IconButton(
-                              icon: const Icon(Icons.keyboard_arrow_down, size: 32),
+                              icon: const Icon(Icons.keyboard_arrow_down,
+                                  size: 32),
                               onPressed: () => Navigator.pop(context),
                               color: Colors.black87,
                             ),
-                            const Text(
-                              'Now Playing',
+                            Text(
+                              AppLocalizations.of(context)!.nowPlaying,
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
@@ -381,7 +427,8 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
                                 fit: BoxFit.cover,
                                 errorBuilder: (context, error, stackTrace) {
                                   return Container(
-                                    color: const Color(0xFF40E0D0).withOpacity(0.2),
+                                    color: const Color(0xFF40E0D0)
+                                        .withOpacity(0.2),
                                     child: const Icon(
                                       Icons.music_note,
                                       size: 100,
@@ -408,7 +455,7 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    widget.sound.title,
+                                    SoundLocalizationHelper.getSoundTitle(context, widget.sound.titleKey),
                                     style: const TextStyle(
                                       fontSize: 24,
                                       fontWeight: FontWeight.bold,
@@ -417,7 +464,7 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
                                   ),
                                   const SizedBox(height: 6),
                                   Text(
-                                    widget.sound.category,
+                                    SoundLocalizationHelper.getSoundCategory(context, widget.sound.categoryKey),
                                     style: TextStyle(
                                       fontSize: 16,
                                       color: Colors.grey[600],
@@ -428,13 +475,16 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
                             ),
                             IconButton(
                               icon: Icon(
-                                _isFavorite ? Icons.favorite : Icons.favorite_border,
+                                _isFavorite
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
                                 size: 32,
                                 color: _isFavorite
                                     ? const Color(0xFFFFB5C2)
                                     : Colors.grey[400],
                               ),
-                              onPressed: () => setState(() => _isFavorite = !_isFavorite),
+                              onPressed: () =>
+                                  setState(() => _isFavorite = !_isFavorite),
                             ),
                           ],
                         ),
@@ -450,36 +500,50 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
                             SliderTheme(
                               data: SliderTheme.of(context).copyWith(
                                 trackHeight: 3,
-                                thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
-                                overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
+                                thumbShape: const RoundSliderThumbShape(
+                                    enabledThumbRadius: 8),
+                                overlayShape: const RoundSliderOverlayShape(
+                                    overlayRadius: 16),
                                 activeTrackColor: const Color(0xFF40E0D0),
                                 inactiveTrackColor: Colors.grey[300],
                                 thumbColor: const Color(0xFF40E0D0),
-                                overlayColor: const Color(0xFF40E0D0).withOpacity(0.2),
+                                overlayColor:
+                                    const Color(0xFF40E0D0).withOpacity(0.2),
                               ),
                               child: Slider(
-                                value: _audioService.currentPosition.inSeconds.toDouble(),
+                                value: _audioService.currentPosition.inSeconds
+                                    .toDouble(),
                                 min: 0,
-                                max: _audioService.totalDuration.inSeconds.toDouble() > 0
-                                    ? _audioService.totalDuration.inSeconds.toDouble()
+                                max: _audioService.totalDuration.inSeconds
+                                            .toDouble() >
+                                        0
+                                    ? _audioService.totalDuration.inSeconds
+                                        .toDouble()
                                     : 1.0,
                                 onChanged: (value) {
-                                  _audioService.seek(Duration(seconds: value.toInt()));
+                                  _audioService
+                                      .seek(Duration(seconds: value.toInt()));
                                 },
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    _audioService.formatTime(_audioService.currentPosition),
-                                    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                                    _audioService.formatTime(
+                                        _audioService.currentPosition),
+                                    style: TextStyle(
+                                        fontSize: 14, color: Colors.grey[600]),
                                   ),
                                   Text(
-                                    _audioService.formatTime(_audioService.totalDuration),
-                                    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                                    _audioService.formatTime(
+                                        _audioService.totalDuration),
+                                    style: TextStyle(
+                                        fontSize: 14, color: Colors.grey[600]),
                                   ),
                                 ],
                               ),
@@ -504,7 +568,8 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
                                     ? const Color(0xFF40E0D0)
                                     : Colors.grey[400],
                               ),
-                              onPressed: () => setState(() => _isShuffling = !_isShuffling),
+                              onPressed: () =>
+                                  setState(() => _isShuffling = !_isShuffling),
                             ),
                             IconButton(
                               icon: const Icon(Icons.skip_previous, size: 44),
@@ -519,7 +584,8 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
                                 shape: BoxShape.circle,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: const Color(0xFFFFB5C2).withOpacity(0.4),
+                                    color: const Color(0xFFFFB5C2)
+                                        .withOpacity(0.4),
                                     blurRadius: 20,
                                     offset: const Offset(0, 8),
                                   ),
@@ -527,11 +593,14 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
                               ),
                               child: IconButton(
                                 icon: Icon(
-                                  _audioService.isPlaying ? Icons.pause : Icons.play_arrow,
+                                  _audioService.isPlaying
+                                      ? Icons.pause
+                                      : Icons.play_arrow,
                                   size: 44,
                                 ),
                                 color: Colors.white,
-                                onPressed: () => _audioService.togglePlayPause(),
+                                onPressed: () =>
+                                    _audioService.togglePlayPause(),
                               ),
                             ),
                             IconButton(
@@ -558,13 +627,14 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
                       // More Details Button
                       TextButton(
                         onPressed: () => _showDetailsSheet(context, false),
-                        child: const Row(
+                        child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.keyboard_arrow_up, color: Color(0xFF40E0D0), size: 20),
+                            Icon(Icons.keyboard_arrow_up,
+                                color: Color(0xFF40E0D0), size: 20),
                             SizedBox(width: 4),
                             Text(
-                              'More details',
+                              AppLocalizations.of(context)!.moreDetails,
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Color(0xFF40E0D0),
@@ -615,7 +685,7 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
               ),
               SizedBox(height: isWeb ? 32 : 24),
               Text(
-                'About This Sound',
+                AppLocalizations.of(context)!.aboutThisSound,
                 style: TextStyle(
                   fontSize: isWeb ? 28 : 24,
                   fontWeight: FontWeight.bold,
@@ -625,27 +695,27 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
               SizedBox(height: isWeb ? 24 : 16),
               _buildDetailRow(
                 Icons.category,
-                'Category',
-                widget.sound.category,
+                AppLocalizations.of(context)!.category,
+                SoundLocalizationHelper.getSoundCategory(context, widget.sound.categoryKey),
                 isWeb,
               ),
               SizedBox(height: isWeb ? 16 : 12),
               _buildDetailRow(
                 Icons.access_time,
-                'Duration',
-                widget.sound.duration,
+                AppLocalizations.of(context)!.duration,
+                AppLocalizations.of(context)!.durationFormat(widget.sound.durationMinutes),
                 isWeb,
               ),
               SizedBox(height: isWeb ? 16 : 12),
               _buildDetailRow(
                 Icons.info_outline,
-                'Type',
-                'Meditation & Relaxation',
+                AppLocalizations.of(context)!.type,
+                AppLocalizations.of(context)!.meditationType,
                 isWeb,
               ),
               SizedBox(height: isWeb ? 32 : 24),
               Text(
-                'Benefits',
+                AppLocalizations.of(context)!.benefits,
                 style: TextStyle(
                   fontSize: isWeb ? 22 : 18,
                   fontWeight: FontWeight.bold,
@@ -654,10 +724,7 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
               ),
               SizedBox(height: isWeb ? 16 : 12),
               Text(
-                '• Reduces stress and anxiety\n'
-                    '• Improves focus and concentration\n'
-                    '• Promotes better sleep\n'
-                    '• Enhances overall well-being',
+                '${AppLocalizations.of(context)!.soundBenefit1}\n${AppLocalizations.of(context)!.soundBenefit2}\n${AppLocalizations.of(context)!.soundBenefit3}\n${AppLocalizations.of(context)!.soundBenefit4}',
                 style: TextStyle(
                   fontSize: isWeb ? 18 : 16,
                   height: 1.6,
@@ -672,7 +739,8 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
     );
   }
 
-  Widget _buildDetailRow(IconData icon, String label, String value, bool isWeb) {
+  Widget _buildDetailRow(
+      IconData icon, String label, String value, bool isWeb) {
     return Row(
       children: [
         Icon(

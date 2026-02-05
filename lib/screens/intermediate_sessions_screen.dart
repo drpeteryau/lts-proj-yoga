@@ -3,6 +3,8 @@ import '../data/yoga_data_complete.dart';
 import '../models/yoga_session.dart';
 import 'session_detail_screen.dart';
 import '../services/global_audio_service.dart';
+import '../l10n/app_localizations.dart';
+import '../utils/yoga_localization_helper.dart';
 
 class IntermediateSessionsScreen extends StatelessWidget {
   const IntermediateSessionsScreen({super.key});
@@ -21,8 +23,8 @@ class IntermediateSessionsScreen extends StatelessWidget {
             Navigator.pop(context);
           } 
         ),
-        title: const Text(
-          'Intermediate Sessions',
+        title: Text(
+          AppLocalizations.of(context)!.intermediateTitle,
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w600,
@@ -89,7 +91,7 @@ class IntermediateSessionsScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        session.title,
+                        YogaLocalizationHelper.getSessionTitle(context, session.titleKey),
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -106,7 +108,7 @@ class IntermediateSessionsScreen extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            '${session.totalDurationMinutes} minutes',
+                            AppLocalizations.of(context)!.minutesCount(session.totalDurationMinutes),
                             style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
@@ -125,7 +127,7 @@ class IntermediateSessionsScreen extends StatelessWidget {
 
             // Description
             Text(
-              session.description,
+              session.descriptionKey,
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey[700],
@@ -139,7 +141,7 @@ class IntermediateSessionsScreen extends StatelessWidget {
             _buildPoseSection(
               context,
               icon: Icons.self_improvement,
-              title: 'Hatha Practice',
+              title: AppLocalizations.of(context)!.hathaPractice,
               poseCount: session.mainPoses.length,
               color: const Color(0xFF35C9BA),
             ),
@@ -151,7 +153,7 @@ class IntermediateSessionsScreen extends StatelessWidget {
               _buildPoseSection(
                 context,
                 icon: Icons.nightlight,
-                title: 'Cool-down',
+                title: AppLocalizations.of(context)!.cooldown,
                 poseCount: session.cooldownPoses.length,
                 color: const Color(0xFF30C5B5),
               ),
@@ -180,11 +182,11 @@ class IntermediateSessionsScreen extends StatelessWidget {
                   ),
                   elevation: 0,
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Start Session',
+                      AppLocalizations.of(context)!.startSession,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -239,7 +241,7 @@ class IntermediateSessionsScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
-              '$poseCount poses',
+              AppLocalizations.of(context)!.poseCount(poseCount),
               style: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,

@@ -3,6 +3,7 @@ import 'package:lottie/lottie.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'main_navigation_screen.dart';
 import '../services/global_audio_service.dart';
+import '../l10n/app_localizations.dart';
 
 class CompleteProfileScreen extends StatefulWidget {
   final String? fullName;
@@ -52,7 +53,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen>
     final age = int.tryParse(_ageController.text.trim());
     if (age == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a valid age')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.enterValidAge)),
       );
       return;
     }
@@ -97,7 +98,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen>
 
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Profile completed 🌿')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.profileCompleted)),
         );
         Navigator.pushAndRemoveUntil(
           context,
@@ -107,7 +108,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen>
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to save profile: $e')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.saveProfileFailed(e.toString()))),
       );
     } finally {
       setState(() => _isLoading = false);
@@ -143,8 +144,8 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen>
                     animate: true,
                   ),
                   const SizedBox(height: 10),
-                  const Text(
-                    'Complete Your Profile 🌸',
+                  Text(
+                    AppLocalizations.of(context)!.completeProfileTitle,
                     style: TextStyle(
                       fontSize: 26,
                       fontWeight: FontWeight.bold,
@@ -152,8 +153,8 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen>
                     ),
                   ),
                   const SizedBox(height: 10),
-                  const Text(
-                    'Just a few quick details to personalize your yoga journey.',
+                  Text(
+                    AppLocalizations.of(context)!.completeProfileSubtitle,
                     style: TextStyle(color: Colors.white70, fontSize: 16),
                     textAlign: TextAlign.center,
                   ),
@@ -175,19 +176,19 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen>
                       children: [
                         _buildTextField(
                           icon: Icons.person_outline,
-                          label: 'Full Name',
+                          label: AppLocalizations.of(context)!.fullName,
                           controller: _nameController,
                         ),
                         _buildTextField(
                           icon: Icons.cake_outlined,
-                          label: 'Age',
+                          label: AppLocalizations.of(context)!.age,
                           controller: _ageController,
                           keyboardType: TextInputType.number,
                         ),
                         const SizedBox(height: 16),
                         _buildDropdown(
                           icon: Icons.fitness_center,
-                          label: 'Experience Level',
+                          label: AppLocalizations.of(context)!.experienceLevel,
                           value: _experienceLevel,
                           items: const ['Beginner', 'Intermediate', 'Advanced'],
                           onChanged: (v) => setState(() => _experienceLevel = v!),
@@ -195,7 +196,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen>
                         const SizedBox(height: 16),
                         _buildDropdown(
                           icon: Icons.timer_outlined,
-                          label: 'Session Length',
+                          label: AppLocalizations.of(context)!.sessionLength,
                           value: _preferredSessionLength,
                           items: const [
                             '5 minutes',
@@ -211,7 +212,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen>
                         const SizedBox(height: 16),
                         _buildDropdown(
                           icon: Icons.language,
-                          label: 'Preferred Language',
+                          label: AppLocalizations.of(context)!.preferredLanguage,
                           value: _preferredLanguage,
                           items: const ['English', 'Mandarin'],
                           onChanged: (v) => setState(() => _preferredLanguage = v!),
@@ -220,8 +221,8 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen>
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text(
-                              'Enable Notifications',
+                            Text(
+                              AppLocalizations.of(context)!.enableNotifications,
                               style: TextStyle(
                                   fontSize: 15, fontWeight: FontWeight.w600),
                             ),
@@ -250,8 +251,8 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen>
                             },
                             child: _isLoading
                                 ? const CircularProgressIndicator(color: Colors.white)
-                                : const Text(
-                                    'Continue',
+                                : Text(
+                                    AppLocalizations.of(context)!.continueButton,
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,

@@ -3,6 +3,8 @@ import '../data/yoga_data_complete.dart';
 import '../models/yoga_session.dart';
 import 'session_detail_screen.dart';
 import '../services/global_audio_service.dart';
+import '../l10n/app_localizations.dart';
+import '../utils/yoga_localization_helper.dart';
 
 class AdvancedSessionsScreen extends StatelessWidget {
   const AdvancedSessionsScreen({super.key});
@@ -20,8 +22,8 @@ class AdvancedSessionsScreen extends StatelessWidget {
               GlobalAudioService.playClickSound();
               Navigator.pop(context);
             }),
-        title: const Text(
-          'Advanced Sessions',
+        title: Text(
+          AppLocalizations.of(context)!.advancedTitle,
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w600,
@@ -56,7 +58,7 @@ class AdvancedSessionsScreen extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'Dynamic flow practice. Move with your breath.',
+                    AppLocalizations.of(context)!.dynamicFlowNotice,
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey[700],
@@ -154,8 +156,8 @@ class AdvancedSessionsScreen extends StatelessWidget {
                               color: const Color(0xFF2AB5A5),
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: const Text(
-                              'ADVANCED',
+                            child: Text(
+                              AppLocalizations.of(context)!.advancedLabel,
                               style: TextStyle(
                                 fontSize: 10,
                                 fontWeight: FontWeight.bold,
@@ -168,7 +170,7 @@ class AdvancedSessionsScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        session.title,
+                        YogaLocalizationHelper.getSessionTitle(context, session.titleKey),
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -185,7 +187,7 @@ class AdvancedSessionsScreen extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            '${session.totalDurationMinutes} minutes',
+                            AppLocalizations.of(context)!.minutesCount(session.totalDurationMinutes),                            
                             style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
@@ -199,8 +201,8 @@ class AdvancedSessionsScreen extends StatelessWidget {
                             color: Colors.orange,
                           ),
                           const SizedBox(width: 4),
-                          const Text(
-                            'High intensity',
+                          Text(
+                            AppLocalizations.of(context)!.highIntensity,
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
@@ -219,7 +221,7 @@ class AdvancedSessionsScreen extends StatelessWidget {
 
             // Description
             Text(
-              session.description,
+              YogaLocalizationHelper.getSessionDescription(context, session.descriptionKey),
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey[700],
@@ -242,7 +244,7 @@ class AdvancedSessionsScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Row(
+                  Row(
                     children: [
                       Icon(
                         Icons.wb_sunny,
@@ -251,7 +253,7 @@ class AdvancedSessionsScreen extends StatelessWidget {
                       ),
                       SizedBox(width: 8),
                       Text(
-                        'Sun Salutation Flow',
+                        AppLocalizations.of(context)!.sunSalutationTitle,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -261,12 +263,12 @@ class AdvancedSessionsScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 12),
-                  _buildFlowStep('1. Downward Dog'),
-                  _buildFlowStep('2. Plank'),
-                  _buildFlowStep('3. Eight-Point Pose'),
-                  _buildFlowStep('4. Baby Cobra'),
-                  _buildFlowStep('5. Full Cobra'),
-                  _buildFlowStep('6. Return to Downward Dog'),
+                  _buildFlowStep(AppLocalizations.of(context)!.step1),
+                  _buildFlowStep(AppLocalizations.of(context)!.step2),
+                  _buildFlowStep(AppLocalizations.of(context)!.step3),
+                  _buildFlowStep(AppLocalizations.of(context)!.step4),
+                  _buildFlowStep(AppLocalizations.of(context)!.step5),
+                  _buildFlowStep(AppLocalizations.of(context)!.step6),
                   const SizedBox(height: 8),
                   Container(
                     padding: const EdgeInsets.all(10),
@@ -274,7 +276,7 @@ class AdvancedSessionsScreen extends StatelessWidget {
                       color: Colors.orange.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Row(
+                    child: Row(
                       children: [
                         Icon(
                           Icons.loop,
@@ -284,7 +286,7 @@ class AdvancedSessionsScreen extends StatelessWidget {
                         SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            'Repeat 5-10 rounds • One breath, one movement',
+                            AppLocalizations.of(context)!.repeatRounds,
                             style: TextStyle(
                               fontSize: 13,
                               color: Colors.orange,
@@ -324,13 +326,13 @@ class AdvancedSessionsScreen extends StatelessWidget {
                   ),
                   elevation: 0,
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(Icons.play_circle_filled, size: 24),
                     SizedBox(width: 8),
                     Text(
-                      'Begin Flow',
+                      AppLocalizations.of(context)!.beginFlow,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,

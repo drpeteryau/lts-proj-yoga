@@ -7,6 +7,7 @@ import 'profile_screen.dart';
 import 'level_selection_screen.dart';
 import '../widgets/mini_playback_bar.dart';
 import '../services/global_audio_service.dart';
+import '../l10n/app_localizations.dart';
 
 class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
@@ -134,7 +135,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           style: GoogleFonts.poppins(
             fontSize: 13,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-            color: isSelected ? const Color(0xFF40E0D0) : const Color(0xFF6B7280),
+            color:
+                isSelected ? const Color(0xFF40E0D0) : const Color(0xFF6B7280),
           ),
         ),
       ),
@@ -172,11 +174,16 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildNavItem(0, Icons.home, 'Home'),
-                _buildNavItem(1, Icons.self_improvement, 'Sessions'),
-                _buildNavItem(2, Icons.track_changes, 'Progress'),
-                _buildNavItem(3, Icons.music_note, 'Sounds'),
-                _buildNavItem(4, Icons.person, 'Profile'),
+                _buildNavItem(
+                    0, Icons.home, AppLocalizations.of(context)!.navHome),
+                _buildNavItem(1, Icons.self_improvement,
+                    AppLocalizations.of(context)!.navSessions),
+                _buildNavItem(2, Icons.track_changes,
+                    AppLocalizations.of(context)!.navProgress),
+                _buildNavItem(3, Icons.music_note,
+                    AppLocalizations.of(context)!.navSounds),
+                _buildNavItem(
+                    4, Icons.person, AppLocalizations.of(context)!.navProfile),
               ],
             ),
           ),
@@ -200,13 +207,13 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           // Glow effect when selected
           boxShadow: isSelected
               ? [
-            BoxShadow(
-              color: const Color(0xFF40E0D0).withOpacity(0.2),
-              blurRadius: 30,
-              spreadRadius: 1,
-              offset: const Offset(0, 5),
-            ),
-          ]
+                  BoxShadow(
+                    color: const Color(0xFF40E0D0).withOpacity(0.2),
+                    blurRadius: 30,
+                    spreadRadius: 1,
+                    offset: const Offset(0, 5),
+                  ),
+                ]
               : null,
         ),
         child: Column(

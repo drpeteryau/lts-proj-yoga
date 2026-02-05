@@ -7,6 +7,7 @@ import 'main_navigation_screen.dart';
 import 'register_screen.dart';
 import 'complete_profile_screen.dart';
 import '../services/global_audio_service.dart';
+import '../l10n/app_localizations.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -49,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen>
     if (_emailController.text.trim().isEmpty ||
         _passwordController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill in all required fields')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.fillRequiredFields)),
       );
       return;
     }
@@ -66,7 +67,7 @@ class _LoginScreenState extends State<LoginScreen>
 
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Welcome back 🌿')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.loginSuccess)),
         );
         Navigator.pushAndRemoveUntil(
           context,
@@ -76,7 +77,7 @@ class _LoginScreenState extends State<LoginScreen>
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Login failed: $e')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.loginFailed(e.toString()))),
       );
     } finally {
       setState(() => _isLoading = false);
@@ -94,7 +95,7 @@ class _LoginScreenState extends State<LoginScreen>
         // Supabase handles the full OAuth dance server-side and redirects back.
         await Supabase.instance.client.auth.signInWithOAuth(
           OAuthProvider.google,
-          redirectTo: '${Uri.base.origin}',
+          redirectTo: Uri.base.origin,
         );
         // Browser redirects away - AuthGate's onAuthStateChange picks up the
         // new session when the page reloads back here.
@@ -168,7 +169,7 @@ class _LoginScreenState extends State<LoginScreen>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Google Sign-In failed: $e')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.googleSignInFailed(e.toString()))),
         );
       }
     } finally {
@@ -206,8 +207,8 @@ class _LoginScreenState extends State<LoginScreen>
                     fit: BoxFit.contain,
                   ),
                   const SizedBox(height: 10),
-                  const Text(
-                    'Welcome Back 🧘‍♀️',
+                  Text(
+                    AppLocalizations.of(context)!.welcomeBack,
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
@@ -215,8 +216,8 @@ class _LoginScreenState extends State<LoginScreen>
                     ),
                   ),
                   const SizedBox(height: 10),
-                  const Text(
-                    'Log in to continue your healing journey.',
+                  Text(
+                    AppLocalizations.of(context)!.loginSubtitle,
                     style: TextStyle(color: Colors.white70, fontSize: 16),
                     textAlign: TextAlign.center,
                   ),
@@ -238,13 +239,13 @@ class _LoginScreenState extends State<LoginScreen>
                       children: [
                         _buildField(
                           Icons.email_outlined,
-                          'Email',
+                          AppLocalizations.of(context)!.email,
                           _emailController,
                           keyboardType: TextInputType.emailAddress,
                         ),
                         _buildField(
                           Icons.lock_outline,
-                          'Password',
+                          AppLocalizations.of(context)!.password,
                           _passwordController,
                           obscureText: true,
                         ),
@@ -268,8 +269,8 @@ class _LoginScreenState extends State<LoginScreen>
                             child: _isLoading
                                 ? const CircularProgressIndicator(
                                 color: Colors.white)
-                                : const Text(
-                              'Log In',
+                                : Text(
+                              AppLocalizations.of(context)!.logIn,
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -304,8 +305,8 @@ class _LoginScreenState extends State<LoginScreen>
                                 ),
                               ),
                             ),
-                            label: const Text(
-                              'Sign in with Google',
+                            label: Text(
+                              AppLocalizations.of(context)!.signInWithGoogle,
                               style: TextStyle(
                                 color: Colors.black87,
                                 fontWeight: FontWeight.w600,
@@ -335,8 +336,8 @@ class _LoginScreenState extends State<LoginScreen>
                                   builder: (_) => const RegisterScreen()),
                             );
                           },
-                          child: const Text(
-                            "Don't have an account? Register",
+                          child: Text(
+                            AppLocalizations.of(context)!.dontHaveAccount,
                             style: TextStyle(
                               color: turquoise,
                               fontWeight: FontWeight.w600,

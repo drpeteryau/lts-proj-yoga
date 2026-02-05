@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'login_screen.dart';
 import 'main_navigation_screen.dart';
 import 'complete_profile_screen.dart';
+import '../main.dart';
 
 class AuthGate extends StatefulWidget {
   const AuthGate({super.key});
@@ -79,6 +80,16 @@ class _AuthGateState extends State<AuthGate> {
 
     print('🔍 Loaded profile: $profile');
 
+    if (profile != null) {
+      final savedLanguage = profile['preferred_language'] ?? 'English';
+
+      // Update the global ValueNotifier in main.dart
+      appLocale.value =
+          savedLanguage == 'Mandarin' ? const Locale('zh') : const Locale('en');
+
+      print('🌐 App language synced to: $savedLanguage');
+    }
+
     final fullName = (profile?['full_name'] as String?)?.trim() ?? '';
     final age = profile?['age'];
     final isIncomplete = fullName.isEmpty || age == null;
@@ -87,7 +98,8 @@ class _AuthGateState extends State<AuthGate> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (isIncomplete) {
-        print('🪷 Incomplete profile detected — going to CompleteProfileScreen');
+        print(
+            '🪷 Incomplete profile detected — going to CompleteProfileScreen');
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(

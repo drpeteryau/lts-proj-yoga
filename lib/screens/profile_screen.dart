@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'edit_profile_screen.dart';
 import 'auth_gate.dart';
 import '../services/global_audio_service.dart';
+import '../l10n/app_localizations.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -113,6 +114,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
+  String _getLocalizedDbValue(String? value) {
+  if (value == null || value.isEmpty) return '-';
+  
+  final l10n = AppLocalizations.of(context)!;
+  final v = value.trim();
+
+  if (v == 'Beginner') return l10n.beginner;
+  if (v == 'Intermediate') return l10n.intermediate;
+  if (v == 'Advanced') return l10n.advanced;
+
+  if (v == ('English')) return l10n.english;
+  if (v == ('Mandarin')) return l10n.mandarin;
+
+  if (v.contains('5')) return l10n.min5;
+  if (v.contains('10')) return l10n.min10;
+  if (v.contains('15')) return l10n.min15;
+  if (v.contains('20')) return l10n.min20;
+  if (v.contains('30')) return l10n.min30;
+
+  return v;
+}
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -130,7 +153,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       backgroundColor: background,
       appBar: AppBar(
         title: Text(
-          'Profile',
+          AppLocalizations.of(context)!.profileTitle,
           style: TextStyle(fontSize: isWeb ? 24 : 20),
         ),
         backgroundColor: Colors.transparent,
@@ -147,7 +170,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               _loadStats();
             },
             child: Text(
-              'Edit',
+              AppLocalizations.of(context)!.edit,
               style: TextStyle(fontSize: isWeb ? 18 : 16),
             ),
           ),
@@ -227,9 +250,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: [
                             Row(
                               children: [
-                                _statCard('Sessions', _totalSessions.toString(), isWeb),
-                                _statCard('Minutes', _totalMinutes.toString(), isWeb),
-                                _statCard('Daily 🔥', _dailyStreak.toString(), isWeb, highlight: true),
+                                _statCard(
+                                    AppLocalizations.of(context)!.sessions,
+                                    _totalSessions.toString(),
+                                    isWeb),
+                                _statCard(
+                                    AppLocalizations.of(context)!.minutesLabel,
+                                    _totalMinutes.toString(),
+                                    isWeb),
+                                _statCard(AppLocalizations.of(context)!.daily,
+                                    _dailyStreak.toString(), isWeb,
+                                    highlight: true),
                               ],
                             ),
 
@@ -238,9 +269,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             // Streak summary fills the remaining right-column width
                             _section(
                               isWeb,
-                              title: 'Streak Summary',
+                              title:
+                                  AppLocalizations.of(context)!.streakSummary,
                               children: [
-                                _infoRow('Weekly Active Weeks', _weeklyStreak.toString(), isWeb),
+                                _infoRow(
+                                    AppLocalizations.of(context)!.weeklyActive,
+                                    _weeklyStreak.toString(),
+                                    isWeb),
                               ],
                             ),
                           ],
@@ -258,34 +293,46 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Expanded(
                         child: _section(
                           isWeb,
-                          title: 'Preferences',
+                          title: AppLocalizations.of(context)!.preferences,
                           children: [
-                            _infoRow('Experience Level', _profile?['experience_level'] ?? '-', isWeb),
-                            _infoRow('Session Length', _profile?['preferred_session_length'] ?? '-', isWeb),
-                            _infoRow('Language', _profile?['preferred_language'] ?? '-', isWeb),
+                            _infoRow(
+                                AppLocalizations.of(context)!.experienceLevel,
+                                _getLocalizedDbValue(_profile?['experience_level']),
+                                isWeb),
+                            _infoRow(
+                                AppLocalizations.of(context)!.sessionLength,
+                                _getLocalizedDbValue(_profile?['preferred_session_length']),
+                                isWeb),
+                            _infoRow(AppLocalizations.of(context)!.language,
+                                _getLocalizedDbValue(_profile?['preferred_language']), isWeb),
                           ],
                         ),
                       ),
-
                       const SizedBox(width: 24),
-
                       Expanded(
                         child: _section(
                           isWeb,
-                          title: 'Notifications',
+                          title: AppLocalizations.of(context)!.notifications,
                           children: [
                             _infoRow(
-                              'Push Notifications',
-                              _profile?['push_notifications_enabled'] == true ? 'Enabled' : 'Disabled',
+                              AppLocalizations.of(context)!.pushNotifications,
+                              _profile?['push_notifications_enabled'] == true
+                                  ? AppLocalizations.of(context)!.enabled
+                                  : AppLocalizations.of(context)!.disabled,
                               isWeb,
                             ),
                             _infoRow(
-                              'Daily Reminder',
-                              _profile?['daily_practice_reminder'] == true ? 'Enabled' : 'Disabled',
+                              AppLocalizations.of(context)!.dailyReminder,
+                              _profile?['daily_practice_reminder'] == true
+                                  ? AppLocalizations.of(context)!.enabled
+                                  : AppLocalizations.of(context)!.disabled,
                               isWeb,
                             ),
                             if (_profile?['daily_practice_reminder'] == true)
-                              _infoRow('Reminder Time', _profile?['reminder_time']?.toString() ?? '-', isWeb),
+                              _infoRow(
+                                  AppLocalizations.of(context)!.reminderTime,
+                                  _profile?['reminder_time']?.toString() ?? '-',
+                                  isWeb),
                           ],
                         ),
                       ),
@@ -342,9 +389,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   Row(
                     children: [
-                      _statCard('Sessions', _totalSessions.toString(), isWeb),
-                      _statCard('Minutes', _totalMinutes.toString(), isWeb),
-                      _statCard('Daily 🔥', _dailyStreak.toString(), isWeb, highlight: true),
+                      _statCard(AppLocalizations.of(context)!.sessions,
+                          _totalSessions.toString(), isWeb),
+                      _statCard(AppLocalizations.of(context)!.minutesLabel,
+                          _totalMinutes.toString(), isWeb),
+                      _statCard(AppLocalizations.of(context)!.daily,
+                          _dailyStreak.toString(), isWeb,
+                          highlight: true),
                     ],
                   ),
 
@@ -352,9 +403,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   _section(
                     isWeb,
-                    title: 'Streak Summary',
+                    title: AppLocalizations.of(context)!.streakSummary,
                     children: [
-                      _infoRow('Weekly Active Weeks', _weeklyStreak.toString(), isWeb),
+                      _infoRow(AppLocalizations.of(context)!.weeklyActive,
+                          _weeklyStreak.toString(), isWeb),
                     ],
                   ),
 
@@ -362,35 +414,47 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   _section(
                     isWeb,
-                    title: 'Preferences',
+                    title: AppLocalizations.of(context)!.preferences,
                     children: [
-                      _infoRow('Experience Level', _profile?['experience_level'] ?? '-', isWeb),
-                      _infoRow('Session Length', _profile?['preferred_session_length'] ?? '-', isWeb),
-                      _infoRow('Language', _profile?['preferred_language'] ?? '-', isWeb),
+                      _infoRow(AppLocalizations.of(context)!.experienceLevel,
+                          _getLocalizedDbValue(_profile?['experience_level']), isWeb),
+                      _infoRow(AppLocalizations.of(context)!.sessionLength,
+                          _getLocalizedDbValue(_profile?['preferred_session_length']), isWeb),
+                      _infoRow(AppLocalizations.of(context)!.language,
+                         _getLocalizedDbValue(_profile?['preferred_language']), isWeb),
                     ],
                   ),
 
                   const SizedBox(height: 16),
 
-                   _section(
+                  _section(
                     isWeb,
-                    title: 'Notifications',
+                    title: AppLocalizations.of(context)!.notifications,
                     children: [
                       _infoRow(
-                        'Push Notifications',
-                        _profile?['push_notifications_enabled'] == true ? 'Enabled' : 'Disabled',
+                        AppLocalizations.of(context)!.pushNotifications,
+                        _profile?['push_notifications_enabled'] == true
+                            ? AppLocalizations.of(context)!.enabled
+                            : AppLocalizations.of(context)!.disabled,
                         isWeb,
                       ),
                       _infoRow(
-                        'Daily Reminder',
-                        _profile?['daily_practice_reminder'] == true ? 'Enabled' : 'Disabled',
+                        AppLocalizations.of(context)!.dailyReminder,
+                        _profile?['daily_practice_reminder'] == true
+                            ? AppLocalizations.of(context)!.enabled
+                            : AppLocalizations.of(context)!.disabled,
                         isWeb,
                       ),
                       if (_profile?['daily_practice_reminder'] == true)
-                        _infoRow('Reminder Time', _profile?['reminder_time']?.toString() ?? '-', isWeb),
+                        _infoRow(
+                            AppLocalizations.of(context)!.reminderTime,
+                            _profile?['reminder_time']?.toString() ?? '-',
+                            isWeb),
                       _infoRow(
-                        'Sound Effects',
-                        _profile?['sound_effects_enabled'] == true ? 'Enabled' : 'Disabled',
+                        AppLocalizations.of(context)!.soundEffects,
+                        _profile?['sound_effects_enabled'] == true
+                            ? AppLocalizations.of(context)!.enabled
+                            : AppLocalizations.of(context)!.disabled,
                         isWeb,
                       ),
                     ],
@@ -408,7 +472,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       if (!mounted) return;
                       Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(builder: (_) => const AuthGate()),
-                            (route) => false,
+                        (route) => false,
                       );
                     },
                     style: ElevatedButton.styleFrom(
@@ -419,7 +483,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                     child: Text(
-                      'LOG OUT',
+                      AppLocalizations.of(context)!.logout,
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
@@ -430,7 +494,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 SizedBox(height: isWeb ? 60 : 40),
               ],
-            
             ),
           ),
         ),
@@ -457,10 +520,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _section(
-      bool isWeb, {
-        required String title,
-        required List<Widget> children,
-      }) {
+    bool isWeb, {
+    required String title,
+    required List<Widget> children,
+  }) {
     return Container(
       padding: EdgeInsets.all(isWeb ? 24 : 16),
       decoration: BoxDecoration(
@@ -493,11 +556,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _statCard(
-      String label,
-      String value,
-      bool isWeb, {
-        bool highlight = false,
-      }) {
+    String label,
+    String value,
+    bool isWeb, {
+    bool highlight = false,
+  }) {
     return Expanded(
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: isWeb ? 8 : 6),

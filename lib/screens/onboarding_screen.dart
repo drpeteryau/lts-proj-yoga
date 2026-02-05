@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'login_screen.dart';
 import '../services/global_audio_service.dart';
+import '../l10n/app_localizations.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
@@ -42,8 +43,8 @@ class OnboardingScreen extends StatelessWidget {
                 const SizedBox(height: 24),
                 
                 // Main heading
-                const Text(
-                  'Feel stronger',
+                Text(
+                  AppLocalizations.of(context)!.onboardingHeading,
                   style: TextStyle(
                     fontSize: 48,
                     fontWeight: FontWeight.bold,
@@ -55,8 +56,8 @@ class OnboardingScreen extends StatelessWidget {
                 const SizedBox(height: 24),
                 
                 // Description
-                const Text(
-                  'Learn from the world\'s best yoga\ncouches anytime at home or on\nthe go.',
+                Text(
+                  AppLocalizations.of(context)!.onboardingDesc,
                   style: TextStyle(
                     fontSize: 18,
                     color: Colors.white,
@@ -88,11 +89,11 @@ class OnboardingScreen extends StatelessWidget {
                         width: 1.5,
                       ),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Let\'s explore',
+                          AppLocalizations.of(context)!.letsExplore,
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,

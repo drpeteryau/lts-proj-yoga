@@ -3,11 +3,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'dart:async';
 import 'sound_player_screen.dart';
 import '../services/global_audio_service.dart';
+import '../l10n/app_localizations.dart';
+import '../utils/sound_localization_helper.dart';
 
 class MeditationSound {
-  final String title;
-  final String category;
-  final String duration;
+  final String titleKey;  // Localization key
+  final String categoryKey;  // Localization key
+  final int durationMinutes;
   final String imageUrl;
   final bool isPopular;
   final String audioUrl;
@@ -15,9 +17,9 @@ class MeditationSound {
   bool isSaved;
 
   MeditationSound({
-    required this.title,
-    required this.category,
-    required this.duration,
+    required this.titleKey,
+    required this.categoryKey,
+    required this.durationMinutes,
     required this.imageUrl,
     this.isPopular = false,
     required this.audioUrl,
@@ -39,61 +41,61 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
   // Using reliable, tested audio URLs
   final List<MeditationSound> sounds = [
     MeditationSound(
-      title: 'Ocean Waves',
-      category: 'Nature',
-      duration: ' ',
+      titleKey: 'soundOceanWaves',
+      categoryKey: 'categoryNature',
+      durationMinutes: 3,
       imageUrl: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=500',
       isPopular: true,
       audioUrl: 'https://cdn.pixabay.com/audio/2022/05/27/audio_1808fbf07a.mp3',
     ),
     MeditationSound(
-      title: 'Forest Rain',
-      category: 'Nature',
-      duration: '45 min',
+      titleKey: 'soundForestRain',
+      categoryKey: 'categoryNature',
+      durationMinutes: 45,
       imageUrl: 'https://images.unsplash.com/photo-1511497584788-876760111969?w=500',
       isPopular: true,
       audioUrl: 'https://cdn.pixabay.com/audio/2021/08/09/audio_0625c1539c.mp3',
     ),
     MeditationSound(
-      title: 'Tibetan Bowls',
-      category: 'Meditation',
-      duration: '20 min',
+      titleKey: 'soundTibetanBowls',
+      categoryKey: 'categoryMeditation',
+      durationMinutes: 20,
       imageUrl: 'https://images.unsplash.com/photo-1545389336-cf090694435e?w=500',
       isPopular: true,
       audioUrl: 'https://cdn.pixabay.com/audio/2022/03/15/audio_c8e7e1f2f7.mp3',
     ),
     MeditationSound(
-      title: 'Peaceful Piano',
-      category: 'Ambient',
-      duration: '60 min',
+      titleKey: 'soundPeacefulPiano',
+      categoryKey: 'categoryAmbient',
+      durationMinutes: 60,
       imageUrl: 'https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?w=500',
       audioUrl: 'https://cdn.pixabay.com/audio/2022/03/10/audio_c610232532.mp3',
     ),
     MeditationSound(
-      title: 'Mountain Stream',
-      category: 'Nature',
-      duration: '40 min',
+      titleKey: 'soundMountainStream',
+      categoryKey: 'categoryNature',
+      durationMinutes: 40,
       imageUrl: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=500',
       audioUrl: 'https://cdn.pixabay.com/audio/2022/06/07/audio_1883c6fef8.mp3',
     ),
     MeditationSound(
-      title: 'Wind Chimes',
-      category: 'Ambient',
-      duration: '25 min',
+      titleKey: 'soundWindChimes',
+      categoryKey: 'categoryAmbient',
+      durationMinutes: 25,
       imageUrl: 'https://images.unsplash.com/photo-1499244571948-7ccddb3583f1?w=500',
       audioUrl: 'https://cdn.pixabay.com/audio/2022/03/15/audio_134a5914f1.mp3',
     ),
     MeditationSound(
-      title: 'Gentle Thunder',
-      category: 'Nature',
-      duration: '35 min',
+      titleKey: 'soundGentleThunder',
+      categoryKey: 'categoryNature',
+      durationMinutes: 35,
       imageUrl: 'https://images.unsplash.com/photo-1502691876148-a84978e59af8?w=500',
       audioUrl: 'https://cdn.pixabay.com/audio/2022/11/09/audio_0c50c1f82e.mp3',
     ),
     MeditationSound(
-      title: 'Singing Birds',
-      category: 'Nature',
-      duration: '30 min',
+      titleKey: 'soundSingingBirds',
+      categoryKey: 'categoryNature',
+      durationMinutes: 30,
       imageUrl: 'https://images.unsplash.com/photo-1444464666168-49d633b86797?w=500',
       audioUrl: 'https://cdn.pixabay.com/audio/2022/03/09/audio_c610232532.mp3',
     ),
@@ -180,14 +182,14 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Welcome back,',
+                  AppLocalizations.of(context)!.welcomeBackSounds,
                   style: GoogleFonts.poppins(
                     fontSize: isWeb ? 16 : 14,
                     color: Colors.grey[600],
                   ),
                 ),
                 Text(
-                  'Find Your Peace',
+                  AppLocalizations.of(context)!.findYourPeace,
                   style: GoogleFonts.poppins(
                     fontSize: isWeb ? 28 : 22,
                     fontWeight: FontWeight.w600,
@@ -231,11 +233,11 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
           ),
           insets: EdgeInsets.symmetric(horizontal: isWeb ? 20 : 16),
         ),
-        tabs: const [
-          Tab(text: 'All'),
-          Tab(text: 'Recent'),
-          Tab(text: 'Saved'),
-          Tab(text: 'Favorites'),
+        tabs: [
+          Tab(text: AppLocalizations.of(context)!.tabAll),
+          Tab(text: AppLocalizations.of(context)!.tabRecent),
+          Tab(text: AppLocalizations.of(context)!.tabSaved),
+          Tab(text: AppLocalizations.of(context)!.tabFavorites),
         ],
       ),
     );
@@ -252,7 +254,7 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
         children: [
           // Most Popular Section
           Text(
-            'Most Popular',
+            AppLocalizations.of(context)!.mostPopular,
             style: GoogleFonts.poppins(
               fontSize: isWeb ? 22 : 18,
               fontWeight: FontWeight.w600,
@@ -266,7 +268,7 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
 
           // Latest Section
           Text(
-            'Latest',
+            AppLocalizations.of(context)!.latest,
             style: GoogleFonts.poppins(
               fontSize: isWeb ? 22 : 18,
               fontWeight: FontWeight.w600,
@@ -284,7 +286,7 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
     return Padding(
       padding: EdgeInsets.all(isWeb ? 32 : 20),
       child: _recentSounds.isEmpty
-          ? _buildEmptyState('No recent sounds', isWeb)
+          ? _buildEmptyState(AppLocalizations.of(context)!.noRecentSounds, isWeb)
           : _buildSoundsGrid(_recentSounds, isWeb),
     );
   }
@@ -293,7 +295,7 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
     return Padding(
       padding: EdgeInsets.all(isWeb ? 32 : 20),
       child: _savedSounds.isEmpty
-          ? _buildEmptyState('No saved sounds yet', isWeb)
+          ? _buildEmptyState(AppLocalizations.of(context)!.noSavedSounds, isWeb)
           : _buildSoundsGrid(_savedSounds, isWeb),
     );
   }
@@ -302,7 +304,7 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
     return Padding(
       padding: EdgeInsets.all(isWeb ? 32 : 20),
       child: _favoriteSounds.isEmpty
-          ? _buildEmptyState('No favorite sounds yet', isWeb)
+          ? _buildEmptyState(AppLocalizations.of(context)!.noFavoriteSounds, isWeb)
           : _buildSoundsGrid(_favoriteSounds, isWeb),
     );
   }
@@ -432,7 +434,7 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            sound.title,
+                            SoundLocalizationHelper.getSoundTitle(context, sound.titleKey),
                             style: GoogleFonts.poppins(
                               color: Colors.white,
                               fontSize: isWeb ? 20 : 18,
@@ -443,7 +445,7 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            sound.category,
+                            SoundLocalizationHelper.getSoundCategory(context, sound.categoryKey),
                             style: GoogleFonts.poppins(
                               color: Colors.white70,
                               fontSize: isWeb ? 15 : 14,
@@ -600,7 +602,7 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
 
                     // Title
                     Text(
-                      sound.title,
+                      SoundLocalizationHelper.getSoundTitle(context, sound.titleKey),
                       style: GoogleFonts.poppins(
                         color: Colors.white,
                         fontSize: isWeb ? 20 : 18,
@@ -624,7 +626,8 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
                             ),
                             SizedBox(width: isWeb ? 6 : 4),
                             Text(
-                              sound.duration,
+                              AppLocalizations.of(context)!.durationFormat(sound.durationMinutes),
+                              // '${sound.durationMinutes} min',
                               style: GoogleFonts.poppins(
                                 color: Colors.white,
                                 fontSize: isWeb ? 15 : 14,
@@ -641,7 +644,7 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(
-                                  sound.isSaved ? 'Saved!' : 'Removed from saved',
+                                  sound.isSaved ? AppLocalizations.of(context)!.savedSuccess : AppLocalizations.of(context)!.removedFromSaved,
                                   style: GoogleFonts.poppins(),
                                 ),
                                 duration: const Duration(seconds: 1),
@@ -668,7 +671,7 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
   }
 
   Future<void> _playSound(MeditationSound sound) async {
-    print('🎵 Tapping sound: ${sound.title}');
+    print('🎵 Tapping sound: ${SoundLocalizationHelper.getSoundTitle(context, sound.titleKey)}');
     print('🎵 URL: ${sound.audioUrl}');
 
     // Show loading indicator
@@ -689,8 +692,8 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
       await Future.any([
         audioService.playSound(
           url: sound.audioUrl,
-          title: sound.title,
-          category: sound.category,
+          title: SoundLocalizationHelper.getSoundTitle(context, sound.titleKey),
+          category: SoundLocalizationHelper.getSoundCategory(context, sound.categoryKey),
           imageUrl: sound.imageUrl,
         ),
         Future.delayed(const Duration(seconds: 10), () {
@@ -704,7 +707,7 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
       // Close loading dialog
       if (mounted) Navigator.pop(context);
 
-      print('🎵 Successfully loaded audio for ${sound.title}');
+      print('🎵 Successfully loaded audio for ${SoundLocalizationHelper.getSoundTitle(context, sound.titleKey)}');
 
       // Navigate to sound player screen
       if (mounted) {
@@ -726,7 +729,7 @@ class _SoundsScreenState extends State<SoundsScreen> with SingleTickerProviderSt
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Failed to load audio. Please try another one.',
+              AppLocalizations.of(context)!.audioLoadError,
               style: GoogleFonts.poppins(),
             ),
             backgroundColor: Colors.red[700],

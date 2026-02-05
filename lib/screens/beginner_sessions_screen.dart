@@ -3,6 +3,8 @@ import '../data/yoga_data.dart';
 import '../models/yoga_session.dart';
 import 'session_detail_screen.dart';
 import '../services/global_audio_service.dart';
+import '../l10n/app_localizations.dart';
+import '../utils/yoga_localization_helper.dart';
 
 class BeginnerSessionsScreen extends StatelessWidget {
   const BeginnerSessionsScreen({super.key});
@@ -20,8 +22,8 @@ class BeginnerSessionsScreen extends StatelessWidget {
               GlobalAudioService.playClickSound();
               Navigator.pop(context);
             }),
-        title: const Text(
-          'Beginner Sessions',
+        title: Text(
+          AppLocalizations.of(context)!.beginnerTitle,
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w600,
@@ -88,7 +90,7 @@ class BeginnerSessionsScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        session.title,
+                        YogaLocalizationHelper.getSessionTitle(context, session.titleKey),
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -124,7 +126,7 @@ class BeginnerSessionsScreen extends StatelessWidget {
 
             // Description
             Text(
-              session.description,
+              YogaLocalizationHelper.getSessionDescription(context, session.descriptionKey),
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey[700],
@@ -138,7 +140,7 @@ class BeginnerSessionsScreen extends StatelessWidget {
             _buildPoseSection(
               context,
               icon: Icons.wb_sunny,
-              title: 'Warm-up',
+              title: AppLocalizations.of(context)!.warmup,
               poseCount: session.warmupPoses.length,
               color: const Color(0xFF5FE9D8), // Light turquoise
             ),
@@ -149,7 +151,7 @@ class BeginnerSessionsScreen extends StatelessWidget {
             _buildPoseSection(
               context,
               icon: Icons.fitness_center,
-              title: 'Main Practice',
+              title: AppLocalizations.of(context)!.mainPractice,
               poseCount: session.mainPoses.length,
               color: const Color(0xFF40E0D0), // Primary turquoise
             ),
@@ -160,7 +162,7 @@ class BeginnerSessionsScreen extends StatelessWidget {
             _buildPoseSection(
               context,
               icon: Icons.nightlight,
-              title: 'Cool-down',
+              title: AppLocalizations.of(context)!.cooldown,
               poseCount: session.cooldownPoses.length,
               color: const Color(0xFF30C5B5), // Darker turquoise
             ),
@@ -190,11 +192,11 @@ class BeginnerSessionsScreen extends StatelessWidget {
                   ),
                   elevation: 0,
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'View Details',
+                      AppLocalizations.of(context)!.viewDetails,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -249,7 +251,7 @@ class BeginnerSessionsScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
-              '$poseCount poses',
+              AppLocalizations.of(context)!.poseCount(poseCount),
               style: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,

@@ -4,6 +4,10 @@ import 'screens/auth_gate.dart';
 import 'services/global_audio_service.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../services/notification_service.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'l10n/app_localizations.dart';
+
+final ValueNotifier<Locale> appLocale = ValueNotifier(const Locale('en'));
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,23 +36,39 @@ class HealYogaApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'HealYoga',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primaryColor: const Color(0xFF40E0D0), // Turquoise
-        colorScheme: ColorScheme.fromSwatch().copyWith(
-          primary: const Color(0xFF40E0D0),
-          secondary: const Color(0xFF00796B),
-        ),
-  textTheme: GoogleFonts.poppinsTextTheme(
-    const TextTheme(
-      bodyLarge: TextStyle(fontSize: 16.0, color: Colors.black87),
-      titleLarge: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
-    ),
-  ),
-      ),
-      home: const AuthGate(),
+    return ValueListenableBuilder<Locale>(
+      valueListenable: appLocale,
+      builder: (context, locale, child) {
+        return MaterialApp(
+          title: 'HealYoga',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            primaryColor: const Color(0xFF40E0D0), // Turquoise
+            colorScheme: ColorScheme.fromSwatch().copyWith(
+              primary: const Color(0xFF40E0D0),
+              secondary: const Color(0xFF00796B),
+            ),
+            textTheme: GoogleFonts.poppinsTextTheme(
+              const TextTheme(
+                bodyLarge: TextStyle(fontSize: 16.0, color: Colors.black87),
+                titleLarge: TextStyle(
+                  fontSize: 22.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+          locale: locale, // <--- This controls the current language
+          supportedLocales: const [Locale('en'), Locale('zh')],
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          home: const AuthGate(),
+        );
+      },
     );
   }
 }

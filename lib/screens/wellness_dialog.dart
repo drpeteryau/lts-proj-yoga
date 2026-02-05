@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/global_audio_service.dart';
+import '../l10n/app_localizations.dart';
 
 void showSeniorFriendlyWellnessDialog({
   required BuildContext context,
@@ -55,9 +56,9 @@ void showSeniorFriendlyWellnessDialog({
               children: [
                 const Text('🌿', style: TextStyle(fontSize: 28)),
                 const SizedBox(width: 12),
-                const Expanded(
+                Expanded(
                   child: Text(
-                    'Wellness Check-in',
+                    AppLocalizations.of(context)!.wellnessDialogTitle,
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.w700,
@@ -76,13 +77,19 @@ void showSeniorFriendlyWellnessDialog({
                     const SizedBox(height: 24),
 
                     // Section 1 - Physical Comfort & Mobility
-                    _buildSectionHeader('Section 1 – Physical Comfort & Mobility', Colors.blue),
+                    _buildSectionHeader(AppLocalizations.of(context)!.section1Title, Colors.blue),
                     const SizedBox(height: 16),
 
                     // Q1: Body Comfort
                     _buildQuestion(
-                      '1️⃣ How comfortable does your body feel during movement?',
-                      ['Not comfortable', 'Slightly comfortable', 'Moderately comfortable', 'Very comfortable', 'Extremely comfortable'],
+                      AppLocalizations.of(context)!.qBodyComfortFull,
+                      [
+                        AppLocalizations.of(context)!.optComfort1,
+                        AppLocalizations.of(context)!.optComfort2,
+                        AppLocalizations.of(context)!.optComfort3,
+                        AppLocalizations.of(context)!.optComfort4,
+                        AppLocalizations.of(context)!.optComfort5
+                      ],
                       localBodyComfort,
                           (value) {
                         setDialogState(() => localBodyComfort = value);
@@ -92,8 +99,14 @@ void showSeniorFriendlyWellnessDialog({
 
                     // Q2: Flexibility
                     _buildQuestion(
-                      '2️⃣ How would you describe your flexibility recently?',
-                      ['Much stiffer', 'A little stiff', 'About the same', 'A bit more flexible', 'Much more flexible'],
+                      AppLocalizations.of(context)!.qFlexibilityFull,
+                      [
+                        AppLocalizations.of(context)!.optFlexibility1,
+                        AppLocalizations.of(context)!.optFlexibility2,
+                        AppLocalizations.of(context)!.optFlexibility3,
+                        AppLocalizations.of(context)!.optFlexibility4,
+                        AppLocalizations.of(context)!.optFlexibility5
+                      ],
                       localFlexibility,
                           (value) {
                         setDialogState(() => localFlexibility = value);
@@ -103,8 +116,14 @@ void showSeniorFriendlyWellnessDialog({
 
                     // Q3: Balance
                     _buildQuestion(
-                      '3️⃣ How steady do you feel when standing or balancing?',
-                      ['Not steady at all', 'Slightly steady', 'Moderately steady', 'Very steady', 'Extremely steady'],
+                      AppLocalizations.of(context)!.qBalanceFull,
+                      [
+                        AppLocalizations.of(context)!.optBalance1,
+                        AppLocalizations.of(context)!.optBalance2,
+                        AppLocalizations.of(context)!.optBalance3,
+                        AppLocalizations.of(context)!.optBalance4,
+                        AppLocalizations.of(context)!.optBalance5
+                      ],
                       localBalance,
                           (value) {
                         setDialogState(() => localBalance = value);
@@ -115,13 +134,19 @@ void showSeniorFriendlyWellnessDialog({
                     const SizedBox(height: 16),
 
                     // Section 2 - Energy & Mood
-                    _buildSectionHeader('Section 2 – Energy & Mood', Colors.orange),
+                    _buildSectionHeader(AppLocalizations.of(context)!.section2Title, Colors.orange),
                     const SizedBox(height: 16),
 
                     // Q4: Energy Level
                     _buildQuestion(
-                      '4️⃣ How is your overall energy level?',
-                      ['Very low', 'Low', 'Average', 'Good', 'Very good'],
+                      AppLocalizations.of(context)!.qEnergyFull,
+                      [
+                        AppLocalizations.of(context)!.optEnergy1,
+                        AppLocalizations.of(context)!.optEnergy2,
+                        AppLocalizations.of(context)!.optEnergy3,
+                        AppLocalizations.of(context)!.optEnergy4,
+                        AppLocalizations.of(context)!.optEnergy5
+                      ],
                       localEnergyLevel,
                           (value) {
                         setDialogState(() => localEnergyLevel = value);
@@ -131,8 +156,14 @@ void showSeniorFriendlyWellnessDialog({
 
                     // Q5: Mood
                     _buildQuestion(
-                      '5️⃣ How has your mood been lately?',
-                      ['Often stressed or down', 'Sometimes stressed', 'Mostly okay', 'Mostly positive', 'Very positive and calm'],
+                      AppLocalizations.of(context)!.qMoodFull,
+                      [
+                        AppLocalizations.of(context)!.optMood1,
+                        AppLocalizations.of(context)!.optMood2,
+                        AppLocalizations.of(context)!.optMood3,
+                        AppLocalizations.of(context)!.optMood4,
+                        AppLocalizations.of(context)!.optMood5
+                      ],
                       localMood,
                           (value) {
                         setDialogState(() => localMood = value);
@@ -143,13 +174,19 @@ void showSeniorFriendlyWellnessDialog({
                     const SizedBox(height: 16),
 
                     // Section 3 - Awareness & Confidence
-                    _buildSectionHeader('Section 3 – Awareness & Confidence', Colors.purple),
+                    _buildSectionHeader(AppLocalizations.of(context)!.section3Title, Colors.purple),
                     const SizedBox(height: 16),
 
                     // Q6: Daily Confidence
                     _buildQuestion(
-                      '6️⃣ How confident do you feel performing daily activities?',
-                      ['Not confident', 'Slightly confident', 'Somewhat confident', 'Confident', 'Very confident'],
+                      AppLocalizations.of(context)!.qConfidenceFull,
+                      [
+                        AppLocalizations.of(context)!.optConfidence1,
+                        AppLocalizations.of(context)!.optConfidence2,
+                        AppLocalizations.of(context)!.optConfidence3,
+                        AppLocalizations.of(context)!.optConfidence4,
+                        AppLocalizations.of(context)!.optConfidence5
+                      ],
                       localDailyConfidence,
                           (value) {
                         setDialogState(() => localDailyConfidence = value);
@@ -159,8 +196,14 @@ void showSeniorFriendlyWellnessDialog({
 
                     // Q7: Body Connection
                     _buildQuestion(
-                      '7️⃣ How connected do you feel to your body during yoga practice?',
-                      ['Not connected', 'A little connected', 'Moderately connected', 'Very connected', 'Deeply connected'],
+                      AppLocalizations.of(context)!.qBodyConnectionFull,
+                      [
+                        AppLocalizations.of(context)!.optConnection1,
+                        AppLocalizations.of(context)!.optConnection2,
+                        AppLocalizations.of(context)!.optConnection3,
+                        AppLocalizations.of(context)!.optConnection4,
+                        AppLocalizations.of(context)!.optConnection5
+                      ],
                       localBodyConnection,
                           (value) {
                         setDialogState(() => localBodyConnection = value);
@@ -171,13 +214,19 @@ void showSeniorFriendlyWellnessDialog({
                     const SizedBox(height: 16),
 
                     // Section 4 - Overall Wellbeing
-                    _buildSectionHeader('⭐ Overall Wellbeing', Colors.green),
+                    _buildSectionHeader(AppLocalizations.of(context)!.section4Title, Colors.green),
                     const SizedBox(height: 16),
 
                     // Q8: Overall Wellbeing
                     _buildQuestion(
-                      '8️⃣ Overall, how would you rate your wellbeing this month?',
-                      ['Poor', 'Fair', 'Good', 'Very good', 'Excellent'],
+                      AppLocalizations.of(context)!.qOverallFull,
+                      [
+                        AppLocalizations.of(context)!.optOverall1,
+                        AppLocalizations.of(context)!.optOverall2,
+                        AppLocalizations.of(context)!.optOverall3,
+                        AppLocalizations.of(context)!.optOverall4,
+                        AppLocalizations.of(context)!.optOverall5
+                      ],
                       localOverallWellbeing,
                           (value) {
                         setDialogState(() => localOverallWellbeing = value);
@@ -194,11 +243,11 @@ void showSeniorFriendlyWellnessDialog({
                         color: const Color(0xFFE3F8F5),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Column(
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '💭 Monthly Reflections (Optional)',
+                            AppLocalizations.of(context)!.monthlyReflections,
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
@@ -207,7 +256,7 @@ void showSeniorFriendlyWellnessDialog({
                           ),
                           SizedBox(height: 6),
                           Text(
-                            'Share specific improvements you\'ve noticed:',
+                            AppLocalizations.of(context)!.shareImprovements,
                             style: TextStyle(fontSize: 14, color: Colors.black87),
                           ),
                         ],
@@ -217,29 +266,29 @@ void showSeniorFriendlyWellnessDialog({
 
                     // Balance Reflection
                     _buildReflectionField(
-                      '🧘 Balance Improvements',
-                      'e.g., I can stand on one leg longer...',
+                      AppLocalizations.of(context)!.labelBalance,
+                      AppLocalizations.of(context)!.hintBalance,
                       onBalanceReflectionChanged,
                     ),
 
                     // Posture Reflection
                     _buildReflectionField(
-                      '🪑 Posture Improvements',
-                      'e.g., My back feels straighter...',
+                      AppLocalizations.of(context)!.labelPosture,
+                      AppLocalizations.of(context)!.hintPosture,
                       onPostureReflectionChanged,
                     ),
 
                     // Consistency Reflection
                     _buildReflectionField(
-                      '📅 Consistency & Habits',
-                      'e.g., I practice every morning now...',
+                      AppLocalizations.of(context)!.labelConsistency,
+                      AppLocalizations.of(context)!.hintConsistency,
                       onConsistencyReflectionChanged,
                     ),
 
                     // Other Reflection
                     _buildReflectionField(
-                      '💬 Other Thoughts',
-                      'Any other improvements or notes...',
+                      AppLocalizations.of(context)!.labelOther,
+                      AppLocalizations.of(context)!.hintOther,
                       onOtherReflectionChanged,
                     ),
                   ],
@@ -252,7 +301,7 @@ void showSeniorFriendlyWellnessDialog({
                   await GlobalAudioService.playClickSound();
                   Navigator.pop(dialogContext);
                 },
-                child: const Text('Skip for Now', style: TextStyle(color: Colors.grey, fontSize: 15)),
+                child: Text(AppLocalizations.of(context)!.skipForNow, style: TextStyle(color: Colors.grey, fontSize: 15)),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -267,8 +316,8 @@ void showSeniorFriendlyWellnessDialog({
                       localBodyConnection == null ||
                       localOverallWellbeing == null) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Please answer all required questions before submitting'),
+                      SnackBar(
+                        content: Text(AppLocalizations.of(context)!.validationErrorCheckIn),
                         backgroundColor: Colors.orange,
                       ),
                     );
@@ -285,8 +334,8 @@ void showSeniorFriendlyWellnessDialog({
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text(
-                  'Submit Check-in',
+                child: Text(
+                  AppLocalizations.of(context)!.submitCheckIn,
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w700,

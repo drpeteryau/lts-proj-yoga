@@ -5,6 +5,8 @@ import '../models/yoga_pose.dart';
 import 'pose_detail_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/global_audio_service.dart';
+import '../l10n/app_localizations.dart';
+import '../utils/yoga_localization_helper.dart';
 
 class SessionDetailScreen extends StatefulWidget {
   final YogaSession session;
@@ -34,7 +36,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
     final response = await supabase
         .from('user_progress')
         .select('pose_id, is_completed')
-        .eq('session_level', widget.session.level);
+        .eq('session_level', widget.session.levelKey);
 
     final progressMap = <String, bool>{};
     for (final row in response) {
@@ -48,7 +50,6 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
@@ -92,7 +93,6 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
       bottomNavigationBar: _buildJoinButton(),
     );
   }
-
 
   Widget _buildHeroSection() {
     return Stack(
@@ -143,7 +143,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                 left: 20,
                 right: 20,
                 child: Text(
-                  widget.session.level,
+                  YogaLocalizationHelper.getSessionLevel(context, widget.session.levelKey),
                   style: GoogleFonts.poppins(
                     fontSize: 32,
                     fontWeight: FontWeight.w600,
@@ -187,8 +187,6 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
     );
   }
 
-
-
   Widget _buildInfoCards() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -197,8 +195,8 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
           Expanded(
             child: _buildInfoCard(
               icon: Icons.access_time,
-              value: '${widget.session.totalDurationMinutes} min',
-              label: 'Duration',
+              value: AppLocalizations.of(context)!.minShort(widget.session.totalDurationMinutes),
+              label: AppLocalizations.of(context)!.duration,
             ),
           ),
           const SizedBox(width: 12),
@@ -206,15 +204,15 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
             child: _buildInfoCard(
               icon: Icons.fitness_center,
               value: '${widget.session.allPoses.length}',
-              label: 'Poses',
+              label: AppLocalizations.of(context)!.poses,
             ),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: _buildInfoCard(
               icon: Icons.whatshot,
-              value: 'Low',
-              label: 'Intensity',
+              value: AppLocalizations.of(context)!.low,
+              label: AppLocalizations.of(context)!.intensity,
             ),
           ),
         ],
@@ -235,7 +233,6 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
       ),
       child: Column(
         children: [
-
           Icon(
             icon,
             color: const Color(0xFF40E0D0),
@@ -271,17 +268,16 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'About Session',
+            AppLocalizations.of(context)!.aboutSession,
             style: GoogleFonts.poppins(
               fontSize: 20,
               fontWeight: FontWeight.w600,
               color: Colors.black87,
             ),
           ),
-
           const SizedBox(height: 12),
           Text(
-            widget.session.description,
+            YogaLocalizationHelper.getSessionDescription(context, widget.session.descriptionKey),
             style: GoogleFonts.poppins(
               fontSize: 14,
               fontWeight: FontWeight.w400,
@@ -304,7 +300,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Session Overview',
+                AppLocalizations.of(context)!.sessionOverview,
                 style: GoogleFonts.poppins(
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
@@ -312,13 +308,14 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: const Color(0xFF40E0D0).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  '${widget.session.allPoses.length} poses',
+                  AppLocalizations.of(context)!.poseCount(widget.session.allPoses.length),
                   style: GoogleFonts.poppins(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
@@ -355,7 +352,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
               pose: pose,
               allPoses: widget.session.allPoses,
               currentIndex: currentIndex,
-              sessionLevel: widget.session.level,
+              sessionLevel: widget.session.levelKey,
             ),
           ),
         );
@@ -412,7 +409,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    pose.name,
+                    YogaLocalizationHelper.getPoseName(context, pose.nameKey),
                     style: GoogleFonts.poppins(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -421,7 +418,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    pose.description,
+                    YogaLocalizationHelper.getPoseDescription(context, pose.descriptionKey),
                     style: GoogleFonts.poppins(
                       fontSize: 13,
                       fontWeight: FontWeight.w400,
@@ -434,7 +431,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                   Row(
                     children: [
                       Text(
-                        'Day $dayNumber',
+                        AppLocalizations.of(context)!.dayNumber(dayNumber),
                         style: GoogleFonts.poppins(
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
@@ -445,7 +442,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                       Text('|', style: TextStyle(color: Colors.grey[500])),
                       const SizedBox(width: 6),
                       Text(
-                        '${pose.durationSeconds ~/ 60} Mins',
+                        AppLocalizations.of(context)!.minsLabel(pose.durationSeconds ~/ 60),
                         style: GoogleFonts.poppins(
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
@@ -498,7 +495,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
               children: [
                 const SizedBox(height: 8),
                 Text(
-                  widget.session.title,
+                  YogaLocalizationHelper.getSessionTitle(context, widget.session.titleKey),
                   style: GoogleFonts.poppins(
                     fontSize: 25,
                     fontWeight: FontWeight.w600,
@@ -507,18 +504,17 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
-
                 Row(
                   children: [
                     Container(
-                      padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 6),
                       decoration: BoxDecoration(
                         color: const Color(0xFF40E0D0).withOpacity(0.15),
                         borderRadius: BorderRadius.circular(999),
                       ),
                       child: Text(
-                        widget.session.level, // e.g. "Beginner"
+                        YogaLocalizationHelper.getSessionLevel(context, widget.session.levelKey),
                         style: GoogleFonts.poppins(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
@@ -528,7 +524,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                     ),
                     const SizedBox(width: 10),
                     Text(
-                      '${widget.session.allPoses.length} poses',
+                      AppLocalizations.of(context)!.poseCount(widget.session.allPoses.length),
                       style: GoogleFonts.poppins(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
@@ -540,10 +536,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
               ],
             ),
           ),
-
           const SizedBox(width: 14),
-
-
         ],
       ),
     );
@@ -575,7 +568,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                     pose: widget.session.allPoses.first,
                     allPoses: widget.session.allPoses,
                     currentIndex: 0,
-                    sessionLevel: widget.session.level,
+                    sessionLevel: widget.session.levelKey,
                   ),
                 ),
               );
@@ -591,7 +584,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
             elevation: 0,
           ),
           child: Text(
-            'Join Class',
+            AppLocalizations.of(context)!.joinClass,
             style: GoogleFonts.poppins(
               fontSize: 16,
               fontWeight: FontWeight.w600,
