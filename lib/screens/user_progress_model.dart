@@ -10,6 +10,7 @@ class UserProgress {
   final int totalSessionsCompleted;
   final DateTime? lastUpdated;
 
+  
   UserProgress({
     required this.userId,
     this.currentLevel = 'Beginner',
