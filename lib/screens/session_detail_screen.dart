@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../models/yoga_session.dart';
 import '../models/yoga_pose.dart';
 import 'pose_detail_screen.dart';
+import 'full_session_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/global_audio_service.dart';
 import '../l10n/app_localizations.dart';
@@ -309,7 +310,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
               ),
               Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: const Color(0xFF40E0D0).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
@@ -559,20 +560,15 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
         child: ElevatedButton(
           onPressed: () async {
             await GlobalAudioService.playClickSound();
-            // Start the session - navigate to first pose
-            if (widget.session.allPoses.isNotEmpty) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => PoseDetailScreen(
-                    pose: widget.session.allPoses.first,
-                    allPoses: widget.session.allPoses,
-                    currentIndex: 0,
-                    sessionLevel: widget.session.levelKey,
-                  ),
+            // Start the full session - this will track completion
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => FullSessionScreen(
+                  session: widget.session,
                 ),
-              );
-            }
+              ),
+            );
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.black87,

@@ -518,7 +518,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get yogaDescGentleChair =>
-      'A gentle introduction suitable for seniors or those wanting a slow, supported practice.';
+      'Make sure the chair is stable by placing it against a wall. Beginner’s level of Chair yoga is suitable for most people. Yoga should be practised with an empty or relatively empty stomach, or at least 2 hours after a meal.';
 
   @override
   String get yogaDescMorningMobility =>
@@ -1313,4 +1313,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mandarin => 'Mandarin';
+
+  @override
+  String get sessionComplete => 'Session Complete!';
+
+  @override
+  String completedPosesCount(int count) {
+    return 'You completed $count poses!';
+  }
+
+  @override
+  String get minutes => 'minutes';
+
+  @override
+  String get totalTime => 'TOTAL TIME';
+
+  @override
+  String get next => 'Next';
+
+  @override
+  String get aboutThisPose => 'About this pose';
+
+  @override
+  String get exitSession => 'Exit Session?';
+
+  @override
+  String get exitSessionMessage =>
+      'Your progress will not be saved if you exit now. Are you sure?';
+
+  @override
+  String get exit => 'Exit';
 }

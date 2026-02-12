@@ -255,7 +255,7 @@
   "yogaSessionSunSalutation": "Sun Salutation Flow",
   "yogaSessionExtendedFlow": "Extended Flow Practice",
   "yogaDescHeadNeck": "Gentle seated stretches releasing neck and shoulder tension.",
-  "yogaDescGentleChair": "A gentle introduction suitable for seniors or those wanting a slow, supported practice.",
+  "yogaDescGentleChair": "Make sure the chair is stable by placing it against a wall. Beginner’s level of Chair yoga is suitable for most people. Yoga should be practised with an empty or relatively empty stomach, or at least 2 hours after a meal.",
   "yogaDescMorningMobility": "A light morning routine focusing on joint mobility, breathing, and supported strength work.",
   "yogaDescWarriorSeries": "A confidence-building sequence exploring Warrior I, II, and supporting transitions.",
   "yogaDescHathaFundamentals": "A classic mat-based Hatha sequence focusing on alignment, breath, and full-body engagement. Ideal for practitioners ready to move beyond chair support.",
@@ -545,5 +545,20 @@
   "min20": "20 minutes",
   "min30": "30 minutes",
   "english": "English",
-  "mandarin": "Mandarin"
+  "mandarin": "Mandarin",
+
+  "sessionComplete": "Session Complete!",
+  "completedPosesCount": "You completed {count} poses!",
+  "@completedPosesCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "minutes": "minutes",
+  "totalTime": "TOTAL TIME",
+  "next": "Next",
+  "aboutThisPose": "About this pose",
+  "exitSession": "Exit Session?",
+  "exitSessionMessage": "Your progress will not be saved if you exit now. Are you sure?",
+  "exit": "Exit"
 }

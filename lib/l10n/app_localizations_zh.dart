@@ -1264,4 +1264,33 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get mandarin => '中文';
+
+  @override
+  String get sessionComplete => '课程完成！';
+
+  @override
+  String completedPosesCount(int count) {
+    return '您完成了 $count 个体式！';
+  }
+
+  @override
+  String get minutes => '分钟';
+
+  @override
+  String get totalTime => '总时间';
+
+  @override
+  String get next => '下一个';
+
+  @override
+  String get aboutThisPose => '关于此体式';
+
+  @override
+  String get exitSession => '退出课程？';
+
+  @override
+  String get exitSessionMessage => '如果现在退出，您的进度将不会保存。确定要退出吗？';
+
+  @override
+  String get exit => '退出';
 }

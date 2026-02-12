@@ -1013,7 +1013,7 @@ abstract class AppLocalizations {
   /// No description provided for @yogaDescGentleChair.
   ///
   /// In en, this message translates to:
-  /// **'A gentle introduction suitable for seniors or those wanting a slow, supported practice.'**
+  /// **'Make sure the chair is stable by placing it against a wall. Beginner’s level of Chair yoga is suitable for most people. Yoga should be practised with an empty or relatively empty stomach, or at least 2 hours after a meal.'**
   String get yogaDescGentleChair;
 
   /// No description provided for @yogaDescMorningMobility.
@@ -2521,6 +2521,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Mandarin'**
   String get mandarin;
+
+  /// No description provided for @sessionComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Session Complete!'**
+  String get sessionComplete;
+
+  /// No description provided for @completedPosesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'You completed {count} poses!'**
+  String completedPosesCount(int count);
+
+  /// No description provided for @minutes.
+  ///
+  /// In en, this message translates to:
+  /// **'minutes'**
+  String get minutes;
+
+  /// No description provided for @totalTime.
+  ///
+  /// In en, this message translates to:
+  /// **'TOTAL TIME'**
+  String get totalTime;
+
+  /// No description provided for @next.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get next;
+
+  /// No description provided for @aboutThisPose.
+  ///
+  /// In en, this message translates to:
+  /// **'About this pose'**
+  String get aboutThisPose;
+
+  /// No description provided for @exitSession.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit Session?'**
+  String get exitSession;
+
+  /// No description provided for @exitSessionMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your progress will not be saved if you exit now. Are you sure?'**
+  String get exitSessionMessage;
+
+  /// No description provided for @exit.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit'**
+  String get exit;
 }
 
 class _AppLocalizationsDelegate

@@ -444,5 +444,15 @@
   "min20": "20 分钟",
   "min30": "30 分钟",
   "english": "英文",
-  "mandarin": "中文"
+  "mandarin": "中文",
+
+  "sessionComplete": "课程完成！",
+  "completedPosesCount": "您完成了 {count} 个体式！",
+  "minutes": "分钟",
+  "totalTime": "总时间",
+  "next": "下一个",
+  "aboutThisPose": "关于此体式",
+  "exitSession": "退出课程？",
+  "exitSessionMessage": "如果现在退出，您的进度将不会保存。确定要退出吗？",
+  "exit": "退出"
 }
