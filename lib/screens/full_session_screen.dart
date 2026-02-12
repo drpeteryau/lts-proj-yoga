@@ -578,11 +578,11 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
 
   Widget _buildBottomPanel() {
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(24),
-          topRight: Radius.circular(24),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1A1A1A), // Dark theme like pose detail
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(28),
+          topRight: Radius.circular(28),
         ),
       ),
       child: SingleChildScrollView(
@@ -592,11 +592,11 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
             // Drag handle
             Container(
               margin: const EdgeInsets.only(top: 12, bottom: 8),
-              width: 40,
-              height: 4,
+              width: 44,
+              height: 5,
               decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(2),
+                color: Colors.grey[700],
+                borderRadius: BorderRadius.circular(3),
               ),
             ),
 
@@ -635,20 +635,20 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
                 ),
               ),
 
-            // Video controls (bottom) - always visible
+            // Video controls (bottom) - matching pose detail style
             if (_isVideoInitialized)
               Positioned(
                 bottom: 0,
                 left: 0,
                 right: 0,
                 child: Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.bottomCenter,
                       end: Alignment.topCenter,
                       colors: [
-                        Colors.black.withOpacity(0.7),
+                        Colors.black.withOpacity(0.8),
                         Colors.transparent,
                       ],
                     ),
@@ -668,6 +668,8 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
                         padding: const EdgeInsets.symmetric(vertical: 4),
                       ),
 
+                      const SizedBox(height: 8),
+
                       // Control buttons row
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -675,16 +677,16 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
                           // Playback speed button
                           PopupMenuButton<double>(
                             icon: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                               decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.5),
-                                borderRadius: BorderRadius.circular(4),
+                                color: Colors.white.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
                                 '${_playbackSpeed}x',
                                 style: GoogleFonts.poppins(
                                   color: Colors.white,
-                                  fontSize: 12,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -712,7 +714,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
                             icon: Icon(
                               _videoController!.value.volume > 0 ? Icons.volume_up : Icons.volume_off,
                               color: Colors.white,
-                              size: 22,
+                              size: 26,
                             ),
                             onPressed: () {
                               setState(() {
@@ -730,7 +732,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
                             icon: const Icon(
                               Icons.fullscreen,
                               color: Colors.white,
-                              size: 22,
+                              size: 26,
                             ),
                             onPressed: () {
                               Navigator.push(
@@ -797,13 +799,43 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
           Text(
             YogaLocalizationHelper.getPoseName(context, currentPose.nameKey),
             style: GoogleFonts.poppins(
-              fontSize: 26,  // Larger for elderly
+              fontSize: 24,  // Larger for elderly
               fontWeight: FontWeight.bold,
-              color: Colors.black,
+              color: Colors.white,
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 30),
+          const SizedBox(height: 12),
+
+          // Duration badge with clock icon (like pose detail)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            decoration: BoxDecoration(
+              color: const Color(0xFF40E0D0).withOpacity(0.15),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.access_time,
+                  size: 16,
+                  color: Color(0xFF40E0D0),
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  '${currentPose.durationSeconds ~/ 60}:${(currentPose.durationSeconds % 60).toString().padLeft(2, '0')} min',
+                  style: GoogleFonts.poppins(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF40E0D0),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 20),
 
           // Timer display - very large
           Text(
@@ -822,22 +854,20 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                ' ${AppLocalizations.of(context)!.totalTime}',
-                style: GoogleFonts.poppins(
-                  fontSize: 16,  // Larger
-                  color: Colors.grey[400],
-                  fontWeight: FontWeight.w500,
-                  letterSpacing: 0.5,
-                ),
-              ),
-              const SizedBox(width: 10),
-
-              Text(
                 _formatTime(_totalTimeSpent),
                 style: GoogleFonts.poppins(
                   fontSize: 16,  // Larger
-                  color: Colors.black,  // Better contrast
+                  color: Colors.white,  // Better contrast
                   fontWeight: FontWeight.w500,
+                ),
+              ),
+              Text(
+                ' ${AppLocalizations.of(context)!.totalTime}',
+                style: GoogleFonts.poppins(
+                  fontSize: 13,  // Larger
+                  color: Colors.grey[400],
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0.5,
                 ),
               ),
               const SizedBox(width: 16),
@@ -868,29 +898,44 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Previous button (only enabled if not first pose)
-          TextButton(
-            onPressed: _currentPoseIndex > 0 ? _goToPreviousPose : null,
-            child: Text(
-              'Prev',
-              style: GoogleFonts.poppins(
-                fontSize: 20,  // Larger
-                fontWeight: FontWeight.w600,
-                color: _currentPoseIndex > 0 ? Colors.grey : Colors.grey[700],
+          // Previous button - outlined style (like pose detail)
+          Expanded(
+            child: OutlinedButton.icon(
+              onPressed: _currentPoseIndex > 0 ? _goToPreviousPose : null,
+
+              label: Text(
+                'Previous',
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey
+                ),
+              ),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Colors.white,
+                side: BorderSide(
+                  color: _currentPoseIndex > 0
+                      ? Colors.white.withOpacity(0.3)
+                      : Colors.grey[800]!,
+                  width: 2,
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
               ),
             ),
           ),
 
-          const SizedBox(width: 20),
+          const SizedBox(width: 14),
 
-          // Play/Pause button - large circular
+          // Play/Pause button - large circular (centered)
           Container(
             width: 80,  // Larger for easier tapping
             height: 80,
-            decoration: BoxDecoration(
-              color: const Color(0xFF40E0D0),
+            decoration: const BoxDecoration(
+              color: Color(0xFF40E0D0),
               shape: BoxShape.circle,
             ),
             child: IconButton(
@@ -910,17 +955,28 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
             ),
           ),
 
-          const SizedBox(width: 20),
+          const SizedBox(width: 14),
 
-          // Next button
-          TextButton(
-            onPressed: _skipToNextPose,
-            child: Text(
-              AppLocalizations.of(context)!.next,
-              style: GoogleFonts.poppins(
-                fontSize: 20,  // Larger
-                fontWeight: FontWeight.w600,
-                color: Colors.black,
+          // Next button - teal filled (like pose detail)
+          Expanded(
+            child: ElevatedButton.icon(
+              onPressed: _skipToNextPose,
+
+              label: Text(
+                AppLocalizations.of(context)!.next,
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF40E0D0),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                elevation: 0,
               ),
             ),
           ),
@@ -934,7 +990,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
-        color: Colors.grey[100],
+        color: const Color(0xFF2A2A2A), // Slightly lighter dark gray
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
@@ -945,7 +1001,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
             style: GoogleFonts.poppins(
               fontSize: 20,  // Larger for elderly
               fontWeight: FontWeight.bold,
-              color: Colors.black,
+              color: Colors.white,
             ),
           ),
           const SizedBox(height: 16),
@@ -954,19 +1010,36 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
             currentPose.instructions,  // Changed from descriptionKey
             style: GoogleFonts.poppins(
               fontSize: 17,  // Larger, easier to read
-              fontWeight: FontWeight.w400,
-              color: Colors.black,  // Better contrast
+              color: Colors.white,  // Better contrast
               height: 1.7,
             ),
           ),
           const SizedBox(height: 24),
-          Text(
-            AppLocalizations.of(context)!.safetyTips,
-            style: GoogleFonts.poppins(
-              fontSize: 20,  // Larger for elderly
-              fontWeight: FontWeight.bold,
-              color: const Color(0xFF40E0D0),
-            ),
+          // Safety tips header with icon
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.orange.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.health_and_safety,
+                  color: Colors.orange,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                AppLocalizations.of(context)!.safetyTips,
+                style: GoogleFonts.poppins(
+                  fontSize: 20,  // Larger for elderly
+                  fontWeight: FontWeight.bold,
+                  color: Colors.orange,
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 12),
           // Use modifications as safety tips
@@ -975,10 +1048,18 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(
-                  Icons.check_circle,
-                  size: 22,  // Larger
-                  color: Color(0xFF40E0D0),
+                Container(
+                  margin: const EdgeInsets.only(top: 4),
+                  padding: const EdgeInsets.all(4),
+                  decoration: const BoxDecoration(
+                    color: Colors.orange,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.check,
+                    size: 14,
+                    color: Colors.white,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -986,7 +1067,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
                     tip,
                     style: GoogleFonts.poppins(
                       fontSize: 16,  // Larger, easier to read
-                      color: Colors.black,  // Better contrast
+                      color: Colors.white,  // Better contrast
                       height: 1.6,
                     ),
                   ),
@@ -1006,24 +1087,31 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(bottom: 16),
+            padding: const EdgeInsets.only(bottom: 18),
             child: Row(
               children: [
                 Text(
                   'Session Playlist',
                   style: GoogleFonts.poppins(
-                    fontSize: 18,
+                    fontSize: 22,  // Larger for elderly
                     fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                    color: Colors.white,
                   ),
                 ),
-                const SizedBox(width: 8),
-                Text(
-                  '${_completedPoseIds.length}/${widget.session.allPoses.length}',
-                  style: GoogleFonts.poppins(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF40E0D0),
+                const SizedBox(width: 12),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF40E0D0).withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    '${_completedPoseIds.length}/${widget.session.allPoses.length}',
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,  // Larger
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF40E0D0),
+                    ),
                   ),
                 ),
               ],
@@ -1036,48 +1124,50 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
             final isCurrent = index == _currentPoseIndex;
 
             return Container(
-              margin: const EdgeInsets.only(bottom: 12),
-              padding: const EdgeInsets.all(16),
+              margin: const EdgeInsets.only(bottom: 14),
+              padding: const EdgeInsets.all(18),  // More padding
               decoration: BoxDecoration(
-                color: isCurrent ? const Color(0xFF40E0D0).withOpacity(0.1) : Colors.white,
+                color: isCurrent
+                    ? const Color(0xFF40E0D0).withOpacity(0.15)
+                    : const Color(0xFF2A2A2A),  // Dark theme
                 border: Border.all(
-                  color: isCurrent ? const Color(0xFF40E0D0) : Colors.grey[300]!,
+                  color: isCurrent ? const Color(0xFF40E0D0) : Colors.grey[800]!,
                   width: isCurrent ? 2 : 1,
                 ),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Row(
                 children: [
-                  // Pose number or checkmark
+                  // Pose number or checkmark - larger
                   Container(
-                    width: 32,
-                    height: 32,
+                    width: 42,  // Larger
+                    height: 42,
                     decoration: BoxDecoration(
                       color: isCompleted
                           ? const Color(0xFF40E0D0)
                           : isCurrent
                           ? const Color(0xFF40E0D0).withOpacity(0.2)
-                          : Colors.grey[200],
+                          : Colors.grey[800],
                       shape: BoxShape.circle,
                     ),
                     child: Center(
                       child: isCompleted
                           ? const Icon(
                         Icons.check,
-                        size: 18,
+                        size: 24,  // Larger
                         color: Colors.white,
                       )
                           : Text(
                         '${index + 1}',
                         style: GoogleFonts.poppins(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: isCurrent ? const Color(0xFF40E0D0) : Colors.grey[600],
+                          fontSize: 18,  // Larger
+                          fontWeight: FontWeight.bold,
+                          color: isCurrent ? const Color(0xFF40E0D0) : Colors.grey[500],
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 14),
 
                   // Pose name and duration
                   Expanded(
@@ -1087,17 +1177,17 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
                         Text(
                           YogaLocalizationHelper.getPoseName(context, pose.nameKey),
                           style: GoogleFonts.poppins(
-                            fontSize: 14,
-                            fontWeight: isCurrent ? FontWeight.w600 : FontWeight.w500,
-                            color: Colors.black87,
+                            fontSize: 17,  // Larger
+                            fontWeight: isCurrent ? FontWeight.bold : FontWeight.w600,
+                            color: Colors.white,  // White for dark theme
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 6),
                         Text(
                           '${pose.durationSeconds ~/ 60}:${(pose.durationSeconds % 60).toString().padLeft(2, '0')} min',
                           style: GoogleFonts.poppins(
-                            fontSize: 12,
-                            color: Colors.grey[600],
+                            fontSize: 14,  // Larger
+                            color: Colors.grey[400],
                           ),
                         ),
                       ],
@@ -1107,15 +1197,15 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
                   // Current playing indicator
                   if (isCurrent)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
                         color: const Color(0xFF40E0D0),
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       child: Text(
                         'Playing',
                         style: GoogleFonts.poppins(
-                          fontSize: 11,
+                          fontSize: 13,  // Larger
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
                         ),
@@ -1392,7 +1482,7 @@ class _FullscreenVideoPlayerState extends State<_FullscreenVideoPlayer> {
                                 '${_formatDuration(widget.controller.value.position)} / ${_formatDuration(widget.controller.value.duration)}',
                                 style: GoogleFonts.poppins(
                                   fontSize: 13,
-                                  color: Colors.black,
+                                  color: Colors.white,
                                 ),
                               ),
 

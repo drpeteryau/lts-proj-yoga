@@ -19,10 +19,6 @@ class SessionDetailScreen extends StatefulWidget {
 }
 
 class _SessionDetailScreenState extends State<SessionDetailScreen> {
-  bool isFavorite = false;
-
-  // Responsive helper
-  bool get isWeb => MediaQuery.of(context).size.width > 600;
   Map<String, bool> poseProgress = {};
 
   @override
@@ -52,541 +48,437 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: Column(
+      backgroundColor: Colors.white, // Light theme
+      body: Stack(
         children: [
-          // Image only (no title overlay)
-          _buildHeroSection(),
+          // Main content
+          Column(
+            children: [
+              // Hero image with fade gradient
+              _buildHeroSection(),
 
-          // Scrollable content
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 16),
+              // Scrollable content
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.only(bottom: 120), // Space for button
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 24),
 
-                  // NEW: Header under the image (like reference 2)
-                  _buildHeaderSection(),
+                      // Session title (Chair Yoga, etc.)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: Text(
+                          YogaLocalizationHelper.getSessionTitle(context, widget.session.titleKey),
+                          style: GoogleFonts.poppins(
+                            fontSize: 26, // Elderly-friendly header
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                            height: 1.2,
+                          ),
+                        ),
+                      ),
 
-                  const SizedBox(height: 18),
+                      const SizedBox(height: 12),
 
-                  // Info cards (Duration, Poses, Intensity)
-                  _buildInfoCards(),
+                      // Level badge (Beginner, Intermediate, etc.)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF40E0D0).withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.signal_cellular_alt,
+                                size: 16,
+                                color: Color(0xFF40E0D0),
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                YogaLocalizationHelper.getSessionLevel(context, widget.session.levelKey),
+                                style: GoogleFonts.poppins(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: const Color(0xFF40E0D0),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
 
-                  const SizedBox(height: 22),
+                      const SizedBox(height: 24),
 
-                  // About this session
-                  _buildAboutSection(),
+                      // About this session
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'About this Session',
+                              style: GoogleFonts.poppins(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              YogaLocalizationHelper.getSessionDescription(context, widget.session.descriptionKey),
+                              style: GoogleFonts.poppins(
+                                fontSize: 16,
+                                color: Colors.grey[700],
+                                height: 1.6,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
 
-                  const SizedBox(height: 22),
+                      const SizedBox(height: 28),
 
-                  // Session Overview (Pose list) - now light tiles
-                  _buildSessionOverview(),
+                      // Pose list (simple cards, no descriptions)
+                      _buildPoseList(),
 
-                  const SizedBox(height: 100),
+                      const SizedBox(height: 20),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          // Floating Join Class button
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: _buildJoinButton(),
+          ),
+
+          // Back button overlay
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 16,
+            left: 16,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
                 ],
+              ),
+              child: IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.black87, size: 24),
+                onPressed: () async {
+                  await GlobalAudioService.playClickSound();
+                  Navigator.pop(context);
+                },
               ),
             ),
           ),
         ],
       ),
-      bottomNavigationBar: _buildJoinButton(),
     );
   }
 
   Widget _buildHeroSection() {
-    return Stack(
-      children: [
-        // Hero image with gradient
-        SizedBox(
-          height: 200,
-          width: double.infinity,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              // Background image
-              Image.network(
-                'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800',
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: Colors.grey[300],
-                    child: const Icon(
-                      Icons.self_improvement,
-                      size: 100,
-                      color: Colors.grey,
-                    ),
-                  );
-                },
-              ),
-
-              // Bottom gradient overlay
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      Colors.transparent,
-                      Colors.black.withOpacity(0.5),
-                      Colors.black.withOpacity(0.8),
-                    ],
-                    stops: const [0.0, 0.4, 0.75, 1.0],
-                  ),
+    return SizedBox(
+      height: 280,
+      width: double.infinity,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Background image
+          Image.network(
+            'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800',
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Container(
+                color: Colors.grey[300],
+                child: const Icon(
+                  Icons.self_improvement,
+                  size: 100,
+                  color: Colors.grey,
                 ),
-              ),
-
-              // Session title at bottom left
-              Positioned(
-                bottom: 20,
-                left: 20,
-                right: 20,
-                child: Text(
-                  YogaLocalizationHelper.getSessionLevel(context, widget.session.levelKey),
-                  style: GoogleFonts.poppins(
-                    fontSize: 32,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                    height: 1.2,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
+              );
+            },
           ),
-        ),
 
-        // Back button
-        Positioned(
-          top: 16,
-          left: 16,
-          child: Container(
+          // Gradient fade to white background
+          Container(
             decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.transparent,
+                  Colors.transparent,
+
+                  Colors.white, // Full white at bottom
+                ],
+                stops: const [0.0, 0.3, 0.6, 0.85, 1.0],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPoseList() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Section header
+          Text(
+            'Poses in this Session',
+            style: GoogleFonts.poppins(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // Pose cards
+          ...widget.session.allPoses.asMap().entries.map((entry) {
+            final index = entry.key;
+            final pose = entry.value;
+            final isCompleted = poseProgress[pose.id] ?? false;
+
+            return _buildPoseCard(pose, index + 1, isCompleted);
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPoseCard(YogaPose pose, int number, bool isCompleted) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () async {
+            await GlobalAudioService.playClickSound();
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PoseDetailScreen(
+                  pose: pose,
+                  allPoses: widget.session.allPoses,
+                  currentIndex: number - 1,
+                  sessionLevel: widget.session.levelKey,
+                ),
+              ),
+            ).then((_) => _loadPoseProgress());
+          },
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: Colors.white, // Light card
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: Colors.grey[300]!,
+                width: 1,
+              ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 8,
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 4,
                   offset: const Offset(0, 2),
                 ),
               ],
             ),
-            child: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.black87),
-              onPressed: () async {
-                await GlobalAudioService.playClickSound();
-                Navigator.pop(context);
-              },
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildInfoCards() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
-        children: [
-          Expanded(
-            child: _buildInfoCard(
-              icon: Icons.access_time,
-              value: AppLocalizations.of(context)!.minShort(widget.session.totalDurationMinutes),
-              label: AppLocalizations.of(context)!.duration,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: _buildInfoCard(
-              icon: Icons.fitness_center,
-              value: '${widget.session.allPoses.length}',
-              label: AppLocalizations.of(context)!.poses,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: _buildInfoCard(
-              icon: Icons.whatshot,
-              value: AppLocalizations.of(context)!.low,
-              label: AppLocalizations.of(context)!.intensity,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInfoCard({
-    required IconData icon,
-    required String value,
-    required String label,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      decoration: BoxDecoration(
-        color: const Color(0xFF40E0D0).withOpacity(0.08),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        children: [
-          Icon(
-            icon,
-            color: const Color(0xFF40E0D0),
-            size: 28,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: GoogleFonts.poppins(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: Colors.black87,
-            ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            label,
-            style: GoogleFonts.poppins(
-              fontSize: 12,
-              fontWeight: FontWeight.w400,
-              color: Colors.grey[600],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAboutSection() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            AppLocalizations.of(context)!.aboutSession,
-            style: GoogleFonts.poppins(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              color: Colors.black87,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            YogaLocalizationHelper.getSessionDescription(context, widget.session.descriptionKey),
-            style: GoogleFonts.poppins(
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-              color: Colors.black,
-              height: 1.6,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSessionOverview() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                AppLocalizations.of(context)!.sessionOverview,
-                style: GoogleFonts.poppins(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
-                ),
-              ),
-              Container(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF40E0D0).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  AppLocalizations.of(context)!.poseCount(widget.session.allPoses.length),
-                  style: GoogleFonts.poppins(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: const Color(0xFF40E0D0),
+            child: Row(
+              children: [
+                // Number or checkmark circle
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: isCompleted
+                        ? const Color(0xFF40E0D0)
+                        : Colors.grey[200],
+                    shape: BoxShape.circle,
                   ),
-                ),
-              ),
-            ],
-          ),
-        ),
-
-        const SizedBox(height: 16),
-
-        // Pose list (like reference image 2 - dark theme list)
-        ...widget.session.allPoses.asMap().entries.map((entry) {
-          final index = entry.key;
-          final pose = entry.value;
-          return _buildPoseListItem(pose, index + 1);
-        }),
-      ],
-    );
-  }
-
-  Widget _buildPoseListItem(YogaPose pose, int dayNumber) {
-    final isCompleted = poseProgress[pose.id] ?? false;
-    final currentIndex = widget.session.allPoses.indexOf(pose);
-
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => PoseDetailScreen(
-              pose: pose,
-              allPoses: widget.session.allPoses,
-              currentIndex: currentIndex,
-              sessionLevel: widget.session.levelKey,
-            ),
-          ),
-        );
-      },
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12, left: 20, right: 20),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.white, // ✅ light tile
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.black.withOpacity(0.06)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.06),
-              blurRadius: 10,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            // Pose thumbnail
-            Container(
-              width: 70,
-              height: 70,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: Colors.grey[200],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.network(
-                  pose.imageUrl,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      color: Colors.grey[200],
-                      child: const Icon(
-                        Icons.self_improvement,
-                        color: Colors.black45,
-                        size: 32,
+                  child: Center(
+                    child: isCompleted
+                        ? const Icon(
+                      Icons.check,
+                      color: Colors.white,
+                      size: 24,
+                    )
+                        : Text(
+                      '$number',
+                      style: GoogleFonts.poppins(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[700],
                       ),
-                    );
-                  },
+                    ),
+                  ),
                 ),
-              ),
-            ),
 
-            const SizedBox(width: 16),
+                const SizedBox(width: 16),
 
-            // Pose info
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    YogaLocalizationHelper.getPoseName(context, pose.nameKey),
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87, // ✅ black text
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    YogaLocalizationHelper.getPoseDescription(context, pose.descriptionKey),
-                    style: GoogleFonts.poppins(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.grey[700], // ✅ dark grey
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 6),
-                  Row(
+                // Pose name and duration
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        AppLocalizations.of(context)!.dayNumber(dayNumber),
+                        YogaLocalizationHelper.getPoseName(context, pose.nameKey),
                         style: GoogleFonts.poppins(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.grey[700],
+                          fontSize: 17,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
                         ),
                       ),
-                      const SizedBox(width: 6),
-                      Text('|', style: TextStyle(color: Colors.grey[500])),
-                      const SizedBox(width: 6),
+                      const SizedBox(height: 4),
                       Text(
-                        AppLocalizations.of(context)!.minsLabel(pose.durationSeconds ~/ 60),
+                        '${pose.durationSeconds ~/ 60}:${(pose.durationSeconds % 60).toString().padLeft(2, '0')} min',
                         style: GoogleFonts.poppins(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.grey[700],
+                          fontSize: 14,
+                          color: Colors.grey[600],
                         ),
                       ),
                     ],
                   ),
-                ],
-              ),
-            ),
-
-            // Status icon
-            Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: isCompleted
-                    ? const Color(0xFF40E0D0)
-                    : Colors.black.withOpacity(0.04),
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: isCompleted
-                      ? const Color(0xFF40E0D0)
-                      : Colors.black.withOpacity(0.12),
-                  width: 2,
                 ),
-              ),
-              child: Icon(
-                isCompleted ? Icons.check : Icons.play_arrow,
-                color: isCompleted ? Colors.white : Colors.black87,
-                size: 20,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
-  Widget _buildHeaderSection() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 8),
-                Text(
-                  YogaLocalizationHelper.getSessionTitle(context, widget.session.titleKey),
-                  style: GoogleFonts.poppins(
-                    fontSize: 25,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
-                    height: 1.2,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF40E0D0).withOpacity(0.15),
-                        borderRadius: BorderRadius.circular(999),
-                      ),
-                      child: Text(
-                        YogaLocalizationHelper.getSessionLevel(context, widget.session.levelKey),
-                        style: GoogleFonts.poppins(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: const Color(0xFF18BFB3),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      AppLocalizations.of(context)!.poseCount(widget.session.allPoses.length),
-                      style: GoogleFonts.poppins(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                  ],
+                // Arrow icon
+                Icon(
+                  Icons.arrow_forward_ios,
+                  size: 18,
+                  color: Colors.grey[400],
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 14),
-        ],
+        ),
       ),
     );
   }
 
   Widget _buildJoinButton() {
+    // Count completed poses
+    final completedCount = widget.session.allPoses
+        .where((pose) => poseProgress[pose.id] ?? false)
+        .length;
+    final totalPoses = widget.session.allPoses.length;
+    final isFullyCompleted = completedCount == totalPoses && totalPoses > 0;
+
     return Container(
-      padding: EdgeInsets.all(isWeb ? 40 : 20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, -5),
-          ),
-        ],
+      padding: EdgeInsets.fromLTRB(
+        24,
+        24,
+        24,
+        MediaQuery.of(context).padding.bottom + 24,
       ),
-      child: SafeArea(
-        child: ElevatedButton(
-          onPressed: () async {
-            await GlobalAudioService.playClickSound();
-            // Start the full session - this will track completion
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => FullSessionScreen(
-                  session: widget.session,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Colors.white.withOpacity(0.0),
+            Colors.white.withOpacity(0.8),
+            Colors.white,
+          ],
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Progress indicator (if started)
+          if (completedCount > 0 && !isFullyCompleted)
+            Container(
+              margin: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              decoration: BoxDecoration(
+                color: const Color(0xFF40E0D0).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: const Color(0xFF40E0D0).withOpacity(0.3),
+                  width: 1,
                 ),
               ),
-            );
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.black87,
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: 18),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.check_circle,
+                    size: 20,
+                    color: Color(0xFF40E0D0),
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    '$completedCount of $totalPoses poses completed',
+                    style: GoogleFonts.poppins(
+                      fontSize: 15,
+                      color: const Color(0xFF40E0D0),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            elevation: 0,
-          ),
-          child: Text(
-            AppLocalizations.of(context)!.joinClass,
-            style: GoogleFonts.poppins(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
+
+          // Join Class button - Turquoise
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () async {
+                await GlobalAudioService.playClickSound();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => FullSessionScreen(session: widget.session),
+                  ),
+                ).then((_) => _loadPoseProgress());
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF40E0D0), // Turquoise
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                elevation: 0,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    isFullyCompleted ? 'Practice Again' : 'Join Class',
+                    style: GoogleFonts.poppins(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  const Icon(Icons.arrow_forward, size: 22),
+                ],
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

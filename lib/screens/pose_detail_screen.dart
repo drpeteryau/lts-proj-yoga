@@ -10,18 +10,13 @@ import '../models/yoga_pose.dart';
 import '../services/global_audio_service.dart';
 import '../utils/yoga_localization_helper.dart';
 
-/// A "session-style" pose detail screen (similar layout to FullSessionScreen),
-/// but **no timer** and users can jump between poses freely.
+/// Pose Detail Screen - Information/Learning page
+/// No timer, no completion tracking, just educational content
 class PoseDetailScreen extends StatefulWidget {
-
-  final VideoPlayerController? controller;
-  final double? playbackSpeed;
-  final ValueChanged<double>? onSpeedChanged;
   final YogaPose pose;
   final List<YogaPose> allPoses;
   final int currentIndex;
   final String sessionLevel;
-  final int _currentPoseIndex = 0;
 
   const PoseDetailScreen({
     super.key,
@@ -29,9 +24,6 @@ class PoseDetailScreen extends StatefulWidget {
     required this.allPoses,
     required this.currentIndex,
     required this.sessionLevel,
-    this.controller,
-    this.playbackSpeed,
-    this.onSpeedChanged,
   });
 
   @override
@@ -39,51 +31,684 @@ class PoseDetailScreen extends StatefulWidget {
 }
 
 class _PoseDetailScreenState extends State<PoseDetailScreen> {
-  // Navigation
   late int _currentPoseIndex;
 
-  // Video
-  bool _showControls = true;
   VideoPlayerController? _videoController;
   bool _isVideoInitialized = false;
-  bool _isVideoPlaying = false;
-
   bool _showVideoControls = false;
   Timer? _hideControlsTimer;
+  double _playbackSpeed = 1.0;
 
-  // Practice-time tracking per pose (no completion gating)
+  // Practice time tracking (no completion, just analytics)
   DateTime? _poseStartTime;
-  final Set<String> _savedPoseIds = <String>{};
-
-  double _currentSpeed = 1.0;
-
-
-  VideoPlayerController? get _activeController => _videoController ?? widget.controller;
-
-  String _formatDuration(Duration d) {
-    final minutes = d.inMinutes.remainder(60).toString().padLeft(2, '0');
-    final seconds = d.inSeconds.remainder(60).toString().padLeft(2, '0');
-    return '$minutes:$seconds';
-  }
-
+  final Set<String> _savedPoseIds = {};
 
   bool get isWeb => MediaQuery.of(context).size.width > 600;
-
-  YogaPose get _pose => widget.allPoses[_currentPoseIndex];
+  YogaPose get currentPose => widget.allPoses[_currentPoseIndex];
 
   @override
   void initState() {
     super.initState();
     _currentPoseIndex = widget.currentIndex.clamp(0, widget.allPoses.length - 1);
     _poseStartTime = DateTime.now();
-    _currentSpeed = widget.playbackSpeed ?? 1.0;
-    _initializeVideoForPose(_pose);
+    _initializeVideo();
+  }
+
+  Future<void> _initializeVideo() async {
+    await _videoController?.dispose();
+
+    // Placeholder video URL
+    _videoController = VideoPlayerController.networkUrl(
+      Uri.parse(
+        'https://rkhmailqbmbijsfzhcch.supabase.co/storage/v1/object/public/pose-videos/beginner/NeckHeadShoulders.MOV',
+      ),
+    );
+
+    try {
+      await _videoController!.initialize();
+      await _videoController!.setLooping(true);
+      await _videoController!.setPlaybackSpeed(_playbackSpeed);
+      await _videoController!.play();
+      if (mounted) {
+        setState(() {
+          _isVideoInitialized = true;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error initializing video: $e');
+    }
+  }
+
+  void _toggleVideo() {
+    if (_videoController == null || !_isVideoInitialized) return;
+    setState(() {
+      if (_videoController!.value.isPlaying) {
+        _videoController!.pause();
+      } else {
+        _videoController!.play();
+      }
+    });
+  }
+
+  void _showControlsTemporarily() {
+    setState(() {
+      _showVideoControls = true;
+    });
+
+    _hideControlsTimer?.cancel();
+    _hideControlsTimer = Timer(const Duration(seconds: 3), () {
+      if (mounted && (_videoController?.value.isPlaying ?? false)) {
+        setState(() {
+          _showVideoControls = false;
+        });
+      }
+    });
+  }
+
+  Future<void> _flushPoseTime() async {
+    if (_poseStartTime == null) return;
+    if (_savedPoseIds.contains(currentPose.id)) return;
+
+    final userId = Supabase.instance.client.auth.currentUser?.id;
+    if (userId == null) return;
+
+    final secondsSpent = DateTime.now().difference(_poseStartTime!).inSeconds;
+    if (secondsSpent < 5) return; // Only track if spent at least 5 seconds
+
+    try {
+      await Supabase.instance.client.from('pose_activity').insert({
+        'user_id': userId,
+        'pose_id': currentPose.id,
+        'pose_name': YogaLocalizationHelper.getPoseName(context, currentPose.nameKey),
+        'session_level': widget.sessionLevel,
+        'duration_seconds': secondsSpent,
+        'completed_at': DateTime.now().toIso8601String(),
+        'activity_date': DateTime.now().toIso8601String().split('T')[0],
+      });
+
+      _savedPoseIds.add(currentPose.id);
+      debugPrint('✅ Saved practice time: ${currentPose.id}, ${secondsSpent}s');
+    } catch (e) {
+      debugPrint('❌ Error saving practice time: $e');
+    }
+  }
+
+  Future<void> _goToPose(int newIndex) async {
+    if (newIndex < 0 || newIndex >= widget.allPoses.length) return;
+    if (newIndex == _currentPoseIndex) return;
+
+    await GlobalAudioService.playClickSound();
+    await _flushPoseTime();
+
+    setState(() {
+      _currentPoseIndex = newIndex;
+      _poseStartTime = DateTime.now();
+    });
+
+    await _initializeVideo();
+  }
+
+  @override
+  void dispose() {
+    _hideControlsTimer?.cancel();
+    _videoController?.dispose();
+    _flushPoseTime();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          // Main content
+          Column(
+            children: [
+              // Video section - top half
+              Expanded(
+                child: _buildVideoSection(),
+              ),
+
+              // Information section - bottom half
+              Expanded(
+                child: _buildInformationPanel(),
+              ),
+            ],
+          ),
+
+          // Close button (top-left)
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 16,
+            left: 16,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.5),
+                shape: BoxShape.circle,
+              ),
+              child: IconButton(
+                icon: const Icon(Icons.close, color: Colors.white, size: 28),
+                onPressed: () async {
+                  await GlobalAudioService.playClickSound();
+                  await _flushPoseTime();
+                  if (mounted) Navigator.of(context).pop();
+                },
+              ),
+            ),
+          ),
+
+          // Pose counter (top-right)
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 16,
+            right: 16,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                '${_currentPoseIndex + 1}/${widget.allPoses.length}',
+                style: GoogleFonts.poppins(
+                  fontSize: 16,  // Larger
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildVideoSection() {
+    return GestureDetector(
+      onTap: _showControlsTemporarily,
+      child: Container(
+        color: Colors.black,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            if (_isVideoInitialized)
+              FittedBox(
+                fit: BoxFit.cover,
+                child: SizedBox(
+                  width: _videoController!.value.size.width,
+                  height: _videoController!.value.size.height,
+                  child: VideoPlayer(_videoController!),
+                ),
+              )
+            else
+              const Center(
+                child: CircularProgressIndicator(
+                  color: Color(0xFF40E0D0),
+                ),
+              ),
+
+            // Video controls (bottom)
+            if (_isVideoInitialized)
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                      colors: [
+                        Colors.black.withOpacity(0.8),
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Progress bar
+                      VideoProgressIndicator(
+                        _videoController!,
+                        allowScrubbing: true,
+                        colors: const VideoProgressColors(
+                          playedColor: Color(0xFF40E0D0),
+                          bufferedColor: Colors.white30,
+                          backgroundColor: Colors.white12,
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                      ),
+
+                      const SizedBox(height: 8),
+
+                      // Control buttons row
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // Playback speed
+                          PopupMenuButton<double>(
+                            icon: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                '${_playbackSpeed}x',
+                                style: GoogleFonts.poppins(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                            onSelected: (speed) {
+                              setState(() {
+                                _playbackSpeed = speed;
+                                _videoController!.setPlaybackSpeed(speed);
+                              });
+                            },
+                            itemBuilder: (context) => [
+                              PopupMenuItem(value: 0.5, child: Text('0.5x', style: GoogleFonts.poppins())),
+                              PopupMenuItem(value: 0.75, child: Text('0.75x', style: GoogleFonts.poppins())),
+                              PopupMenuItem(value: 1.0, child: Text('1.0x (Normal)', style: GoogleFonts.poppins())),
+                              PopupMenuItem(value: 1.25, child: Text('1.25x', style: GoogleFonts.poppins())),
+                              PopupMenuItem(value: 1.5, child: Text('1.5x', style: GoogleFonts.poppins())),
+                              PopupMenuItem(value: 2.0, child: Text('2.0x', style: GoogleFonts.poppins())),
+                            ],
+                          ),
+
+                          const Spacer(),
+
+                          // Volume button
+                          IconButton(
+                            icon: Icon(
+                              _videoController!.value.volume > 0 ? Icons.volume_up : Icons.volume_off,
+                              color: Colors.white,
+                              size: 26,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                if (_videoController!.value.volume > 0) {
+                                  _videoController!.setVolume(0);
+                                } else {
+                                  _videoController!.setVolume(1.0);
+                                }
+                              });
+                            },
+                          ),
+
+                          // Fullscreen button
+                          IconButton(
+                            icon: const Icon(
+                              Icons.fullscreen,
+                              color: Colors.white,
+                              size: 26,
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => _FullscreenVideoPlayer(
+                                    controller: _videoController!,
+                                    poseName: YogaLocalizationHelper.getPoseName(context, currentPose.nameKey),
+                                    playbackSpeed: _playbackSpeed,
+                                    onSpeedChanged: (speed) {
+                                      setState(() {
+                                        _playbackSpeed = speed;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+            // Tap to play/pause overlay
+            if (_showVideoControls && _isVideoInitialized)
+              Positioned.fill(
+                child: Container(
+                  color: Colors.black.withOpacity(0.3),
+                  child: Center(
+                    child: Container(
+                      width: 80,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.5),
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        icon: Icon(
+                          _videoController!.value.isPlaying ? Icons.pause : Icons.play_arrow,
+                          size: 48,
+                          color: Colors.white,
+                        ),
+                        onPressed: _toggleVideo,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInformationPanel() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey[900],
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(28),
+          topRight: Radius.circular(28),
+        ),
+      ),
+      child: Column(
+        children: [
+          // Drag handle
+          Container(
+            margin: const EdgeInsets.only(top: 12, bottom: 8),
+            width: 44,
+            height: 5,
+            decoration: BoxDecoration(
+              color: Colors.grey[700],
+              borderRadius: BorderRadius.circular(3),
+            ),
+          ),
+
+          // Scrollable content
+          Expanded(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Pose name
+                  Text(
+                    YogaLocalizationHelper.getPoseName(context, currentPose.nameKey),
+                    style: GoogleFonts.poppins(
+                      fontSize: 28,  // Very large for elderly
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      height: 1.2,
+                    ),
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  // Duration badge
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF40E0D0).withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.access_time,
+                          size: 18,
+                          color: Color(0xFF40E0D0),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          '${currentPose.durationSeconds ~/ 60}:${(currentPose.durationSeconds % 60).toString().padLeft(2, '0')} min',
+                          style: GoogleFonts.poppins(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF40E0D0),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // How to do this pose
+                  Text(
+                    'How to Do This Pose',
+                    style: GoogleFonts.poppins(
+                      fontSize: 22,  // Large
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // Instructions
+                  Text(
+                    currentPose.instructions,
+                    style: GoogleFonts.poppins(
+                      fontSize: 17,  // Large, easy to read
+                      color: Colors.grey[300],  // Good contrast
+                      height: 1.7,
+                      letterSpacing: 0.2,
+                    ),
+                  ),
+
+                  const SizedBox(height: 28),
+
+                  // Safety tips section
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.orange.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(
+                          Icons.health_and_safety,
+                          color: Colors.orange,
+                          size: 24,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        'Safety Tips',
+                        style: GoogleFonts.poppins(
+                          fontSize: 22,  // Large
+                          fontWeight: FontWeight.bold,
+                          color: Colors.orange,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 14),
+
+                  // Safety tips list
+                  ...currentPose.modifications.map((tip) => Padding(
+                    padding: const EdgeInsets.only(bottom: 14),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(top: 4),
+                          padding: const EdgeInsets.all(4),
+                          decoration: const BoxDecoration(
+                            color: Colors.orange,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.check,
+                            size: 14,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            tip,
+                            style: GoogleFonts.poppins(
+                              fontSize: 16,  // Large
+                              color: Colors.grey[300],
+                              height: 1.6,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )),
+
+                  const SizedBox(height: 32),
+
+                  // Info notice
+                  Container(
+                    padding: const EdgeInsets.all(18),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: Colors.blue.withOpacity(0.3),
+                        width: 1,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.info_outline,
+                          color: Colors.blue,
+                          size: 28,
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Text(
+                            'This is for learning only. To track progress, use "Join Class" from the session screen.',
+                            style: GoogleFonts.poppins(
+                              fontSize: 14,
+                              color: Colors.blue[200],
+                              height: 1.5,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+                ],
+              ),
+            ),
+          ),
+
+          // Navigation buttons at bottom
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+            child: Row(
+              children: [
+                // Previous button
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: _currentPoseIndex > 0
+                        ? () => _goToPose(_currentPoseIndex - 1)
+                        : null,
+                    icon: const Icon(Icons.arrow_back, size: 20),
+                    label: Text(
+                      'Previous',
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      side: BorderSide(
+                        color: _currentPoseIndex > 0
+                            ? Colors.white.withOpacity(0.3)
+                            : Colors.grey[800]!,
+                        width: 2,
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(width: 14),
+
+                // Next button
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: _currentPoseIndex < widget.allPoses.length - 1
+                        ? () => _goToPose(_currentPoseIndex + 1)
+                        : null,
+                    icon: const Icon(Icons.arrow_forward, size: 20),
+                    label: Text(
+                      'Next',
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF40E0D0),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      elevation: 0,
+                      disabledBackgroundColor: Colors.grey[800],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Fullscreen Video Player
+class _FullscreenVideoPlayer extends StatefulWidget {
+  final VideoPlayerController controller;
+  final String poseName;
+  final double playbackSpeed;
+  final Function(double) onSpeedChanged;
+
+  const _FullscreenVideoPlayer({
+    required this.controller,
+    required this.poseName,
+    required this.playbackSpeed,
+    required this.onSpeedChanged,
+  });
+
+  @override
+  State<_FullscreenVideoPlayer> createState() => _FullscreenVideoPlayerState();
+}
+
+class _FullscreenVideoPlayerState extends State<_FullscreenVideoPlayer> {
+  bool _showControls = true;
+  Timer? _hideControlsTimer;
+  late double _currentSpeed;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentSpeed = widget.playbackSpeed;
+    _startHideControlsTimer();
   }
 
   void _startHideControlsTimer() {
     _hideControlsTimer?.cancel();
     _hideControlsTimer = Timer(const Duration(seconds: 3), () {
-      if (mounted && (_activeController?.value.isPlaying ?? false)) {
+      if (mounted && widget.controller.value.isPlaying) {
         setState(() {
           _showControls = false;
         });
@@ -101,13 +726,11 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
   }
 
   void _togglePlayPause() {
-    final ctrl = _activeController;
-    if (ctrl == null) return;
     setState(() {
-      if (ctrl.value.isPlaying) {
-        ctrl.pause();
+      if (widget.controller.value.isPlaying) {
+        widget.controller.pause();
       } else {
-        ctrl.play();
+        widget.controller.play();
       }
     });
     _startHideControlsTimer();
@@ -116,713 +739,220 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
   @override
   void dispose() {
     _hideControlsTimer?.cancel();
-    _videoController?.dispose();
-    _flushPoseTime(); // best-effort
     super.dispose();
   }
 
-  Future<void> _initializeVideoForPose(YogaPose pose) async {
-    // Dispose old controller
-    final old = _videoController;
-    _videoController = null;
-    _isVideoInitialized = false;
-    _isVideoPlaying = false;
-    old?.removeListener(_videoListener);
-    await old?.dispose();
-
-    // TODO: Replace with a real mapping from pose -> video url.
-    // For now, this matches FullSessionScreen's placeholder approach.
-    final videoUrl =
-        'https://rkhmailqbmbijsfzhcch.supabase.co/storage/v1/object/public/pose-videos/beginner/NeckHeadShoulders.MOV';
-
-    final controller = VideoPlayerController.networkUrl(Uri.parse(videoUrl));
-    _videoController = controller;
-
-    try {
-      await controller.initialize();
-      await controller.setLooping(true);
-      await controller.play();
-      controller.addListener(_videoListener);
-
-      if (!mounted) return;
-      setState(() {
-        _isVideoInitialized = true;
-        _isVideoPlaying = controller.value.isPlaying;
-      });
-    } catch (e) {
-      // If video fails, UI will fall back to the pose image.
-      debugPrint('Error initializing video: $e');
-      if (!mounted) return;
-      setState(() {
-        _isVideoInitialized = false;
-        _isVideoPlaying = false;
-      });
-    }
-  }
-
-  void _videoListener() {
-    if (!mounted || _videoController == null) return;
-    final playing = _videoController!.value.isPlaying;
-    if (playing != _isVideoPlaying) {
-      setState(() => _isVideoPlaying = playing);
-    }
-  }
-
-
-
-  void _showControlsTemporarily() {
-    setState(() => _showVideoControls = true);
-    _startHideControlsTimer();
-  }
-
-
-
-  Future<void> _flushPoseTime() async {
-    final userId = Supabase.instance.client.auth.currentUser?.id;
-    if (userId == null) return;
-
-    final started = _poseStartTime;
-    if (started == null) return;
-
-    final secondsSpent = DateTime.now().difference(started).inSeconds;
-    if (secondsSpent <= 0) return;
-
-    // avoid duplicating inserts for the same pose within a single visit
-    if (_savedPoseIds.contains(_pose.id)) return;
-
-    try {
-      await Supabase.instance.client.from('pose_activity').insert({
-        'user_id': userId,
-        'pose_id': _pose.id,
-        'pose_name': YogaLocalizationHelper.getPoseName(context, _pose.nameKey),
-        'session_level': widget.sessionLevel,
-        'duration_seconds': secondsSpent,
-        'completed_at': DateTime.now().toIso8601String(),
-        'activity_date': DateTime.now().toIso8601String().split('T')[0],
-      });
-
-      _savedPoseIds.add(_pose.id);
-      debugPrint('✅ Saved pose time: ${_pose.id}, ${secondsSpent}s');
-    } catch (e) {
-      debugPrint('❌ Error saving pose time: $e');
-    }
-  }
-
-  Future<void> _goToPose(int newIndex) async {
-    if (newIndex < 0 || newIndex >= widget.allPoses.length) return;
-    if (newIndex == _currentPoseIndex) return;
-
-    await GlobalAudioService.playClickSound();
-
-    // Save time spent on current pose before switching
-    await _flushPoseTime();
-
-    setState(() {
-      _currentPoseIndex = newIndex;
-      _poseStartTime = DateTime.now();
-      _showVideoControls = false;
-    });
-
-    await _initializeVideoForPose(_pose);
-  }
-
-
-
-  void _openPosePicker() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (context) {
-        return Container(
-          height: MediaQuery.of(context).size.height * (isWeb ? 0.55 : 0.65),
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-          ),
-          child: Column(
-            children: [
-              const SizedBox(height: 10),
-              Container(
-                width: 44,
-                height: 5,
-                decoration: BoxDecoration(
-                  color: Colors.black12,
-                  borderRadius: BorderRadius.circular(99),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Poses',
-                style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.w600),
-              ),
-              const SizedBox(height: 12),
-              Expanded(
-                child: ListView.separated(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 20),
-                  itemCount: widget.allPoses.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 10),
-                  itemBuilder: (context, index) {
-                    final p = widget.allPoses[index];
-                    final selected = index == _currentPoseIndex;
-                    return InkWell(
-                      onTap: () {
-                        Navigator.of(context).pop();
-                        _goToPose(index);
-                      },
-                      borderRadius: BorderRadius.circular(16),
-                      child: Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: selected ? const Color(0xFF40E0D0).withOpacity(0.12) : Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: selected ? const Color(0xFF40E0D0) : Colors.black12,
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: Image.network(
-                                p.imageUrl,
-                                width: 56,
-                                height: 56,
-                                fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) => Container(
-                                  width: 56,
-                                  height: 56,
-                                  color: Colors.black12,
-                                  alignment: Alignment.center,
-                                  child: const Icon(Icons.image_not_supported_outlined),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                YogaLocalizationHelper.getPoseName(context, p.nameKey),
-                                style: GoogleFonts.poppins(
-                                  fontSize: 16,
-                                  fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                            if (selected)
-                              const Icon(Icons.check_circle, color: Color(0xFF40E0D0)),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
+  String _formatDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    final minutes = twoDigits(duration.inMinutes.remainder(60));
+    final seconds = twoDigits(duration.inSeconds.remainder(60));
+    return '$minutes:$seconds';
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              Expanded(child: _buildVideoSection()),
-              Expanded(child: _buildBottomPanel()),
-            ],
-          ),
-
-          // Close button (top-left)
-          Positioned(
-            top: MediaQuery.of(context).padding.top + 10,
-            left: 16,
-            child: _roundIconButton(
-              icon: Icons.close,
-              onTap: () async {
-                await GlobalAudioService.playClickSound();
-                await _flushPoseTime();
-                if (mounted) Navigator.of(context).pop();
-              },
+      body: GestureDetector(
+        onTap: () async {
+          await GlobalAudioService.playClickSound();
+          _toggleControls();
+        },
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            // Video player - fill screen
+            Center(
+              child: FittedBox(
+                fit: BoxFit.contain,
+                child: SizedBox(
+                  width: widget.controller.value.size.width,
+                  height: widget.controller.value.size.height,
+                  child: VideoPlayer(widget.controller),
+                ),
+              ),
             ),
-          ),
 
-          // Poses button (top-right)
-          Positioned(
-            top: MediaQuery.of(context).padding.top + 10,
-            right: 16,
-            child: _roundIconButton(
-              icon: Icons.list_alt_rounded,
-              onTap: () async {
-                await GlobalAudioService.playClickSound();
-                _openPosePicker();
-              },
-
-            ),
-          ),
-
-          // Index indicator (top-center)
-          Positioned(
-            top: MediaQuery.of(context).padding.top + 16,
-            left: 0,
-            right: 0,
-            child: Center(
+            // Controls overlay
+            AnimatedOpacity(
+              opacity: _showControls ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 300),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.4),
-                  borderRadius: BorderRadius.circular(999),
-                ),
-                child: Text(
-                  '${_currentPoseIndex + 1} / ${widget.allPoses.length}',
-                  style: GoogleFonts.poppins(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 13,
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black.withOpacity(0.7),
+                      Colors.transparent,
+                      Colors.transparent,
+                      Colors.black.withOpacity(0.7),
+                    ],
                   ),
                 ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _roundIconButton({required IconData icon, required VoidCallback onTap}) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 44,
-        height: 44,
-        decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.45),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Colors.white.withOpacity(0.18)),
-        ),
-        child: Icon(icon, color: Colors.white),
-      ),
-    );
-  }
-
-
-
-  Widget _buildVideoSection() {
-    return GestureDetector(
-      onTap: () {
-        _toggleControls();
-        _showControlsTemporarily();
-      },
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          // Video player - fill screen
-          Positioned.fill(
-            child: Builder(
-              builder: (context) {
-                final ctrl = _activeController;
-                if (ctrl == null || !ctrl.value.isInitialized) {
-                  return const Center(
-                    child: SizedBox(
-                      width: 80,
-                      height: 80,
-                      child: CircularProgressIndicator(strokeWidth: 3),
-                    ),
-                  );
-                }
-                final size = ctrl.value.size;
-                return FittedBox(
-                  fit: BoxFit.cover,
-                  child: SizedBox(
-                    width: size.width,
-                    height: size.height,
-                    child: VideoPlayer(ctrl),
-                  ),
-                );
-              },
-            ),
-          ),
-
-          // Controls overlay
-          AnimatedOpacity(
-            opacity: _showControls ? 1.0 : 0.0,
-            duration: const Duration(milliseconds: 300),
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.black.withOpacity(0.7),
-                    Colors.transparent,
-                    Colors.transparent,
-                    Colors.black.withOpacity(0.7),
-                  ],
-                ),
-              ),
-              child: Column(
-                children: [
-                  // Top bar
-                  SafeArea(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(
-                              Icons.arrow_back,
-                              color: Colors.white,
-                              size: 28,
-                            ),
-                            onPressed: () async {
-                              await GlobalAudioService.playClickSound();
-                              Navigator.pop(context);
-                            },
-                          ),
-                          const SizedBox(width: 8),
-
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  const Spacer(),
-
-                  // Play/Pause button
-                  Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.3),
-                      shape: BoxShape.circle,
-                    ),
-                    child: IconButton(
-                      icon: Icon(
-                        (_activeController?.value.isPlaying ?? false) ? Icons.pause : Icons.play_arrow,
-                        size: 48,
-                        color: Colors.white,
-                      ),
-                      onPressed: () async {
-                        await GlobalAudioService.playClickSound();
-                        _togglePlayPause();
-                      },
-                    ),
-                  ),
-
-                  const Spacer(),
-
-                  // Bottom controls
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      children: [
-                        // Progress bar
-                        Builder(
-                          builder: (context) {
-                            final ctrl = _activeController;
-                            if (ctrl == null || !ctrl.value.isInitialized) {
-                              return const SizedBox.shrink();
-                            }
-                            return VideoProgressIndicator(
-                              ctrl,
-                              allowScrubbing: true,
-                              colors: const VideoProgressColors(
-                                playedColor: Color(0xFF40E0D0),
-                                bufferedColor: Colors.white30,
-                                backgroundColor: Colors.white12,
-                              ),
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                            );
-                          },
-                        ),
-
-                        // Time and controls
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                child: Column(
+                  children: [
+                    // Top bar
+                    SafeArea(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Row(
                           children: [
-                            // Current time / Total time
-                            Text(
-                              '${_formatDuration((_activeController?.value.position) ?? Duration.zero)} / ${_formatDuration((_activeController?.value.duration) ?? Duration.zero)}',
-                              style: GoogleFonts.poppins(
-                                fontSize: 13,
-                                color: Colors.black,
+                            IconButton(
+                              icon: const Icon(
+                                Icons.arrow_back,
+                                color: Colors.white,
+                                size: 28,
                               ),
+                              onPressed: () async {
+                                await GlobalAudioService.playClickSound();
+                                Navigator.pop(context);
+                              },
                             ),
-
-                            Row(
-                              children: [
-                                // Playback speed
-                                PopupMenuButton<double>(
-                                  icon: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.2),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Text(
-                                      '${_currentSpeed}x',
-                                      style: GoogleFonts.poppins(
-                                        color: Colors.white,
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ),
-                                  onSelected: (speed) {
-                                    setState(() {
-                                      _currentSpeed = speed;
-                                      _activeController?.setPlaybackSpeed(speed);
-                                      widget.onSpeedChanged?.call(speed);
-                                    });
-                                  },
-                                  itemBuilder: (context) => [
-                                    PopupMenuItem(value: 0.5, child: Text('0.5x', style: GoogleFonts.poppins())),
-                                    PopupMenuItem(value: 0.75, child: Text('0.75x', style: GoogleFonts.poppins())),
-                                    PopupMenuItem(value: 1.0, child: Text('1.0x (Normal)', style: GoogleFonts.poppins())),
-                                    PopupMenuItem(value: 1.25, child: Text('1.25x', style: GoogleFonts.poppins())),
-                                    PopupMenuItem(value: 1.5, child: Text('1.5x', style: GoogleFonts.poppins())),
-                                    PopupMenuItem(value: 2.0, child: Text('2.0x', style: GoogleFonts.poppins())),
-                                  ],
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                widget.poseName,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
                                 ),
-
-                                const SizedBox(width: 8),
-
-                                // Volume
-                                IconButton(
-                                  icon: Icon(
-                                    ((_activeController?.value.volume ?? 0) > 0) ? Icons.volume_up : Icons.volume_off,
-                                    color: Colors.white,
-                                    size: 24,
-                                  ),
-                                  onPressed: () {
-                                    setState(() {
-                                      if (((_activeController?.value.volume ?? 0) > 0)) {
-                                        _activeController?.setVolume(0);
-                                      } else {
-                                        _activeController?.setVolume(1.0);
-                                      }
-                                    });
-                                  },
-                                ),
-                              ],
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ],
                         ),
-                      ],
+                      ),
                     ),
-                  ),
 
-                  SizedBox(height: MediaQuery.of(context).padding.bottom),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+                    const Spacer(),
 
-  Widget _buildBottomPanel() {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.fromLTRB(20, 18, 20, isWeb ? 24 : 16),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-      ),
-      child: Column(
-        children: [
-          // Grab handle
-          Container(
-            width: 44,
-            height: 5,
-            decoration: BoxDecoration(
-              color: Colors.black12,
-              borderRadius: BorderRadius.circular(99),
-            ),
-          ),
-          const SizedBox(height: 14),
-
-          // Main content scroll
-          Expanded(
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildPoseTitle(),
-
-                  const SizedBox(height: 16),
-                  _buildDescription(),
-
-                  _buildBenefits(),
-                  const SizedBox(height: 10),
-                ],
-              ),
-            ),
-          ),
-
-          // Navigation row (free toggle, no completion requirement)
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: _currentPoseIndex > 0 ? () => _goToPose(_currentPoseIndex - 1) : null,
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: Colors.black12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                  ),
-                  child: Text(
-                    'Previous',
-                    style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: _currentPoseIndex < widget.allPoses.length - 1
-                      ? () => _goToPose(_currentPoseIndex + 1)
-                      : () => _goToPose(_currentPoseIndex), // last pose: stay
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF40E0D0),
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                  ),
-                  child: Text(
-                    _currentPoseIndex < widget.allPoses.length - 1
-                        ? AppLocalizations.of(context)!.nextPose
-                        : AppLocalizations.of(context)!.nextPose,
-                    style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPoseTitle() {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-      child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-      Text(
-      YogaLocalizationHelper.getPoseName(context, _pose.nameKey),
-      style: GoogleFonts.poppins(
-        fontSize: isWeb ? 26 : 26,
-        fontWeight: FontWeight.w700,
-        height: 1.2,
-      ),
-      ),
-      ]),
-    );
-  }
-
-
-
-  Widget _buildDescription() {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-      child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-          Text(
-          AppLocalizations.of(context)!.aboutThisPose,
-      style: GoogleFonts.poppins(
-        fontSize: 22,  // Larger for elderly
-        fontWeight: FontWeight.bold,
-        color: Colors.black,
-      ),
-    ),
-    const SizedBox(height: 16),
-    // Use instructions, not description
-    Text(
-    _pose.instructions,  // Changed from descriptionKey
-    style: GoogleFonts.poppins(
-    fontSize: 17,  // Larger, easier to read
-    fontWeight: FontWeight.w400,
-    color: Colors.black,  // Better contrast
-    height: 1.7,
-    ),
-    ),
-    ]),
-    );
-  }
-
-  Widget _buildBenefits() {
-    // Keep this lightweight but informative.
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            AppLocalizations.of(context)!.safetyTips,
-            style: GoogleFonts.poppins(
-              fontSize: 20,  // Larger for elderly
-              fontWeight: FontWeight.bold,
-              color: const Color(0xFF40E0D0),
-            ),
-          ),
-          const SizedBox(height: 12),
-          // Use modifications as safety tips
-          ..._pose.modifications.map((tip) => Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Icon(
-                  Icons.check_circle,
-                  size: 22,  // Larger
-                  color: Color(0xFF40E0D0),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    tip,
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,  // Larger, easier to read
-                      color: Colors.black,  // Better contrast
-                      height: 1.6,
+                    // Play/Pause button
+                    Container(
+                      width: 80,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.3),
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        icon: Icon(
+                          widget.controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
+                          size: 48,
+                          color: Colors.white,
+                        ),
+                        onPressed: () async {
+                          await GlobalAudioService.playClickSound();
+                          _togglePlayPause();
+                        },
+                      ),
                     ),
-                  ),
+
+                    const Spacer(),
+
+                    // Bottom controls
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          // Progress bar
+                          VideoProgressIndicator(
+                            widget.controller,
+                            allowScrubbing: true,
+                            colors: const VideoProgressColors(
+                              playedColor: Color(0xFF40E0D0),
+                              bufferedColor: Colors.white30,
+                              backgroundColor: Colors.white12,
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                          ),
+
+                          // Time and controls
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              // Current time / Total time
+                              Text(
+                                '${_formatDuration(widget.controller.value.position)} / ${_formatDuration(widget.controller.value.duration)}',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 13,
+                                  color: Colors.white,
+                                ),
+                              ),
+
+                              Row(
+                                children: [
+                                  // Playback speed
+                                  PopupMenuButton<double>(
+                                    icon: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withOpacity(0.2),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Text(
+                                        '${_currentSpeed}x',
+                                        style: GoogleFonts.poppins(
+                                          color: Colors.white,
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                    onSelected: (speed) {
+                                      setState(() {
+                                        _currentSpeed = speed;
+                                        widget.controller.setPlaybackSpeed(speed);
+                                        widget.onSpeedChanged(speed);
+                                      });
+                                    },
+                                    itemBuilder: (context) => [
+                                      PopupMenuItem(value: 0.5, child: Text('0.5x', style: GoogleFonts.poppins())),
+                                      PopupMenuItem(value: 0.75, child: Text('0.75x', style: GoogleFonts.poppins())),
+                                      PopupMenuItem(value: 1.0, child: Text('1.0x (Normal)', style: GoogleFonts.poppins())),
+                                      PopupMenuItem(value: 1.25, child: Text('1.25x', style: GoogleFonts.poppins())),
+                                      PopupMenuItem(value: 1.5, child: Text('1.5x', style: GoogleFonts.poppins())),
+                                      PopupMenuItem(value: 2.0, child: Text('2.0x', style: GoogleFonts.poppins())),
+                                    ],
+                                  ),
+
+                                  const SizedBox(width: 8),
+
+                                  // Volume
+                                  IconButton(
+                                    icon: Icon(
+                                      widget.controller.value.volume > 0 ? Icons.volume_up : Icons.volume_off,
+                                      color: Colors.white,
+                                      size: 24,
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        if (widget.controller.value.volume > 0) {
+                                          widget.controller.setVolume(0);
+                                        } else {
+                                          widget.controller.setVolume(1.0);
+                                        }
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    SizedBox(height: MediaQuery.of(context).padding.bottom),
+                  ],
                 ),
-              ],
+              ),
             ),
-          )),
-
-  ],
-      ),
-    );
-  }
-
-  Widget _tipRow(IconData icon, String text) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(icon, size: 20, color: Colors.black54),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Text(
-            text,
-            style: GoogleFonts.poppins(fontSize: 14, height: 1.45, color: Colors.black87),
-          ),
+          ],
         ),
-      ],
+      ),
     );
   }
-
 }
