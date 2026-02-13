@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'login_screen.dart';
 import 'main_navigation_screen.dart';
 import 'complete_profile_screen.dart';
+import 'splash_screen.dart';
 import '../main.dart';
 
 class AuthGate extends StatefulWidget {
@@ -14,11 +15,21 @@ class AuthGate extends StatefulWidget {
 
 class _AuthGateState extends State<AuthGate> {
   bool _isLoading = true;
+  bool _showSplash = true;
 
   @override
   void initState() {
     super.initState();
+
+    // Start loading auth immediately in background
     _checkAuthState();
+
+    // Show splash for 4.5 seconds (longer duration)
+    Future.delayed(const Duration(milliseconds: 4500), () {
+      if (mounted) {
+        setState(() => _showSplash = false);
+      }
+    });
 
     // 🔄 React to login/logout automatically
     Supabase.instance.client.auth.onAuthStateChange.listen((event) {
@@ -85,9 +96,9 @@ class _AuthGateState extends State<AuthGate> {
 
       // Update the global ValueNotifier in main.dart
       appLocale.value =
-          savedLanguage == 'Mandarin' ? const Locale('zh') : const Locale('en');
+      savedLanguage == 'Mandarin' ? const Locale('zh') : const Locale('en');
 
-      print('🌐 App language synced to: $savedLanguage');
+      print('🌍 App language synced to: $savedLanguage');
     }
 
     final fullName = (profile?['full_name'] as String?)?.trim() ?? '';
@@ -110,14 +121,14 @@ class _AuthGateState extends State<AuthGate> {
               email: user.email ?? '',
             ),
           ),
-          (_) => false,
+              (_) => false,
         );
       } else {
         print('🌿 Profile complete — going to MainNavigationScreen');
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (_) => const MainNavigationScreen()),
-          (_) => false,
+              (_) => false,
         );
       }
     });
@@ -127,6 +138,11 @@ class _AuthGateState extends State<AuthGate> {
 
   @override
   Widget build(BuildContext context) {
+    // Show splash screen first
+    if (_showSplash) {
+      return const SplashScreen();
+    }
+
     if (_isLoading) {
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
@@ -138,7 +154,7 @@ class _AuthGateState extends State<AuthGate> {
       return const LoginScreen();
     }
 
-    // Fallback (shouldn’t appear)
+    // Fallback (shouldn't appear)
     return const Scaffold(body: SizedBox.shrink());
   }
 }
