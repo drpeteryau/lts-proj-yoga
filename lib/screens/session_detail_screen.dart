@@ -48,7 +48,9 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       backgroundColor: Colors.white, // Light theme
+
       body: Stack(
         children: [
           // Main content
@@ -64,7 +66,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 26),
 
                       // Session title (Chair Yoga, etc.)
                       Padding(
@@ -80,36 +82,37 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                         ),
                       ),
 
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 20),
 
-                      // Level badge (Beginner, Intermediate, etc.)
+                      // 3 Circular info boxes
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 24),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF40E0D0).withOpacity(0.15),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(
-                                Icons.signal_cellular_alt,
-                                size: 16,
-                                color: Color(0xFF40E0D0),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: _buildInfoBox(
+                                label: 'Level',
+                                value: YogaLocalizationHelper.getSessionLevel(context, widget.session.levelKey),
+                                color: const Color(0xFFFFF0E4),
                               ),
-                              const SizedBox(width: 6),
-                              Text(
-                                YogaLocalizationHelper.getSessionLevel(context, widget.session.levelKey),
-                                style: GoogleFonts.poppins(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: const Color(0xFF40E0D0),
-                                ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: _buildInfoBox(
+                                label: 'Total Time',
+                                value: '${widget.session.totalDurationMinutes} min',
+                                color: const Color(0xFFEBFFFF),
                               ),
-                            ],
-                          ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: _buildInfoBox(
+                                label: 'Total Poses',
+                                value: '${widget.session.allPoses.length} poses',
+                                color: const Color(0xFFE1FFF9),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
 
@@ -124,7 +127,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                             Text(
                               'About this Session',
                               style: GoogleFonts.poppins(
-                                fontSize: 20,
+                                fontSize: 22,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black87,
                               ),
@@ -133,9 +136,10 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                             Text(
                               YogaLocalizationHelper.getSessionDescription(context, widget.session.descriptionKey),
                               style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                color: Colors.grey[700],
-                                height: 1.6,
+                                fontSize: 18,
+                                fontWeight:FontWeight.w400,
+                                color: Colors.black,
+                                height: 1.4,
                               ),
                             ),
                           ],
@@ -187,6 +191,43 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                 },
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoBox({
+    required String label,
+    required String value,
+    required Color color,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        children: [
+          Text(
+            label,
+            style: GoogleFonts.poppins(
+              fontSize: 12,
+              color: Colors.black54,
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: GoogleFonts.poppins(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+            textAlign: TextAlign.center,
           ),
         ],
       ),
@@ -245,9 +286,9 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
         children: [
           // Section header
           Text(
-            'Poses in this Session',
+            'Poses Preview',
             style: GoogleFonts.poppins(
-              fontSize: 20,
+              fontSize: 22,
               fontWeight: FontWeight.bold,
               color: Colors.black87,
             ),
@@ -294,15 +335,12 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
             decoration: BoxDecoration(
               color: Colors.white, // Light card
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: Colors.grey[300]!,
-                width: 1,
-              ),
+
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.05),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
+                  blurRadius: 10,
+                  offset: const Offset(2, 2),
                 ),
               ],
             ),
@@ -315,7 +353,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                   decoration: BoxDecoration(
                     color: isCompleted
                         ? const Color(0xFF40E0D0)
-                        : Colors.grey[200],
+                        : const Color(0xFFFFF1DB),
                     shape: BoxShape.circle,
                   ),
                   child: Center(
@@ -346,8 +384,8 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                       Text(
                         YogaLocalizationHelper.getPoseName(context, pose.nameKey),
                         style: GoogleFonts.poppins(
-                          fontSize: 17,
-                          fontWeight: FontWeight.w600,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                           color: Colors.black87,
                         ),
                       ),
@@ -356,7 +394,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                         '${pose.durationSeconds ~/ 60}:${(pose.durationSeconds % 60).toString().padLeft(2, '0')} min',
                         style: GoogleFonts.poppins(
                           fontSize: 14,
-                          color: Colors.grey[600],
+                          color: Colors.black
                         ),
                       ),
                     ],
@@ -439,7 +477,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
               ),
             ),
 
-          // Join Class button - Turquoise
+          // Join Now button - Purple rounded style
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
@@ -453,11 +491,11 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                 ).then((_) => _loadPoseProgress());
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF40E0D0), // Turquoise
+                backgroundColor: const Color(0xFF40E0D0), // Purple/Blue
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 20),
+                padding: const EdgeInsets.symmetric(vertical: 18),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(30), // More rounded
                 ),
                 elevation: 0,
               ),
@@ -467,13 +505,23 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                   Text(
                     isFullyCompleted ? 'Practice Again' : 'Join Class',
                     style: GoogleFonts.poppins(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0.5,
+                      fontSize: 17,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.3,
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  const Icon(Icons.arrow_forward, size: 22),
+                  const SizedBox(width: 12),
+                  Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.arrow_forward,
+                      size: 18,
+                    ),
+                  ),
                 ],
               ),
             ),

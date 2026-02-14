@@ -136,7 +136,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
             fontSize: 13,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
             color:
-                isSelected ? const Color(0xFF40E0D0) : const Color(0xFF6B7280),
+            isSelected ? const Color(0xFF000000) : const Color(0xFF6B7280),
           ),
         ),
       ),
@@ -159,10 +159,10 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: const Color(0xFFFFFDFA),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withOpacity(0.1),
               blurRadius: 10,
               offset: const Offset(0, -2),
             ),
@@ -175,15 +175,15 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _buildNavItem(
-                    0, Icons.home, AppLocalizations.of(context)!.navHome),
-                _buildNavItem(1, Icons.self_improvement,
+                    0, Icons.home_filled, AppLocalizations.of(context)!.navHome),
+                _buildNavItem(1, Icons.spa_rounded,
                     AppLocalizations.of(context)!.navSessions),
-                _buildNavItem(2, Icons.track_changes,
+                _buildNavItem(2, Icons.timeline_rounded,
                     AppLocalizations.of(context)!.navProgress),
-                _buildNavItem(3, Icons.music_note,
+                _buildNavItem(3, Icons.music_note_rounded,
                     AppLocalizations.of(context)!.navSounds),
                 _buildNavItem(
-                    4, Icons.person, AppLocalizations.of(context)!.navProfile),
+                    4, Icons.person_rounded, AppLocalizations.of(context)!.navProfile),
               ],
             ),
           ),
@@ -207,30 +207,31 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           // Glow effect when selected
           boxShadow: isSelected
               ? [
-                  BoxShadow(
-                    color: const Color(0xFF40E0D0).withOpacity(0.2),
-                    blurRadius: 30,
-                    spreadRadius: 1,
-                    offset: const Offset(0, 5),
-                  ),
-                ]
+            BoxShadow(
+              color: const Color(0xFFFFFFFF).withOpacity(0.2),
+              blurRadius: 30,
+              spreadRadius: 1,
+              offset: const Offset(0, 5),
+            ),
+          ]
               : null,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            const SizedBox(height: 4),
             Icon(
               icon,
-              color: isSelected ? const Color(0xFF40E0D0) : Colors.grey,
-              size: 24,
+              color: isSelected ? const Color(0xFF000000) : Colors.grey[500],
+              size: 32,
             ),
             const SizedBox(height: 4),
             Text(
               label,
               style: GoogleFonts.poppins(
                 fontSize: 12,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                color: isSelected ? const Color(0xFF40E0D0) : Colors.grey,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                color: isSelected ? const Color(0xFF000000) : Colors.grey[800],
               ),
             ),
           ],

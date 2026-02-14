@@ -750,9 +750,12 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
 class FlowerBackgroundPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
+    // Skip if size is invalid
+    if (size.width <= 0 || size.height <= 0) return;
+
     // Draw multiple flower shapes with varying opacity and sizes
-    _drawFlower(canvas, size.width * 0.95, size.height * 0.92, 80, 0.8);
-    _drawFlower(canvas, size.width * 0.88, size.height * 0.25, 65, 0.86);
+    _drawFlower(canvas, size.width * 0.15, size.height * 0.12, 80, 0.08);
+    _drawFlower(canvas, size.width * 0.88, size.height * 0.25, 65, 0.06);
     _drawFlower(canvas, size.width * 0.08, size.height * 0.45, 90, 0.07);
     _drawFlower(canvas, size.width * 0.82, size.height * 0.58, 70, 0.05);
     _drawFlower(canvas, size.width * 0.25, size.height * 0.75, 75, 0.06);
@@ -765,57 +768,60 @@ class FlowerBackgroundPainter extends CustomPainter {
   }
 
   void _drawFlower(Canvas canvas, double cx, double cy, double size, double opacity) {
+    // Clamp opacity between 0 and 1
+    final validOpacity = opacity.clamp(0.0, 1.0);
+
     // Create paint with specified opacity
     final paint = Paint()
-      ..color = const Color(0xFF40E0D0).withOpacity(opacity)
-      ..style = PaintingStyle.fill;
+      ..color = const Color(0xFF40E0D0).withOpacity(validOpacity)
+      ..style = PaintingStyle.fill
+      ..isAntiAlias = true;
 
     const petals = 6;
 
     // Draw petals
     for (int i = 0; i < petals; i++) {
       final angle = (i * 2 * 3.14159) / petals;
-      final path = Path();
-
-      // Create elegant petal shape
-      path.moveTo(cx, cy);
-
-      // Outer curve of petal
-      path.quadraticBezierTo(
-        cx + size * 0.3,
-        cy - size * 0.5,
-        cx + size * 0.15,
-        cy - size,
-      );
-
-      // Tip of petal
-      path.quadraticBezierTo(
-        cx,
-        cy - size * 1.1,
-        cx - size * 0.15,
-        cy - size,
-      );
-
-      // Inner curve back to center
-      path.quadraticBezierTo(
-        cx - size * 0.3,
-        cy - size * 0.5,
-        cx,
-        cy,
-      );
 
       canvas.save();
       canvas.translate(cx, cy);
       canvas.rotate(angle);
-      canvas.translate(-cx, -cy);
+
+      final path = Path();
+      path.moveTo(0, 0);
+
+      // Simplified petal shape
+      path.quadraticBezierTo(
+        size * 0.3,
+        -size * 0.5,
+        size * 0.15,
+        -size,
+      );
+
+      path.quadraticBezierTo(
+        0,
+        -size * 1.1,
+        -size * 0.15,
+        -size,
+      );
+
+      path.quadraticBezierTo(
+        -size * 0.3,
+        -size * 0.5,
+        0,
+        0,
+      );
+
+      path.close();
       canvas.drawPath(path, paint);
       canvas.restore();
     }
 
     // Draw center circle
     final centerPaint = Paint()
-      ..color = const Color(0xFF40E0D0).withOpacity(opacity * 1.2)
-      ..style = PaintingStyle.fill;
+      ..color = const Color(0xFF40E0D0).withOpacity((validOpacity * 1.2).clamp(0.0, 1.0))
+      ..style = PaintingStyle.fill
+      ..isAntiAlias = true;
     canvas.drawCircle(Offset(cx, cy), size * 0.25, centerPaint);
   }
 

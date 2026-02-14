@@ -491,7 +491,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
                     currentPose.instructions,
                     style: GoogleFonts.poppins(
                       fontSize: 17,  // Large, easy to read
-                      color: Colors.grey[300],  // Good contrast
+                      color: Colors.white,  // Good contrast
                       height: 1.7,
                       letterSpacing: 0.2,
                     ),
@@ -553,7 +553,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
                             tip,
                             style: GoogleFonts.poppins(
                               fontSize: 16,  // Large
-                              color: Colors.grey[300],
+                              color: Colors.white,
                               height: 1.6,
                             ),
                           ),
@@ -614,12 +614,13 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
                     onPressed: _currentPoseIndex > 0
                         ? () => _goToPose(_currentPoseIndex - 1)
                         : null,
-                    icon: const Icon(Icons.arrow_back, size: 20),
+
                     label: Text(
                       'Previous',
                       style: GoogleFonts.poppins(
-                        fontSize: 16,
+                        fontSize: 18,
                         fontWeight: FontWeight.w600,
+                          color: Colors.grey
                       ),
                     ),
                     style: OutlinedButton.styleFrom(
@@ -646,11 +647,11 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
                     onPressed: _currentPoseIndex < widget.allPoses.length - 1
                         ? () => _goToPose(_currentPoseIndex + 1)
                         : null,
-                    icon: const Icon(Icons.arrow_forward, size: 20),
+
                     label: Text(
                       'Next',
                       style: GoogleFonts.poppins(
-                        fontSize: 16,
+                        fontSize: 18,
                         fontWeight: FontWeight.w600,
                       ),
                     ),

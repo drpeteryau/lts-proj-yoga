@@ -115,26 +115,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   String _getLocalizedDbValue(String? value) {
-  if (value == null || value.isEmpty) return '-';
-  
-  final l10n = AppLocalizations.of(context)!;
-  final v = value.trim();
+    if (value == null || value.isEmpty) return '-';
 
-  if (v == 'Beginner') return l10n.beginner;
-  if (v == 'Intermediate') return l10n.intermediate;
-  if (v == 'Advanced') return l10n.advanced;
+    final l10n = AppLocalizations.of(context)!;
+    final v = value.trim();
 
-  if (v == ('English')) return l10n.english;
-  if (v == ('Mandarin')) return l10n.mandarin;
+    if (v == 'Beginner') return l10n.beginner;
+    if (v == 'Intermediate') return l10n.intermediate;
+    if (v == 'Advanced') return l10n.advanced;
 
-  if (v.contains('5')) return l10n.min5;
-  if (v.contains('10')) return l10n.min10;
-  if (v.contains('15')) return l10n.min15;
-  if (v.contains('20')) return l10n.min20;
-  if (v.contains('30')) return l10n.min30;
+    if (v == ('English')) return l10n.english;
+    if (v == ('Mandarin')) return l10n.mandarin;
 
-  return v;
-}
+    if (v.contains('5')) return l10n.min5;
+    if (v.contains('10')) return l10n.min10;
+    if (v.contains('15')) return l10n.min15;
+    if (v.contains('20')) return l10n.min20;
+    if (v.contains('30')) return l10n.min30;
+
+    return v;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -150,368 +150,412 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final imageUrl = _profile?['profile_image_url'];
 
     return Scaffold(
-      backgroundColor: background,
-      appBar: AppBar(
-        title: Text(
-          AppLocalizations.of(context)!.profileTitle,
-          style: TextStyle(fontSize: isWeb ? 24 : 20),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFFD4F1F0),
+              Color(0xFFFFFFFF),
+              Color(0xFFE8F9F3),
+              Color(0xFFFFE9DB),
+            ],
+            stops: [0.0, 0.3, 0.6, 1.0],
+          ),
         ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        actions: [
-          TextButton(
-            onPressed: () async {
-              await GlobalAudioService.playClickSound();
-              await Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const EditProfileScreen()),
-              );
-              _loadProfile();
-              _loadStats();
-            },
-            child: Text(
-              AppLocalizations.of(context)!.edit,
-              style: TextStyle(fontSize: isWeb ? 18 : 16),
-            ),
-          ),
-        ],
-      ),
-      body: Center(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxWidth: isWeb ? 1000 : double.infinity,
-          ),
-          child: SingleChildScrollView(
-            padding: EdgeInsets.all(isWeb ? 40 : 20),
-            child: Column(
+        child: SafeArea(
+          child: Column(
               children: [
-                // ── WEB: 2-column grid layout ──
-                // ── MOBILE: single-column stack (unchanged) ──
-                if (isWeb) ...[
-                  // Row 1: Avatar card (fixed width) | Stats + Streak (right column)
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Avatar card – fixed width
-                      SizedBox(
-                        width: 300,
-                        child: _card(
-                          isWeb,
-                          child: Column(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      turquoise.withOpacity(0.6),
-                                      turquoise.withOpacity(0.2),
-                                    ],
-                                  ),
-                                ),
-                                padding: const EdgeInsets.all(4),
-                                child: CircleAvatar(
-                                  radius: 60,
-                                  backgroundImage: imageUrl != null
-                                      ? NetworkImage(imageUrl)
-                                      : null,
-                                  child: imageUrl == null
-                                      ? const Icon(Icons.person, size: 48)
-                                      : null,
-                                ),
-                              ),
-                              const SizedBox(height: 20),
-                              Text(
-                                name,
-                                style: const TextStyle(
-                                  fontSize: 28,
-                                  fontWeight: FontWeight.bold,
-                                  color: textDark,
-                                ),
-                              ),
-                              Text(
-                                email,
-                                style: const TextStyle(
-                                  color: textMuted,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(width: 24),
-
-                      // Right column: Stats row on top, Streak Summary below
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Row(
-                              children: [
-                                _statCard(
-                                    AppLocalizations.of(context)!.sessions,
-                                    _totalSessions.toString(),
-                                    isWeb),
-                                _statCard(
-                                    AppLocalizations.of(context)!.minutesLabel,
-                                    _totalMinutes.toString(),
-                                    isWeb),
-                                _statCard(AppLocalizations.of(context)!.daily,
-                                    _dailyStreak.toString(), isWeb,
-                                    highlight: true),
-                              ],
-                            ),
-
-                            const SizedBox(height: 24),
-
-                            // Streak summary fills the remaining right-column width
-                            _section(
-                              isWeb,
-                              title:
-                                  AppLocalizations.of(context)!.streakSummary,
-                              children: [
-                                _infoRow(
-                                    AppLocalizations.of(context)!.weeklyActive,
-                                    _weeklyStreak.toString(),
-                                    isWeb),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+          // Custom header
+          Padding(
+          padding: EdgeInsets.all(isWeb ? 24 : 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Profile',
+                style: TextStyle(
+                  fontSize: isWeb ? 32 : 26,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              OutlinedButton(
+                onPressed: () async {
+                  await GlobalAudioService.playClickSound();
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const EditProfileScreen()),
+                  );
+                  _loadProfile();
+                  _loadStats();
+                },
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: turquoise,
+                  side: const BorderSide(color: turquoise, width: 2),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isWeb ? 24 : 20,
+                    vertical: isWeb ? 14 : 12,
                   ),
-
-                  const SizedBox(height: 24),
-
-                  // Row 2: Preferences | Notifications
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: _section(
-                          isWeb,
-                          title: AppLocalizations.of(context)!.preferences,
-                          children: [
-                            _infoRow(
-                                AppLocalizations.of(context)!.experienceLevel,
-                                _getLocalizedDbValue(_profile?['experience_level']),
-                                isWeb),
-                            _infoRow(
-                                AppLocalizations.of(context)!.sessionLength,
-                                _getLocalizedDbValue(_profile?['preferred_session_length']),
-                                isWeb),
-                            _infoRow(AppLocalizations.of(context)!.language,
-                                _getLocalizedDbValue(_profile?['preferred_language']), isWeb),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 24),
-                      Expanded(
-                        child: _section(
-                          isWeb,
-                          title: AppLocalizations.of(context)!.notifications,
-                          children: [
-                            _infoRow(
-                              AppLocalizations.of(context)!.pushNotifications,
-                              _profile?['push_notifications_enabled'] == true
-                                  ? AppLocalizations.of(context)!.enabled
-                                  : AppLocalizations.of(context)!.disabled,
-                              isWeb,
-                            ),
-                            _infoRow(
-                              AppLocalizations.of(context)!.dailyReminder,
-                              _profile?['daily_practice_reminder'] == true
-                                  ? AppLocalizations.of(context)!.enabled
-                                  : AppLocalizations.of(context)!.disabled,
-                              isWeb,
-                            ),
-                            if (_profile?['daily_practice_reminder'] == true)
-                              _infoRow(
-                                  AppLocalizations.of(context)!.reminderTime,
-                                  _profile?['reminder_time']?.toString() ?? '-',
-                                  isWeb),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ] else ...[
-                  // ── MOBILE: single column, unchanged order ──
-                  _card(
-                    isWeb,
-                    child: Column(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            gradient: LinearGradient(
-                              colors: [
-                                turquoise.withOpacity(0.6),
-                                turquoise.withOpacity(0.2),
-                              ],
-                            ),
-                          ),
-                          padding: const EdgeInsets.all(3),
-                          child: CircleAvatar(
-                            radius: 38,
-                            backgroundImage: imageUrl != null
-                                ? NetworkImage(imageUrl)
-                                : null,
-                            child: imageUrl == null
-                                ? const Icon(Icons.person, size: 36)
-                                : null,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          name,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: textDark,
-                          ),
-                        ),
-                        Text(
-                          email,
-                          style: const TextStyle(
-                            color: textMuted,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  Row(
-                    children: [
-                      _statCard(AppLocalizations.of(context)!.sessions,
-                          _totalSessions.toString(), isWeb),
-                      _statCard(AppLocalizations.of(context)!.minutesLabel,
-                          _totalMinutes.toString(), isWeb),
-                      _statCard(AppLocalizations.of(context)!.daily,
-                          _dailyStreak.toString(), isWeb,
-                          highlight: true),
-                    ],
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  _section(
-                    isWeb,
-                    title: AppLocalizations.of(context)!.streakSummary,
-                    children: [
-                      _infoRow(AppLocalizations.of(context)!.weeklyActive,
-                          _weeklyStreak.toString(), isWeb),
-                    ],
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  _section(
-                    isWeb,
-                    title: AppLocalizations.of(context)!.preferences,
-                    children: [
-                      _infoRow(AppLocalizations.of(context)!.experienceLevel,
-                          _getLocalizedDbValue(_profile?['experience_level']), isWeb),
-                      _infoRow(AppLocalizations.of(context)!.sessionLength,
-                          _getLocalizedDbValue(_profile?['preferred_session_length']), isWeb),
-                      _infoRow(AppLocalizations.of(context)!.language,
-                         _getLocalizedDbValue(_profile?['preferred_language']), isWeb),
-                    ],
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  _section(
-                    isWeb,
-                    title: AppLocalizations.of(context)!.notifications,
-                    children: [
-                      _infoRow(
-                        AppLocalizations.of(context)!.pushNotifications,
-                        _profile?['push_notifications_enabled'] == true
-                            ? AppLocalizations.of(context)!.enabled
-                            : AppLocalizations.of(context)!.disabled,
-                        isWeb,
-                      ),
-                      _infoRow(
-                        AppLocalizations.of(context)!.dailyReminder,
-                        _profile?['daily_practice_reminder'] == true
-                            ? AppLocalizations.of(context)!.enabled
-                            : AppLocalizations.of(context)!.disabled,
-                        isWeb,
-                      ),
-                      if (_profile?['daily_practice_reminder'] == true)
-                        _infoRow(
-                            AppLocalizations.of(context)!.reminderTime,
-                            _profile?['reminder_time']?.toString() ?? '-',
-                            isWeb),
-                      _infoRow(
-                        AppLocalizations.of(context)!.soundEffects,
-                        _profile?['sound_effects_enabled'] == true
-                            ? AppLocalizations.of(context)!.enabled
-                            : AppLocalizations.of(context)!.disabled,
-                        isWeb,
-                      ),
-                    ],
-                  ),
-                ],
-
-                // Logout – full width on both platforms
-                SizedBox(height: isWeb ? 48 : 32),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      await GlobalAudioService.playClickSound();
-                      await supabase.auth.signOut(scope: SignOutScope.global);
-                      if (!mounted) return;
-                      Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (_) => const AuthGate()),
-                        (route) => false,
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      padding: EdgeInsets.symmetric(vertical: isWeb ? 18 : 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(isWeb ? 16 : 14),
-                      ),
-                    ),
-                    child: Text(
-                      AppLocalizations.of(context)!.logout,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        fontSize: isWeb ? 18 : 16,
-                      ),
-                    ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
                   ),
                 ),
-                SizedBox(height: isWeb ? 60 : 40),
-              ],
-            ),
+                child: Text(
+                  'Edit',
+                  style: TextStyle(
+                    fontSize: isWeb ? 16 : 15,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
+
+        Expanded(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: isWeb ? 1000 : double.infinity,
+              ),
+              child: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(horizontal: isWeb ? 40 : 20),
+                child: Column(
+                  children: [
+                    // ── WEB: 2-column grid layout ──
+                    // ── MOBILE: single-column stack (unchanged) ──
+                    if (isWeb) ...[
+                      // Row 1: Avatar card (fixed width) | Stats + Streak (right column)
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Avatar card – fixed width
+                          SizedBox(
+                            width: 300,
+                            child: _card(
+                              isWeb,
+                              child: Column(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          turquoise.withOpacity(0.6),
+                                          turquoise.withOpacity(0.2),
+                                        ],
+                                      ),
+                                    ),
+                                    padding: const EdgeInsets.all(4),
+                                    child: CircleAvatar(
+                                      radius: 60,
+                                      backgroundImage: imageUrl != null
+                                          ? NetworkImage(imageUrl)
+                                          : null,
+                                      child: imageUrl == null
+                                          ? const Icon(Icons.person, size: 48)
+                                          : null,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20),
+                                  Text(
+                                    name,
+                                    style: const TextStyle(
+                                      fontSize: 28,
+                                      fontWeight: FontWeight.bold,
+                                      color: textDark,
+                                    ),
+                                  ),
+                                  Text(
+                                    email,
+                                    style: const TextStyle(
+                                      color: textMuted,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(width: 24),
+
+                          // Right column: Stats row on top, Streak Summary below
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Row(
+                                  children: [
+                                    _statCard(
+                                        AppLocalizations.of(context)!.sessions,
+                                        _totalSessions.toString(),
+                                        isWeb),
+                                    _statCard(
+                                        AppLocalizations.of(context)!.minutesLabel,
+                                        _totalMinutes.toString(),
+                                        isWeb),
+                                    _statCard(AppLocalizations.of(context)!.daily,
+                                        _dailyStreak.toString(), isWeb,
+                                        highlight: true),
+                                  ],
+                                ),
+
+                                const SizedBox(height: 24),
+
+                                // Streak summary fills the remaining right-column width
+                                _section(
+                                  isWeb,
+                                  title:
+                                  AppLocalizations.of(context)!.streakSummary,
+                                  children: [
+                                    _infoRow(
+                                        AppLocalizations.of(context)!.weeklyActive,
+                                        _weeklyStreak.toString(),
+                                        isWeb),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // Row 2: Preferences | Notifications
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: _section(
+                              isWeb,
+                              title: AppLocalizations.of(context)!.preferences,
+                              children: [
+                                _infoRow(
+                                    AppLocalizations.of(context)!.experienceLevel,
+                                    _getLocalizedDbValue(_profile?['experience_level']),
+                                    isWeb),
+                                _infoRow(
+                                    AppLocalizations.of(context)!.sessionLength,
+                                    _getLocalizedDbValue(_profile?['preferred_session_length']),
+                                    isWeb),
+                                _infoRow(AppLocalizations.of(context)!.language,
+                                    _getLocalizedDbValue(_profile?['preferred_language']), isWeb),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 24),
+                          Expanded(
+                            child: _section(
+                              isWeb,
+                              title: AppLocalizations.of(context)!.notifications,
+                              children: [
+                                _infoRow(
+                                  AppLocalizations.of(context)!.pushNotifications,
+                                  _profile?['push_notifications_enabled'] == true
+                                      ? AppLocalizations.of(context)!.enabled
+                                      : AppLocalizations.of(context)!.disabled,
+                                  isWeb,
+                                ),
+                                _infoRow(
+                                  AppLocalizations.of(context)!.dailyReminder,
+                                  _profile?['daily_practice_reminder'] == true
+                                      ? AppLocalizations.of(context)!.enabled
+                                      : AppLocalizations.of(context)!.disabled,
+                                  isWeb,
+                                ),
+                                if (_profile?['daily_practice_reminder'] == true)
+                                  _infoRow(
+                                      AppLocalizations.of(context)!.reminderTime,
+                                      _profile?['reminder_time']?.toString() ?? '-',
+                                      isWeb),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ] else ...[
+                      // ── MOBILE: single column, unchanged order ──
+                      _card(
+                        isWeb,
+                        child: Column(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                gradient: LinearGradient(
+                                  colors: [
+                                    turquoise.withOpacity(0.6),
+                                    turquoise.withOpacity(0.2),
+                                  ],
+                                ),
+                              ),
+                              padding: const EdgeInsets.all(3),
+                              child: CircleAvatar(
+                                radius: 38,
+                                backgroundImage: imageUrl != null
+                                    ? NetworkImage(imageUrl)
+                                    : null,
+                                child: imageUrl == null
+                                    ? const Icon(Icons.person, size: 36)
+                                    : null,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              name,
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: textDark,
+                              ),
+                            ),
+                            Text(
+                              email,
+                              style: const TextStyle(
+                                color: textMuted,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      Row(
+                        children: [
+                          _statCard(AppLocalizations.of(context)!.sessions,
+                              _totalSessions.toString(), isWeb),
+                          _statCard(AppLocalizations.of(context)!.minutesLabel,
+                              _totalMinutes.toString(), isWeb),
+                          _statCard(AppLocalizations.of(context)!.daily,
+                              _dailyStreak.toString(), isWeb,
+                              highlight: true),
+                        ],
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      _section(
+                        isWeb,
+                        title: AppLocalizations.of(context)!.streakSummary,
+                        children: [
+                          _infoRow(AppLocalizations.of(context)!.weeklyActive,
+                              _weeklyStreak.toString(), isWeb),
+                        ],
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      _section(
+                        isWeb,
+                        title: AppLocalizations.of(context)!.preferences,
+                        children: [
+                          _infoRow(AppLocalizations.of(context)!.experienceLevel,
+                              _getLocalizedDbValue(_profile?['experience_level']), isWeb),
+                          _infoRow(AppLocalizations.of(context)!.sessionLength,
+                              _getLocalizedDbValue(_profile?['preferred_session_length']), isWeb),
+                          _infoRow(AppLocalizations.of(context)!.language,
+                              _getLocalizedDbValue(_profile?['preferred_language']), isWeb),
+                        ],
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      _section(
+                        isWeb,
+                        title: AppLocalizations.of(context)!.notifications,
+                        children: [
+                          _infoRow(
+                            AppLocalizations.of(context)!.pushNotifications,
+                            _profile?['push_notifications_enabled'] == true
+                                ? AppLocalizations.of(context)!.enabled
+                                : AppLocalizations.of(context)!.disabled,
+                            isWeb,
+                          ),
+                          _infoRow(
+                            AppLocalizations.of(context)!.dailyReminder,
+                            _profile?['daily_practice_reminder'] == true
+                                ? AppLocalizations.of(context)!.enabled
+                                : AppLocalizations.of(context)!.disabled,
+                            isWeb,
+                          ),
+                          if (_profile?['daily_practice_reminder'] == true)
+                            _infoRow(
+                                AppLocalizations.of(context)!.reminderTime,
+                                _profile?['reminder_time']?.toString() ?? '-',
+                                isWeb),
+                          _infoRow(
+                            AppLocalizations.of(context)!.soundEffects,
+                            _profile?['sound_effects_enabled'] == true
+                                ? AppLocalizations.of(context)!.enabled
+                                : AppLocalizations.of(context)!.disabled,
+                            isWeb,
+                          ),
+                        ],
+                      ),
+                    ],
+
+                    // Logout – full width on both platforms
+                    SizedBox(height: isWeb ? 48 : 32),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          await GlobalAudioService.playClickSound();
+                          await supabase.auth.signOut(scope: SignOutScope.global);
+                          if (!mounted) return;
+                          Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(builder: (_) => const AuthGate()),
+                                (route) => false,
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red[400],
+                          padding: EdgeInsets.symmetric(vertical: isWeb ? 18 : 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: Text(
+                          'Sign Out',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                            fontSize: isWeb ? 18 : 17,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: isWeb ? 60 : 40),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        )],
+        ),
       ),
+    ),
     );
   }
 
   Widget _card(bool isWeb, {required Widget child}) {
     return Container(
-      padding: EdgeInsets.all(isWeb ? 32 : 20),
+      padding: EdgeInsets.all(isWeb ? 32 : 24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(isWeb ? 24 : 20),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
-            blurRadius: isWeb ? 15 : 10,
-            offset: Offset(0, isWeb ? 6 : 4),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -520,20 +564,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _section(
-    bool isWeb, {
-    required String title,
-    required List<Widget> children,
-  }) {
+      bool isWeb, {
+        required String title,
+        required List<Widget> children,
+      }) {
     return Container(
-      padding: EdgeInsets.all(isWeb ? 24 : 16),
+      padding: EdgeInsets.all(isWeb ? 28 : 24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(isWeb ? 20 : 16),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: isWeb ? 12 : 8,
-            offset: Offset(0, isWeb ? 4 : 3),
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -543,12 +587,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Text(
             title,
             style: TextStyle(
-              fontSize: isWeb ? 20 : 16,
+              fontSize: isWeb ? 22 : 20,
               fontWeight: FontWeight.bold,
-              color: const Color(0xFF2E6F68),
+              color: Colors.black87,
             ),
           ),
-          SizedBox(height: isWeb ? 16 : 12),
+          SizedBox(height: isWeb ? 20 : 16),
           ...children,
         ],
       ),
@@ -556,11 +600,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _statCard(
-    String label,
-    String value,
-    bool isWeb, {
-    bool highlight = false,
-  }) {
+      String label,
+      String value,
+      bool isWeb, {
+        bool highlight = false,
+      }) {
     return Expanded(
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: isWeb ? 8 : 6),
@@ -577,16 +621,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Text(
               value,
               style: TextStyle(
-                fontSize: isWeb ? 24 : 18,
+                fontSize: isWeb ? 32 : 28,
                 fontWeight: FontWeight.bold,
                 color: textDark,
               ),
             ),
+            const SizedBox(height: 4),
             Text(
               label,
               style: TextStyle(
                 color: textMuted,
-                fontSize: isWeb ? 15 : 13,
+                fontSize: isWeb ? 16 : 15,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],
@@ -597,19 +643,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _infoRow(String label, String value, bool isWeb) {
     return Padding(
-      padding: EdgeInsets.only(bottom: isWeb ? 12 : 8),
+      padding: EdgeInsets.only(bottom: isWeb ? 16 : 14),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             label,
-            style: TextStyle(fontSize: isWeb ? 16 : 14),
+            style: TextStyle(
+              fontSize: isWeb ? 17 : 16,
+              fontWeight: FontWeight.w500,
+              color: Colors.black87,
+            ),
           ),
           Text(
             value,
             style: TextStyle(
               color: textMuted,
-              fontSize: isWeb ? 16 : 14,
+              fontSize: isWeb ? 17 : 16,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ],

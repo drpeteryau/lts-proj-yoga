@@ -74,7 +74,19 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
 
     if (_isLoading) {
       return Container(
-        color: Colors.white,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFFD4F1F0),
+              Color(0xFFFFFFFF),
+              Color(0xFFE8F9F3),
+              Color(0xFFFFE9DB),
+            ],
+            stops: [0.0, 0.3, 0.6, 1.0],
+          ),
+        ),
         child: const Center(
           child: CircularProgressIndicator(
             color: Color(0xFF40E0D0),
@@ -85,7 +97,19 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
 
     if (_error != null) {
       return Container(
-        color: Colors.white,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFFD4F1F0),
+              Color(0xFFFFFFFF),
+              Color(0xFFE8F9F3),
+              Color(0xFFFFE9DB),
+            ],
+            stops: [0.0, 0.3, 0.6, 1.0],
+          ),
+        ),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -117,7 +141,19 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
     }
 
     return Container(
-        color: Colors.white,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFFD4F1F0),
+              Color(0xFFFFFFFF),
+              Color(0xFFE8F9F3),
+              Color(0xFFFFE9DB),
+            ],
+            stops: [0.0, 0.3, 0.6, 1.0],
+          ),
+        ),
         child: SafeArea(
             child: Center(
               child: ConstrainedBox(
@@ -132,23 +168,27 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                       children: [
                         SizedBox(height: isWeb ?5 : 12),
 
-                        // Header
+                        // Header - Motivating text
                         Text(
-                          AppLocalizations.of(context)!.chooseYour,
+                          'Begin Your',
                           style: GoogleFonts.poppins(
-                            fontSize: isWeb ? 36 : 28,
-                            fontWeight: FontWeight.w300,
-                            color: Colors.black87,
-                          ),
-                        ),
-                        Text(
-                          AppLocalizations.of(context)!.level,
-                          style: GoogleFonts.poppins(
-                            fontSize: isWeb ? 48 : 36,
+                            fontSize: isWeb ? 36 : 32,
                             fontWeight: FontWeight.w600,
                             color: Colors.black87,
+                            height: 1.2,
                           ),
                         ),
+                        Text(
+                          'Wellness Journey',
+                          style: GoogleFonts.poppins(
+                            fontSize: isWeb ? 36 : 32,
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xFF40E0D0),
+                            height: 1.2,
+                          ),
+                        ),
+
+
 
                         SizedBox(height: isWeb ? 48 : 32),
 
@@ -159,7 +199,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                           subtitle: AppLocalizations.of(context)!.beginnerSubtitle,
                           description: AppLocalizations.of(context)!.beginnerDesc,
                           imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600',
-                          color: const Color(0xFF40E0D0),
+                          color: const Color(0xCD000000),
                           isLocked: false,
                           sessionsCompleted: _getSessionsCompleted('beginner'),
                           onTap: () {
@@ -183,14 +223,14 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                           subtitle: AppLocalizations.of(context)!.intermediateSubtitle,
                           description: AppLocalizations.of(context)!.intermediateDesc,
                           imageUrl: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=600',
-                          color: const Color(0xFF35C9BA),
+                          color: const Color(0xCD000000),
                           isLocked: !(_userProgress?.intermediateUnlocked ?? false),
                           sessionsCompleted: _getSessionsCompleted('intermediate'),
                           progress: (_userProgress?.progressToIntermediate ?? 0.0),
                           requiredSessions: UserProgress.sessionsRequiredForIntermediate,
                           currentLevelSessions: _getSessionsCompleted('beginner'),
                           onTap: () {
-                            if (_userProgress?.intermediateUnlocked ?? false) {                              
+                            if (_userProgress?.intermediateUnlocked ?? false) {
                               GlobalAudioService.playClickSound();
                               final session = YogaDataComplete.intermediateSessions.first;
                               Navigator.push(
@@ -218,7 +258,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                           subtitle: AppLocalizations.of(context)!.advancedSubtitle,
                           description: AppLocalizations.of(context)!.advancedDesc,
                           imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600',
-                          color: const Color(0xFF2AB5A5),
+                          color: const Color(0xCD000000),
                           isLocked: !(_userProgress?.advancedUnlocked ?? false),
                           sessionsCompleted: _getSessionsCompleted('advanced'),
                           progress: (_userProgress?.progressToAdvanced ?? 0.0),
@@ -260,7 +300,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                   ),
                 ),
               ),)));
-        }
+  }
 
   Widget _buildLevelCard(
       BuildContext context, {
@@ -280,19 +320,19 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 200,
+        height: 220, // Taller for elderly-friendly spacing
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(24), // More rounded
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 15,
-              offset: const Offset(0, 5),
+              color: Colors.black.withOpacity(0.15),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(24),
           child: Stack(
             fit: StackFit.expand,
             children: [
@@ -339,20 +379,20 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                       children: [
                         Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
+                            horizontal: 14,
+                            vertical: 8,
                           ),
                           decoration: BoxDecoration(
                             color: color,
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(14),
                           ),
                           child: Text(
                             title.toUpperCase(),
                             style: GoogleFonts.poppins(
-                              fontSize: 12,
+                              fontSize: 13, // Larger
                               fontWeight: FontWeight.w700,
                               color: Colors.white,
-                              letterSpacing: 1,
+                              letterSpacing: 1.2,
                             ),
                           ),
                         ),
@@ -385,9 +425,9 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                       // Unlock message
                       if (needsIntermediate)
                         Text(
-                          AppLocalizations.of(context)!.unlockIntermediateFirst,
+                          'Complete Intermediate first',
                           style: GoogleFonts.poppins(
-                            fontSize: 16,
+                            fontSize: 18, // Larger
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
                           ),
@@ -397,19 +437,19 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              AppLocalizations.of(context)!.completeMore(requiredSessions - currentLevelSessions),
+                              'Complete ${requiredSessions - currentLevelSessions} more sessions to unlock',
                               style: GoogleFonts.poppins(
-                                fontSize: 16,
+                                fontSize: 18, // Larger
                                 fontWeight: FontWeight.w600,
                                 color: Colors.white,
                               ),
                             ),
-                            const SizedBox(height: 4),
+                            const SizedBox(height: 6),
                             Text(
-                              AppLocalizations.of(context)!.sessionsProgress(currentLevelSessions, requiredSessions),
+                              '$currentLevelSessions of $requiredSessions sessions completed',
                               style: GoogleFonts.poppins(
-                                fontSize: 13,
-                                color: Colors.white.withOpacity(0.9),
+                                fontSize: 15, // Larger
+                                color: Colors.white.withOpacity(0.95),
                               ),
                             ),
                           ],
@@ -425,7 +465,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                             value: progress,
                             backgroundColor: Colors.white.withOpacity(0.3),
                             valueColor: AlwaysStoppedAnimation<Color>(color),
-                            minHeight: 6,
+                            minHeight: 8, // Thicker bar
                           ),
                         ),
                     ]
@@ -434,30 +474,43 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                       Text(
                         subtitle,
                         style: GoogleFonts.poppins(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
+                          fontSize: 24, // Larger for elderly
+                          fontWeight: FontWeight.bold,
                           color: Colors.white,
+                          height: 1.2,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 8),
                       Text(
                         description,
                         style: GoogleFonts.poppins(
-                          fontSize: 13,
-                          color: Colors.white.withOpacity(0.9),
+                          fontSize: 15, // Larger for elderly
+                          color: Colors.white.withOpacity(0.95),
+                          height: 1.4,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
 
                       if (sessionsCompleted > 0) ...[
-                        const SizedBox(height: 8),
-                        Text(
-                          AppLocalizations.of(context)!.sessionsCompletedCount(sessionsCompleted),
-                          style: GoogleFonts.poppins(
-                            fontSize: 12,
-                            color: Colors.white.withOpacity(0.8),
-                          ),
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.check_circle,
+                              color: color,
+                              size: 16,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              '$sessionsCompleted sessions completed',
+                              style: GoogleFonts.poppins(
+                                fontSize: 14, // Larger
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ],
@@ -503,7 +556,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
           children: [
             Text(
               message ??
-              AppLocalizations.of(context)!.completeSessionsToUnlock(requiredSessions - currentSessions),
+                  AppLocalizations.of(context)!.completeSessionsToUnlock(requiredSessions - currentSessions),
               style: GoogleFonts.poppins(fontSize: 15),
             ),
             const SizedBox(height: 16),

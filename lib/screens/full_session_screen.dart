@@ -854,22 +854,24 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                _formatTime(_totalTimeSpent),
-                style: GoogleFonts.poppins(
-                  fontSize: 16,  // Larger
-                  color: Colors.white,  // Better contrast
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              Text(
                 ' ${AppLocalizations.of(context)!.totalTime}',
                 style: GoogleFonts.poppins(
-                  fontSize: 13,  // Larger
+                  fontSize: 14,  // Larger
                   color: Colors.grey[400],
                   fontWeight: FontWeight.w500,
                   letterSpacing: 0.5,
                 ),
               ),
+              const SizedBox(width: 16),
+              Text(
+                _formatTime(_totalTimeSpent),
+                style: GoogleFonts.poppins(
+                  fontSize: 18,  // Larger
+                  color: Colors.white,  // Better contrast
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+
               const SizedBox(width: 16),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -907,7 +909,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
               label: Text(
                 'Previous',
                 style: GoogleFonts.poppins(
-                  fontSize: 16,
+                  fontSize: 18,
                   fontWeight: FontWeight.w600,
                   color: Colors.grey
                 ),
@@ -965,7 +967,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
               label: Text(
                 AppLocalizations.of(context)!.next,
                 style: GoogleFonts.poppins(
-                  fontSize: 16,
+                  fontSize: 18,
                   fontWeight: FontWeight.w600,
                 ),
               ),

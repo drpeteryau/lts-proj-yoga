@@ -222,176 +222,169 @@ class _ProgressScreenState extends State<ProgressScreen> {
     }
 
     return Scaffold(
-        backgroundColor: Colors.white,
-        body: SafeArea(
-          child: Center(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxWidth: isWeb ? 1200 : double.infinity,
-              ),
-              child: SingleChildScrollView(
-                padding: EdgeInsets.all(isWeb ? 40 : 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Header
-                    Text(
-                      AppLocalizations.of(context)!.progressHeader,
-                      style: GoogleFonts.poppins(
-                        fontSize: isWeb ? 36 : 28,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      AppLocalizations.of(context)!.progressSubtitle,
-                      style: GoogleFonts.poppins(
-                        fontSize: isWeb ? 18 : 14,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-
-                    SizedBox(height: isWeb ? 48 : 32),
-
-                    // On web: 2-column layout to use horizontal space properly.
-                    // On mobile: single column, same order as before.
-                    if (isWeb) ...[
-                      // Row 1: Stats | Wellness
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(child: _buildStatsOverview()),
-                          const SizedBox(width: 24),
-                          Expanded(child: _buildWellnessCheckInCard()),
-                        ],
-                      ),
-
-                      const SizedBox(height: 24),
-
-                      // Row 2: Weekly Progress | Calendar
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(child: _buildWeeklyProgress()),
-                          const SizedBox(width: 24),
-                          Expanded(child: _buildPracticeCalendar()),
-                        ],
-                      ),
-                    ] else ...[
-                      _buildStatsOverview(),
-                      const SizedBox(height: 24),
-                      _buildWellnessCheckInCard(),
-                      const SizedBox(height: 24),
-                      _buildWeeklyProgress(),
-                      const SizedBox(height: 24),
-                      _buildPracticeCalendar(),
-                    ],
-
-                    const SizedBox(height: 20),
-                  ],
-                ),
+        body: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color(0xFFD4F1F0),
+                  Color(0xFFFFFFFF),
+                  Color(0xFFE9F8F7),
+                  Color(0xFFFFE9DB),
+                ],
+                stops: [0.0, 0.3, 0.6, 1.0],
               ),
             ),
-          ),
-        ));
-  }
+            child: SafeArea(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: isWeb ? 1200 : double.infinity,
+                  ),
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.all(isWeb ? 40 : 22),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Header - simplified
+                        Text(
+                          'Activity Summary',
+                          style: GoogleFonts.poppins(
+                            fontSize: isWeb ? 32 : 26,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
 
-  Widget _buildStatsOverview() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            const Color(0xFF40E0D0).withOpacity(0.1),
-            const Color(0xFF40E0D0).withOpacity(0.05),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(child: _buildStatItem(
-                icon: Icons.local_fire_department,
-                value: _currentStreak.toString(),
-                label: AppLocalizations.of(context)!.dayStreak,
-                color: const Color(0xFFFF6B6B),
-              )),
-              Container(width: 1, height: 50, color: Colors.grey[300]),
-              Expanded(child: _buildStatItem(
-                icon: Icons.self_improvement,
-                value: _totalSessions.toString(),
-                label: AppLocalizations.of(context)!.sessions,
-                color: const Color(0xFF40E0D0),
-              )),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Container(height: 1, color: Colors.grey[300]),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(child: _buildStatItem(
-                icon: Icons.access_time,
-                value: _totalMinutes.toString(),
-                label: AppLocalizations.of(context)!.totalMinutes,
-                color: const Color(0xFF9D7FEA),
-              )),
-              Container(width: 1, height: 50, color: Colors.grey[300]),
-              Expanded(child: _buildStatItem(
-                icon: Icons.emoji_events,
-                value: _getCurrentBadge(),
-                label: AppLocalizations.of(context)!.thisWeek,
-                color: const Color(0xFFFFD700),
-              )),
-            ],
-          ),
-        ],
-      ),
+                        SizedBox(height: isWeb ? 32 : 24),
+
+                        // On web: 2-column layout to use horizontal space properly.
+                        // On mobile: single column, same order as before.
+                        if (isWeb) ...[
+                          // Row 1: Stats | Wellness
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(child: _buildStatsOverview()),
+                              const SizedBox(width: 24),
+                              Expanded(child: _buildWellnessCheckInCard()),
+                            ],
+                          ),
+
+                          const SizedBox(height: 24),
+
+                          // Daily minutes chart (full width)
+                          _buildDailyMinutesChart(),
+
+                          const SizedBox(height: 24),
+
+                          // Row 2: Weekly Progress | Calendar
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(child: _buildWeeklyProgress()),
+                              const SizedBox(width: 24),
+                              Expanded(child: _buildPracticeCalendar()),
+                            ],
+                          ),
+                        ] else ...[
+                          _buildWeeklyProgress(),
+                          const SizedBox(height: 16),
+                          _buildWellnessCheckInCard(),
+                          const SizedBox(height: 16),
+                          _buildStatsOverview(),
+                          const SizedBox(height: 16),
+                          _buildDailyMinutesChart(),
+                          const SizedBox(height: 24),
+                          _buildPracticeCalendar(),
+                        ],
+
+                        const SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ))
     );
   }
 
-  Widget _buildStatItem({
-    required IconData icon,
-    required String value,
-    required String label,
-    required Color color,
-  }) {
+  Widget _buildStatsOverview() {
     return Column(
       children: [
-        Icon(icon, color: color, size: 28),
-        const SizedBox(height: 8),
-        Text(
-          value,
-          style: GoogleFonts.poppins(
-            fontSize: 24,
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-          ),
+        // First row: Streak and Sessions
+        Row(
+          children: [
+            Expanded(
+              child: _buildStatBox(
+                icon: Icons.local_fire_department,
+                iconColor: const Color(0xFFFF6B6B),
+                iconBgColor: const Color(0xFFFFE5E5),
+                value: _currentStreak.toString(),
+                label: 'Streak',
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _buildStatBox(
+                icon: Icons.self_improvement,
+                iconColor: const Color(0xFF40E0D0),
+                iconBgColor: const Color(0xFFE0F7F4),
+                value: _totalSessions.toString(),
+                label: 'Sessions',
+              ),
+            ),
+          ],
         ),
-        Text(
-          label,
-          style: GoogleFonts.poppins(
-            fontSize: 12,
-            color: Colors.grey[600],
-          ),
-          textAlign: TextAlign.center,
+        const SizedBox(height: 16),
+        // Second row: Total Minutes and Badge
+        Row(
+          children: [
+            Expanded(
+              child: _buildStatBox(
+                icon: Icons.timer_outlined,
+                iconColor: const Color(0xFF9D7FEA),
+                iconBgColor: const Color(0xFFF3EFFF),
+                value: _totalMinutes.toString(),
+                label: 'Minutes',
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _buildStatBox(
+                icon: Icons.emoji_events,
+                iconColor: const Color(0xFFFFD700),
+                iconBgColor: const Color(0xFFFFF8E1),
+                value: _getCurrentBadge(),
+                label: 'This Week',
+              ),
+            ),
+          ],
         ),
       ],
     );
   }
 
-  Widget _buildWellnessCheckInCard() {
+  Widget _buildStatBox({
+    required IconData icon,
+    required Color iconColor,
+    required Color iconBgColor,
+    required String value,
+    required String label,
+  }) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.grey[200]!),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -399,15 +392,219 @@ class _ProgressScreenState extends State<ProgressScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF40E0D0).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
+                  color: const Color(0xE4E9FFFC),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Icon(icon, color: Colors.black, size: 20),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                label,
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  color: Colors.black87,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            value,
+            style: GoogleFonts.poppins(
+              fontSize: 32,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDailyMinutesChart() {
+    // Get last 7 days of activity
+    final now = DateTime.now();
+    final List<Map<String, dynamic>> weekData = [];
+
+    for (int i = 6; i >= 0; i--) {
+      final date = now.subtract(Duration(days: i));
+      final dateKey = DateFormat('yyyy-MM-dd').format(date);
+      final dayName = DateFormat('E').format(date).substring(0, 3);
+
+      // Calculate minutes for this day (simplified - you may need to adjust based on your data structure)
+      int minutesForDay = 0;
+      if (_activityDays[dateKey] == true) {
+        // Estimate based on average session length
+        minutesForDay = (_totalMinutes / max(_activityDays.length, 1)).round();
+      }
+
+      weekData.add({
+        'day': dayName,
+        'minutes': minutesForDay,
+        'isToday': i == 0,
+      });
+    }
+
+    final maxMinutes = weekData.map((d) => d['minutes'] as int).reduce(max).toDouble();
+    final hasData = maxMinutes > 0;
+
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(
+                'Daily Minutes',
+                style: GoogleFonts.poppins(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
+              ),
+              const Spacer(),
+              Text(
+                'Week',
+                style: GoogleFonts.poppins(
+                  fontSize: 13,
+                  color: Colors.grey[600],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+
+          if (!hasData)
+          // No data message
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 40),
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.show_chart,
+                      size: 48,
+                      color: Colors.grey[300],
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Nothing tracked yet',
+                      style: GoogleFonts.poppins(
+                        fontSize: 15,
+                        color: Colors.grey[400],
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          else
+          // Chart with bars
+            SizedBox(
+              height: 160,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: weekData.map((data) {
+                  final minutes = data['minutes'] as int;
+                  final dayName = data['day'] as String;
+                  final isToday = data['isToday'] as bool;
+                  final heightRatio = maxMinutes > 0 ? (minutes / maxMinutes) : 0.0;
+                  final barHeight = 100 * heightRatio;
+
+                  return Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          if (minutes > 0)
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 4),
+                              child: Text(
+                                '$minutes',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: isToday ? const Color(0xFF40E0D0) : Colors.black87,
+                                ),
+                              ),
+                            ),
+                          Container(
+                            height: max(barHeight, minutes > 0 ? 20 : 10),
+                            decoration: BoxDecoration(
+                              color: isToday
+                                  ? const Color(0xFFFFB74D)
+                                  : const Color(0xFF40E0D0),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            dayName,
+                            style: GoogleFonts.poppins(
+                              fontSize: 12,
+                              color: Colors.grey[600],
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWellnessCheckInCard() {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                  color: const Color(0xE4E9FFFC),
+                  borderRadius: BorderRadius.circular(25),
                 ),
                 child: const Icon(
                   Icons.favorite,
-                  color: Color(0xFF40E0D0),
-                  size: 24,
+                  color: const Color(0xFF000000),
+                  size: 20,
                 ),
               ),
               const SizedBox(width: 12),
@@ -416,22 +613,24 @@ class _ProgressScreenState extends State<ProgressScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      AppLocalizations.of(context)!.wellnessDialogTitle,
+                      'Wellness Check-In',
                       style: GoogleFonts.poppins(
-                        fontSize: 18,
+                        fontSize: 22,
                         fontWeight: FontWeight.w600,
                         color: Colors.black87,
                       ),
                     ),
+                    const SizedBox(height: 2),
                     Text(
                       _hasCheckInThisWeek
-                          ? AppLocalizations.of(context)!.checkedInMsg
-                          : AppLocalizations.of(context)!.shareFeeling,
+                          ? 'Checked in this week ✓'
+                          : 'How are you feeling?',
                       style: GoogleFonts.poppins(
-                        fontSize: 13,
+                        fontSize: 16,
                         color: _hasCheckInThisWeek
                             ? const Color(0xFF40E0D0)
                             : Colors.grey[600],
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],
@@ -440,45 +639,69 @@ class _ProgressScreenState extends State<ProgressScreen> {
             ],
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
 
           Row(
             children: [
               Expanded(
-                child: OutlinedButton.icon(
+                child: OutlinedButton(
                   onPressed: () async {
                     await GlobalAudioService.playClickSound();
                     _showWellnessDialog();
                   },
-                  icon: const Icon(Icons.add_circle_outline, size: 18),
-                  label: Text(
-                    AppLocalizations.of(context)!.newCheckIn,
-                    style: GoogleFonts.poppins(fontSize: 14),
-                  ),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: const Color(0xFF40E0D0),
-                    side: const BorderSide(color: Color(0xFF40E0D0)),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    side: const BorderSide(color: Color(0xFF40E0D0), width: 1.5),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.add_circle, size: 25),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Check-In',
+                        style: GoogleFonts.poppins(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: ElevatedButton.icon(
+                child: ElevatedButton(
                   onPressed: () async {
                     await GlobalAudioService.playClickSound();
                     _showReflectionHistory();
                   },
-                  icon: const Icon(Icons.history, size: 18),
-                  label: Text(
-                    AppLocalizations.of(context)!.viewHistory,
-                    style: GoogleFonts.poppins(fontSize: 14),
-                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF40E0D0),
                     foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
                     elevation: 0,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.history, size: 20),
+                      const SizedBox(width: 8),
+                      Text(
+                        'History',
+                        style: GoogleFonts.poppins(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -493,80 +716,113 @@ class _ProgressScreenState extends State<ProgressScreen> {
     final progress = (_weeklyMinutes / _weeklyGoal).clamp(0.0, 1.0);
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.grey[200]!),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Header
           Text(
-            AppLocalizations.of(context)!.thisWeek,
+            'This Week',
             style: GoogleFonts.poppins(
-              fontSize: 18,
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+
+          const SizedBox(height: 28),
+
+          // Circular progress chart
+          Center(
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                // Background circle
+                SizedBox(
+                  width: 200,
+                  height: 200,
+                  child: CustomPaint(
+                    painter: _CircularProgressPainter(
+                      progress: progress,
+                      progressColor: const Color(0xFF40E0D0),
+                      backgroundColor: Colors.grey[200]!,
+                    ),
+                  ),
+                ),
+
+                // Center content
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SizedBox(height: 12),
+
+                    // Minutes value
+                    Text(
+                      '$_weeklyMinutes',
+                      style: GoogleFonts.poppins(
+                        fontSize: 42,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                        height: 1.0,
+                      ),
+                    ),
+
+                    Text(
+                      'min',
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+
+                    const SizedBox(height: 8),
+
+                    Text(
+                      'of $_weeklyGoal min',
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        color: Colors.grey[500],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 32),
+
+          // Badges section
+          Text(
+            'Weekly Badges',
+            style: GoogleFonts.poppins(
+              fontSize: 16,
               fontWeight: FontWeight.w600,
               color: Colors.black87,
             ),
           ),
+
           const SizedBox(height: 16),
-
-          // Progress
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                AppLocalizations.of(context)!.minShort(_weeklyMinutes),
-                style: GoogleFonts.poppins(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF40E0D0),
-                ),
-              ),
-              Text(
-                AppLocalizations.of(context)!.weeklyGoal(_weeklyGoal),
-                style: GoogleFonts.poppins(
-                  fontSize: 14,
-                  color: Colors.grey[600],
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 12),
-
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: LinearProgressIndicator(
-              value: progress,
-              minHeight: 12,
-              backgroundColor: Colors.grey[200],
-              valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF40E0D0)),
-            ),
-          ),
-
-          const SizedBox(height: 20),
-
-          // Badges
-          Text(
-            AppLocalizations.of(context)!.weeklyBadges,
-            style: GoogleFonts.poppins(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: Colors.grey[700],
-            ),
-          ),
-
-          const SizedBox(height: 12),
 
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildBadge(AppLocalizations.of(context)!.bronze, 60, Icons.emoji_events, const Color(0xFFCD7F32)),
-              _buildBadge(AppLocalizations.of(context)!.silver, 120, Icons.emoji_events, const Color(0xFFC0C0C0)),
-              _buildBadge(AppLocalizations.of(context)!.gold, 180, Icons.emoji_events, const Color(0xFFFFD700)),
-              _buildBadge(AppLocalizations.of(context)!.platinum, 240, Icons.diamond, const Color(0xFF40E0D0)),
+              _buildBadge('Bronze', 60, Icons.emoji_events, const Color(0xFFCD7F32)),
+              _buildBadge('Silver', 120, Icons.emoji_events, const Color(0xFFC0C0C0)),
+              _buildBadge('Gold', 180, Icons.emoji_events, const Color(0xFFFFD700)),
+              _buildBadge('Platinum', 240, Icons.diamond, const Color(0xFFB9F2FF)),
             ],
           ),
         ],
@@ -580,38 +836,46 @@ class _ProgressScreenState extends State<ProgressScreen> {
     return Column(
       children: [
         Container(
-          width: 60,
-          height: 60,
+          width: 70,
+          height: 70,
           decoration: BoxDecoration(
-            color: achieved ? color.withOpacity(0.1) : Colors.grey[100],
+            color: achieved ? Colors.white : Colors.grey[50],
             shape: BoxShape.circle,
             border: Border.all(
               color: achieved ? color : Colors.grey[300]!,
-              width: 2,
+              width: 3,
             ),
+            boxShadow: achieved ? [
+              BoxShadow(
+                color: color.withOpacity(0.3),
+                blurRadius: 8,
+                spreadRadius: 1,
+              ),
+            ] : null,
           ),
           child: Center(
             child: Icon(
               icon,
               color: achieved ? color : Colors.grey[400],
-              size: 28,
+              size: 32,
             ),
           ),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 8),
         Text(
           name,
           style: GoogleFonts.poppins(
-            fontSize: 11,
+            fontSize: 12,
             fontWeight: FontWeight.w600,
-            color: achieved ? color : Colors.grey[500],
+            color: achieved ? Colors.black87 : Colors.grey[500],
           ),
         ),
+        const SizedBox(height: 2),
         Text(
-          AppLocalizations.of(context)!.minutesCount(minutes),
+          '$minutes min',
           style: GoogleFonts.poppins(
             fontSize: 10,
-            color: Colors.grey[500],
+            color: Colors.grey[600],
           ),
         ),
       ],
@@ -620,7 +884,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
 
   Widget _buildPracticeCalendar() {
     return Container(
-      padding: EdgeInsets.all(isWeb ? 28 : 20),
+      padding: EdgeInsets.all(isWeb ? 28 : 24),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
@@ -635,7 +899,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
               Text(
                 AppLocalizations.of(context)!.calendar,
                 style: GoogleFonts.poppins(
-                  fontSize: isWeb ? 22 : 18,
+                  fontSize: isWeb ? 22 : 22,
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
                 ),
@@ -661,7 +925,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                   Text(
                     DateFormat.yMMM(Localizations.localeOf(context).toString()).format(_currentMonth),
                     style: GoogleFonts.poppins(
-                      fontSize: isWeb ? 16 : 14,
+                      fontSize: isWeb ? 16 : 16,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -955,7 +1219,7 @@ class _WellnessCheckInDialogState extends State<_WellnessCheckInDialog> {
             Text(
               AppLocalizations.of(context)!.wellnessDialogSubtitle,
               style: GoogleFonts.poppins(
-                fontSize: 14,
+                fontSize: 16,
                 color: Colors.grey[600],
               ),
             ),
@@ -981,12 +1245,12 @@ class _WellnessCheckInDialogState extends State<_WellnessCheckInDialog> {
                       maxLines: 3,
                       decoration: InputDecoration(
                         labelText: AppLocalizations.of(context)!.notesOptional,
-                        labelStyle: GoogleFonts.poppins(fontSize: 14),
+                        labelStyle: GoogleFonts.poppins(fontSize: 16),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      style: GoogleFonts.poppins(fontSize: 14),
+                      style: GoogleFonts.poppins(fontSize: 16),
                     ),
                   ],
                 ),
@@ -1064,7 +1328,7 @@ class _WellnessCheckInDialogState extends State<_WellnessCheckInDialog> {
           Text(
             label,
             style: GoogleFonts.poppins(
-              fontSize: 13,
+              fontSize: 16,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -1105,7 +1369,7 @@ class _ReflectionHistoryScreen extends StatelessWidget {
         title: Text(
           AppLocalizations.of(context)!.reflectionHistory,
           style: GoogleFonts.poppins(
-            fontSize: 18,
+            fontSize: 22,
             fontWeight: FontWeight.w600,
             color: Colors.black87,
           ),
@@ -1121,7 +1385,7 @@ class _ReflectionHistoryScreen extends StatelessWidget {
             Text(
               AppLocalizations.of(context)!.noReflections,
               style: GoogleFonts.poppins(
-                fontSize: 16,
+                fontSize: 20,
                 color: Colors.grey[600],
               ),
             ),
@@ -1150,21 +1414,21 @@ class _ReflectionHistoryScreen extends StatelessWidget {
                   children: [
                     const Icon(
                       Icons.calendar_today,
-                      size: 16,
+                      size: 20,
                       color: Color(0xFF40E0D0),
                     ),
                     const SizedBox(width: 8),
                     Text(
                       DateFormat.yMMMd(Localizations.localeOf(context).toString()).format(date),
                       style: GoogleFonts.poppins(
-                        fontSize: 14,
+                        fontSize: 18,
                         fontWeight: FontWeight.w600,
                         color: const Color(0xFF40E0D0),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 14),
                 _buildReflectionItem(AppLocalizations.of(context)!.bodyComfort, reflection['fitness_improvement']),
                 _buildReflectionItem(AppLocalizations.of(context)!.flexibility, reflection['flexibility_improvement']),
                 _buildReflectionItem(AppLocalizations.of(context)!.balance, reflection['balance_rating']),
@@ -1213,15 +1477,15 @@ class _ReflectionHistoryScreen extends StatelessWidget {
           Text(
             label,
             style: GoogleFonts.poppins(
-              fontSize: 13,
-              color: Colors.grey[700],
+              fontSize: 17,
+              color: Colors.black,
             ),
           ),
           Row(
             children: List.generate(5, (index) {
               return Icon(
                 Icons.circle,
-                size: 8,
+                size: 14,
                 color: index < (value ?? 0)
                     ? const Color(0xFF40E0D0)
                     : Colors.grey[300],
@@ -1384,6 +1648,58 @@ class _EmojiPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_) => false;
+}
+
+// Circular progress painter for weekly progress
+class _CircularProgressPainter extends CustomPainter {
+  final double progress;
+  final Color progressColor;
+  final Color backgroundColor;
+
+  _CircularProgressPainter({
+    required this.progress,
+    required this.progressColor,
+    required this.backgroundColor,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width / 2;
+    final strokeWidth = 16.0;
+
+    // Background circle
+    final backgroundPaint = Paint()
+      ..color = backgroundColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth
+      ..strokeCap = StrokeCap.round;
+
+    canvas.drawCircle(center, radius - strokeWidth / 2, backgroundPaint);
+
+    // Progress arc
+    final progressPaint = Paint()
+      ..color = progressColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth
+      ..strokeCap = StrokeCap.round;
+
+    final sweepAngle = 2 * 3.14159 * progress;
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius - strokeWidth / 2),
+      -3.14159 / 2, // Start from top
+      sweepAngle,
+      false,
+      progressPaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_CircularProgressPainter oldDelegate) {
+    return oldDelegate.progress != progress ||
+        oldDelegate.progressColor != progressColor ||
+        oldDelegate.backgroundColor != backgroundColor;
+  }
 }
 
 class _NeedlePainter extends CustomPainter {
