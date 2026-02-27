@@ -83,6 +83,10 @@ flutter:
     - assets/audio/morning.mp3
     - assets/audio/deepbreathing.mp3
     - assets/audio/evening.mp3
+    - assets/audio/completion.mp3
+    - assets/audio/welcome.mp3
+
+
 
   # To add assets to your application, add an assets section, like this:
   # assets:

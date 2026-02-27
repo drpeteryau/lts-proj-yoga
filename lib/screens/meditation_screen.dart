@@ -227,19 +227,10 @@ class _MeditationScreenState extends State<MeditationScreen> {
     );
   }
 
-void _startSession(MeditationSession session) async {
+void _startSession(MeditationSession session) {
+  if (MeditationSessionScreen.isActive) return;
+
   final audioService = GlobalAudioService();
-
-  await audioService.playSound(
-    assetFile: session.audioFile,
-    title: session.title,
-    category: "Meditation",
-    imageUrl: session.imageUrl,
-  );
-
-  audioService.startSessionTimer(
-    Duration(minutes: session.durationMinutes),
-  );
 
   Navigator.push(
     context,
@@ -247,5 +238,15 @@ void _startSession(MeditationSession session) async {
       builder: (_) => MeditationSessionScreen(session: session),
     ),
   );
+
+  if (audioService.sessionRemaining == Duration.zero) {
+    audioService.startMeditationWithWelcome(
+      assetFile: session.audioFile,
+      title: session.title,
+      category: "Meditation",
+      imageUrl: session.imageUrl,
+      duration: Duration(minutes: session.durationMinutes),
+    );
+  }
 }
 }

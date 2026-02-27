@@ -4,7 +4,7 @@ import 'meditation_screen.dart';
 
 class MeditationSessionScreen extends StatefulWidget {
   final MeditationSession session;
-
+  static bool isActive = false;
   const MeditationSessionScreen({
     super.key,
     required this.session,
@@ -23,21 +23,22 @@ class _MeditationSessionScreenState
 
   late AnimationController _breathingController;
   late AnimationController _backgroundController;
+  late AnimationController _completionController;
+  late AnimationController _shimmerController;
 
   late Animation<double> _scaleAnimation;
   late Animation<double> _glowAnimation;
+  late Animation<double> _completionFade;
 
-  int _lastPhase = -1;
+  bool _completionTriggered = false;
+  bool _isExiting = false; // ✅ prevents preparing from reappearing
+  
 
   @override
   void initState() {
     super.initState();
-
-    if (_audioService.sessionRemaining == Duration.zero) {
-      _audioService.startSessionTimer(
-        Duration(minutes: widget.session.durationMinutes),
-      );
-    }
+    MeditationSessionScreen.isActive = true;
+    
 
     _breathingController = AnimationController(
       vsync: this,
@@ -48,6 +49,21 @@ class _MeditationSessionScreenState
       vsync: this,
       duration: const Duration(seconds: 40),
     )..repeat(reverse: true);
+
+    _shimmerController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat();
+
+    _completionController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+
+    _completionFade = CurvedAnimation(
+      parent: _completionController,
+      curve: Curves.easeIn,
+    );
 
     _scaleAnimation = TweenSequence<double>([
       TweenSequenceItem(
@@ -70,12 +86,17 @@ class _MeditationSessionScreenState
       TweenSequenceItem(tween: Tween(begin: 0.6, end: 0.2), weight: 6),
       TweenSequenceItem(tween: ConstantTween(0.2), weight: 6),
     ]).animate(_breathingController);
+
+
   }
 
   @override
   void dispose() {
     _breathingController.dispose();
     _backgroundController.dispose();
+    _completionController.dispose();
+    _shimmerController.dispose();
+    MeditationSessionScreen.isActive = false;
     super.dispose();
   }
 
@@ -109,13 +130,20 @@ class _MeditationSessionScreenState
         _audioService.sessionTotal != Duration.zero &&
         _audioService.sessionRemaining == Duration.zero;
 
+
+
+    if (isComplete && !_completionTriggered) {
+      _completionTriggered = true;
+      _completionController.forward();
+    }
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
         fit: StackFit.expand,
         children: [
 
-          // 🌊 SAFE background drift using Alignment (never cuts)
+
           AnimatedBuilder(
             animation: _backgroundController,
             builder: (context, _) {
@@ -132,13 +160,14 @@ class _MeditationSessionScreenState
             },
           ),
 
-          // 🌈 Main animated UI
           AnimatedBuilder(
             animation: Listenable.merge([
               _audioService,
               _breathingController,
             ]),
             builder: (context, _) {
+
+              final isPreparing = _audioService.isPreparing;
 
               final seconds =
                   _audioService.sessionRemaining.inSeconds;
@@ -157,40 +186,10 @@ class _MeditationSessionScreenState
                 currentPhaseIndex = 3;
               }
 
-              if (currentPhaseIndex != _lastPhase &&
-                  _audioService.isPlaying &&
-                  !isComplete) {
-
-                _lastPhase = currentPhaseIndex;
-
-                if (currentPhaseIndex == 0) {
-                  _audioService.playBreathingCue("inhale");
-                } else if (currentPhaseIndex == 1) {
-                  _audioService.playBreathingCue("hold");
-                } else if (currentPhaseIndex == 2) {
-                  _audioService.playBreathingCue("exhale");
-                } else {
-                  _audioService.playBreathingCue("hold");
-                }
-              }
+   
 
               final breathingText =
                   _breathingPhaseText(currentPhaseIndex);
-
-              Color overlayColor;
-              switch (currentPhaseIndex) {
-                case 0:
-                  overlayColor = Colors.teal.withOpacity(0.35);
-                  break;
-                case 1:
-                  overlayColor = Colors.teal.withOpacity(0.25);
-                  break;
-                case 2:
-                  overlayColor = Colors.indigo.withOpacity(0.35);
-                  break;
-                default:
-                  overlayColor = Colors.indigo.withOpacity(0.25);
-              }
 
               return Stack(
                 fit: StackFit.expand,
@@ -198,7 +197,7 @@ class _MeditationSessionScreenState
 
                   AnimatedContainer(
                     duration: const Duration(seconds: 2),
-                    color: overlayColor,
+                    color: Colors.black.withOpacity(0.3),
                   ),
 
                   SafeArea(
@@ -218,52 +217,93 @@ class _MeditationSessionScreenState
 
                         const Spacer(),
 
-                        Transform.scale(
-                          scale: _scaleAnimation.value,
-                          child: Container(
-                            width: 220,
-                            height: 220,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white.withOpacity(0.1),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.white
-                                      .withOpacity(_glowAnimation.value),
-                                  blurRadius: 60,
-                                  spreadRadius: 10,
-                                ),
-                              ],
+                        AnimatedOpacity(
+                          duration: const Duration(milliseconds: 800),
+                          opacity: isPreparing ? 0.0 : 1.0,
+                          child: Transform.scale(
+                            scale: _scaleAnimation.value,
+                            child: Container(
+                              width: 220,
+                              height: 220,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white.withOpacity(0.1),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.white
+                                        .withOpacity(_glowAnimation.value),
+                                    blurRadius: 60,
+                                    spreadRadius: 10,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
 
                         const SizedBox(height: 30),
 
-                        Text(
-                          breathingText,
-                          style: const TextStyle(
-                            color: Colors.white70,
-                            fontSize: 22,
-                            fontWeight: FontWeight.w500,
-                          ),
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 600),
+                          child: isPreparing
+                              ? AnimatedBuilder(
+                                  key: const ValueKey("preparing"),
+                                  animation: _shimmerController,
+                                  builder: (context, child) {
+                                    return ShaderMask(
+                                      shaderCallback: (bounds) {
+                                        return LinearGradient(
+                                          begin: Alignment(
+                                              -1 + 2 * _shimmerController.value,
+                                              0),
+                                          end: Alignment(
+                                              1 + 2 * _shimmerController.value,
+                                              0),
+                                          colors: const [
+                                            Colors.white24,
+                                            Colors.white70,
+                                            Colors.white24,
+                                          ],
+                                        ).createShader(bounds);
+                                      },
+                                      child: const Text(
+                                        "Preparing your session...",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                )
+                              : Text(
+                                  breathingText,
+                                  key: const ValueKey("breathing"),
+                                  style: const TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
                         ),
 
                         const SizedBox(height: 40),
 
-                        Text(
-                          _formatDuration(
-                              _audioService.sessionRemaining),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 36,
-                            fontWeight: FontWeight.w300,
+                        if (!isPreparing)
+                          Text(
+                            _formatDuration(
+                                _audioService.sessionRemaining),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 36,
+                              fontWeight: FontWeight.w300,
+                            ),
                           ),
-                        ),
 
                         const SizedBox(height: 40),
 
-                        if (!isComplete)
+                        if (!isComplete && !isPreparing)
                           GestureDetector(
                             onTap: () {
                               _audioService.togglePlayPause();
@@ -280,6 +320,18 @@ class _MeditationSessionScreenState
                                     : Icons.play_arrow,
                                 size: 36,
                                 color: Colors.black,
+                              ),
+                            ),
+                          )
+                        else if (isComplete)
+                          FadeTransition(
+                            opacity: _completionFade,
+                            child: const Text(
+                              "Session Complete",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 28,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ),

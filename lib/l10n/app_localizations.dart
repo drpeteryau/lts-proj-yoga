@@ -452,10 +452,10 @@ abstract class AppLocalizations {
   /// **'Progress'**
   String get navProgress;
 
-  /// No description provided for @navSounds.
+  /// No description provided for @navMeditation.
   ///
   /// In en, this message translates to:
-  /// **'Sounds'**
+  /// **'Meditation'**
   String get navMeditation;
 
   /// No description provided for @navProfile.
