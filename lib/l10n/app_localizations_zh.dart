@@ -196,7 +196,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get navProgress => '进度';
 
   @override
-  String get navSounds => '白噪音';
+  String get navMeditation => '冥想';
 
   @override
   String get navProfile => '个人资料';

@@ -199,7 +199,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navProgress => 'Progress';
 
   @override
-  String get navSounds => 'Sounds';
+  String get navMeditation => 'Meditation';
 
   @override
   String get navProfile => 'Profile';

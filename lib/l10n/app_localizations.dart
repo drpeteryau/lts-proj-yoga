@@ -456,7 +456,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Sounds'**
-  String get navSounds;
+  String get navMeditation;
 
   /// No description provided for @navProfile.
   ///

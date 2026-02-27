@@ -180,8 +180,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                     AppLocalizations.of(context)!.navSessions),
                 _buildNavItem(2, Icons.timeline_rounded,
                     AppLocalizations.of(context)!.navProgress),
-                _buildNavItem(3, Icons.music_note_rounded,
-                    AppLocalizations.of(context)!.navSounds),
+                _buildNavItem(3, Icons.self_improvement,
+                    AppLocalizations.of(context)!.navMeditation),
                 _buildNavItem(
                     4, Icons.person_rounded, AppLocalizations.of(context)!.navProfile),
               ],
