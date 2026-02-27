@@ -9,18 +9,19 @@ class GlobalAudioService extends ChangeNotifier {
 
   final AudioPlayer _audioPlayer = AudioPlayer();
 
-  // for sound effects like button clicks 
+  // 🔥 Voice / Effect player
   static final AudioPlayer _effectPlayer = AudioPlayer();
   static bool isSoundEffectsEnabled = true;
+
   static Future<void> playClickSound() async {
-  try {
+    try {
       if (isSoundEffectsEnabled) {
-        _effectPlayer.resume();    
+        await _effectPlayer.resume();
       }
-  } catch (e) {
-    debugPrint("Error playing click sound: $e");
+    } catch (e) {
+      debugPrint("Error playing click sound: $e");
+    }
   }
-}
 
   bool _isPlaying = false;
   String? _currentSoundTitle;
@@ -31,6 +32,15 @@ class GlobalAudioService extends ChangeNotifier {
   Duration _currentPosition = Duration.zero;
   Duration _totalDuration = Duration.zero;
   bool _isRepeating = false;
+
+  // 🔥 Session Timer
+  Timer? _sessionTimer;
+  Duration _sessionTotal = Duration.zero;
+  Duration _sessionRemaining = Duration.zero;
+
+  // 🔥 NEW: Prevent overlapping breathing cues
+  bool _isCuePlaying = false;
+  double _originalVolume = 0.8;
 
   // Getters
   bool get isPlaying => _isPlaying;
@@ -44,186 +54,235 @@ class GlobalAudioService extends ChangeNotifier {
   bool get isRepeating => _isRepeating;
   bool get hasSound => _currentSoundTitle != null;
   AudioPlayer get audioPlayer => _audioPlayer;
+  Duration get sessionTotal => _sessionTotal;
+  Duration get sessionRemaining => _sessionRemaining;
 
   Future<void> initialize() async {
-    print('🎵 Initializing GlobalAudioService...');
-
-    // Listen to player state changes
     _audioPlayer.onPlayerStateChanged.listen((state) {
-      print('🎵 Player state changed: $state');
       _isPlaying = state == PlayerState.playing;
       notifyListeners();
     });
 
-    // Listen to duration changes
     _audioPlayer.onDurationChanged.listen((duration) {
-      print('🎵 Duration changed: $duration');
       _totalDuration = duration;
       notifyListeners();
     });
 
-    // Listen to position changes
     _audioPlayer.onPositionChanged.listen((position) {
       _currentPosition = position;
       notifyListeners();
     });
 
-    // Listen to completion
     _audioPlayer.onPlayerComplete.listen((event) {
-      print('🎵 Playback completed');
       _isPlaying = false;
       _currentPosition = Duration.zero;
+      notifyListeners();
+    });
 
-      if (_isRepeating && _currentAudioUrl != null) {
-        // Replay the current sound
-        print('🎵 Repeating...');
-        playSound(
-          url: _currentAudioUrl!,
-          title: _currentSoundTitle!,
-          category: _currentSoundCategory!,
-          imageUrl: _currentSoundImageUrl!,
-        );
-      } else {
+    // 🔥 MAIN FIX STARTS HERE
+    await _effectPlayer.setPlayerMode(PlayerMode.lowLatency);
+    await _effectPlayer.setReleaseMode(ReleaseMode.stop);
+
+    await _effectPlayer.setAudioContext(
+      AudioContext(
+        android: AudioContextAndroid(
+          contentType: AndroidContentType.speech,
+          usageType: AndroidUsageType.assistanceSonification,
+          audioFocus: AndroidAudioFocus.none,
+        ),
+        iOS: AudioContextIOS(
+          category: AVAudioSessionCategory.playback,
+          options: {AVAudioSessionOptions.mixWithOthers},
+        ),
+      ),
+    );
+  }
+
+  // 🔥 NEW: Breathing Voice Cue
+  Future<void> playBreathingCue(String phase) async {
+    if (!isSoundEffectsEnabled) return;
+    if (_isCuePlaying) return;
+
+    try {
+      _isCuePlaying = true;
+
+      String file;
+
+      switch (phase) {
+        case "inhale":
+          file = "audio/inhale.mp3";
+          break;
+        case "exhale":
+          file = "audio/exhale.mp3";
+          break;
+        case "hold":
+          file = "audio/hold.mp3";
+          break;
+        default:
+          _isCuePlaying = false;
+          return;
+      }
+
+      // 🔥 Duck background music
+      _originalVolume = _volume;
+      await _audioPlayer.setVolume(_originalVolume * 0.4);
+
+      await _effectPlayer.stop();
+      await _effectPlayer.setSource(AssetSource(file));
+      await _effectPlayer.resume();
+
+      // Wait for cue to finish
+      await Future.delayed(const Duration(seconds: 2));
+
+      // 🔥 Restore volume
+      await _audioPlayer.setVolume(_originalVolume);
+    } catch (e) {
+      debugPrint("Breathing cue error: $e");
+    } finally {
+      _isCuePlaying = false;
+    }
+  }
+
+  // 🔥 Session Timer Logic (unchanged except kept intact)
+  void startSessionTimer(Duration duration) {
+    _sessionTimer?.cancel();
+
+    _sessionTotal = duration;
+    _sessionRemaining = duration;
+
+    _sessionTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_isPlaying && _sessionRemaining.inSeconds > 0) {
+        _sessionRemaining -= const Duration(seconds: 1);
         notifyListeners();
+      } else if (_sessionRemaining.inSeconds <= 0) {
+        timer.cancel();
+        _handleSessionComplete();
       }
     });
 
-    // Setting the player to low latency mode is key for UI sounds
-    await _effectPlayer.setReleaseMode(ReleaseMode.stop); 
-    // Pre-load the click source into memory
-    await _effectPlayer.setSource(AssetSource('audio/click.mp3'));
+    notifyListeners();
+  }
 
-    print('🎵 GlobalAudioService initialized successfully');
+  void _resumeSessionTimer() {
+    if (_sessionRemaining.inSeconds <= 0) return;
+
+    _sessionTimer?.cancel();
+
+    _sessionTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_isPlaying && _sessionRemaining.inSeconds > 0) {
+        _sessionRemaining -= const Duration(seconds: 1);
+        notifyListeners();
+      } else if (_sessionRemaining.inSeconds <= 0) {
+        timer.cancel();
+        _handleSessionComplete();
+      }
+    });
+  }
+
+  Future<void> _handleSessionComplete() async {
+    const steps = 20;
+    const fadeDuration = Duration(milliseconds: 2000);
+    final stepDelay = fadeDuration.inMilliseconds ~/ steps;
+    final volumeStep = _volume / steps;
+
+    for (int i = 0; i < steps; i++) {
+      _volume -= volumeStep;
+      if (_volume < 0) _volume = 0;
+      await _audioPlayer.setVolume(_volume);
+      await Future.delayed(Duration(milliseconds: stepDelay));
+    }
+
+    await stop();
+  }
+
+  void stopSessionTimer() {
+    _sessionTimer?.cancel();
+    _sessionTotal = Duration.zero;
+    _sessionRemaining = Duration.zero;
+    notifyListeners();
   }
 
   Future<void> playSound({
-    required String url,
+    required String assetFile,
     required String title,
     required String category,
     required String imageUrl,
   }) async {
-    try {
-      print('🎵 Playing sound: $title');
-      print('🎵 URL: $url');
+    await _audioPlayer.stop();
 
-      // Stop current playback if any
-      await _audioPlayer.stop();
+    _currentAudioUrl = assetFile;
+    _currentSoundTitle = title;
+    _currentSoundCategory = category;
+    _currentSoundImageUrl = imageUrl;
 
-      // Update state BEFORE playing
-      _currentAudioUrl = url;
-      _currentSoundTitle = title;
-      _currentSoundCategory = category;
-      _currentSoundImageUrl = imageUrl;
+      await _audioPlayer.setSource(
+    AssetSource("audio/$assetFile"),
+  );
+    await _audioPlayer.setVolume(_volume);
+    await _audioPlayer.setReleaseMode(ReleaseMode.loop);
 
-      // Set volume
-      await _audioPlayer.setVolume(_volume);
-
-      // Set release mode for looping if needed
-      await _audioPlayer.setReleaseMode(_isRepeating ? ReleaseMode.loop : ReleaseMode.release);
-
-      // Play using the correct API with timeout
-      await _audioPlayer.play(UrlSource(url)).timeout(
-        const Duration(seconds: 15),
-        onTimeout: () {
-          print('❌ Audio loading timed out after 15 seconds');
-          throw TimeoutException('Audio loading timed out');
-        },
-      );
-
-      _isPlaying = true;
-      notifyListeners();
-
-      print('🎵 Sound playing successfully');
-    } catch (e) {
-      print('❌ Error playing sound: $e');
-      _isPlaying = false;
-      // Clear the failed sound
-      _currentSoundTitle = null;
-      _currentSoundCategory = null;
-      _currentSoundImageUrl = null;
-      _currentAudioUrl = null;
-      notifyListeners();
-      rethrow; // Rethrow so the UI can show the error
-    }
+    await _audioPlayer.resume();
+    _isPlaying = true;
+    notifyListeners();
   }
 
   Future<void> togglePlayPause() async {
-    try {
-      if (_isPlaying) {
-        print('🎵 Pausing audio');
-        await _audioPlayer.pause();
-        _isPlaying = false;
-      } else {
-        print('🎵 Resuming audio');
-        await _audioPlayer.resume();
-        _isPlaying = true;
-      }
-      notifyListeners();
-    } catch (e) {
-      print('❌ Error toggling play/pause: $e');
+    if (_isPlaying) {
+      await _audioPlayer.pause();
+      _isPlaying = false;
+      _sessionTimer?.cancel();
+    } else {
+      await _audioPlayer.resume();
+      _isPlaying = true;
+      _resumeSessionTimer();
     }
+    notifyListeners();
   }
 
   Future<void> stop() async {
-    try {
-      print('🎵 Stopping audio');
-      await _audioPlayer.stop();
-      _isPlaying = false;
-      _currentPosition = Duration.zero;
-      notifyListeners();
-    } catch (e) {
-      print('❌ Error stopping audio: $e');
-    }
+    await _audioPlayer.stop();
+    _isPlaying = false;
+    _currentPosition = Duration.zero;
+    stopSessionTimer();
+    notifyListeners();
   }
 
   Future<void> clearSound() async {
-    try {
-      print('🎵 Clearing sound');
-      await _audioPlayer.stop();
-      _isPlaying = false;
-      _currentSoundTitle = null;
-      _currentSoundCategory = null;
-      _currentSoundImageUrl = null;
-      _currentAudioUrl = null;
-      _currentPosition = Duration.zero;
-      _totalDuration = Duration.zero;
-      notifyListeners();
-    } catch (e) {
-      print('❌ Error clearing sound: $e');
-    }
+    await _audioPlayer.stop();
+    _isPlaying = false;
+    _currentSoundTitle = null;
+    _currentSoundCategory = null;
+    _currentSoundImageUrl = null;
+    _currentAudioUrl = null;
+    _currentPosition = Duration.zero;
+    _totalDuration = Duration.zero;
+    stopSessionTimer();
+    notifyListeners();
   }
 
   Future<void> setVolume(double volume) async {
-    try {
-      _volume = volume.clamp(0.0, 1.0);
-      await _audioPlayer.setVolume(_volume);
-      notifyListeners();
-    } catch (e) {
-      print('❌ Error setting volume: $e');
-    }
+    _volume = volume.clamp(0.0, 1.0);
+    await _audioPlayer.setVolume(_volume);
+    notifyListeners();
   }
 
   Future<void> seek(Duration position) async {
-    try {
-      print('🎵 Seeking to: $position');
-      await _audioPlayer.seek(position);
-      notifyListeners();
-    } catch (e) {
-      print('❌ Error seeking: $e');
-    }
+    await _audioPlayer.seek(position);
+    notifyListeners();
   }
 
   void toggleRepeat() {
     _isRepeating = !_isRepeating;
-    _audioPlayer.setReleaseMode(_isRepeating ? ReleaseMode.loop : ReleaseMode.release);
-    print('🎵 Repeat mode: $_isRepeating');
+    _audioPlayer.setReleaseMode(
+      _isRepeating ? ReleaseMode.loop : ReleaseMode.release,
+    );
     notifyListeners();
   }
 
   @override
   void dispose() {
-    print('🎵 Disposing GlobalAudioService');
     _audioPlayer.dispose();
+    _sessionTimer?.cancel();
     super.dispose();
   }
 

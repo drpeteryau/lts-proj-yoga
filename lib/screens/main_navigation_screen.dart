@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'home_tab_screen.dart';
 import 'progress_screen.dart';
-import 'sounds_screen.dart';
+import 'meditation_screen.dart';
 import 'profile_screen.dart';
 import 'level_selection_screen.dart';
 import '../widgets/mini_playback_bar.dart';
@@ -23,7 +23,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     HomeTabScreen(),
     LevelSelectionScreen(),
     ProgressScreen(),
-    SoundsScreen(),
+    MeditationScreen(),
     ProfileScreen(),
   ];
 
@@ -111,7 +111,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                     _buildTopNavItem(0, 'HOME'),
                     _buildTopNavItem(1, 'SESSIONS'),
                     _buildTopNavItem(2, 'PROGRESS'),
-                    _buildTopNavItem(3, 'SOUNDS'),
+                    _buildTopNavItem(3, 'MEDITATION'),
                     _buildTopNavItem(4, 'PROFILE'),
                   ],
                 ),

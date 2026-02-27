@@ -31,7 +31,7 @@ dependencies:
   flutter:
     sdk: flutter
   
-
+  just_audio: ^0.10.5
   image_picker: ^1.0.7
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -77,6 +77,12 @@ flutter:
   
   assets:
     - assets/audio/click.mp3
+    - assets/audio/inhale.mp3
+    - assets/audio/hold.mp3
+    - assets/audio/exhale.mp3
+    - assets/audio/morning.mp3
+    - assets/audio/deepbreathing.mp3
+    - assets/audio/evening.mp3
 
   # To add assets to your application, add an assets section, like this:
   # assets:

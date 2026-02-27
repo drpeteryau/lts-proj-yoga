@@ -1,37 +1,49 @@
 import 'package:flutter/material.dart';
 import '../services/global_audio_service.dart';
-import '../screens/sound_player_screen.dart';
-import '../screens/sounds_screen.dart';
-import '../utils/sound_localization_helper.dart';
+import '../screens/meditation_session_screen.dart';
+import '../screens/meditation_screen.dart';
 
 class MiniPlaybackBar extends StatelessWidget {
   const MiniPlaybackBar({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: GlobalAudioService(),
-      builder: (context, child) {
-        final audioService = GlobalAudioService();
+    final audioService = GlobalAudioService();
 
-        // Don't show the bar if there's no sound playing
-        if (!audioService.hasSound) {
+    return AnimatedBuilder(
+      animation: audioService,
+      builder: (context, _) {
+        // Hide if nothing loaded
+        if (!audioService.hasSound ||
+            audioService.currentAudioUrl == null) {
           return const SizedBox.shrink();
         }
 
+        // 🔥 USE SESSION TIMER INSTEAD OF AUDIO DURATION
+        final total = audioService.sessionTotal;
+        final remaining = audioService.sessionRemaining;
+
+        final progress = total.inSeconds > 0
+            ? (total.inSeconds - remaining.inSeconds) /
+                total.inSeconds
+            : 0.0;
+
         return GestureDetector(
           onTap: () {
-            // Open the full sound player screen
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => SoundPlayerScreen(
-                  sound: MeditationSound(
-                    titleKey: SoundLocalizationHelper.getTitleKey(context, audioService.currentSoundTitle),
-                    categoryKey: SoundLocalizationHelper.getCategoryKey(context, audioService.currentSoundCategory),
-                    durationMinutes: audioService.totalDuration.inMinutes,
-                    imageUrl: audioService.currentSoundImageUrl ?? '',
-                    audioUrl: audioService.currentAudioUrl ?? '',
+                builder: (_) => MeditationSessionScreen(
+                  session: MeditationSession(
+                    title: audioService.currentSoundTitle ?? '',
+                    description: '',
+                    durationMinutes:
+                        total.inMinutes > 0 ? total.inMinutes : 5,
+                    imageUrl:
+                        audioService.currentSoundImageUrl ?? '',
+                    audioFile:
+                        audioService.currentAudioUrl ?? '',
+                    type: MeditationType.guided,
                   ),
                 ),
               ),
@@ -43,93 +55,89 @@ class MiniPlaybackBar extends StatelessWidget {
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 10,
+                  color: Colors.black.withOpacity(0.08),
+                  blurRadius: 8,
                   offset: const Offset(0, -2),
                 ),
               ],
             ),
             child: Column(
               children: [
-                // Progress bar
+                // 🔥 Progress bar synced to SESSION timer
                 LinearProgressIndicator(
-                  value: audioService.totalDuration.inSeconds > 0
-                      ? audioService.currentPosition.inSeconds /
-                      audioService.totalDuration.inSeconds
-                      : 0.0,
+                  value: progress.clamp(0.0, 1.0),
                   backgroundColor: Colors.grey[200],
                   valueColor: const AlwaysStoppedAnimation<Color>(
                     Color(0xFF40E0D0),
                   ),
-                  minHeight: 2,
+                  minHeight: 3,
                 ),
 
-                // Main content
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 8),
                     child: Row(
                       children: [
-                        // Album art thumbnail
-                        Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Image.network(
-                              audioService.currentSoundImageUrl ?? '',
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Container(
-                                  color: const Color(0xFF40E0D0).withOpacity(0.2),
-                                  child: const Icon(
-                                    Icons.music_note,
-                                    color: Color(0xFF40E0D0),
-                                    size: 24,
-                                  ),
-                                );
-                              },
-                            ),
+                        // Thumbnail
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.network(
+                            audioService.currentSoundImageUrl ?? '',
+                            width: 48,
+                            height: 48,
+                            fit: BoxFit.cover,
+                            errorBuilder:
+                                (context, error, stackTrace) {
+                              return Container(
+                                width: 48,
+                                height: 48,
+                                color: const Color(0xFF40E0D0)
+                                    .withOpacity(0.2),
+                                child: const Icon(
+                                  Icons.self_improvement,
+                                  color: Color(0xFF40E0D0),
+                                ),
+                              );
+                            },
                           ),
                         ),
 
                         const SizedBox(width: 12),
 
-                        // Song info
+                        // Title + Category
                         Expanded(
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment:
+                                CrossAxisAlignment.start,
+                            mainAxisAlignment:
+                                MainAxisAlignment.center,
                             children: [
                               Text(
-                                audioService.currentSoundTitle ?? '',
+                                audioService
+                                        .currentSoundTitle ??
+                                    '',
                                 style: const TextStyle(
                                   fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.black87,
+                                  fontWeight:
+                                      FontWeight.w600,
                                 ),
                                 maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                                overflow:
+                                    TextOverflow.ellipsis,
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                audioService.currentSoundCategory ?? '',
+                                audioService
+                                        .currentSoundCategory ??
+                                    '',
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: Colors.grey[600],
                                 ),
                                 maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                                overflow:
+                                    TextOverflow.ellipsis,
                               ),
                             ],
                           ),
@@ -137,37 +145,23 @@ class MiniPlaybackBar extends StatelessWidget {
 
                         const SizedBox(width: 12),
 
-                        // Play/Pause button
-                        Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF40E0D0),
-                            shape: BoxShape.circle,
+                        // Play / Pause
+                        IconButton(
+                          icon: Icon(
+                            audioService.isPlaying
+                                ? Icons.pause
+                                : Icons.play_arrow,
                           ),
-                          child: IconButton(
-                            icon: Icon(
-                              audioService.isPlaying
-                                  ? Icons.pause
-                                  : Icons.play_arrow,
-                              size: 24,
-                            ),
-                            color: Colors.white,
-                            padding: EdgeInsets.zero,
-                            onPressed: () {
-                              audioService.togglePlayPause();
-                            },
-                          ),
+                          color: const Color(0xFF40E0D0),
+                          onPressed: () {
+                            audioService.togglePlayPause();
+                          },
                         ),
 
-                        const SizedBox(width: 8),
-
-                        // Close button
+                        // Close
                         IconButton(
-                          icon: const Icon(Icons.close, size: 20),
+                          icon: const Icon(Icons.close),
                           color: Colors.grey[600],
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
                           onPressed: () {
                             audioService.clearSound();
                           },

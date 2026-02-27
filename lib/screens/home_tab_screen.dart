@@ -6,7 +6,7 @@ import 'session_detail_screen.dart';
 import '../models/yoga_pose.dart';
 import '../models/yoga_session.dart';
 import 'pose_detail_screen.dart';
-import 'sounds_screen.dart';
+import 'meditation_screen.dart';
 import '../services/global_audio_service.dart';
 import '../l10n/app_localizations.dart';
 import '../utils/yoga_localization_helper.dart';
@@ -402,7 +402,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
           await GlobalAudioService.playClickSound();
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const SoundsScreen()),
+            MaterialPageRoute(builder: (context) => const MeditationScreen()),
           );
         },
         child: Container(

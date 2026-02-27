@@ -9,6 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  just_audio: ^0.10.5
   image_picker: ^1.0.7
   cupertino_icons: ^1.0.2
   audioplayers: ^5.2.1
@@ -24,6 +25,7 @@ dependencies:
   volume_controller: ^3.4.1
   flutter_localizations:
     sdk: flutter
+ 
 
 
 dev_dependencies:
@@ -36,5 +38,7 @@ flutter:
   generate: true
 
   assets:
-    - lib/assets/animation/YogaAnimation.json
+  - assets/audio/inhale.mp3
+  - assets/audio/hold.mp3
+  - assets/audio/exhale.mp3
 
