@@ -1198,6 +1198,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get logout => 'LOG OUT';
 
   @override
+  String get aboutus => 'About us';
+
+  @override
   String get editProfile => 'Edit Profile';
 
   @override

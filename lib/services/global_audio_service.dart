@@ -461,6 +461,10 @@ Future<void> startMeditationWithWelcome({
     _sessionStartCancelled = false;
 
     _isPreparing = true;
+    _currentAudioUrl = assetFile;
+    _currentSoundTitle = title;
+    _currentSoundCategory = category;
+    _currentSoundImageUrl = imageUrl;
     notifyListeners();
 
     await _audioPlayer.stop();

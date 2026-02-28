@@ -4,6 +4,7 @@ import 'edit_profile_screen.dart';
 import 'auth_gate.dart';
 import '../services/global_audio_service.dart';
 import '../l10n/app_localizations.dart';
+import 'about_us_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -500,39 +501,80 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ],
 
-                    // Logout – full width on both platforms
-                    SizedBox(height: isWeb ? 48 : 32),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          await GlobalAudioService.playClickSound();
-                          await supabase.auth.signOut(scope: SignOutScope.global);
-                          if (!mounted) return;
-                          Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(builder: (_) => const AuthGate()),
-                                (route) => false,
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red[400],
-                          padding: EdgeInsets.symmetric(vertical: isWeb ? 18 : 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          elevation: 0,
-                        ),
-                        child: Text(
-                          'Sign Out',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                            fontSize: isWeb ? 18 : 17,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: isWeb ? 60 : 40),
+// About Us Button
+SizedBox(height: isWeb ? 40 : 28),
+SizedBox(
+  width: double.infinity,
+  child: ElevatedButton(
+    onPressed: () async {
+      await GlobalAudioService.playClickSound();
+      if (!mounted) return;
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const AboutUsScreen()),
+      );
+    },
+    style: ElevatedButton.styleFrom(
+      backgroundColor: turquoise, // 👈 solid color
+      foregroundColor: Colors.white,
+      padding: EdgeInsets.symmetric(vertical: isWeb ? 18 : 16),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      elevation: 0,
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Icon(Icons.info_outline),
+        const SizedBox(width: 8),
+        Text(
+          AppLocalizations.of(context)!.aboutus,
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: isWeb ? 18 : 17,
+          ),
+        ),
+      ],
+    ),
+  ),
+),
+
+SizedBox(height: isWeb ? 20 : 16),
+
+// Logout – full width
+SizedBox(
+  width: double.infinity,
+  child: ElevatedButton(
+    onPressed: () async {
+      await GlobalAudioService.playClickSound();
+      await supabase.auth.signOut(scope: SignOutScope.global);
+      if (!mounted) return;
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => const AuthGate()),
+        (route) => false,
+      );
+    },
+    style: ElevatedButton.styleFrom(
+      backgroundColor: Colors.red[400],
+      padding: EdgeInsets.symmetric(vertical: isWeb ? 18 : 16),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      elevation: 0,
+    ),
+    child: Text(
+      'Sign Out',
+      style: TextStyle(
+        color: Colors.white,
+        fontWeight: FontWeight.w600,
+        fontSize: isWeb ? 18 : 17,
+      ),
+    ),
+  ),
+),
+
+SizedBox(height: isWeb ? 60 : 40),
                   ],
                 ),
               ),

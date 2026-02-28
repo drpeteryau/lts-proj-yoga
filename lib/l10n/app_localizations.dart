@@ -2288,6 +2288,12 @@ abstract class AppLocalizations {
   /// **'LOG OUT'**
   String get logout;
 
+  /// No description provided for @aboutus.
+  ///
+  /// In en, this message translates to:
+  /// **'About us'**
+  String get aboutus;
+
   /// No description provided for @editProfile.
   ///
   /// In en, this message translates to:

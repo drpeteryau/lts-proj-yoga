@@ -5,6 +5,7 @@ import 'meditation_screen.dart';
 class MeditationSessionScreen extends StatefulWidget {
   final MeditationSession session;
   static bool isActive = false;
+
   const MeditationSessionScreen({
     super.key,
     required this.session,
@@ -31,14 +32,12 @@ class _MeditationSessionScreenState
   late Animation<double> _completionFade;
 
   bool _completionTriggered = false;
-  bool _isExiting = false; // ✅ prevents preparing from reappearing
-  
+  bool _isExiting = false;
 
   @override
   void initState() {
     super.initState();
     MeditationSessionScreen.isActive = true;
-    
 
     _breathingController = AnimationController(
       vsync: this,
@@ -86,8 +85,6 @@ class _MeditationSessionScreenState
       TweenSequenceItem(tween: Tween(begin: 0.6, end: 0.2), weight: 6),
       TweenSequenceItem(tween: ConstantTween(0.2), weight: 6),
     ]).animate(_breathingController);
-
-
   }
 
   @override
@@ -130,8 +127,6 @@ class _MeditationSessionScreenState
         _audioService.sessionTotal != Duration.zero &&
         _audioService.sessionRemaining == Duration.zero;
 
-
-
     if (isComplete && !_completionTriggered) {
       _completionTriggered = true;
       _completionController.forward();
@@ -142,7 +137,6 @@ class _MeditationSessionScreenState
       body: Stack(
         fit: StackFit.expand,
         children: [
-
 
           AnimatedBuilder(
             animation: _backgroundController,
@@ -186,8 +180,6 @@ class _MeditationSessionScreenState
                 currentPhaseIndex = 3;
               }
 
-   
-
               final breathingText =
                   _breathingPhaseText(currentPhaseIndex);
 
@@ -206,14 +198,28 @@ class _MeditationSessionScreenState
 
                         Align(
                           alignment: Alignment.topLeft,
-                          child: IconButton(
-                            icon: const Icon(Icons.close,
-                                color: Colors.white),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                          ),
-                        ),
+                         child: Padding(
+    padding: const EdgeInsets.only(left: 8),
+    child: GestureDetector(
+      onTap: () {
+        Navigator.pop(context);
+      },
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.6),
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.white70, width: 1.5),
+        ),
+        child: const Icon(
+          Icons.remove,
+          color: Colors.white,
+          size: 28,
+        ),
+      ),
+    ),
+  ),
+),
 
                         const Spacer(),
 
@@ -243,50 +249,63 @@ class _MeditationSessionScreenState
 
                         const SizedBox(height: 30),
 
-                        AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 600),
-                          child: isPreparing
-                              ? AnimatedBuilder(
-                                  key: const ValueKey("preparing"),
-                                  animation: _shimmerController,
-                                  builder: (context, child) {
-                                    return ShaderMask(
-                                      shaderCallback: (bounds) {
-                                        return LinearGradient(
-                                          begin: Alignment(
-                                              -1 + 2 * _shimmerController.value,
-                                              0),
-                                          end: Alignment(
-                                              1 + 2 * _shimmerController.value,
-                                              0),
-                                          colors: const [
-                                            Colors.white24,
-                                            Colors.white70,
-                                            Colors.white24,
-                                          ],
-                                        ).createShader(bounds);
-                                      },
-                                      child: const Text(
-                                        "Preparing your session...",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                )
-                              : Text(
-                                  breathingText,
-                                  key: const ValueKey("breathing"),
-                                  style: const TextStyle(
-                                    color: Colors.white70,
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                        ),
+AnimatedSwitcher(
+  duration: const Duration(milliseconds: 600),
+  child: isPreparing
+      ? Column(
+          key: const ValueKey("preparing"),
+          children: [
+            const Text(
+              "Preparing your session...",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+
+            const SizedBox(height: 30),
+
+            GestureDetector(
+              onTap: () async {
+                _audioService.cancelPendingSessionStart();
+await _audioService.clearSound();
+if (mounted) Navigator.pop(context);
+              },
+              child: Container(
+                width: 240,
+                padding: const EdgeInsets.symmetric(
+                  vertical: 16,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade800,
+                  borderRadius: BorderRadius.circular(40),
+                  border: Border.all(color: Colors.white70),
+                ),
+                child: const Center(
+                  child: Text(
+                    "Cancel Session",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        )
+      : Text(
+          breathingText,
+          key: const ValueKey("breathing"),
+          style: const TextStyle(
+            color: Colors.white70,
+            fontSize: 22,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+),
 
                         const SizedBox(height: 40),
 
@@ -304,25 +323,106 @@ class _MeditationSessionScreenState
                         const SizedBox(height: 40),
 
                         if (!isComplete && !isPreparing)
-                          GestureDetector(
-                            onTap: () {
-                              _audioService.togglePlayPause();
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.all(20),
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
+                          Column(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  _audioService.togglePlayPause();
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(20),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    _audioService.isPlaying
+                                        ? Icons.pause
+                                        : Icons.play_arrow,
+                                    size: 36,
+                                    color: Colors.black,
+                                  ),
+                                ),
                               ),
-                              child: Icon(
-                                _audioService.isPlaying
-                                    ? Icons.pause
-                                    : Icons.play_arrow,
-                                size: 36,
-                                color: Colors.black,
-                              ),
-                            ),
+
+                              // 🔥 ADDED END SESSION BUTTON
+                              const SizedBox(height: 20),
+
+GestureDetector(
+  onTap: () async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: const Text(
+            "End Session?",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: const Text(
+            "Are you sure you want to end your meditation session?",
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, false);
+              },
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, true);
+              },
+              child: const Text(
+                "End",
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirm == true) {
+      await _audioService.clearSound();
+      if (mounted) Navigator.pop(context);
+    }
+  },
+  child: Container(
+    width: 220,
+    padding: const EdgeInsets.symmetric(
+      vertical: 16,
+    ),
+    decoration: BoxDecoration(
+      color: Colors.redAccent,
+      borderRadius: BorderRadius.circular(30),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.redAccent.withOpacity(0.5),
+          blurRadius: 12,
+          spreadRadius: 1,
+        ),
+      ],
+    ),
+    child: const Center(
+      child: Text(
+        "End Session",
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    ),
+  ),
+),
+                          
+                      ],
                           )
+                          
+                          
                         else if (isComplete)
                           FadeTransition(
                             opacity: _completionFade,

@@ -13,10 +13,12 @@ class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
 
   @override
-  State<MainNavigationScreen> createState() => _MainNavigationScreenState();
+  State<MainNavigationScreen> createState() =>
+      _MainNavigationScreenState();
 }
 
-class _MainNavigationScreenState extends State<MainNavigationScreen> {
+class _MainNavigationScreenState
+    extends State<MainNavigationScreen> {
   int _selectedIndex = 0;
 
   final List<Widget> _screens = const [
@@ -43,13 +45,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          // Top navigation bar
           _buildTopNav(),
-          // Main content
-          Expanded(
-            child: _screens[_selectedIndex],
-          ),
-          // Mini playback bar
+          Expanded(child: _screens[_selectedIndex]),
           const MiniPlaybackBar(),
         ],
       ),
@@ -75,14 +72,14 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 1150),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment:
+                  MainAxisAlignment.spaceBetween,
               children: [
-                // Logo / Brand — left side
                 Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.self_improvement,
-                      color: const Color(0xFF40E0D0),
+                      color: Color(0xFF40E0D0),
                       size: 28,
                     ),
                     const SizedBox(width: 10),
@@ -91,7 +88,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                       style: GoogleFonts.poppins(
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
-                        color: const Color(0xFF1F3D3A),
+                        color:
+                            const Color(0xFF1F3D3A),
                       ),
                     ),
                     Text(
@@ -99,14 +97,13 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                       style: GoogleFonts.poppins(
                         fontSize: 20,
                         fontWeight: FontWeight.w400,
-                        color: const Color(0xFF40E0D0),
+                        color:
+                            const Color(0xFF40E0D0),
                       ),
                     ),
                   ],
                 ),
-                // Nav links — right side
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     _buildTopNavItem(0, 'HOME'),
                     _buildTopNavItem(1, 'SESSIONS'),
@@ -129,14 +126,18 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     return GestureDetector(
       onTap: () => setState(() => _selectedIndex = index),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        padding:
+            const EdgeInsets.symmetric(horizontal: 20),
         child: Text(
           label,
           style: GoogleFonts.poppins(
             fontSize: 13,
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-            color:
-            isSelected ? const Color(0xFF000000) : const Color(0xFF6B7280),
+            fontWeight: isSelected
+                ? FontWeight.w600
+                : FontWeight.w400,
+            color: isSelected
+                ? const Color(0xFF000000)
+                : const Color(0xFF6B7280),
           ),
         ),
       ),
@@ -149,11 +150,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          // Main content
-          Expanded(
-            child: _screens[_selectedIndex],
-          ),
-          // Mini playback bar (appears above bottom nav when music is playing)
+          Expanded(child: _screens[_selectedIndex]),
           const MiniPlaybackBar(),
         ],
       ),
@@ -162,7 +159,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           color: const Color(0xFFFFFDFA),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color:
+                  Colors.black.withOpacity(0.1),
               blurRadius: 10,
               offset: const Offset(0, -2),
             ),
@@ -170,20 +168,40 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         ),
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            padding:
+                const EdgeInsets.symmetric(vertical: 6),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildNavItem(
-                    0, Icons.home_filled, AppLocalizations.of(context)!.navHome),
-                _buildNavItem(1, Icons.spa_rounded,
-                    AppLocalizations.of(context)!.navSessions),
-                _buildNavItem(2, Icons.timeline_rounded,
-                    AppLocalizations.of(context)!.navProgress),
-                _buildNavItem(3, Icons.self_improvement,
-                    AppLocalizations.of(context)!.navMeditation),
-                _buildNavItem(
-                    4, Icons.person_rounded, AppLocalizations.of(context)!.navProfile),
+                Expanded(
+                    child: _buildNavItem(
+                        0,
+                        Icons.home_filled,
+                        AppLocalizations.of(context)!
+                            .navHome)),
+                Expanded(
+                    child: _buildNavItem(
+                        1,
+                        Icons.spa_rounded,
+                        AppLocalizations.of(context)!
+                            .navSessions)),
+                Expanded(
+                    child: _buildNavItem(
+                        2,
+                        Icons.timeline_rounded,
+                        AppLocalizations.of(context)!
+                            .navProgress)),
+                Expanded(
+                    child: _buildNavItem(
+                        3,
+                        Icons.self_improvement,
+                        AppLocalizations.of(context)!
+                            .navMeditation)),
+                Expanded(
+                    child: _buildNavItem(
+                        4,
+                        Icons.person_rounded,
+                        AppLocalizations.of(context)!
+                            .navProfile)),
               ],
             ),
           ),
@@ -192,7 +210,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     );
   }
 
-  Widget _buildNavItem(int index, IconData icon, String label) {
+  Widget _buildNavItem(
+      int index, IconData icon, String label) {
     final isSelected = _selectedIndex == index;
 
     return GestureDetector(
@@ -201,37 +220,51 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         setState(() => _selectedIndex = index);
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding:
+            const EdgeInsets.symmetric(vertical: 6),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          // Glow effect when selected
+          borderRadius:
+              BorderRadius.circular(16),
           boxShadow: isSelected
               ? [
-            BoxShadow(
-              color: const Color(0xFFFFFFFF).withOpacity(0.2),
-              blurRadius: 30,
-              spreadRadius: 1,
-              offset: const Offset(0, 5),
-            ),
-          ]
+                  BoxShadow(
+                    color: Colors.white
+                        .withOpacity(0.2),
+                    blurRadius: 30,
+                    spreadRadius: 1,
+                    offset:
+                        const Offset(0, 5),
+                  ),
+                ]
               : null,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const SizedBox(height: 4),
             Icon(
               icon,
-              color: isSelected ? const Color(0xFF000000) : Colors.grey[500],
-              size: 32,
+              size: 24,
+              color: isSelected
+                  ? const Color(0xFF000000)
+                  : Colors.grey[500],
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 2),
             Text(
               label,
+              maxLines: 1,
+              overflow:
+                  TextOverflow.ellipsis,
+              textAlign:
+                  TextAlign.center,
               style: GoogleFonts.poppins(
-                fontSize: 12,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                color: isSelected ? const Color(0xFF000000) : Colors.grey[800],
+                fontSize: 10,
+                fontWeight: isSelected
+                    ? FontWeight.bold
+                    : FontWeight.w500,
+                color: isSelected
+                    ? const Color(
+                        0xFF000000)
+                    : Colors.grey[800],
               ),
             ),
           ],

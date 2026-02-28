@@ -1149,6 +1149,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get logout => '退出登录';
 
   @override
+  String get aboutus => '关于我们';
+
+  @override
   String get editProfile => '编辑个人资料';
 
   @override

@@ -47,7 +47,7 @@ class _MeditationScreenState extends State<MeditationScreen> {
     MeditationSession(
       title: "Deep Breathing",
       description: "Reduce stress with focused breath",
-      durationMinutes: 5,
+      durationMinutes: 1,
       imageUrl:
           "https://images.unsplash.com/photo-1511497584788-876760111969?w=800",
       audioFile:
