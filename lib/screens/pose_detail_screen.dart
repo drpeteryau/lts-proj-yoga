@@ -61,8 +61,8 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
       return;
     }
 
-    // Wait for widget to build first
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    // Show PIN dialog immediately (no delay)
+    Future.microtask(() {
       if (mounted) {
         _showPinDialog();
       }
@@ -251,8 +251,8 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
   }
 
   Widget _buildVideoSection() {
-    // Show loading until PIN verified and video initialized
-    if (!SimplePinService.isPinVerifiedThisSession() || !_isVideoInitialized) {
+    // Show PIN waiting message only if PIN not verified yet
+    if (!SimplePinService.isPinVerifiedThisSession()) {
       return Container(
         color: Colors.black,
         child: Center(
@@ -278,6 +278,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
       );
     }
 
+    // PIN verified - show video player or loading spinner
     return GestureDetector(
       onTap: _showControlsTemporarily,
       child: Container(
@@ -673,8 +674,8 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
                     label: Text(
                       'Previous',
                       style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
                           color: Colors.grey
                       ),
                     ),

@@ -7,6 +7,8 @@ import 'dart:async';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/pose_progress_service.dart';
 import '../services/global_audio_service.dart';
+import '../services/simple_pin_service.dart';
+import '../widgets/simple_pin_dialog.dart';
 import '../l10n/app_localizations.dart';
 import '../utils/yoga_localization_helper.dart';
 
@@ -50,7 +52,34 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
   @override
   void initState() {
     super.initState();
-    _initializeSession();  // Call async method
+    _checkPinAndInitialize();
+  }
+
+  Future<void> _checkPinAndInitialize() async {
+    if (SimplePinService.isPinVerifiedThisSession()) {
+      await _initializeSession();
+      return;
+    }
+
+    // Show PIN dialog immediately (no delay)
+    Future.microtask(() {
+      if (mounted) {
+        _showPinDialog();
+      }
+    });
+  }
+
+  void _showPinDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => SimplePinDialog(
+        onSuccess: () async {
+          // PIN verified - initialize session
+          await _initializeSession();
+        },
+      ),
+    );
   }
 
   Future<void> _initializeSession() async {
@@ -683,6 +712,34 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
   }
 
   Widget _buildVideoSection() {
+    // Show PIN waiting message only if PIN not verified yet
+    if (!SimplePinService.isPinVerifiedThisSession()) {
+      return Container(
+        color: Colors.black,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.lock_outline,
+                size: 64,
+                color: Color(0xFF40E0D0),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Waiting for PIN...',
+                style: GoogleFonts.poppins(
+                  color: Colors.white70,
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // PIN verified - show video player or loading spinner
     return GestureDetector(
       onTap: _showControlsTemporarily,
       child: Container(
@@ -980,9 +1037,9 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
               label: Text(
                 'Previous',
                 style: GoogleFonts.poppins(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.grey
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey
                 ),
               ),
               style: OutlinedButton.styleFrom(
