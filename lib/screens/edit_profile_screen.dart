@@ -256,357 +256,423 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     const turquoise = Color(0xFF40E0D0);
 
     if (_isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return Scaffold(
+        body: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xFFD4F1F0),
+                Color(0xFFFFFFFF),
+                Color(0xFFE8F9F3),
+                Color(0xFFFFE9DB),
+              ],
+              stops: [0.0, 0.3, 0.6, 1.0],
+            ),
+          ),
+          child: const Center(
+            child: CircularProgressIndicator(color: turquoise),
+          ),
+        ),
+      );
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFFEAF6F4),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Color(0xFF1F3D3A)),
-        title: Text(
-          AppLocalizations.of(context)!.editProfile,
-          style: TextStyle(color: Color(0xFF1F3D3A)),
-        ),
-        actions: [
-          TextButton(
-            onPressed: _isSaving ? null : () async {
-              GlobalAudioService.playClickSound();
-              _saveProfile();
-            },
-            child: Text(
-              AppLocalizations.of(context)!.save,
-              style: TextStyle(
-                color: Color(0xFF40E0D0),
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFFD4F1F0),
+              Color(0xFFFFFFFF),
+              Color(0xFFE8F9F3),
+              Color(0xFFFFE9DB),
+            ],
+            stops: [0.0, 0.3, 0.6, 1.0],
           ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(isWeb ? 28 : 16),
-        child: Column(
-          children: [
+        ),
+        child: SafeArea(
+          child: Column(
+              children: [
+          // Custom header
+          Padding(
+          padding: EdgeInsets.all(isWeb ? 24 : 20),
+          child: Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.arrow_back, size: 28),
+                onPressed: () => Navigator.pop(context),
+                color: Colors.black87,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'Edit Profile',
+                  style: TextStyle(
+                    fontSize: isWeb ? 32 : 26,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: _isSaving ? null : () async {
+                  GlobalAudioService.playClickSound();
+                  _saveProfile();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: turquoise,
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isWeb ? 28 : 24,
+                    vertical: isWeb ? 14 : 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  elevation: 0,
+                ),
+                child: Text(
+                  'Save',
+                  style: TextStyle(
+                    fontSize: isWeb ? 16 : 15,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        Expanded(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: isWeb ? 28 : 20),
+            child: Column(
+              children: [
             // ===================== PROFILE IMAGE =====================
             Center(
-              child: Stack(
-                children: [
-                  CircleAvatar(
-                    radius: 60,
-                    backgroundColor: turquoise.withOpacity(0.2),
-                    backgroundImage: _profileImageUrl != null
-                        ? NetworkImage(_profileImageUrl!)
-                        : null,
-                    child: _profileImageUrl == null
-                        ? const Icon(Icons.person, size: 60, color: turquoise)
-                        : null,
+            child: Stack(
+            children: [
+              CircleAvatar(
+              radius: 60,
+              backgroundColor: turquoise.withOpacity(0.2),
+              backgroundImage: _profileImageUrl != null
+                  ? NetworkImage(_profileImageUrl!)
+                  : null,
+              child: _profileImageUrl == null
+                  ? const Icon(Icons.person, size: 60, color: turquoise)
+                  : null,
+            ),
+            Positioned(
+              bottom: 0,
+              right: 0,
+              child: PopupMenuButton<String>(
+                icon: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: const BoxDecoration(
+                    color: turquoise,
+                    shape: BoxShape.circle,
                   ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: PopupMenuButton<String>(
-                      icon: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: const BoxDecoration(
-                          color: turquoise,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(Icons.camera_alt,
-                            color: Colors.white, size: 20),
-                      ),
-                      onSelected: (value) {
-                        if (value == 'upload') {
-                          _pickAndUploadImage();
-                        } else if (value == 'remove') {
-                          _removeProfileImage();
-                        }
-                      },
-                      itemBuilder: (context) => [
-                        PopupMenuItem(
-                          value: 'upload',
-                          child: Row(
-                            children: [
-                              Icon(Icons.upload, color: Color(0xFF2E6F68)),
-                              SizedBox(width: 8),
-                              Text(AppLocalizations.of(context)!.uploadPhoto),
-                            ],
-                          ),
-                        ),
-                        if (_profileImageUrl != null)
-                          PopupMenuItem(
-                            value: 'remove',
-                            child: Row(
-                              children: [
-                                Icon(Icons.delete, color: Colors.red),
-                                SizedBox(width: 8),
-                                Text(AppLocalizations.of(context)!.removePhoto),
-                              ],
-                            ),
-                          ),
+                  child: const Icon(Icons.camera_alt,
+                      color: Colors.white, size: 20),
+                ),
+                onSelected: (value) {
+                  if (value == 'upload') {
+                    _pickAndUploadImage();
+                  } else if (value == 'remove') {
+                    _removeProfileImage();
+                  }
+                },
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    value: 'upload',
+                    child: Row(
+                      children: [
+                        Icon(Icons.upload, color: Color(0xFF2E6F68)),
+                        SizedBox(width: 8),
+                        Text(AppLocalizations.of(context)!.uploadPhoto),
                       ],
+                    ),
+                  ),
+                  if (_profileImageUrl != null)
+                    PopupMenuItem(
+                      value: 'remove',
+                      child: Row(
+                        children: [
+                          Icon(Icons.delete, color: Colors.red),
+                          SizedBox(width: 8),
+                          Text(AppLocalizations.of(context)!.removePhoto),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 24),
+
+        // ===================== BASIC INFO =====================
+        _card(
+          title: AppLocalizations.of(context)!.basicInfo,
+          children: [
+            _textField(AppLocalizations.of(context)!.fullName, _nameController),
+            _textField(AppLocalizations.of(context)!.age, _ageController,
+                keyboardType: TextInputType.number),
+            // _dropdown(AppLocalizations.of(context)!.experienceLevel, _experienceLevel,
+            //     ['Beginner', 'Intermediate', 'Advanced'],
+            //         (v) => setState(() => _experienceLevel = v)),
+            _dropdown(
+                AppLocalizations.of(context)!.sessionLength,
+                _sessionLength,
+                [
+                  '5 minutes',
+                  '10 minutes',
+                  '15 minutes',
+                  '20 minutes',
+                  '30 minutes'
+                ],
+                    (v) => setState(() => _sessionLength = v),
+                itemLabelBuilder: (value) {
+                  if (value == '5 minutes') return AppLocalizations.of(context)!.min5;
+                  if (value == '10 minutes') return AppLocalizations.of(context)!.min10;
+                  if (value == '15 minutes') return AppLocalizations.of(context)!.min15;
+                  if (value == '20 minutes') return AppLocalizations.of(context)!.min20;
+                  if (value == '30 minutes') return AppLocalizations.of(context)!.min30;
+                  return value;
+                }),
+            _dropdown(
+              AppLocalizations.of(context)!.language,
+              _language,
+              [
+                'English',
+                'Mandarin',
+              ],
+                  (v) {
+                setState(() => _language = v);
+                appLocale.value = v == 'Mandarin' ? const Locale('zh') : const Locale('en');
+              },
+              itemLabelBuilder: (value) {
+                if (value == 'English') return AppLocalizations.of(context)!.english;
+                if (value == 'Mandarin') return AppLocalizations.of(context)!.mandarin;
+                return value;
+              },
+            ),
+          ],
+        ),
+
+        _card(
+          title: AppLocalizations.of(context)!.notifications,
+          children: [
+            SwitchListTile(
+                title: Text(AppLocalizations.of(context)!.pushNotifications),
+                value: _pushNotifications,
+                activeThumbColor: turquoise,
+                onChanged: (v) {
+                  GlobalAudioService.playClickSound();
+                  setState(() => _pushNotifications = v);
+                  // Trigger the local notification if turned on
+                  if (v == true) {
+                    NotificationService().showNotification(
+                      title: 'HealYoga',
+                      body: AppLocalizations.of(context)!.pushEnabledMsg,
+                    );
+                  }
+                }),
+            SwitchListTile(
+                title: Text(AppLocalizations.of(context)!.dailyReminder),
+                value: _dailyPracticeReminder,
+                activeThumbColor: turquoise,
+                onChanged: (v) {
+                  GlobalAudioService.playClickSound();
+                  setState(() => _dailyPracticeReminder = v);
+                  // Trigger the local notification if turned on
+                  if (v == true) {
+                    NotificationService().showNotification(
+                      title: AppLocalizations.of(context)!.dailyReminderEnabled,
+                      body: '${AppLocalizations.of(context)!.dailyEnabledMsg} $_reminderTime',
+                    );
+                  }
+                }),
+            ListTile(
+              title: Text(AppLocalizations.of(context)!.reminderTime),
+              trailing: Text(
+                _reminderTime,
+                style: const TextStyle(color: Color(0xFF6B8F8A)),
+              ),
+              onTap: () async {
+                GlobalAudioService.playClickSound();
+                final time = await showTimePicker(
+                  context: context,
+                  initialTime: TimeOfDay.now(),
+                );
+                if (time != null) {
+                  setState(() {
+                    _reminderTime = time.format(context);
+                  });
+
+                  if (_dailyPracticeReminder == true) {
+                    NotificationService().scheduleDailyNotification(
+                      id: 101, // Unique ID for this daily reminder
+                      title: AppLocalizations.of(context)!.dailyReminderNotification,
+                      body: AppLocalizations.of(context)!.dailyReminderBody,
+                      hour: time.hour,
+                      minute: time.minute,
+                    );
+
+                    // NotificationService().showNotification(
+                    //   title: 'Reminder Time Set!',
+                    //   body:
+                    //   'We will remind you every day at $_reminderTime 🕓',
+                    // );
+                  } else {
+                    NotificationService().cancelNotification(101);
+                  }
+                }
+              },
+            ),
+          ],
+        ),
+
+        _card(
+          title: AppLocalizations.of(context)!.sound,
+          children: [
+            SwitchListTile(
+                title: Text(AppLocalizations.of(context)!.soundEffects),
+                value: _soundEffectsEnabled,
+                activeThumbColor: turquoise,
+                onChanged: (v) {
+                  setState(() => _soundEffectsEnabled = v);
+                  GlobalAudioService.isSoundEffectsEnabled = v;
+                  if (v) {
+                    GlobalAudioService.playClickSound();
+                  }
+                }
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        _isWebPlatform ? AppLocalizations.of(context)!.appVolume : AppLocalizations.of(context)!.systemVolume,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF2E6F68),
+                        ),
+                      ),
+                      Text(
+                        '${(_volumeLevel * 100).round()}%',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Color(0xFF6B8F8A),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      // --- Mute Button ---
+                      IconButton(
+                        icon: Icon(
+                          _volumeLevel == 0
+                              ? Icons.volume_off
+                              : Icons.volume_mute,
+                          color: const Color(0xFF6B8F8A),
+                        ),
+                        onPressed: () async {
+                          setState(() {
+                            if (_volumeLevel > 0) {
+                              _previousVolume = _volumeLevel;
+                              _volumeLevel = 0;
+                            } else {
+                              _volumeLevel = _previousVolume;
+                            }
+                          });
+                          if (!_isWebPlatform) {
+                            await VolumeController.instance.setVolume(_volumeLevel);
+                          }
+                          await GlobalAudioService().setVolume(_volumeLevel);
+                        },
+                      ),
+
+                      // --- The Slider ---
+                      Expanded(
+                        child: Slider(
+                          value: _volumeLevel,
+                          min: 0,
+                          max: 1,
+                          divisions: 10,
+                          label: '${(_volumeLevel * 100).round()}%',
+                          activeColor: turquoise,
+                          onChanged: (v) async {
+                            setState(() => _volumeLevel = v);
+                            if (!_isWebPlatform) {
+                              await VolumeController.instance.setVolume(v);
+                            }
+                            await GlobalAudioService().setVolume(v);
+                          },
+                        ),
+                      ),
+
+                      // --- Max Button ---
+                      IconButton(
+                        icon: const Icon(Icons.volume_up,
+                            color: Color(0xFF6B8F8A)),
+                        onPressed: () async {
+                          setState(() {
+                            _volumeLevel = 1.0;
+                          });
+                          if (!_isWebPlatform) {
+                            await VolumeController.instance.setVolume(1.0);
+                          }
+                          await GlobalAudioService().setVolume(1.0);
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    _isWebPlatform
+                        ? AppLocalizations.of(context)!.appVolumeDesc
+                        : AppLocalizations.of(context)!.systemVolumeDesc,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Color(0xFF9CA3AF),
+                      fontStyle: FontStyle.italic,
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 24),
-
-            // ===================== BASIC INFO =====================
-            _card(
-              title: AppLocalizations.of(context)!.basicInfo,
-              children: [
-                _textField(AppLocalizations.of(context)!.fullName, _nameController),
-                _textField(AppLocalizations.of(context)!.age, _ageController,
-                    keyboardType: TextInputType.number),
-                // _dropdown(AppLocalizations.of(context)!.experienceLevel, _experienceLevel,
-                //     ['Beginner', 'Intermediate', 'Advanced'],
-                //         (v) => setState(() => _experienceLevel = v)),
-                _dropdown(
-                    AppLocalizations.of(context)!.sessionLength,
-                    _sessionLength,
-                    [
-                      '5 minutes',
-                      '10 minutes',
-                      '15 minutes',
-                      '20 minutes',
-                      '30 minutes'
-                    ],
-                    (v) => setState(() => _sessionLength = v),
-                    itemLabelBuilder: (value) {
-                      if (value == '5 minutes') return AppLocalizations.of(context)!.min5;
-                      if (value == '10 minutes') return AppLocalizations.of(context)!.min10;                      
-                      if (value == '15 minutes') return AppLocalizations.of(context)!.min15;
-                      if (value == '20 minutes') return AppLocalizations.of(context)!.min20;
-                      if (value == '30 minutes') return AppLocalizations.of(context)!.min30;
-                        return value;
-                    }), 
-                _dropdown(
-                    AppLocalizations.of(context)!.language,
-                    _language,
-                    [
-                      'English',
-                      'Mandarin',
-                    ],
-                    (v) {
-                      setState(() => _language = v);
-                      appLocale.value = v == 'Mandarin' ? const Locale('zh') : const Locale('en');
-                    },
-                    itemLabelBuilder: (value) {
-                      if (value == 'English') return AppLocalizations.of(context)!.english;
-                      if (value == 'Mandarin') return AppLocalizations.of(context)!.mandarin;
-                        return value;
-                    },                
-                  ),
-              ],
-            ),
-
-            _card(
-              title: AppLocalizations.of(context)!.notifications,
-              children: [
-                SwitchListTile(
-                    title: Text(AppLocalizations.of(context)!.pushNotifications),
-                    value: _pushNotifications,
-                    activeThumbColor: turquoise,
-                    onChanged: (v) {
-                      GlobalAudioService.playClickSound();
-                      setState(() => _pushNotifications = v);
-                      // Trigger the local notification if turned on
-                      if (v == true) {
-                        NotificationService().showNotification(
-                          title: 'HealYoga',
-                          body: AppLocalizations.of(context)!.pushEnabledMsg,
-                        );
-                      }
-                    }),
-                SwitchListTile(
-                    title: Text(AppLocalizations.of(context)!.dailyReminder),
-                    value: _dailyPracticeReminder,
-                    activeThumbColor: turquoise,
-                    onChanged: (v) {
-                      GlobalAudioService.playClickSound();
-                      setState(() => _dailyPracticeReminder = v);
-                      // Trigger the local notification if turned on
-                      if (v == true) {
-                        NotificationService().showNotification(
-                          title: AppLocalizations.of(context)!.dailyReminderEnabled,
-                          body: '${AppLocalizations.of(context)!.dailyEnabledMsg} $_reminderTime',
-                        );
-                      }
-                    }),
-                ListTile(
-                  title: Text(AppLocalizations.of(context)!.reminderTime),
-                  trailing: Text(
-                    _reminderTime,
-                    style: const TextStyle(color: Color(0xFF6B8F8A)),
-                  ),
-                  onTap: () async {
-                    GlobalAudioService.playClickSound();
-                    final time = await showTimePicker(
-                      context: context,
-                      initialTime: TimeOfDay.now(),
-                    );
-                    if (time != null) {
-                      setState(() {
-                        _reminderTime = time.format(context);
-                      });
-
-                      if (_dailyPracticeReminder == true) {
-                        NotificationService().scheduleDailyNotification(
-                          id: 101, // Unique ID for this daily reminder
-                          title: AppLocalizations.of(context)!.dailyReminderNotification,
-                          body: AppLocalizations.of(context)!.dailyReminderBody,
-                          hour: time.hour,
-                          minute: time.minute,
-                        );
-
-                        // NotificationService().showNotification(
-                        //   title: 'Reminder Time Set!',
-                        //   body:
-                        //   'We will remind you every day at $_reminderTime 🕓',
-                        // );
-                      } else {
-                        NotificationService().cancelNotification(101);
-                      }
-                    }
-                  },
-                ),
-              ],
-            ),
-
-            _card(
-              title: AppLocalizations.of(context)!.sound,
-              children: [
-                SwitchListTile(
-                  title: Text(AppLocalizations.of(context)!.soundEffects),
-                  value: _soundEffectsEnabled,
-                  activeThumbColor: turquoise,
-                  onChanged: (v) {
-                    setState(() => _soundEffectsEnabled = v);
-                    GlobalAudioService.isSoundEffectsEnabled = v;
-                    if (v) {
-                      GlobalAudioService.playClickSound();
-                    }
-                  }
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            _isWebPlatform ? AppLocalizations.of(context)!.appVolume : AppLocalizations.of(context)!.systemVolume,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xFF2E6F68),
-                            ),
-                          ),
-                          Text(
-                            '${(_volumeLevel * 100).round()}%',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Color(0xFF6B8F8A),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          // --- Mute Button ---
-                          IconButton(
-                            icon: Icon(
-                              _volumeLevel == 0
-                                  ? Icons.volume_off
-                                  : Icons.volume_mute,
-                              color: const Color(0xFF6B8F8A),
-                            ),
-                            onPressed: () async {
-                              setState(() {
-                                if (_volumeLevel > 0) {
-                                  _previousVolume = _volumeLevel;
-                                  _volumeLevel = 0;
-                                } else {
-                                  _volumeLevel = _previousVolume;
-                                }
-                              });
-                              if (!_isWebPlatform) {
-                                await VolumeController.instance.setVolume(_volumeLevel);
-                              }
-                              await GlobalAudioService().setVolume(_volumeLevel);
-                            },
-                          ),
-
-                          // --- The Slider ---
-                          Expanded(
-                            child: Slider(
-                              value: _volumeLevel,
-                              min: 0,
-                              max: 1,
-                              divisions: 10,
-                              label: '${(_volumeLevel * 100).round()}%',
-                              activeColor: turquoise,
-                              onChanged: (v) async {
-                                setState(() => _volumeLevel = v);
-                                if (!_isWebPlatform) {
-                                  await VolumeController.instance.setVolume(v);
-                                }
-                                await GlobalAudioService().setVolume(v);
-                              },
-                            ),
-                          ),
-
-                          // --- Max Button ---
-                          IconButton(
-                            icon: const Icon(Icons.volume_up,
-                                color: Color(0xFF6B8F8A)),
-                            onPressed: () async {
-                              setState(() {
-                                _volumeLevel = 1.0;
-                              });
-                              if (!_isWebPlatform) {
-                                await VolumeController.instance.setVolume(1.0);
-                              }
-                              await GlobalAudioService().setVolume(1.0);
-                            },
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        _isWebPlatform
-                            ? AppLocalizations.of(context)!.appVolumeDesc
-                            : AppLocalizations.of(context)!.systemVolumeDesc,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Color(0xFF9CA3AF),
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
           ],
         ),
-      ),
+      ]),
+    ),
+    ),
+    ],
+    ),
+    ),
+    ),
     );
   }
 
   // ===================== HELPERS =====================
   Widget _card({String? title, required List<Widget> children}) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: EdgeInsets.all(isWeb ? 28 : 16),
+      margin: EdgeInsets.only(bottom: isWeb ? 20 : 16),
+      padding: EdgeInsets.all(isWeb ? 28 : 24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -620,11 +686,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         children: [
           if (title != null)
             Padding(
-              padding: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.only(bottom: 16),
               child: Text(
                 title,
-                style: const TextStyle(
-                  fontSize: 16,
+                style: TextStyle(
+                  fontSize: isWeb ? 22 : 20,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF2E6F68),
                 ),
@@ -642,16 +708,33 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         TextInputType keyboardType = TextInputType.text,
       }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: EdgeInsets.only(bottom: isWeb ? 18 : 16),
       child: TextField(
         controller: controller,
         keyboardType: keyboardType,
+        style: TextStyle(
+          fontSize: isWeb ? 17 : 16,
+        ),
         decoration: InputDecoration(
           labelText: label,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          labelStyle: TextStyle(
+            fontSize: isWeb ? 16 : 15,
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide(color: Colors.grey[300]!),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: const BorderSide(color: Color(0xFF40E0D0), width: 2),
+          ),
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: isWeb ? 20 : 16,
+            vertical: isWeb ? 18 : 16,
+          ),
         ),
         onTap: () {
-          GlobalAudioService.playClickSound();          
+          GlobalAudioService.playClickSound();
         },
       ),
     );
@@ -662,28 +745,46 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       String value,
       List<String> items,
       ValueChanged<String> onChanged, {
-      String Function(String)? itemLabelBuilder,
+        String Function(String)? itemLabelBuilder,
       }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: EdgeInsets.only(bottom: isWeb ? 18 : 16),
       child: DropdownButtonFormField<String>(
-        initialValue: value,
-        decoration: InputDecoration(
-          labelText: label,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        ),
-        items: items.map((e) {
-        return DropdownMenuItem(
-          value: e,
-          child: Text(itemLabelBuilder != null ? itemLabelBuilder(e) : e),
-        );
-      }).toList(),
-        onChanged: (v) {
-          if (v != null) {
-            GlobalAudioService.playClickSound();
-            onChanged(v);
+          initialValue: value,
+          style: TextStyle(
+            fontSize: isWeb ? 17 : 16,
+            color: Colors.black87,
+          ),
+          decoration: InputDecoration(
+            labelText: label,
+            labelStyle: TextStyle(
+              fontSize: isWeb ? 16 : 15,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide(color: Colors.grey[300]!),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: const BorderSide(color: Color(0xFF40E0D0), width: 2),
+            ),
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: isWeb ? 20 : 16,
+              vertical: isWeb ? 18 : 16,
+            ),
+          ),
+          items: items.map((e) {
+            return DropdownMenuItem(
+              value: e,
+              child: Text(itemLabelBuilder != null ? itemLabelBuilder(e) : e),
+            );
+          }).toList(),
+          onChanged: (v) {
+            if (v != null) {
+              GlobalAudioService.playClickSound();
+              onChanged(v);
+            }
           }
-        }
       ),
     );
   }

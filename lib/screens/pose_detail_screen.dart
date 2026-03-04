@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:video_player/video_player.dart';
-
 import '../l10n/app_localizations.dart';
 import '../models/yoga_pose.dart';
 import '../services/global_audio_service.dart';
+import '../widgets/simple_pin_dialog.dart';
+import '../services/simple_pin_service.dart';
 import '../utils/yoga_localization_helper.dart';
 
 /// Pose Detail Screen - Information/Learning page
@@ -51,7 +52,34 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
     super.initState();
     _currentPoseIndex = widget.currentIndex.clamp(0, widget.allPoses.length - 1);
     _poseStartTime = DateTime.now();
-    _initializeVideo();
+    _checkPinAndInitialize();
+  }
+
+  Future<void> _checkPinAndInitialize() async {
+    if (SimplePinService.isPinVerifiedThisSession()) {
+      await _initializeVideo();
+      return;
+    }
+
+    // Wait for widget to build first
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _showPinDialog();
+      }
+    });
+  }
+
+  void _showPinDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => SimplePinDialog(
+        onSuccess: () async {
+          // PIN verified - initialize video
+          await _initializeVideo();
+        },
+      ),
+    );
   }
 
   Future<void> _initializeVideo() async {
@@ -223,6 +251,33 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
   }
 
   Widget _buildVideoSection() {
+    // Show loading until PIN verified and video initialized
+    if (!SimplePinService.isPinVerifiedThisSession() || !_isVideoInitialized) {
+      return Container(
+        color: Colors.black,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.lock_outline,
+                size: 64,
+                color: Color(0xFF40E0D0),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Waiting for PIN...',
+                style: GoogleFonts.poppins(
+                  color: Colors.white70,
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return GestureDetector(
       onTap: _showControlsTemporarily,
       child: Container(
@@ -618,7 +673,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
                     label: Text(
                       'Previous',
                       style: GoogleFonts.poppins(
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.w600,
                           color: Colors.grey
                       ),
@@ -651,7 +706,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
                     label: Text(
                       'Next',
                       style: GoogleFonts.poppins(
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
                     ),

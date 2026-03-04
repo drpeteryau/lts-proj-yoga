@@ -50,38 +50,83 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
   @override
   void initState() {
     super.initState();
+    _initializeSession();  // Call async method
+  }
+
+  Future<void> _initializeSession() async {
     _remainingSeconds = currentPose.durationSeconds;
-    _loadCompletedPoses();
-    _initializeVideo();
+    await _loadCompletedPoses();
+    _findFirstIncompletePose();
+    await _initializeVideo();
     _startTimer();
   }
 
   Future<void> _loadCompletedPoses() async {
     final userId = Supabase.instance.client.auth.currentUser?.id;
-    if (userId == null) return;
+    if (userId == null) {
+      print('❌ No user ID - cannot load progress');
+      return;
+    }
 
     try {
       final supabase = Supabase.instance.client;
 
-      // Load all completed poses for this session level
+      print('🔍 Loading completed poses for ${widget.session.levelKey}...');
+
+      // Query pose_activity table for unique completed poses
       final response = await supabase
-          .from('user_progress')
+          .from('pose_activity')
           .select('pose_id')
           .eq('user_id', userId)
-          .eq('session_level', widget.session.levelKey)
-          .eq('is_completed', true);
+          .eq('session_level', widget.session.levelKey);
+
+      // Get unique pose IDs
+      final uniquePoseIds = <String>{};
+      for (final row in response) {
+        uniquePoseIds.add(row['pose_id'].toString());
+      }
 
       if (mounted) {
         setState(() {
           _completedPoseIds.clear();
-          for (final row in response) {
-            _completedPoseIds.add(row['pose_id'].toString());
+          _completedPoseIds.addAll(uniquePoseIds);
+          for (final poseId in uniquePoseIds) {
+            print('  ✓ Pose completed: $poseId');
           }
         });
+        print('✅ Loaded ${_completedPoseIds.length} completed poses');
       }
     } catch (e) {
-      print('Error loading completed poses: $e');
+      print('❌ Error loading completed poses: $e');
     }
+  }
+
+  void _findFirstIncompletePose() {
+    print('🔍 Finding first incomplete pose...');
+    print('🔍 Completed poses: ${_completedPoseIds.length}');
+
+    // Find the first pose that's not completed
+    for (int i = 0; i < widget.session.allPoses.length; i++) {
+      final pose = widget.session.allPoses[i];
+
+      if (!_completedPoseIds.contains(pose.id)) {
+        // Found first incomplete pose!
+        setState(() {
+          _currentPoseIndex = i;
+          _remainingSeconds = pose.durationSeconds;
+        });
+
+        print('✅ Resuming at pose ${i + 1}/${widget.session.allPoses.length}: ${pose.nameKey}');
+        return;
+      }
+    }
+
+    // All poses completed - start from beginning
+    print('🎉 All poses completed! Starting from beginning.');
+    setState(() {
+      _currentPoseIndex = 0;
+      _remainingSeconds = widget.session.allPoses[0].durationSeconds;
+    });
   }
 
   Future<void> _initializeVideo() async {
@@ -407,8 +452,34 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
 
   Future<void> _saveSessionProgress() async {
     // This is called at the end of session
-    // Individual poses are already saved, so just log completion
-    print('✅ Session complete! ${_completedPoseIds.length} poses completed');
+    final userId = Supabase.instance.client.auth.currentUser?.id;
+    if (userId == null) return;
+
+    try {
+      final supabase = Supabase.instance.client;
+
+      // Calculate total duration for the session
+      final totalDuration = widget.session.allPoses
+          .fold<int>(0, (sum, pose) => sum + pose.durationSeconds);
+
+      // Save session completion
+      await supabase.from('session_completions').insert({
+        'user_id': userId,
+        'session_id': widget.session.id,
+        'session_name': widget.session.titleKey,
+        'session_level': widget.session.levelKey,
+        'total_poses': widget.session.allPoses.length,
+        'total_duration_seconds': totalDuration,
+        'completed_at': DateTime.now().toIso8601String(),
+        'completion_date': DateTime.now().toIso8601String().split('T')[0],
+      });
+
+      print('✅ Session complete! ${_completedPoseIds.length} poses completed');
+      print('✅ Session completion saved to database');
+    } catch (e) {
+      print('❌ Error saving session completion: $e');
+      // Don't block the UI if save fails
+    }
   }
 
   void _showSessionCompleteDialog() {
@@ -545,7 +616,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
                 icon: const Icon(Icons.close, color: Colors.white),
                 onPressed: () async {
                   await GlobalAudioService.playClickSound();
-                  _showExitDialog();
+                  _showExitConfirmation();
                 },
               ),
             ),
@@ -1222,55 +1293,159 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
     );
   }
 
-  void _showExitDialog() {
+  void _showExitConfirmation() {
+    // Pause timer when showing dialog
+    if (_isTimerRunning) {
+      _pauseTimer();
+    }
+
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
         title: Text(
-          AppLocalizations.of(context)!.exitSession,
+          'Exit Session?',
           style: GoogleFonts.poppins(
-            fontSize: 20,
+            fontSize: 22,
             fontWeight: FontWeight.bold,
+            color: Colors.black87,
           ),
         ),
-        content: Text(
-          AppLocalizations.of(context)!.exitSessionMessage,
-          style: GoogleFonts.poppins(
-            fontSize: 14,
-            color: Colors.grey[700],
-          ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Show progress if any poses completed
+            if (_completedPoseIds.isNotEmpty) ...[
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.green.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: Colors.green.withOpacity(0.3),
+                    width: 1,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.check_circle,
+                      color: Colors.green,
+                      size: 24,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${_completedPoseIds.length} of ${widget.session.allPoses.length} poses completed',
+                            style: GoogleFonts.poppins(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Progress saved ✓',
+                            style: GoogleFonts.poppins(
+                              fontSize: 13,
+                              color: Colors.green[700],
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'You can continue from where you left off anytime!',
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  color: Colors.grey[700],
+                  height: 1.4,
+                ),
+              ),
+            ] else ...[
+              // No poses completed yet
+              Row(
+                children: [
+                  Icon(
+                    Icons.info_outline,
+                    color: Colors.orange,
+                    size: 24,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      'No poses completed yet',
+                      style: GoogleFonts.poppins(
+                        fontSize: 15,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'Complete at least one pose to save your progress.',
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  color: Colors.grey[600],
+                ),
+              ),
+            ],
+          ],
         ),
         actions: [
           TextButton(
-            onPressed: () async {
-              await GlobalAudioService.playClickSound();
-              Navigator.pop(context);
+            onPressed: () {
+              Navigator.pop(context); // Close dialog
+              // Resume timer if it was running
+              if (!_isTimerRunning && _remainingSeconds > 0) {
+                _startTimer();
+              }
             },
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            ),
             child: Text(
-              AppLocalizations.of(context)!.cancel,
+              'Stay',
               style: GoogleFonts.poppins(
-                color: Colors.grey[600],
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF40E0D0),
               ),
             ),
           ),
           ElevatedButton(
-            onPressed: () async {
-              await GlobalAudioService.playClickSound();
+            onPressed: () {
+              GlobalAudioService.playClickSound();
               Navigator.pop(context); // Close dialog
               Navigator.pop(context); // Exit session
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
+              backgroundColor: Colors.red[400],
+              elevation: 0,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
             child: Text(
-              AppLocalizations.of(context)!.exit,
+              'Exit',
               style: GoogleFonts.poppins(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
                 color: Colors.white,
               ),
             ),

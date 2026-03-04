@@ -337,6 +337,66 @@ Future<void> togglePlayPause() async {
   notifyListeners();
 }
 
+  Future<void> startAmbientSound({
+    required String audioUrl,
+    required String title,
+    required String imageUrl,
+    Duration? duration,
+    bool isLooping = true,
+  }) async {
+    await _audioPlayer.stop();
+
+    _currentAudioUrl = audioUrl;
+    _currentSoundTitle = title;
+    _currentSoundCategory = "Ambient";
+    _currentSoundImageUrl = imageUrl;
+
+    if (_volume == 0) {
+      _volume = 0.8; // default fallback
+    }
+
+    // Play from URL (Pixabay links)
+    if (audioUrl.startsWith("http://") || audioUrl.startsWith("https://")) {
+      await _audioPlayer.setSource(UrlSource(audioUrl));
+    } else {
+      // Fallback: if you ever pass an asset filename by mistake
+      await _audioPlayer.setSource(AssetSource("audio/$audioUrl"));
+    }
+
+    await _audioPlayer.setVolume(_volume);
+    await _audioPlayer.setReleaseMode(
+      isLooping ? ReleaseMode.loop : ReleaseMode.release,
+    );
+
+    await _audioPlayer.resume();
+    _isPlaying = true;
+    notifyListeners();
+
+    // Optional session countdown (no breathing cues)
+    if (duration != null && duration > Duration.zero) {
+      _startAmbientSessionTimer(duration);
+    }
+  }
+
+  /// Simple timer for ambient sounds (no inhale/hold/exhale cues)
+  void _startAmbientSessionTimer(Duration duration) {
+    _sessionTimer?.cancel();
+    _sessionTotal = duration;
+    _sessionRemaining = duration;
+
+    _sessionTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_isPlaying && _sessionRemaining.inSeconds > 0) {
+        _sessionRemaining -= const Duration(seconds: 1);
+        notifyListeners();
+      } else if (_sessionRemaining.inSeconds <= 0) {
+        timer.cancel();
+        _handleSessionComplete();
+      }
+    });
+
+    notifyListeners();
+  }
+
 Future<void> stop() async {
   _isManuallyStopped = true;
 
