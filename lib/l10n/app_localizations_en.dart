@@ -1177,7 +1177,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get minutesLabel => 'Minutes';
 
   @override
-  String get daily => 'Daily 🔥';
+  String get daily => 'Streak';
 
   @override
   String get streakSummary => 'Streak Summary';

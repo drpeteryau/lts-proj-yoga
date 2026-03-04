@@ -21,13 +21,19 @@ class _MainNavigationScreenState
     extends State<MainNavigationScreen> {
   int _selectedIndex = 0;
 
-  final List<Widget> _screens = const [
-    HomeTabScreen(),
-    LevelSelectionScreen(),
-    ProgressScreen(),
-    MeditationScreen(),
-    ProfileScreen(),
-  ];
+  late final List<Widget> _screens;
+
+  @override
+  void initState() {
+    super.initState();
+    _screens = [
+      HomeTabScreen(onNavigateToTab: (i) => setState(() => _selectedIndex = i)),
+      const LevelSelectionScreen(),
+      const ProgressScreen(),
+      const MeditationScreen(),
+      const ProfileScreen(),
+    ];
+  }
 
   bool get isWeb => MediaQuery.of(context).size.width > 600;
 

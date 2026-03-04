@@ -31,7 +31,9 @@ final allYogaPoses = [
 ];
 
 class HomeTabScreen extends StatefulWidget {
-  const HomeTabScreen({super.key});
+  final void Function(int index)? onNavigateToTab;
+
+  const HomeTabScreen({super.key, this.onNavigateToTab});
 
   @override
   State<HomeTabScreen> createState() => _HomeTabScreenState();
@@ -409,13 +411,20 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: GestureDetector(
-        onTap: () async {
-          await GlobalAudioService.playClickSound();
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const MeditationScreen()),
-          );
-        },
+          onTap: () async {
+            await GlobalAudioService.playClickSound();
+
+            if (widget.onNavigateToTab != null) {
+              widget.onNavigateToTab!(3); // Meditation tab index
+              return;
+            }
+
+            // fallback if callback not provided
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const MeditationScreen()),
+            );
+          },
         child: Container(
           width: double.infinity,
           padding: const EdgeInsets.all(28),

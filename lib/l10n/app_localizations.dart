@@ -2249,7 +2249,7 @@ abstract class AppLocalizations {
   /// No description provided for @daily.
   ///
   /// In en, this message translates to:
-  /// **'Daily 🔥'**
+  /// **'Streak'**
   String get daily;
 
   /// No description provided for @streakSummary.

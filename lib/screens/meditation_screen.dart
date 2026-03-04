@@ -74,8 +74,8 @@ class _MeditationScreenState extends State<MeditationScreen> {
       durationMinutes: 60,
       imageUrl:
       "https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=800",
-      // Free ocean waves sound from Pixabay
-      audioFile: "https://cdn.pixabay.com/audio/2022/03/10/audio_c8c6dcced4.mp3",
+      // Ocean waves - Pixabay free audio
+      audioFile: "https://cdn.pixabay.com/download/audio/2022/03/10/audio_c1c0c7a4d6.mp3",
       type: MeditationType.sound,
       isLooping: true,
     ),
@@ -85,8 +85,8 @@ class _MeditationScreenState extends State<MeditationScreen> {
       durationMinutes: 60,
       imageUrl:
       "https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?w=800",
-      // Free rain sound from Pixabay
-      audioFile: "https://cdn.pixabay.com/audio/2022/03/24/audio_c8c0e5e2c7.mp3",
+      // Rain sounds - Pixabay free audio
+      audioFile: "https://cdn.pixabay.com/download/audio/2021/08/04/audio_12b0c7a7d3.mp3",
       type: MeditationType.sound,
       isLooping: true,
     ),
@@ -96,8 +96,8 @@ class _MeditationScreenState extends State<MeditationScreen> {
       durationMinutes: 60,
       imageUrl:
       "https://images.unsplash.com/photo-1511497584788-876760111969?w=800",
-      // Free forest birds from Pixabay
-      audioFile: "https://cdn.pixabay.com/audio/2022/05/13/audio_c8d0c8e7c5.mp3",
+      // Forest ambience - Pixabay free audio
+      audioFile: "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3",
       type: MeditationType.sound,
       isLooping: true,
     ),
@@ -107,8 +107,8 @@ class _MeditationScreenState extends State<MeditationScreen> {
       durationMinutes: 60,
       imageUrl:
       "https://images.unsplash.com/photo-1518098268026-4e89f1a2cd8e?w=800",
-      // Free fire crackling from Pixabay
-      audioFile: "https://cdn.pixabay.com/audio/2021/08/04/audio_c9b0c8e7d4.mp3",
+      // Fireplace crackling - Pixabay free audio
+      audioFile: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_4c0f6a4b82.mp3",
       type: MeditationType.sound,
       isLooping: true,
     ),
@@ -118,8 +118,8 @@ class _MeditationScreenState extends State<MeditationScreen> {
       durationMinutes: 60,
       imageUrl:
       "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800",
-      // Free white noise from Pixabay
-      audioFile: "https://cdn.pixabay.com/audio/2022/10/26/audio_d0b9c8f2a1.mp3",
+      // White noise - Pixabay free audio
+      audioFile: "https://cdn.pixabay.com/download/audio/2022/10/13/audio_2f2e3b3d4e.mp3",
       type: MeditationType.sound,
       isLooping: true,
     ),
@@ -129,8 +129,8 @@ class _MeditationScreenState extends State<MeditationScreen> {
       durationMinutes: 60,
       imageUrl:
       "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800",
-      // Free water stream from Pixabay
-      audioFile: "https://cdn.pixabay.com/audio/2022/06/07/audio_f0c8d9e3b2.mp3",
+      // Stream water - Pixabay free audio
+      audioFile: "https://cdn.pixabay.com/download/audio/2022/06/07/audio_0c0e7c1f3d.mp3",
       type: MeditationType.sound,
       isLooping: true,
     ),
@@ -140,8 +140,8 @@ class _MeditationScreenState extends State<MeditationScreen> {
       durationMinutes: 60,
       imageUrl:
       "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800",
-      // Free wind chimes from Pixabay
-      audioFile: "https://cdn.pixabay.com/audio/2023/01/15/audio_e1d2f3c4b5.mp3",
+      // Wind chimes - Pixabay free audio
+      audioFile: "https://cdn.pixabay.com/download/audio/2023/02/28/audio_5f3c9a2e1b.mp3",
       type: MeditationType.sound,
       isLooping: true,
     ),
@@ -151,8 +151,8 @@ class _MeditationScreenState extends State<MeditationScreen> {
       durationMinutes: 60,
       imageUrl:
       "https://images.unsplash.com/photo-1475274047050-1d0c0975c63e?w=800",
-      // Free cricket sounds from Pixabay
-      audioFile: "https://cdn.pixabay.com/audio/2022/08/18/audio_b3c4d5e6f7.mp3",
+      // Cricket sounds - Pixabay free audio
+      audioFile: "https://cdn.pixabay.com/download/audio/2022/06/08/audio_7e5c9b8f2a.mp3",
       type: MeditationType.sound,
       isLooping: true,
     ),
@@ -184,7 +184,7 @@ class _MeditationScreenState extends State<MeditationScreen> {
                 child: ListView(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   children: [
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 14),
                     _buildQuickStartCard(),
                     const SizedBox(height: 32),
                     _buildSectionTitle("Guided Meditations"),
@@ -221,19 +221,6 @@ class _MeditationScreenState extends State<MeditationScreen> {
         children: [
           Row(
             children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF40E0D0).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(
-                  Icons.self_improvement,
-                  size: 28,
-                  color: Color(0xFF40E0D0),
-                ),
-              ),
-              const SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -246,14 +233,7 @@ class _MeditationScreenState extends State<MeditationScreen> {
                         color: Colors.black87,
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      "Find your inner peace",
-                      style: GoogleFonts.poppins(
-                        fontSize: 15,
-                        color: Colors.grey[600],
-                      ),
-                    ),
+
                   ],
                 ),
               ),
