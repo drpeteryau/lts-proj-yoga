@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/global_audio_service.dart';
 import 'meditation_screen.dart';
+import '../l10n/app_localizations.dart';
 
 class MeditationSessionScreen extends StatefulWidget {
   final MeditationSession session;
@@ -32,7 +33,7 @@ class _MeditationSessionScreenState
   late Animation<double> _completionFade;
 
   bool _completionTriggered = false;
-  bool _isExiting = false;
+  final bool _isExiting = false;
 
   @override
   void initState() {
@@ -108,13 +109,13 @@ class _MeditationSessionScreenState
   String _breathingPhaseText(int phaseIndex) {
     switch (phaseIndex) {
       case 0:
-        return "Inhale...";
+        return AppLocalizations.of(context)!.meditationInhale;
       case 1:
-        return "Hold...";
+        return AppLocalizations.of(context)!.meditationHold;
       case 2:
-        return "Exhale...";
+        return AppLocalizations.of(context)!.meditationExhale;
       case 3:
-        return "Hold...";
+        return AppLocalizations.of(context)!.meditationHold;
       default:
         return "";
     }
@@ -255,8 +256,8 @@ AnimatedSwitcher(
       ? Column(
           key: const ValueKey("preparing"),
           children: [
-            const Text(
-              "Preparing your session...",
+            Text(
+              AppLocalizations.of(context)!.meditationPreparing,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 24,
@@ -282,9 +283,9 @@ if (mounted) Navigator.pop(context);
                   borderRadius: BorderRadius.circular(40),
                   border: Border.all(color: Colors.white70),
                 ),
-                child: const Center(
+                child: Center(
                   child: Text(
-                    "Cancel Session",
+                    AppLocalizations.of(context)!.meditationCancel,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,
@@ -357,26 +358,26 @@ GestureDetector(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          title: const Text(
-            "End Session?",
+          title: Text(
+            AppLocalizations.of(context)!.meditationEndTitle,
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
-          content: const Text(
-            "Are you sure you want to end your meditation session?",
+          content: Text(
+            AppLocalizations.of(context)!.meditationEndMessage,
           ),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(context, false);
               },
-              child: const Text("Cancel"),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
             TextButton(
               onPressed: () {
                 Navigator.pop(context, true);
               },
-              child: const Text(
-                "End",
+              child: Text(
+                AppLocalizations.of(context)!.meditationConfirmEnd,
                 style: TextStyle(color: Colors.red),
               ),
             ),
@@ -406,9 +407,9 @@ GestureDetector(
         ),
       ],
     ),
-    child: const Center(
+    child: Center(
       child: Text(
-        "End Session",
+        AppLocalizations.of(context)!.meditationEndSession,
         style: TextStyle(
           color: Colors.white,
           fontSize: 16,
@@ -426,8 +427,8 @@ GestureDetector(
                         else if (isComplete)
                           FadeTransition(
                             opacity: _completionFade,
-                            child: const Text(
-                              "Session Complete",
+                            child: Text(
+                              AppLocalizations.of(context)!.meditationComplete,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 28,

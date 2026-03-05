@@ -95,9 +95,16 @@ class _AuthGateState extends State<AuthGate> {
       final savedLanguage = profile['preferred_language'] ?? 'English';
 
       // Update the global ValueNotifier in main.dart
-      appLocale.value =
-      savedLanguage == 'Mandarin' ? const Locale('zh') : const Locale('en');
-
+      if (savedLanguage == 'Mandarin (Simplified)') {
+        appLocale.value = const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans');
+      }
+      else if (savedLanguage == 'Mandarin (Traditional)') {
+        appLocale.value = const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant');
+      } 
+      else {
+        appLocale.value = const Locale('en');
+      }
+      
       print('🌍 App language synced to: $savedLanguage');
     }
 

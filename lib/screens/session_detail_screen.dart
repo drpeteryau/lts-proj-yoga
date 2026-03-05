@@ -6,8 +6,8 @@ import 'pose_detail_screen.dart';
 import 'full_session_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/global_audio_service.dart';
-import '../l10n/app_localizations.dart';
 import '../utils/yoga_localization_helper.dart';
+import '../l10n/app_localizations.dart';
 
 class SessionDetailScreen extends StatefulWidget {
   final YogaSession session;
@@ -91,7 +91,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                           children: [
                             Expanded(
                               child: _buildInfoBox(
-                                label: 'Level',
+                                label: AppLocalizations.of(context)!.sessionLevelLabel,
                                 value: YogaLocalizationHelper.getSessionLevel(context, widget.session.levelKey),
                                 color: const Color(0xFFFFF0E4),
                               ),
@@ -99,16 +99,16 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                             const SizedBox(width: 12),
                             Expanded(
                               child: _buildInfoBox(
-                                label: 'Total Time',
-                                value: '${widget.session.totalDurationMinutes} min',
+                                label: AppLocalizations.of(context)!.sessionTotalTimeLabel,
+                                value: AppLocalizations.of(context)!.minsLabel(widget.session.totalDurationMinutes),
                                 color: const Color(0xFFEBFFFF),
                               ),
                             ),
                             const SizedBox(width: 12),
                             Expanded(
                               child: _buildInfoBox(
-                                label: 'Total Poses',
-                                value: '${widget.session.allPoses.length} poses',
+                                label: AppLocalizations.of(context)!.sessionTotalPosesLabel,
+                                value: AppLocalizations.of(context)!.poseCount(widget.session.allPoses.length),
                                 color: const Color(0xFFE1FFF9),
                               ),
                             ),
@@ -125,7 +125,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'About this Session',
+                              AppLocalizations.of(context)!.aboutThisSession,
                               style: GoogleFonts.poppins(
                                 fontSize: 22,
                                 fontWeight: FontWeight.bold,
@@ -286,7 +286,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
         children: [
           // Section header
           Text(
-            'Poses Preview',
+            AppLocalizations.of(context)!.posesPreview,
             style: GoogleFonts.poppins(
               fontSize: 22,
               fontWeight: FontWeight.bold,
@@ -391,7 +391,11 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '${pose.durationSeconds ~/ 60}:${(pose.durationSeconds % 60).toString().padLeft(2, '0')} min',
+                        AppLocalizations.of(context)!.durationFormat(
+                          (pose.durationSeconds ~/ 60),
+                          (pose.durationSeconds % 60).toString().padLeft(2, '0'),
+                        ),
+                        // '${pose.durationSeconds ~/ 60}:${(pose.durationSeconds % 60).toString().padLeft(2, '0')} min',
                         style: GoogleFonts.poppins(
                           fontSize: 14,
                           color: Colors.black
@@ -466,7 +470,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    '$completedCount of $totalPoses poses completed',
+                    AppLocalizations.of(context)!.posesCompletedCount(completedCount, totalPoses),
                     style: GoogleFonts.poppins(
                       fontSize: 15,
                       color: const Color(0xFF40E0D0),
@@ -503,7 +507,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    isFullyCompleted ? 'Practice Again' : 'Join Class',
+                    isFullyCompleted ? AppLocalizations.of(context)!.practiceAgain : AppLocalizations.of(context)!.joinClass,
                     style: GoogleFonts.poppins(
                       fontSize: 17,
                       fontWeight: FontWeight.w600,

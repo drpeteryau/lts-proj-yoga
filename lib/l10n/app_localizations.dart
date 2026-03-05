@@ -96,6 +96,8 @@ abstract class AppLocalizations {
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
     Locale('zh'),
+    Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans'),
+    Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
   ];
 
   /// No description provided for @registerTitle.
@@ -464,119 +466,119 @@ abstract class AppLocalizations {
   /// **'Profile'**
   String get navProfile;
 
+  /// No description provided for @appTagline.
+  ///
+  /// In en, this message translates to:
+  /// **'Find Your Inner Peace'**
+  String get appTagline;
+
   /// No description provided for @goodMorning.
   ///
   /// In en, this message translates to:
-  /// **'Good Morning'**
+  /// **'Good Morning!'**
   String get goodMorning;
 
   /// No description provided for @goodAfternoon.
   ///
   /// In en, this message translates to:
-  /// **'Good Afternoon'**
+  /// **'Good Afternoon!'**
   String get goodAfternoon;
 
   /// No description provided for @goodEvening.
   ///
   /// In en, this message translates to:
-  /// **'Good Evening'**
+  /// **'Good Evening!'**
   String get goodEvening;
 
-  /// No description provided for @dayCount.
+  /// No description provided for @friend.
   ///
   /// In en, this message translates to:
-  /// **'Day {number}'**
-  String dayCount(int number);
+  /// **'Friend'**
+  String get friend;
 
-  /// No description provided for @mainSessionTitle.
+  /// No description provided for @findYourPeace.
   ///
   /// In en, this message translates to:
-  /// **'Do 7 Exercises in\nOnly 6 Minutes'**
-  String get mainSessionTitle;
+  /// **'Find Your Peace'**
+  String get findYourPeace;
 
-  /// No description provided for @start.
+  /// No description provided for @calmingSounds.
   ///
   /// In en, this message translates to:
-  /// **'Start'**
-  String get start;
+  /// **'Calming sounds for your wellness'**
+  String get calmingSounds;
 
-  /// No description provided for @keepUpWork.
+  /// No description provided for @listenNow.
   ///
   /// In en, this message translates to:
-  /// **'Keep up the good work!'**
-  String get keepUpWork;
+  /// **'Listen Now'**
+  String get listenNow;
 
-  /// No description provided for @minShort.
+  /// No description provided for @yogaSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Perfect for those just starting their yoga journey'**
+  String get yogaSubtitle;
+
+  /// No description provided for @joinNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Join Now'**
+  String get joinNow;
+
+  /// No description provided for @wellnessOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Wellness Overview'**
+  String get wellnessOverview;
+
+  /// No description provided for @streak.
+  ///
+  /// In en, this message translates to:
+  /// **'Streak'**
+  String get streak;
+
+  /// No description provided for @sessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Sessions'**
+  String get sessions;
+
+  /// No description provided for @weekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get weekly;
+
+  /// No description provided for @totalTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Time'**
+  String get totalTime;
+
+  /// No description provided for @daysCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 day} other{{count} days}}'**
+  String daysCount(int count);
+
+  /// No description provided for @minutesCount.
   ///
   /// In en, this message translates to:
   /// **'{count} min'**
-  String minShort(int count);
+  String minutesCount(int count);
 
-  /// No description provided for @poseDurationSeconds.
+  /// No description provided for @beginYour.
   ///
   /// In en, this message translates to:
-  /// **'{seconds} seconds'**
-  String poseDurationSeconds(int seconds);
+  /// **'Begin Your'**
+  String get beginYour;
 
-  /// No description provided for @durationFormat.
+  /// No description provided for @wellnessJourney.
   ///
   /// In en, this message translates to:
-  /// **'{minutes} min'**
-  String durationFormat(int minutes);
-
-  /// No description provided for @mon.
-  ///
-  /// In en, this message translates to:
-  /// **'Mon'**
-  String get mon;
-
-  /// No description provided for @tue.
-  ///
-  /// In en, this message translates to:
-  /// **'Tue'**
-  String get tue;
-
-  /// No description provided for @wed.
-  ///
-  /// In en, this message translates to:
-  /// **'Wed'**
-  String get wed;
-
-  /// No description provided for @thu.
-  ///
-  /// In en, this message translates to:
-  /// **'Thu'**
-  String get thu;
-
-  /// No description provided for @fri.
-  ///
-  /// In en, this message translates to:
-  /// **'Fri'**
-  String get fri;
-
-  /// No description provided for @sat.
-  ///
-  /// In en, this message translates to:
-  /// **'Sat'**
-  String get sat;
-
-  /// No description provided for @sun.
-  ///
-  /// In en, this message translates to:
-  /// **'Sun'**
-  String get sun;
-
-  /// No description provided for @chooseYour.
-  ///
-  /// In en, this message translates to:
-  /// **'Choose Your'**
-  String get chooseYour;
-
-  /// No description provided for @level.
-  ///
-  /// In en, this message translates to:
-  /// **'Level'**
-  String get level;
+  /// **'Wellness Journey'**
+  String get wellnessJourney;
 
   /// No description provided for @beginnerSubtitle.
   ///
@@ -620,16 +622,10 @@ abstract class AppLocalizations {
   /// **'{levelName} Locked'**
   String lockedLevelTitle(String levelName);
 
-  /// No description provided for @completeMore.
-  ///
-  /// In en, this message translates to:
-  /// **'Complete {count} more'**
-  String completeMore(int count);
-
   /// No description provided for @completeSessionsToUnlock.
   ///
   /// In en, this message translates to:
-  /// **'Complete {count} more'**
+  /// **'Complete {count} more sessions to unlock'**
   String completeSessionsToUnlock(int count);
 
   /// No description provided for @unlockIntermediateFirst.
@@ -667,6 +663,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'OK'**
   String get ok;
+
+  /// No description provided for @enterPasscodeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin Passcode 🔐'**
+  String get enterPasscodeHint;
+
+  /// No description provided for @moreInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'More Info'**
+  String get moreInfo;
 
   /// No description provided for @beginnerTitle.
   ///
@@ -745,12 +753,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'ADVANCED'**
   String get advancedLabel;
-
-  /// No description provided for @minutesCount.
-  ///
-  /// In en, this message translates to:
-  /// **'{count} minutes'**
-  String minutesCount(int count);
 
   /// No description provided for @highIntensity.
   ///
@@ -1196,6 +1198,54 @@ abstract class AppLocalizations {
   /// **'A dynamic sequence linking breath and movement. Builds strength, heat, coordination, and stamina.'**
   String get yogaDescSunSalutation;
 
+  /// No description provided for @sessionLevelLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Level'**
+  String get sessionLevelLabel;
+
+  /// No description provided for @sessionTotalTimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Time'**
+  String get sessionTotalTimeLabel;
+
+  /// No description provided for @sessionTotalPosesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Poses'**
+  String get sessionTotalPosesLabel;
+
+  /// No description provided for @aboutThisSession.
+  ///
+  /// In en, this message translates to:
+  /// **'About this Session'**
+  String get aboutThisSession;
+
+  /// No description provided for @posesPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Poses Preview'**
+  String get posesPreview;
+
+  /// No description provided for @posesCompletedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{completed} of {total} poses completed'**
+  String posesCompletedCount(int completed, int total);
+
+  /// No description provided for @practiceAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Practice Again'**
+  String get practiceAgain;
+
+  /// No description provided for @posesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'poses'**
+  String get posesLabel;
+
   /// No description provided for @duration.
   ///
   /// In en, this message translates to:
@@ -1249,6 +1299,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} Mins'**
   String minsLabel(int count);
+
+  /// No description provided for @poseComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Pose Complete!'**
+  String get poseComplete;
+
+  /// No description provided for @greatWorkChoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Great work! What would you like to do?'**
+  String get greatWorkChoice;
+
+  /// No description provided for @retryPose.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry This Pose'**
+  String get retryPose;
+
+  /// No description provided for @finishSession.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish Session'**
+  String get finishSession;
+
+  /// No description provided for @sessionPlaylist.
+  ///
+  /// In en, this message translates to:
+  /// **'Session Playlist'**
+  String get sessionPlaylist;
+
+  /// No description provided for @playing.
+  ///
+  /// In en, this message translates to:
+  /// **'Playing'**
+  String get playing;
+
+  /// No description provided for @poseCountProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{completed}/{total}'**
+  String poseCountProgress(int completed, int total);
+
+  /// No description provided for @totalMinutesSpent.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} {minutesLabel} total'**
+  String totalMinutesSpent(int minutes, String minutesLabel);
+
+  /// No description provided for @previous.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous'**
+  String get previous;
+
+  /// No description provided for @completeCurrentPoseFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Please complete the current pose before moving to the next one'**
+  String get completeCurrentPoseFirst;
 
   /// No description provided for @poseProgress.
   ///
@@ -1346,23 +1456,47 @@ abstract class AppLocalizations {
   /// **'Done'**
   String get done;
 
-  /// No description provided for @progressHeader.
+  /// No description provided for @poseDetailTitle.
   ///
   /// In en, this message translates to:
-  /// **'Your Progress'**
-  String get progressHeader;
+  /// **'Pose Details'**
+  String get poseDetailTitle;
 
-  /// No description provided for @progressSubtitle.
+  /// No description provided for @howToDoTitle.
   ///
   /// In en, this message translates to:
-  /// **'Track your journey to wellness'**
-  String get progressSubtitle;
+  /// **'How to Do This Pose'**
+  String get howToDoTitle;
 
-  /// No description provided for @dayStreak.
+  /// No description provided for @learningNotice.
   ///
   /// In en, this message translates to:
-  /// **'Day Streak'**
-  String get dayStreak;
+  /// **'This is for learning only. To track progress, use \"Join Class\" from the session screen.'**
+  String get learningNotice;
+
+  /// No description provided for @poseCurrentCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{current} of {total}'**
+  String poseCurrentCount(int current, int total);
+
+  /// No description provided for @durationFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes}:{seconds} min'**
+  String durationFormat(int minutes, String seconds);
+
+  /// No description provided for @calendar.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar'**
+  String get calendar;
+
+  /// No description provided for @activitySummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity Summary'**
+  String get activitySummary;
 
   /// No description provided for @totalMinutes.
   ///
@@ -1376,11 +1510,35 @@ abstract class AppLocalizations {
   /// **'This Week'**
   String get thisWeek;
 
-  /// No description provided for @weeklyGoal.
+  /// No description provided for @dailyMinutes.
   ///
   /// In en, this message translates to:
-  /// **'Goal: {goal} min'**
-  String weeklyGoal(int goal);
+  /// **'Daily Minutes'**
+  String get dailyMinutes;
+
+  /// No description provided for @week.
+  ///
+  /// In en, this message translates to:
+  /// **'Week'**
+  String get week;
+
+  /// No description provided for @nothingTracked.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing tracked yet'**
+  String get nothingTracked;
+
+  /// No description provided for @min.
+  ///
+  /// In en, this message translates to:
+  /// **'min'**
+  String get min;
+
+  /// No description provided for @ofGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'of {goal} min'**
+  String ofGoal(int goal);
 
   /// No description provided for @weeklyBadges.
   ///
@@ -1388,35 +1546,35 @@ abstract class AppLocalizations {
   /// **'Weekly Badges'**
   String get weeklyBadges;
 
-  /// No description provided for @checkedInMsg.
+  /// No description provided for @wellnessCheckIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Wellness Check-In'**
+  String get wellnessCheckIn;
+
+  /// No description provided for @checkedInThisWeek.
   ///
   /// In en, this message translates to:
   /// **'Checked in this week ✓'**
-  String get checkedInMsg;
+  String get checkedInThisWeek;
 
-  /// No description provided for @shareFeeling.
+  /// No description provided for @howAreYouFeeling.
   ///
   /// In en, this message translates to:
-  /// **'Share how you\'re feeling'**
-  String get shareFeeling;
+  /// **'How are you feeling?'**
+  String get howAreYouFeeling;
 
-  /// No description provided for @newCheckIn.
+  /// No description provided for @checkInButton.
   ///
   /// In en, this message translates to:
-  /// **'New Check-in'**
-  String get newCheckIn;
+  /// **'Check-In'**
+  String get checkInButton;
 
-  /// No description provided for @viewHistory.
+  /// No description provided for @historyButton.
   ///
   /// In en, this message translates to:
-  /// **'View History'**
-  String get viewHistory;
-
-  /// No description provided for @calendar.
-  ///
-  /// In en, this message translates to:
-  /// **'Calendar'**
-  String get calendar;
+  /// **'History'**
+  String get historyButton;
 
   /// No description provided for @practice.
   ///
@@ -1429,6 +1587,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Rest day'**
   String get restDay;
+
+  /// No description provided for @reflectionHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Reflection History'**
+  String get reflectionHistory;
+
+  /// No description provided for @noReflections.
+  ///
+  /// In en, this message translates to:
+  /// **'No reflections yet'**
+  String get noReflections;
+
+  /// No description provided for @bodyComfort.
+  ///
+  /// In en, this message translates to:
+  /// **'Body Comfort'**
+  String get bodyComfort;
+
+  /// No description provided for @flexibility.
+  ///
+  /// In en, this message translates to:
+  /// **'Flexibility'**
+  String get flexibility;
+
+  /// No description provided for @balance.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance'**
+  String get balance;
+
+  /// No description provided for @energy.
+  ///
+  /// In en, this message translates to:
+  /// **'Energy'**
+  String get energy;
+
+  /// No description provided for @mood.
+  ///
+  /// In en, this message translates to:
+  /// **'Mood'**
+  String get mood;
+
+  /// No description provided for @confidence.
+  ///
+  /// In en, this message translates to:
+  /// **'Confidence'**
+  String get confidence;
+
+  /// No description provided for @mindBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Mind-Body'**
+  String get mindBody;
+
+  /// No description provided for @wellbeing.
+  ///
+  /// In en, this message translates to:
+  /// **'Wellbeing'**
+  String get wellbeing;
+
+  /// No description provided for @notes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes: '**
+  String get notes;
 
   /// No description provided for @wellnessDialogTitle.
   ///
@@ -1508,12 +1732,6 @@ abstract class AppLocalizations {
   /// **'Submit'**
   String get submit;
 
-  /// No description provided for @notes.
-  ///
-  /// In en, this message translates to:
-  /// **'Notes: '**
-  String get notes;
-
   /// No description provided for @rateAllError.
   ///
   /// In en, this message translates to:
@@ -1525,18 +1743,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Wellness check-in saved!'**
   String get checkInSaved;
-
-  /// No description provided for @reflectionHistory.
-  ///
-  /// In en, this message translates to:
-  /// **'Reflection History'**
-  String get reflectionHistory;
-
-  /// No description provided for @noReflections.
-  ///
-  /// In en, this message translates to:
-  /// **'No reflections yet'**
-  String get noReflections;
 
   /// No description provided for @platinum.
   ///
@@ -1958,54 +2164,6 @@ abstract class AppLocalizations {
   /// **'Please answer all required questions before submitting'**
   String get validationErrorCheckIn;
 
-  /// No description provided for @bodyComfort.
-  ///
-  /// In en, this message translates to:
-  /// **'Body Comfort'**
-  String get bodyComfort;
-
-  /// No description provided for @flexibility.
-  ///
-  /// In en, this message translates to:
-  /// **'Flexibility'**
-  String get flexibility;
-
-  /// No description provided for @balance.
-  ///
-  /// In en, this message translates to:
-  /// **'Balance'**
-  String get balance;
-
-  /// No description provided for @energy.
-  ///
-  /// In en, this message translates to:
-  /// **'Energy'**
-  String get energy;
-
-  /// No description provided for @mood.
-  ///
-  /// In en, this message translates to:
-  /// **'Mood'**
-  String get mood;
-
-  /// No description provided for @confidence.
-  ///
-  /// In en, this message translates to:
-  /// **'Confidence'**
-  String get confidence;
-
-  /// No description provided for @mindBody.
-  ///
-  /// In en, this message translates to:
-  /// **'Mind-Body'**
-  String get mindBody;
-
-  /// No description provided for @wellbeing.
-  ///
-  /// In en, this message translates to:
-  /// **'Wellbeing'**
-  String get wellbeing;
-
   /// No description provided for @nowPlaying.
   ///
   /// In en, this message translates to:
@@ -2072,89 +2230,137 @@ abstract class AppLocalizations {
   /// **'• Enhances overall well-being'**
   String get soundBenefit4;
 
-  /// No description provided for @welcomeBackSounds.
+  /// No description provided for @meditationHeaderTitle.
   ///
   /// In en, this message translates to:
-  /// **'Welcome back,'**
-  String get welcomeBackSounds;
+  /// **'Choose Your Meditation'**
+  String get meditationHeaderTitle;
 
-  /// No description provided for @findYourPeace.
+  /// No description provided for @meditationHeaderSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Find Your Peace'**
-  String get findYourPeace;
+  /// **'Pause & Breathe'**
+  String get meditationHeaderSubtitle;
 
-  /// No description provided for @tabAll.
+  /// No description provided for @meditationQuickStart.
   ///
   /// In en, this message translates to:
-  /// **'All'**
-  String get tabAll;
+  /// **'Quick Start • 5-10 min'**
+  String get meditationQuickStart;
 
-  /// No description provided for @tabRecent.
+  /// No description provided for @meditationAllSection.
   ///
   /// In en, this message translates to:
-  /// **'Recent'**
-  String get tabRecent;
+  /// **'All Meditations'**
+  String get meditationAllSection;
 
-  /// No description provided for @tabSaved.
+  /// No description provided for @meditationCategoryLabel.
   ///
   /// In en, this message translates to:
-  /// **'Saved'**
-  String get tabSaved;
+  /// **'Meditation'**
+  String get meditationCategoryLabel;
 
-  /// No description provided for @tabFavorites.
+  /// No description provided for @meditationDurationMin.
   ///
   /// In en, this message translates to:
-  /// **'Favorites'**
-  String get tabFavorites;
+  /// **'{count} min'**
+  String meditationDurationMin(int count);
 
-  /// No description provided for @mostPopular.
+  /// No description provided for @meditationSessionMorningTitle.
   ///
   /// In en, this message translates to:
-  /// **'Most Popular'**
-  String get mostPopular;
+  /// **'Morning Clarity'**
+  String get meditationSessionMorningTitle;
 
-  /// No description provided for @latest.
+  /// No description provided for @meditationSessionMorningDesc.
   ///
   /// In en, this message translates to:
-  /// **'Latest'**
-  String get latest;
+  /// **'Start your day with calm intention'**
+  String get meditationSessionMorningDesc;
 
-  /// No description provided for @noRecentSounds.
+  /// No description provided for @meditationSessionBreathingTitle.
   ///
   /// In en, this message translates to:
-  /// **'No recent sounds'**
-  String get noRecentSounds;
+  /// **'Deep Breathing'**
+  String get meditationSessionBreathingTitle;
 
-  /// No description provided for @noSavedSounds.
+  /// No description provided for @meditationSessionBreathingDesc.
   ///
   /// In en, this message translates to:
-  /// **'No saved sounds yet'**
-  String get noSavedSounds;
+  /// **'Reduce stress with focused breath'**
+  String get meditationSessionBreathingDesc;
 
-  /// No description provided for @noFavoriteSounds.
+  /// No description provided for @meditationSessionEveningTitle.
   ///
   /// In en, this message translates to:
-  /// **'No favorite sounds yet'**
-  String get noFavoriteSounds;
+  /// **'Evening Wind Down'**
+  String get meditationSessionEveningTitle;
 
-  /// No description provided for @savedSuccess.
+  /// No description provided for @meditationSessionEveningDesc.
   ///
   /// In en, this message translates to:
-  /// **'Saved!'**
-  String get savedSuccess;
+  /// **'Release the day and prepare for rest'**
+  String get meditationSessionEveningDesc;
 
-  /// No description provided for @removedFromSaved.
+  /// No description provided for @meditationPreparing.
   ///
   /// In en, this message translates to:
-  /// **'Removed from saved'**
-  String get removedFromSaved;
+  /// **'Preparing your session...'**
+  String get meditationPreparing;
 
-  /// No description provided for @audioLoadError.
+  /// No description provided for @meditationCancel.
   ///
   /// In en, this message translates to:
-  /// **'Failed to load audio. Please try another one.'**
-  String get audioLoadError;
+  /// **'Cancel Session'**
+  String get meditationCancel;
+
+  /// No description provided for @meditationEndSession.
+  ///
+  /// In en, this message translates to:
+  /// **'End Session'**
+  String get meditationEndSession;
+
+  /// No description provided for @meditationComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Session Complete'**
+  String get meditationComplete;
+
+  /// No description provided for @meditationInhale.
+  ///
+  /// In en, this message translates to:
+  /// **'Inhale...'**
+  String get meditationInhale;
+
+  /// No description provided for @meditationExhale.
+  ///
+  /// In en, this message translates to:
+  /// **'Exhale...'**
+  String get meditationExhale;
+
+  /// No description provided for @meditationHold.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold...'**
+  String get meditationHold;
+
+  /// No description provided for @meditationEndTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'End Session?'**
+  String get meditationEndTitle;
+
+  /// No description provided for @meditationEndMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to end your meditation session?'**
+  String get meditationEndMessage;
+
+  /// No description provided for @meditationConfirmEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'End'**
+  String get meditationConfirmEnd;
 
   /// No description provided for @soundOceanWaves.
   ///
@@ -2234,12 +2440,6 @@ abstract class AppLocalizations {
   /// **'Edit'**
   String get edit;
 
-  /// No description provided for @sessions.
-  ///
-  /// In en, this message translates to:
-  /// **'Sessions'**
-  String get sessions;
-
   /// No description provided for @minutesLabel.
   ///
   /// In en, this message translates to:
@@ -2282,11 +2482,11 @@ abstract class AppLocalizations {
   /// **'Disabled'**
   String get disabled;
 
-  /// No description provided for @logout.
+  /// No description provided for @signout.
   ///
   /// In en, this message translates to:
-  /// **'LOG OUT'**
-  String get logout;
+  /// **'Sign Out'**
+  String get signout;
 
   /// No description provided for @aboutus.
   ///
@@ -2522,11 +2722,17 @@ abstract class AppLocalizations {
   /// **'English'**
   String get english;
 
-  /// No description provided for @mandarin.
+  /// No description provided for @mandarinSimplified.
   ///
   /// In en, this message translates to:
-  /// **'Mandarin'**
-  String get mandarin;
+  /// **'Mandarin (Simplified)'**
+  String get mandarinSimplified;
+
+  /// No description provided for @mandarinTraditional.
+  ///
+  /// In en, this message translates to:
+  /// **'Mandarin (Traditional)'**
+  String get mandarinTraditional;
 
   /// No description provided for @sessionComplete.
   ///
@@ -2545,12 +2751,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'minutes'**
   String get minutes;
-
-  /// No description provided for @totalTime.
-  ///
-  /// In en, this message translates to:
-  /// **'TOTAL TIME'**
-  String get totalTime;
 
   /// No description provided for @next.
   ///
@@ -2581,6 +2781,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Exit'**
   String get exit;
+
+  /// No description provided for @aboutUsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'About Us'**
+  String get aboutUsTitle;
+
+  /// No description provided for @appSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Helping you build healthier habits through guided yoga.'**
+  String get appSubtitle;
+
+  /// No description provided for @missionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Our Mission'**
+  String get missionTitle;
+
+  /// No description provided for @missionContent.
+  ///
+  /// In en, this message translates to:
+  /// **'HealYoga is designed to encourage regular yoga practice through guided sessions, calming music, and progress tracking. We focus on accessibility and simplicity to make wellness available to everyone.'**
+  String get missionContent;
+
+  /// No description provided for @featuresTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Key Features'**
+  String get featuresTitle;
+
+  /// No description provided for @feature1.
+  ///
+  /// In en, this message translates to:
+  /// **'Guided yoga sessions'**
+  String get feature1;
+
+  /// No description provided for @feature2.
+  ///
+  /// In en, this message translates to:
+  /// **'Relaxing music & meditation'**
+  String get feature2;
+
+  /// No description provided for @feature3.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress tracking'**
+  String get feature3;
+
+  /// No description provided for @feature4.
+  ///
+  /// In en, this message translates to:
+  /// **'User authentication & profiles'**
+  String get feature4;
+
+  /// No description provided for @creditsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Credits'**
+  String get creditsTitle;
+
+  /// No description provided for @projectSupervisor.
+  ///
+  /// In en, this message translates to:
+  /// **'Project Supervisor'**
+  String get projectSupervisor;
+
+  /// No description provided for @teamMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'Team Members'**
+  String get teamMembers;
+
+  /// No description provided for @yogaInstructor.
+  ///
+  /// In en, this message translates to:
+  /// **'Yoga Instructor'**
+  String get yogaInstructor;
+
+  /// No description provided for @licensesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Source Licenses'**
+  String get licensesTitle;
+
+  /// No description provided for @viewLicensesButton.
+  ///
+  /// In en, this message translates to:
+  /// **'View All Licenses'**
+  String get viewLicensesButton;
+
+  /// No description provided for @copyright.
+  ///
+  /// In en, this message translates to:
+  /// **'© 2026 HealYoga Project\nAll Rights Reserved'**
+  String get copyright;
 }
 
 class _AppLocalizationsDelegate
@@ -2601,6 +2897,20 @@ class _AppLocalizationsDelegate
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
+  // Lookup logic when language+script codes are specified.
+  switch (locale.languageCode) {
+    case 'zh':
+      {
+        switch (locale.scriptCode) {
+          case 'Hans':
+            return AppLocalizationsZhHans();
+          case 'Hant':
+            return AppLocalizationsZhHant();
+        }
+        break;
+      }
+  }
+
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
     case 'en':

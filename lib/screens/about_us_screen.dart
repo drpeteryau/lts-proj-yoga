@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 
 class AboutUsScreen extends StatelessWidget {
-  const AboutUsScreen({Key? key}) : super(key: key);
+  const AboutUsScreen({super.key});
 
   static const turquoise = Color(0xFF40E0D0);
   static const background = Color(0xFFEAF6F4);
@@ -12,7 +13,7 @@ class AboutUsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: background,
       appBar: AppBar(
-        title: const Text("About Us"),
+        title: Text(AppLocalizations.of(context)!.aboutUsTitle),
         centerTitle: true,
         backgroundColor: turquoise,
         foregroundColor: Colors.white,
@@ -22,11 +23,10 @@ class AboutUsScreen extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-
             // App Title Card
             _card(
               child: Column(
-                children: const [
+                children: [
                   Text(
                     "HealYoga",
                     style: TextStyle(
@@ -36,7 +36,7 @@ class AboutUsScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    "Helping you build healthier habits through guided yoga.",
+                    AppLocalizations.of(context)!.appSubtitle,
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 16),
                   ),
@@ -48,12 +48,9 @@ class AboutUsScreen extends StatelessWidget {
 
             // Mission Card
             _card(
-              title: "Our Mission",
-              child: const Text(
-                "HealYoga is designed to encourage regular yoga practice "
-                "through guided sessions, calming music, and progress tracking. "
-                "We focus on accessibility and simplicity to make wellness "
-                "available to everyone.",
+              title: AppLocalizations.of(context)!.missionTitle,
+              child: Text(
+                AppLocalizations.of(context)!.missionContent,
                 style: TextStyle(fontSize: 16),
               ),
             ),
@@ -62,13 +59,13 @@ class AboutUsScreen extends StatelessWidget {
 
             // Features Card
             _card(
-              title: "Key Features",
+              title: AppLocalizations.of(context)!.featuresTitle,
               child: Column(
-                children: const [
-                  FeatureItem(text: "Guided yoga sessions"),
-                  FeatureItem(text: "Relaxing music & meditation"),
-                  FeatureItem(text: "Progress tracking"),
-                  FeatureItem(text: "User authentication & profiles"),
+                children: [
+                  FeatureItem(text: AppLocalizations.of(context)!.feature1),
+                  FeatureItem(text: AppLocalizations.of(context)!.feature2),
+                  FeatureItem(text: AppLocalizations.of(context)!.feature3),
+                  FeatureItem(text: AppLocalizations.of(context)!.feature4),
                 ],
               ),
             ),
@@ -77,23 +74,21 @@ class AboutUsScreen extends StatelessWidget {
 
             // Credits Card
             _card(
-              title: "Credits",
+              title: AppLocalizations.of(context)!.creditsTitle,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
-                    "Project Supervisor",
+                    AppLocalizations.of(context)!.projectSupervisor,
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  SizedBox(height: 4),
+                  SizedBox(height: 8),
                   Text("Dr. Peter Yau"),
-
                   SizedBox(height: 16),
-
                   Text(
-                    "Team Members",
+                    AppLocalizations.of(context)!.teamMembers,
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                     ),
@@ -103,14 +98,62 @@ class AboutUsScreen extends StatelessWidget {
                   Text("• Daniel Soong"),
                   Text("• Kaam Yan Hye"),
                   Text("• Natalie Narayanan"),
+                  SizedBox(height: 16),
+                  Text(
+                    AppLocalizations.of(context)!.yogaInstructor,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text("Ms Lim Li Peng"),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Package Licenses Card
+            _card(
+              title: AppLocalizations.of(context)!.licensesTitle,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: () {
+                        showLicensePage(
+                          context: context,
+                          applicationName: 'HealYoga',
+                          applicationVersion: '1.0.0',
+                          applicationIcon: const Padding(
+                            padding: EdgeInsets.all(12.0),
+                            child: Icon(Icons.self_improvement, size: 48, color: turquoise),
+                          ),
+                          applicationLegalese: AppLocalizations.of(context)!.copyright,
+                        );
+                      },
+                      icon: const Icon(Icons.description_outlined),
+                      label: Text(AppLocalizations.of(context)!.viewLicensesButton),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: turquoise,
+                        side: const BorderSide(color: turquoise),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
 
             const SizedBox(height: 30),
 
-            const Text(
-              "© 2026 HealYoga Project\nAll Rights Reserved",
+            Text(
+              AppLocalizations.of(context)!.copyright,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 13,
@@ -162,7 +205,7 @@ class AboutUsScreen extends StatelessWidget {
 
 class FeatureItem extends StatelessWidget {
   final String text;
-  const FeatureItem({required this.text, Key? key}) : super(key: key);
+  const FeatureItem({required this.text, super.key});
 
   @override
   Widget build(BuildContext context) {

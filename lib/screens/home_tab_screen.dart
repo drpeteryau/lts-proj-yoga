@@ -3,14 +3,11 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../data/yoga_data_complete.dart';
 import 'session_detail_screen.dart';
-import '../models/yoga_pose.dart';
-import '../models/yoga_session.dart';
-import 'pose_detail_screen.dart';
 import 'meditation_screen.dart';
 import '../services/global_audio_service.dart';
-import '../l10n/app_localizations.dart';
 import '../utils/yoga_localization_helper.dart';
 import 'package:intl/intl.dart';
+import '../l10n/app_localizations.dart';
 
 // Combine all yoga sessions from YogaDataComplete class
 final yogaSessions = [
@@ -71,7 +68,8 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
 
       if (response != null && mounted) {
         setState(() {
-          _userName = (response['full_name'] as String?)?.split(' ').first ?? 'Friend';
+          _userName =
+              (response['full_name'] as String?)?.split(' ').first ?? 'Friend';
           _profileImageUrl = response['profile_image_url'] as String?;
         });
       }
@@ -156,6 +154,19 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
     }
   }
 
+  String _getGreeting(BuildContext context) {
+    final hour = DateTime.now().hour;
+    final localizations = AppLocalizations.of(context)!;
+
+    if (hour < 12) {
+      return localizations.goodMorning;
+    } else if (hour < 17) {
+      return localizations.goodAfternoon;
+    } else {
+      return localizations.goodEvening;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -164,7 +175,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
           // Flower background with opacity
           Positioned.fill(
             child: Opacity(
-              opacity: 0.9,  // Increased from 0.15 for better visibility
+              opacity: 0.9, // Increased from 0.15 for better visibility
               child: CustomPaint(
                 painter: FlowerBackgroundPainter(),
               ),
@@ -218,22 +229,20 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
       padding: const EdgeInsets.fromLTRB(24, 26, 24, 0),
       child: Row(
         children: [
-
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Good Morning!',
+                  _getGreeting(context),
                   style: GoogleFonts.poppins(
                     fontSize: 20,
                     fontWeight: FontWeight.w500,
                     color: Colors.black87,
                   ),
                 ),
-
                 Text(
-                  '${_userName.isEmpty ? 'Friend' : _userName}',
+                  _userName.isEmpty ? AppLocalizations.of(context)!.friend : _userName,
                   style: GoogleFonts.poppins(
                     fontSize: 30,
                     color: Colors.black,
@@ -263,17 +272,15 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
             child: ClipOval(
               child: _profileImageUrl != null && _profileImageUrl!.isNotEmpty
                   ? Image.network(
-                _profileImageUrl!,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return _buildDefaultAvatar();
-                },
-              )
+                      _profileImageUrl!,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return _buildDefaultAvatar();
+                      },
+                    )
                   : _buildDefaultAvatar(),
             ),
           ),
-
-
         ],
       ),
     );
@@ -304,7 +311,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
 
   Widget _buildMonthSelector() {
     final now = DateTime.now();
-    final monthName = DateFormat('MMMM yyyy').format(now);
+    final monthName = DateFormat('MMMM yyyy', Localizations.localeOf(context).toString()).format(now);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 30),
@@ -314,20 +321,16 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-
               Text(
                 monthName,
                 style: GoogleFonts.poppins(
                   fontSize: 22,
                   fontWeight: FontWeight.w500,
                   color: Colors.black87,
-
                 ),
               ),
             ],
           ),
-
-
         ],
       ),
     );
@@ -354,11 +357,11 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                   style: GoogleFonts.poppins(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
-                    color: isSelected ? const Color(0xFF40E0D0) : Colors.black45,
+                    color:
+                        isSelected ? const Color(0xFF40E0D0) : Colors.black45,
                   ),
                 ),
                 const SizedBox(height: 14),
-
                 Container(
                   width: 40,
                   height: 40,
@@ -367,13 +370,15 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                         ? const Color(0xFF40E0D0)
                         : const Color(0xCAFFFFFF),
                     shape: BoxShape.circle,
-                    boxShadow: isSelected ? [
-                      BoxShadow(
-                        color: const Color(0xFF40E0D0).withOpacity(0.3),
-                        blurRadius: 10,
-                        spreadRadius: 4,
-                      ),
-                    ] : null,
+                    boxShadow: isSelected
+                        ? [
+                            BoxShadow(
+                              color: const Color(0xFF40E0D0).withOpacity(0.3),
+                              blurRadius: 10,
+                              spreadRadius: 4,
+                            ),
+                          ]
+                        : null,
                   ),
                   child: Center(
                     child: Text(
@@ -417,10 +422,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                 const Color(0xFF11EDDB).withOpacity(0.1),
               ],
             ),
-
             borderRadius: BorderRadius.circular(28),
-
-
           ),
           child: Column(
             children: [
@@ -428,19 +430,18 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
 
               // Zen text
               Text(
-                'Find Your Peace',
+                AppLocalizations.of(context)!.findYourPeace,
                 style: GoogleFonts.poppins(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,
-
                 ),
               ),
 
               const SizedBox(height: 2),
 
               Text(
-                'Calming sounds for your wellness',
+                AppLocalizations.of(context)!.calmingSounds,
                 style: GoogleFonts.poppins(
                   fontSize: 18,
                   color: Colors.black,
@@ -453,7 +454,8 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
 
               // Subtle button
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     colors: [
@@ -474,7 +476,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      'Listen Now',
+                      AppLocalizations.of(context)!.listenNow,
                       style: GoogleFonts.poppins(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
@@ -493,8 +495,9 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
   }
 
   Widget _buildChairYogaWidget() {
-    final beginnerSessions = yogaSessions.where((s) =>
-    s.levelKey.toLowerCase() == 'beginner').toList();
+    final beginnerSessions = yogaSessions
+        .where((s) => s.levelKey.toLowerCase() == 'beginner')
+        .toList();
     if (beginnerSessions.isEmpty) return const SizedBox();
 
     final session = beginnerSessions.first;
@@ -574,7 +577,8 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                       children: [
                         const SizedBox(height: 20),
                         Text(
-                          YogaLocalizationHelper.getSessionTitle(context, session.titleKey),
+                          YogaLocalizationHelper.getSessionTitle(
+                              context, session.titleKey),
                           style: GoogleFonts.poppins(
                             fontSize: 26,
                             fontWeight: FontWeight.bold,
@@ -583,7 +587,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Perfect for those just starting their yoga journey',
+                          AppLocalizations.of(context)!.yogaSubtitle,
                           style: GoogleFonts.poppins(
                             fontSize: 18,
                             fontWeight: FontWeight.w500,
@@ -593,13 +597,14 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                         ),
                         const SizedBox(height: 20),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 9),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 24, vertical: 9),
                           decoration: BoxDecoration(
                             color: const Color(0xB6000000),
                             borderRadius: BorderRadius.circular(19),
                           ),
                           child: Text(
-                            'Join Now',
+                            AppLocalizations.of(context)!.joinNow,
                             style: GoogleFonts.poppins(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
@@ -629,7 +634,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
           Padding(
             padding: const EdgeInsets.only(top: 20, left: 4, bottom: 16),
             child: Text(
-              'Wellness Overview',
+              AppLocalizations.of(context)!.wellnessOverview,
               style: GoogleFonts.poppins(
                 fontSize: 26,
                 fontWeight: FontWeight.bold,
@@ -637,14 +642,13 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
               ),
             ),
           ),
-
           Row(
             children: [
               Expanded(
                 child: _buildWellnessCard(
                   icon: Icons.local_fire_department,
-                  title: 'Streak',
-                  value: '$_currentStreak days',
+                  title: AppLocalizations.of(context)!.streak,
+                  value: AppLocalizations.of(context)!.daysCount(_currentStreak),
                   color: const Color(0xFFA5A5A5),
                 ),
               ),
@@ -652,23 +656,21 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
               Expanded(
                 child: _buildWellnessCard(
                   icon: Icons.self_improvement,
-                  title: 'Sessions',
+                  title: AppLocalizations.of(context)!.sessions,
                   value: '$_totalSessions',
                   color: const Color(0xFFB0FFF6),
                 ),
               ),
             ],
           ),
-
           const SizedBox(height: 12),
-
           Row(
             children: [
               Expanded(
                 child: _buildWellnessCard(
                   icon: Icons.timer_outlined,
-                  title: 'Weekly',
-                  value: '$_weeklyMinutes min',
+                  title: AppLocalizations.of(context)!.weekly,
+                  value: AppLocalizations.of(context)!.minutesCount(_weeklyMinutes),
                   color: const Color(0xFF9B59B6),
                 ),
               ),
@@ -676,8 +678,8 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
               Expanded(
                 child: _buildWellnessCard(
                   icon: Icons.schedule,
-                  title: 'Total Time',
-                  value: '$_totalMinutes min',
+                  title: AppLocalizations.of(context)!.totalTime,
+                  value: AppLocalizations.of(context)!.minutesCount(_totalMinutes),
                   color: const Color(0xFF3498DB),
                 ),
               ),
@@ -767,7 +769,8 @@ class FlowerBackgroundPainter extends CustomPainter {
     _drawFlower(canvas, size.width * 0.35, size.height * 0.9, 50, 0.06);
   }
 
-  void _drawFlower(Canvas canvas, double cx, double cy, double size, double opacity) {
+  void _drawFlower(
+      Canvas canvas, double cx, double cy, double size, double opacity) {
     // Clamp opacity between 0 and 1
     final validOpacity = opacity.clamp(0.0, 1.0);
 
@@ -819,7 +822,8 @@ class FlowerBackgroundPainter extends CustomPainter {
 
     // Draw center circle
     final centerPaint = Paint()
-      ..color = const Color(0xFF40E0D0).withOpacity((validOpacity * 1.2).clamp(0.0, 1.0))
+      ..color = const Color(0xFF40E0D0)
+          .withOpacity((validOpacity * 1.2).clamp(0.0, 1.0))
       ..style = PaintingStyle.fill
       ..isAntiAlias = true;
     canvas.drawCircle(Offset(cx, cy), size * 0.25, centerPaint);

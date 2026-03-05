@@ -93,48 +93,37 @@
   "navMeditation": "Meditation",
   "navProfile": "Profile",
 
-  
-  "goodMorning": "Good Morning",
-  "goodAfternoon": "Good Afternoon",
-  "goodEvening": "Good Evening",
-  "dayCount": "Day {number}",
-  "@dayCount": {
-    "placeholders": {
-      "number": { "type": "int" }
-    }
-  },
-  "mainSessionTitle": "Do 7 Exercises in\nOnly 6 Minutes",
-  "start": "Start",
-  "keepUpWork": "Keep up the good work!",
-  "minShort": "{count} min",
-  "@minShort": {
+  "appTagline": "Find Your Inner Peace",
+  "goodMorning": "Good Morning!",
+  "goodAfternoon": "Good Afternoon!",
+  "goodEvening": "Good Evening!",
+  "friend": "Friend",
+  "findYourPeace": "Find Your Peace",
+  "calmingSounds": "Calming sounds for your wellness",
+  "listenNow": "Listen Now",
+  "yogaSubtitle": "Perfect for those just starting their yoga journey",
+  "joinNow": "Join Now",
+  "wellnessOverview": "Wellness Overview",
+  "streak": "Streak",
+  "sessions": "Sessions",
+  "weekly": "Weekly",
+  "totalTime": "Total Time",
+  "daysCount": "{count, plural, =1{1 day} other{{count} days}}",
+  "@daysCount": {
     "placeholders": {
       "count": { "type": "int" }
     }
   },
-  "poseDurationSeconds": "{seconds} seconds",
-  "@poseDurationSeconds": {
+  "minutesCount": "{count} min",
+  "@minutesCount": {
     "placeholders": {
-      "seconds": { "type": "int" }
+      "count": { "type": "int" }
     }
   },
-  "durationFormat": "{minutes} min",
-  "@durationFormat": {
-    "placeholders": {
-      "minutes": { "type": "int"}
-    }
-  },
-  "mon": "Mon",
-  "tue": "Tue",
-  "wed": "Wed",
-  "thu": "Thu",
-  "fri": "Fri",
-  "sat": "Sat",
-  "sun": "Sun",
 
   
-  "chooseYour": "Choose Your",
-  "level": "Level",
+  "beginYour": "Begin Your",
+  "wellnessJourney": "Wellness Journey",
   "beginnerSubtitle": "Chair Yoga",
   "beginnerDesc": "Perfect for those just starting their yoga journey",
   "intermediateSubtitle": "Hatha yoga on the mat",
@@ -147,13 +136,7 @@
       "levelName": { "type": "String" }
     }
   },
-  "completeMore": "Complete {count} more",
-  "@completeMore": {
-    "placeholders": {
-      "count": { "type": "int" }
-    }
-  },
-  "completeSessionsToUnlock": "Complete {count} more",
+  "completeSessionsToUnlock": "Complete {count} more sessions to unlock",
   "@completeSessionsToUnlock": {
     "placeholders": {
       "count": { "type": "int" }
@@ -176,6 +159,8 @@
   "errorLoadingProgress": "Error loading progress",
   "retry": "Retry",
   "ok": "OK",
+  "enterPasscodeHint": "Admin Passcode 🔐",
+  "moreInfo": "More Info",
 
 
   "beginnerTitle": "Beginner Sessions",
@@ -204,12 +189,6 @@
   "advancedTitle": "Advanced Sessions",
   "dynamicFlowNotice": "Dynamic flow practice. Move with your breath.",
   "advancedLabel": "ADVANCED",
-  "minutesCount": "{count} minutes",
-  "@minutesCount": {
-    "placeholders": {
-      "count": { "type": "int" }
-    }
-  },
   "highIntensity": "High intensity",
   "sunSalutationTitle": "Sun Salutation Flow",
   "repeatRounds": "Repeat 5-10 rounds • One breath, one movement",
@@ -288,6 +267,22 @@
   "yogaDescSunSalutation": "A dynamic sequence linking breath and movement. Builds strength, heat, coordination, and stamina.",
 
   
+  "sessionLevelLabel": "Level",
+  "sessionTotalTimeLabel": "Total Time",
+  "sessionTotalPosesLabel": "Total Poses",
+  "aboutThisSession": "About this Session",
+  "posesPreview": "Poses Preview",
+  "posesCompletedCount": "{completed} of {total} poses completed",
+  "@posesCompletedCount": {
+    "placeholders": {
+      "completed": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "practiceAgain": "Practice Again",
+  "posesLabel": "poses",
+
+  
   "duration": "Duration",
   "poses": "Poses",
   "intensity": "Intensity",
@@ -307,6 +302,30 @@
       "count": { "type": "int" }
     }
   },
+
+  
+  "poseComplete": "Pose Complete!",
+  "greatWorkChoice": "Great work! What would you like to do?",
+  "retryPose": "Retry This Pose",
+  "finishSession": "Finish Session",
+  "sessionPlaylist": "Session Playlist",
+  "playing": "Playing",
+  "poseCountProgress": "{completed}/{total}",
+  "@poseCountProgress": {
+    "placeholders": {
+      "completed": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "totalMinutesSpent": "{minutes} {minutesLabel} total",
+  "@totalMinutesSpent": {
+    "placeholders": {
+      "minutes": { "type": "int" },
+      "minutesLabel": { "type": "String" }
+    }
+  },
+  "previous": "Previous",
+  "completeCurrentPoseFirst": "Please complete the current pose before moving to the next one",
 
   
   "poseProgress": "{current} of {total}",
@@ -333,25 +352,58 @@
   "done": "Done",
 
   
-  "progressHeader": "Your Progress",
-  "progressSubtitle": "Track your journey to wellness",
-  "dayStreak": "Day Streak",
+  "poseDetailTitle": "Pose Details",
+  "howToDoTitle": "How to Do This Pose",
+  "learningNotice": "This is for learning only. To track progress, use \"Join Class\" from the session screen.",
+  "poseCurrentCount": "{current} of {total}",
+  "@poseCurrentCount": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "durationFormat": "{minutes}:{seconds} min",
+  "@durationFormat": {
+    "placeholders": {
+      "minutes": { "type": "int" },
+      "seconds": { "type": "String" }
+    }
+  },
+
+
+  "calendar": "Calendar",  
+  "activitySummary": "Activity Summary",
   "totalMinutes": "Total Minutes",
   "thisWeek": "This Week",
-  "weeklyGoal": "Goal: {goal} min",
-  "@weeklyGoal": {
+  "dailyMinutes": "Daily Minutes",
+  "week": "Week",
+  "nothingTracked": "Nothing tracked yet",
+  "min": "min",
+  "ofGoal": "of {goal} min",
+  "@ofGoal": {
     "placeholders": {
       "goal": { "type": "int" }
     }
   },
   "weeklyBadges": "Weekly Badges",
-  "checkedInMsg": "Checked in this week ✓",
-  "shareFeeling": "Share how you're feeling",
-  "newCheckIn": "New Check-in",
-  "viewHistory": "View History",
-  "calendar": "Calendar",
+  "wellnessCheckIn": "Wellness Check-In",
+  "checkedInThisWeek": "Checked in this week ✓",
+  "howAreYouFeeling": "How are you feeling?",
+  "checkInButton": "Check-In",
+  "historyButton": "History",
   "practice": "Practice",
   "restDay": "Rest day",
+  "reflectionHistory": "Reflection History",
+  "noReflections": "No reflections yet",
+  "bodyComfort": "Body Comfort",
+  "flexibility": "Flexibility",
+  "balance": "Balance",
+  "energy": "Energy",
+  "mood": "Mood",
+  "confidence": "Confidence",
+  "mindBody": "Mind-Body",
+  "wellbeing": "Wellbeing",
+  "notes": "Notes: ",
   "wellnessDialogTitle": "Wellness Check-in",
   "wellnessDialogSubtitle": "How are you feeling today?",
   "qBodyComfort": "How comfortable does your body feel when doing yoga?",
@@ -365,11 +417,8 @@
   "notesOptional": "Notes (optional)",
   "cancel": "Cancel",
   "submit": "Submit",
-  "notes": "Notes: ",
   "rateAllError": "Please rate all categories",
   "checkInSaved": "Wellness check-in saved!",
-  "reflectionHistory": "Reflection History",
-  "noReflections": "No reflections yet",
   "platinum": "Platinum",
   "gold": "Gold",
   "silver": "Silver",
@@ -442,14 +491,6 @@
   "skipForNow": "Skip for Now",
   "submitCheckIn": "Submit Check-in",
   "validationErrorCheckIn": "Please answer all required questions before submitting",
-  "bodyComfort": "Body Comfort",
-  "flexibility": "Flexibility",
-  "balance": "Balance",
-  "energy": "Energy",
-  "mood": "Mood",
-  "confidence": "Confidence",
-  "mindBody": "Mind-Body",
-  "wellbeing": "Wellbeing",
 
   
   "nowPlaying": "Now Playing",
@@ -465,20 +506,35 @@
   "soundBenefit4": "• Enhances overall well-being",
 
   
-  "welcomeBackSounds": "Welcome back,",
-  "findYourPeace": "Find Your Peace",
-  "tabAll": "All",
-  "tabRecent": "Recent",
-  "tabSaved": "Saved",
-  "tabFavorites": "Favorites",
-  "mostPopular": "Most Popular",
-  "latest": "Latest",
-  "noRecentSounds": "No recent sounds",
-  "noSavedSounds": "No saved sounds yet",
-  "noFavoriteSounds": "No favorite sounds yet",
-  "savedSuccess": "Saved!",
-  "removedFromSaved": "Removed from saved",
-  "audioLoadError": "Failed to load audio. Please try another one.",
+  "meditationHeaderTitle": "Choose Your Meditation",
+  "meditationHeaderSubtitle": "Pause & Breathe",
+  "meditationQuickStart": "Quick Start • 5-10 min",
+  "meditationAllSection": "All Meditations",
+  "meditationCategoryLabel": "Meditation",
+  "meditationDurationMin": "{count} min",
+  "@meditationDurationMin": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "meditationSessionMorningTitle": "Morning Clarity",
+  "meditationSessionMorningDesc": "Start your day with calm intention",
+  "meditationSessionBreathingTitle": "Deep Breathing",
+  "meditationSessionBreathingDesc": "Reduce stress with focused breath",
+  "meditationSessionEveningTitle": "Evening Wind Down",
+  "meditationSessionEveningDesc": "Release the day and prepare for rest",
+
+
+  "meditationPreparing": "Preparing your session...",
+  "meditationCancel": "Cancel Session",
+  "meditationEndSession": "End Session",
+  "meditationComplete": "Session Complete",
+  "meditationInhale": "Inhale...",
+  "meditationExhale": "Exhale...",
+  "meditationHold": "Hold...",
+  "meditationEndTitle": "End Session?",
+  "meditationEndMessage": "Are you sure you want to end your meditation session?",
+  "meditationConfirmEnd": "End",
 
   
   "soundOceanWaves": "Ocean Waves",
@@ -496,7 +552,6 @@
 
   "profileTitle": "Profile",
   "edit": "Edit",
-  "sessions": "Sessions",
   "minutesLabel": "Minutes",
   "daily": "Daily 🔥",
   "streakSummary": "Streak Summary",
@@ -504,7 +559,7 @@
   "preferences": "Preferences",
   "enabled": "Enabled",
   "disabled": "Disabled",
-  "logout": "LOG OUT",
+  "signout": "Sign Out",
   "aboutus": "About us",
 
 
@@ -546,7 +601,8 @@
   "min20": "20 minutes",
   "min30": "30 minutes",
   "english": "English",
-  "mandarin": "Mandarin",
+  "mandarinSimplified": "Mandarin (Simplified)",
+  "mandarinTraditional": "Mandarin (Traditional)",
 
   "sessionComplete": "Session Complete!",
   "completedPosesCount": "You completed {count} poses!",
@@ -556,10 +612,27 @@
     }
   },
   "minutes": "minutes",
-  "totalTime": "TOTAL TIME",
   "next": "Next",
   "aboutThisPose": "About this pose",
   "exitSession": "Exit Session?",
   "exitSessionMessage": "Your progress will not be saved if you exit now. Are you sure?",
-  "exit": "Exit"
+  "exit": "Exit",
+
+  
+  "aboutUsTitle": "About Us",
+  "appSubtitle": "Helping you build healthier habits through guided yoga.",
+  "missionTitle": "Our Mission",
+  "missionContent": "HealYoga is designed to encourage regular yoga practice through guided sessions, calming music, and progress tracking. We focus on accessibility and simplicity to make wellness available to everyone.",
+  "featuresTitle": "Key Features",
+  "feature1": "Guided yoga sessions",
+  "feature2": "Relaxing music & meditation",
+  "feature3": "Progress tracking",
+  "feature4": "User authentication & profiles",
+  "creditsTitle": "Credits",
+  "projectSupervisor": "Project Supervisor",
+  "teamMembers": "Team Members",
+  "yogaInstructor": "Yoga Instructor",
+  "licensesTitle": "Open Source Licenses",
+  "viewLicensesButton": "View All Licenses",
+  "copyright": "© 2026 HealYoga Project\nAll Rights Reserved"
 }

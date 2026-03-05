@@ -205,69 +205,72 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navProfile => 'Profile';
 
   @override
-  String get goodMorning => 'Good Morning';
+  String get appTagline => 'Find Your Inner Peace';
 
   @override
-  String get goodAfternoon => 'Good Afternoon';
+  String get goodMorning => 'Good Morning!';
 
   @override
-  String get goodEvening => 'Good Evening';
+  String get goodAfternoon => 'Good Afternoon!';
 
   @override
-  String dayCount(int number) {
-    return 'Day $number';
+  String get goodEvening => 'Good Evening!';
+
+  @override
+  String get friend => 'Friend';
+
+  @override
+  String get findYourPeace => 'Find Your Peace';
+
+  @override
+  String get calmingSounds => 'Calming sounds for your wellness';
+
+  @override
+  String get listenNow => 'Listen Now';
+
+  @override
+  String get yogaSubtitle =>
+      'Perfect for those just starting their yoga journey';
+
+  @override
+  String get joinNow => 'Join Now';
+
+  @override
+  String get wellnessOverview => 'Wellness Overview';
+
+  @override
+  String get streak => 'Streak';
+
+  @override
+  String get sessions => 'Sessions';
+
+  @override
+  String get weekly => 'Weekly';
+
+  @override
+  String get totalTime => 'Total Time';
+
+  @override
+  String daysCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days',
+      one: '1 day',
+    );
+    return '$_temp0';
   }
 
   @override
-  String get mainSessionTitle => 'Do 7 Exercises in\nOnly 6 Minutes';
-
-  @override
-  String get start => 'Start';
-
-  @override
-  String get keepUpWork => 'Keep up the good work!';
-
-  @override
-  String minShort(int count) {
+  String minutesCount(int count) {
     return '$count min';
   }
 
   @override
-  String poseDurationSeconds(int seconds) {
-    return '$seconds seconds';
-  }
+  String get beginYour => 'Begin Your';
 
   @override
-  String durationFormat(int minutes) {
-    return '$minutes min';
-  }
-
-  @override
-  String get mon => 'Mon';
-
-  @override
-  String get tue => 'Tue';
-
-  @override
-  String get wed => 'Wed';
-
-  @override
-  String get thu => 'Thu';
-
-  @override
-  String get fri => 'Fri';
-
-  @override
-  String get sat => 'Sat';
-
-  @override
-  String get sun => 'Sun';
-
-  @override
-  String get chooseYour => 'Choose Your';
-
-  @override
-  String get level => 'Level';
+  String get wellnessJourney => 'Wellness Journey';
 
   @override
   String get beginnerSubtitle => 'Chair Yoga';
@@ -294,13 +297,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String completeMore(int count) {
-    return 'Complete $count more';
-  }
-
-  @override
   String completeSessionsToUnlock(int count) {
-    return 'Complete $count more';
+    return 'Complete $count more sessions to unlock';
   }
 
   @override
@@ -324,6 +322,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ok => 'OK';
+
+  @override
+  String get enterPasscodeHint => 'Admin Passcode 🔐';
+
+  @override
+  String get moreInfo => 'More Info';
 
   @override
   String get beginnerTitle => 'Beginner Sessions';
@@ -380,11 +384,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get advancedLabel => 'ADVANCED';
-
-  @override
-  String minutesCount(int count) {
-    return '$count minutes';
-  }
 
   @override
   String get highIntensity => 'High intensity';
@@ -632,6 +631,32 @@ class AppLocalizationsEn extends AppLocalizations {
       'A dynamic sequence linking breath and movement. Builds strength, heat, coordination, and stamina.';
 
   @override
+  String get sessionLevelLabel => 'Level';
+
+  @override
+  String get sessionTotalTimeLabel => 'Total Time';
+
+  @override
+  String get sessionTotalPosesLabel => 'Total Poses';
+
+  @override
+  String get aboutThisSession => 'About this Session';
+
+  @override
+  String get posesPreview => 'Poses Preview';
+
+  @override
+  String posesCompletedCount(int completed, int total) {
+    return '$completed of $total poses completed';
+  }
+
+  @override
+  String get practiceAgain => 'Practice Again';
+
+  @override
+  String get posesLabel => 'poses';
+
+  @override
   String get duration => 'Duration';
 
   @override
@@ -661,6 +686,41 @@ class AppLocalizationsEn extends AppLocalizations {
   String minsLabel(int count) {
     return '$count Mins';
   }
+
+  @override
+  String get poseComplete => 'Pose Complete!';
+
+  @override
+  String get greatWorkChoice => 'Great work! What would you like to do?';
+
+  @override
+  String get retryPose => 'Retry This Pose';
+
+  @override
+  String get finishSession => 'Finish Session';
+
+  @override
+  String get sessionPlaylist => 'Session Playlist';
+
+  @override
+  String get playing => 'Playing';
+
+  @override
+  String poseCountProgress(int completed, int total) {
+    return '$completed/$total';
+  }
+
+  @override
+  String totalMinutesSpent(int minutes, String minutesLabel) {
+    return '$minutes $minutesLabel total';
+  }
+
+  @override
+  String get previous => 'Previous';
+
+  @override
+  String get completeCurrentPoseFirst =>
+      'Please complete the current pose before moving to the next one';
 
   @override
   String poseProgress(int current, int total) {
@@ -713,13 +773,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get done => 'Done';
 
   @override
-  String get progressHeader => 'Your Progress';
+  String get poseDetailTitle => 'Pose Details';
 
   @override
-  String get progressSubtitle => 'Track your journey to wellness';
+  String get howToDoTitle => 'How to Do This Pose';
 
   @override
-  String get dayStreak => 'Day Streak';
+  String get learningNotice =>
+      'This is for learning only. To track progress, use \"Join Class\" from the session screen.';
+
+  @override
+  String poseCurrentCount(int current, int total) {
+    return '$current of $total';
+  }
+
+  @override
+  String durationFormat(int minutes, String seconds) {
+    return '$minutes:$seconds min';
+  }
+
+  @override
+  String get calendar => 'Calendar';
+
+  @override
+  String get activitySummary => 'Activity Summary';
 
   @override
   String get totalMinutes => 'Total Minutes';
@@ -728,33 +805,78 @@ class AppLocalizationsEn extends AppLocalizations {
   String get thisWeek => 'This Week';
 
   @override
-  String weeklyGoal(int goal) {
-    return 'Goal: $goal min';
+  String get dailyMinutes => 'Daily Minutes';
+
+  @override
+  String get week => 'Week';
+
+  @override
+  String get nothingTracked => 'Nothing tracked yet';
+
+  @override
+  String get min => 'min';
+
+  @override
+  String ofGoal(int goal) {
+    return 'of $goal min';
   }
 
   @override
   String get weeklyBadges => 'Weekly Badges';
 
   @override
-  String get checkedInMsg => 'Checked in this week ✓';
+  String get wellnessCheckIn => 'Wellness Check-In';
 
   @override
-  String get shareFeeling => 'Share how you\'re feeling';
+  String get checkedInThisWeek => 'Checked in this week ✓';
 
   @override
-  String get newCheckIn => 'New Check-in';
+  String get howAreYouFeeling => 'How are you feeling?';
 
   @override
-  String get viewHistory => 'View History';
+  String get checkInButton => 'Check-In';
 
   @override
-  String get calendar => 'Calendar';
+  String get historyButton => 'History';
 
   @override
   String get practice => 'Practice';
 
   @override
   String get restDay => 'Rest day';
+
+  @override
+  String get reflectionHistory => 'Reflection History';
+
+  @override
+  String get noReflections => 'No reflections yet';
+
+  @override
+  String get bodyComfort => 'Body Comfort';
+
+  @override
+  String get flexibility => 'Flexibility';
+
+  @override
+  String get balance => 'Balance';
+
+  @override
+  String get energy => 'Energy';
+
+  @override
+  String get mood => 'Mood';
+
+  @override
+  String get confidence => 'Confidence';
+
+  @override
+  String get mindBody => 'Mind-Body';
+
+  @override
+  String get wellbeing => 'Wellbeing';
+
+  @override
+  String get notes => 'Notes: ';
 
   @override
   String get wellnessDialogTitle => 'Wellness Check-in';
@@ -800,19 +922,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get submit => 'Submit';
 
   @override
-  String get notes => 'Notes: ';
-
-  @override
   String get rateAllError => 'Please rate all categories';
 
   @override
   String get checkInSaved => 'Wellness check-in saved!';
-
-  @override
-  String get reflectionHistory => 'Reflection History';
-
-  @override
-  String get noReflections => 'No reflections yet';
 
   @override
   String get platinum => 'Platinum';
@@ -1033,30 +1146,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Please answer all required questions before submitting';
 
   @override
-  String get bodyComfort => 'Body Comfort';
-
-  @override
-  String get flexibility => 'Flexibility';
-
-  @override
-  String get balance => 'Balance';
-
-  @override
-  String get energy => 'Energy';
-
-  @override
-  String get mood => 'Mood';
-
-  @override
-  String get confidence => 'Confidence';
-
-  @override
-  String get mindBody => 'Mind-Body';
-
-  @override
-  String get wellbeing => 'Wellbeing';
-
-  @override
   String get nowPlaying => 'Now Playing';
 
   @override
@@ -1090,46 +1179,76 @@ class AppLocalizationsEn extends AppLocalizations {
   String get soundBenefit4 => '• Enhances overall well-being';
 
   @override
-  String get welcomeBackSounds => 'Welcome back,';
+  String get meditationHeaderTitle => 'Choose Your Meditation';
 
   @override
-  String get findYourPeace => 'Find Your Peace';
+  String get meditationHeaderSubtitle => 'Pause & Breathe';
 
   @override
-  String get tabAll => 'All';
+  String get meditationQuickStart => 'Quick Start • 5-10 min';
 
   @override
-  String get tabRecent => 'Recent';
+  String get meditationAllSection => 'All Meditations';
 
   @override
-  String get tabSaved => 'Saved';
+  String get meditationCategoryLabel => 'Meditation';
 
   @override
-  String get tabFavorites => 'Favorites';
+  String meditationDurationMin(int count) {
+    return '$count min';
+  }
 
   @override
-  String get mostPopular => 'Most Popular';
+  String get meditationSessionMorningTitle => 'Morning Clarity';
 
   @override
-  String get latest => 'Latest';
+  String get meditationSessionMorningDesc =>
+      'Start your day with calm intention';
 
   @override
-  String get noRecentSounds => 'No recent sounds';
+  String get meditationSessionBreathingTitle => 'Deep Breathing';
 
   @override
-  String get noSavedSounds => 'No saved sounds yet';
+  String get meditationSessionBreathingDesc =>
+      'Reduce stress with focused breath';
 
   @override
-  String get noFavoriteSounds => 'No favorite sounds yet';
+  String get meditationSessionEveningTitle => 'Evening Wind Down';
 
   @override
-  String get savedSuccess => 'Saved!';
+  String get meditationSessionEveningDesc =>
+      'Release the day and prepare for rest';
 
   @override
-  String get removedFromSaved => 'Removed from saved';
+  String get meditationPreparing => 'Preparing your session...';
 
   @override
-  String get audioLoadError => 'Failed to load audio. Please try another one.';
+  String get meditationCancel => 'Cancel Session';
+
+  @override
+  String get meditationEndSession => 'End Session';
+
+  @override
+  String get meditationComplete => 'Session Complete';
+
+  @override
+  String get meditationInhale => 'Inhale...';
+
+  @override
+  String get meditationExhale => 'Exhale...';
+
+  @override
+  String get meditationHold => 'Hold...';
+
+  @override
+  String get meditationEndTitle => 'End Session?';
+
+  @override
+  String get meditationEndMessage =>
+      'Are you sure you want to end your meditation session?';
+
+  @override
+  String get meditationConfirmEnd => 'End';
 
   @override
   String get soundOceanWaves => 'Ocean Waves';
@@ -1171,9 +1290,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get edit => 'Edit';
 
   @override
-  String get sessions => 'Sessions';
-
-  @override
   String get minutesLabel => 'Minutes';
 
   @override
@@ -1195,7 +1311,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get disabled => 'Disabled';
 
   @override
-  String get logout => 'LOG OUT';
+  String get signout => 'Sign Out';
 
   @override
   String get aboutus => 'About us';
@@ -1315,7 +1431,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get english => 'English';
 
   @override
-  String get mandarin => 'Mandarin';
+  String get mandarinSimplified => 'Mandarin (Simplified)';
+
+  @override
+  String get mandarinTraditional => 'Mandarin (Traditional)';
 
   @override
   String get sessionComplete => 'Session Complete!';
@@ -1327,9 +1446,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get minutes => 'minutes';
-
-  @override
-  String get totalTime => 'TOTAL TIME';
 
   @override
   String get next => 'Next';
@@ -1346,4 +1462,54 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get exit => 'Exit';
+
+  @override
+  String get aboutUsTitle => 'About Us';
+
+  @override
+  String get appSubtitle =>
+      'Helping you build healthier habits through guided yoga.';
+
+  @override
+  String get missionTitle => 'Our Mission';
+
+  @override
+  String get missionContent =>
+      'HealYoga is designed to encourage regular yoga practice through guided sessions, calming music, and progress tracking. We focus on accessibility and simplicity to make wellness available to everyone.';
+
+  @override
+  String get featuresTitle => 'Key Features';
+
+  @override
+  String get feature1 => 'Guided yoga sessions';
+
+  @override
+  String get feature2 => 'Relaxing music & meditation';
+
+  @override
+  String get feature3 => 'Progress tracking';
+
+  @override
+  String get feature4 => 'User authentication & profiles';
+
+  @override
+  String get creditsTitle => 'Credits';
+
+  @override
+  String get projectSupervisor => 'Project Supervisor';
+
+  @override
+  String get teamMembers => 'Team Members';
+
+  @override
+  String get yogaInstructor => 'Yoga Instructor';
+
+  @override
+  String get licensesTitle => 'Open Source Licenses';
+
+  @override
+  String get viewLicensesButton => 'View All Licenses';
+
+  @override
+  String get copyright => '© 2026 HealYoga Project\nAll Rights Reserved';
 }

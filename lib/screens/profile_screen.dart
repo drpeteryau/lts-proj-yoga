@@ -126,7 +126,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (v == 'Advanced') return l10n.advanced;
 
     if (v == ('English')) return l10n.english;
-    if (v == ('Mandarin')) return l10n.mandarin;
+    if (v == ('Mandarin (Simplified)')) return l10n.mandarinSimplified;
+    if (v == ('Mandarin (Traditional)')) return l10n.mandarinTraditional;
 
     if (v.contains('5')) return l10n.min5;
     if (v.contains('10')) return l10n.min10;
@@ -175,7 +176,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Profile',
+                AppLocalizations.of(context)!.profileTitle,
                 style: TextStyle(
                   fontSize: isWeb ? 32 : 26,
                   fontWeight: FontWeight.bold,
@@ -204,7 +205,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
                 child: Text(
-                  'Edit',
+                  AppLocalizations.of(context)!.edit,
                   style: TextStyle(
                     fontSize: isWeb ? 16 : 15,
                     fontWeight: FontWeight.w600,
@@ -564,7 +565,7 @@ SizedBox(
       elevation: 0,
     ),
     child: Text(
-      'Sign Out',
+      AppLocalizations.of(context)!.signout,
       style: TextStyle(
         color: Colors.white,
         fontWeight: FontWeight.w600,

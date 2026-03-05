@@ -249,7 +249,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                       children: [
                         // Header - simplified
                         Text(
-                          'Activity Summary',
+                          AppLocalizations.of(context)!.activitySummary,
                           style: GoogleFonts.poppins(
                             fontSize: isWeb ? 32 : 26,
                             fontWeight: FontWeight.bold,
@@ -322,7 +322,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 iconColor: const Color(0xFFFF6B6B),
                 iconBgColor: const Color(0xFFFFE5E5),
                 value: _currentStreak.toString(),
-                label: 'Streak',
+                label: AppLocalizations.of(context)!.streak,
               ),
             ),
             const SizedBox(width: 16),
@@ -332,7 +332,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 iconColor: const Color(0xFF40E0D0),
                 iconBgColor: const Color(0xFFE0F7F4),
                 value: _totalSessions.toString(),
-                label: 'Sessions',
+                label: AppLocalizations.of(context)!.sessions,
               ),
             ),
           ],
@@ -347,7 +347,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 iconColor: const Color(0xFF9D7FEA),
                 iconBgColor: const Color(0xFFF3EFFF),
                 value: _totalMinutes.toString(),
-                label: 'Minutes',
+                label: AppLocalizations.of(context)!.totalMinutes,
               ),
             ),
             const SizedBox(width: 16),
@@ -357,7 +357,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 iconColor: const Color(0xFFFFD700),
                 iconBgColor: const Color(0xFFFFF8E1),
                 value: _getCurrentBadge(),
-                label: 'This Week',
+                label: AppLocalizations.of(context)!.weeklyBadges,
               ),
             ),
           ],
@@ -425,30 +425,42 @@ class _ProgressScreenState extends State<ProgressScreen> {
   }
 
   Widget _buildDailyMinutesChart() {
-    // Get last 7 days of activity
     final now = DateTime.now();
+    
+    // 1. Find the Monday of the current week
+    // If today is Sunday (7), subtracting 6 days gets us to Monday.
+    // If today is Monday (1), subtracting 0 days stays on Monday.
+    final int daysToSubtract = now.weekday - 1;
+    final DateTime mondayOfThisWeek = DateTime(now.year, now.month, now.day).subtract(Duration(days: daysToSubtract));
+
     final List<Map<String, dynamic>> weekData = [];
 
-    for (int i = 6; i >= 0; i--) {
-      final date = now.subtract(Duration(days: i));
+    // 2. Loop through 7 days starting from Monday
+    for (int i = 0; i < 7; i++) {
+      final date = mondayOfThisWeek.add(Duration(days: i));
       final dateKey = DateFormat('yyyy-MM-dd').format(date);
-      final dayName = DateFormat('E').format(date).substring(0, 3);
+      
+      // Use the locale-aware short day name (Mon, Tue, etc.)
+      final dayName = DateFormat('E', Localizations.localeOf(context).toString()).format(date);
 
-      // Calculate minutes for this day (simplified - you may need to adjust based on your data structure)
+      // Logic to get minutes for that specific day
+      // (Using your existing logic or checking specific records if available)
       int minutesForDay = 0;
       if (_activityDays[dateKey] == true) {
-        // Estimate based on average session length
+        // This is a placeholder for your daily minute logic. 
+        // If your DB records have exact minutes per day, you should fetch them in _loadProgressData
         minutesForDay = (_totalMinutes / max(_activityDays.length, 1)).round();
       }
 
       weekData.add({
         'day': dayName,
         'minutes': minutesForDay,
-        'isToday': i == 0,
+        'isToday': date.day == now.day && date.month == now.month && date.year == now.year,
       });
     }
 
-    final maxMinutes = weekData.map((d) => d['minutes'] as int).reduce(max).toDouble();
+    // 3. Render the UI (Same as your original code from here)
+    final maxMinutes = weekData.map((d) => (d['minutes'] as int).toDouble()).reduce(max);
     final hasData = maxMinutes > 0;
 
     return Container(
@@ -470,7 +482,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
           Row(
             children: [
               Text(
-                'Daily Minutes',
+                AppLocalizations.of(context)!.dailyMinutes,
                 style: GoogleFonts.poppins(
                   fontSize: 22,
                   fontWeight: FontWeight.w600,
@@ -479,7 +491,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
               ),
               const Spacer(),
               Text(
-                'Week',
+                AppLocalizations.of(context)!.week,
                 style: GoogleFonts.poppins(
                   fontSize: 13,
                   color: Colors.grey[600],
@@ -488,22 +500,16 @@ class _ProgressScreenState extends State<ProgressScreen> {
             ],
           ),
           const SizedBox(height: 24),
-
           if (!hasData)
-          // No data message
             Center(
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 40),
                 child: Column(
                   children: [
-                    Icon(
-                      Icons.show_chart,
-                      size: 48,
-                      color: Colors.grey[300],
-                    ),
+                    Icon(Icons.show_chart, size: 48, color: Colors.grey[300]),
                     const SizedBox(height: 12),
                     Text(
-                      'Nothing tracked yet',
+                      AppLocalizations.of(context)!.nothingTracked,
                       style: GoogleFonts.poppins(
                         fontSize: 15,
                         color: Colors.grey[400],
@@ -515,7 +521,6 @@ class _ProgressScreenState extends State<ProgressScreen> {
               ),
             )
           else
-          // Chart with bars
             SizedBox(
               height: 160,
               child: Row(
@@ -550,8 +555,8 @@ class _ProgressScreenState extends State<ProgressScreen> {
                             height: max(barHeight, minutes > 0 ? 20 : 10),
                             decoration: BoxDecoration(
                               color: isToday
-                                  ? const Color(0xFFFFB74D)
-                                  : const Color(0xFF40E0D0),
+                                  ? const Color(0xFFFFB74D) // Orange for today
+                                  : const Color(0xFF40E0D0), // Teal for others
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
@@ -603,7 +608,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 ),
                 child: const Icon(
                   Icons.favorite,
-                  color: const Color(0xFF000000),
+                  color: Color(0xFF000000),
                   size: 20,
                 ),
               ),
@@ -613,7 +618,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Wellness Check-In',
+                      AppLocalizations.of(context)!.wellnessCheckIn,
                       style: GoogleFonts.poppins(
                         fontSize: 22,
                         fontWeight: FontWeight.w600,
@@ -623,8 +628,8 @@ class _ProgressScreenState extends State<ProgressScreen> {
                     const SizedBox(height: 2),
                     Text(
                       _hasCheckInThisWeek
-                          ? 'Checked in this week ✓'
-                          : 'How are you feeling?',
+                          ? AppLocalizations.of(context)!.checkedInThisWeek
+                          : AppLocalizations.of(context)!.howAreYouFeeling,
                       style: GoogleFonts.poppins(
                         fontSize: 16,
                         color: _hasCheckInThisWeek
@@ -663,7 +668,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                       const Icon(Icons.add_circle, size: 25),
                       const SizedBox(width: 8),
                       Text(
-                        'Check-In',
+                        AppLocalizations.of(context)!.checkInButton,
                         style: GoogleFonts.poppins(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
@@ -695,7 +700,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                       const Icon(Icons.history, size: 20),
                       const SizedBox(width: 8),
                       Text(
-                        'History',
+                        AppLocalizations.of(context)!.historyButton,
                         style: GoogleFonts.poppins(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
@@ -733,7 +738,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
         children: [
           // Header
           Text(
-            'This Week',
+            AppLocalizations.of(context)!.thisWeek,
             style: GoogleFonts.poppins(
               fontSize: 22,
               fontWeight: FontWeight.bold,
@@ -779,7 +784,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                     ),
 
                     Text(
-                      'min',
+                      AppLocalizations.of(context)!.min,
                       style: GoogleFonts.poppins(
                         fontSize: 16,
                         color: Colors.black,
@@ -790,7 +795,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                     const SizedBox(height: 8),
 
                     Text(
-                      'of $_weeklyGoal min',
+                      AppLocalizations.of(context)!.ofGoal(_weeklyGoal),
                       style: GoogleFonts.poppins(
                         fontSize: 14,
                         color: Colors.grey[500],
@@ -806,7 +811,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
 
           // Badges section
           Text(
-            'Weekly Badges',
+            AppLocalizations.of(context)!.weeklyBadges,
             style: GoogleFonts.poppins(
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -819,10 +824,10 @@ class _ProgressScreenState extends State<ProgressScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildBadge('Bronze', 60, Icons.emoji_events, const Color(0xFFCD7F32)),
-              _buildBadge('Silver', 120, Icons.emoji_events, const Color(0xFFC0C0C0)),
-              _buildBadge('Gold', 180, Icons.emoji_events, const Color(0xFFFFD700)),
-              _buildBadge('Platinum', 240, Icons.diamond, const Color(0xFFB9F2FF)),
+              _buildBadge(AppLocalizations.of(context)!.bronze, 60, Icons.emoji_events, const Color(0xFFCD7F32)),
+              _buildBadge(AppLocalizations.of(context)!.silver, 120, Icons.emoji_events, const Color(0xFFC0C0C0)),
+              _buildBadge(AppLocalizations.of(context)!.gold, 180, Icons.emoji_events, const Color(0xFFFFD700)),
+              _buildBadge(AppLocalizations.of(context)!.platinum, 240, Icons.diamond, const Color(0xFFB9F2FF)),
             ],
           ),
         ],
@@ -872,7 +877,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
         ),
         const SizedBox(height: 2),
         Text(
-          '$minutes min',
+          AppLocalizations.of(context)!.ofGoal(minutes),
           style: GoogleFonts.poppins(
             fontSize: 10,
             color: Colors.grey[600],

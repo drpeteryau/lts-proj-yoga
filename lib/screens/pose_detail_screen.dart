@@ -5,10 +5,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:video_player/video_player.dart';
 
-import '../l10n/app_localizations.dart';
 import '../models/yoga_pose.dart';
 import '../services/global_audio_service.dart';
 import '../utils/yoga_localization_helper.dart';
+import '../l10n/app_localizations.dart';
 
 /// Pose Detail Screen - Information/Learning page
 /// No timer, no completion tracking, just educational content
@@ -461,7 +461,10 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          '${currentPose.durationSeconds ~/ 60}:${(currentPose.durationSeconds % 60).toString().padLeft(2, '0')} min',
+                          AppLocalizations.of(context)!.durationFormat(
+                            (currentPose.durationSeconds ~/ 60).toInt(),
+                            (currentPose.durationSeconds % 60).toString().padLeft(2, '0'),
+                          ),
                           style: GoogleFonts.poppins(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
@@ -476,7 +479,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
 
                   // How to do this pose
                   Text(
-                    'How to Do This Pose',
+                    AppLocalizations.of(context)!.howToDoTitle,
                     style: GoogleFonts.poppins(
                       fontSize: 22,  // Large
                       fontWeight: FontWeight.bold,
@@ -516,7 +519,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
                       ),
                       const SizedBox(width: 12),
                       Text(
-                        'Safety Tips',
+                        AppLocalizations.of(context)!.safetyTips,
                         style: GoogleFonts.poppins(
                           fontSize: 22,  // Large
                           fontWeight: FontWeight.bold,
@@ -585,7 +588,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
                         const SizedBox(width: 14),
                         Expanded(
                           child: Text(
-                            'This is for learning only. To track progress, use "Join Class" from the session screen.',
+                            AppLocalizations.of(context)!.learningNotice,
                             style: GoogleFonts.poppins(
                               fontSize: 14,
                               color: Colors.blue[200],
@@ -616,7 +619,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
                         : null,
 
                     label: Text(
-                      'Previous',
+                      AppLocalizations.of(context)!.previous,
                       style: GoogleFonts.poppins(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
@@ -649,7 +652,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
                         : null,
 
                     label: Text(
-                      'Next',
+                      AppLocalizations.of(context)!.next,
                       style: GoogleFonts.poppins(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,

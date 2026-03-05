@@ -30,7 +30,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
   bool _isPaused = false;
 
   int _totalTimeSpent = 0;
-  int _sessionStartSeconds = 0;
+  final int _sessionStartSeconds = 0;
   final Set<String> _completedPoseIds = {};
 
   VideoPlayerController? _videoController;
@@ -174,7 +174,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Please complete the current pose before moving to the next one',
+            AppLocalizations.of(context)!.completeCurrentPoseFirst,
             style: GoogleFonts.poppins(),
           ),
           backgroundColor: Colors.orange,
@@ -286,7 +286,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
             ),
             const SizedBox(height: 24),
             Text(
-              'Pose Complete!',
+              AppLocalizations.of(context)!.poseComplete,
               style: GoogleFonts.poppins(
                 fontSize: 26,  // Larger for elderly
                 fontWeight: FontWeight.bold,
@@ -305,7 +305,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Great work! What would you like to do?',
+              AppLocalizations.of(context)!.greatWorkChoice,
               style: GoogleFonts.poppins(
                 fontSize: 16,  // Larger
                 color: Colors.grey[600],
@@ -337,7 +337,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
                 ),
               ),
               child: Text(
-                'Retry This Pose',
+                AppLocalizations.of(context)!.retryPose,
                 style: GoogleFonts.poppins(
                   fontSize: 18,  // Larger
                   fontWeight: FontWeight.w600,
@@ -366,7 +366,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
                 elevation: 0,
               ),
               child: Text(
-                isLastPose ? 'Finish Session' : 'Next Pose',
+                isLastPose ? AppLocalizations.of(context)!.finishSession : AppLocalizations.of(context)!.nextPose,
                 style: GoogleFonts.poppins(
                   fontSize: 18,  // Larger
                   fontWeight: FontWeight.w600,
@@ -457,7 +457,10 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              '${(_totalTimeSpent ~/ 60)} ${AppLocalizations.of(context)!.minutes} total',
+              AppLocalizations.of(context)!.totalMinutesSpent(
+                _totalTimeSpent ~/ 60,                     // The number (int)
+                AppLocalizations.of(context)!.minutes,     // The label "minutes"
+              ),
               style: GoogleFonts.poppins(
                 fontSize: 16,  // Larger
                 color: Colors.grey[600],
@@ -907,7 +910,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
               onPressed: _currentPoseIndex > 0 ? _goToPreviousPose : null,
 
               label: Text(
-                'Previous',
+                AppLocalizations.of(context)!.previous,
                 style: GoogleFonts.poppins(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -1093,7 +1096,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
             child: Row(
               children: [
                 Text(
-                  'Session Playlist',
+                  AppLocalizations.of(context)!.sessionPlaylist,
                   style: GoogleFonts.poppins(
                     fontSize: 22,  // Larger for elderly
                     fontWeight: FontWeight.bold,
@@ -1205,7 +1208,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Text(
-                        'Playing',
+                        AppLocalizations.of(context)!.playing,
                         style: GoogleFonts.poppins(
                           fontSize: 13,  // Larger
                           fontWeight: FontWeight.w600,

@@ -105,11 +105,11 @@ class _MainNavigationScreenState
                 ),
                 Row(
                   children: [
-                    _buildTopNavItem(0, 'HOME'),
-                    _buildTopNavItem(1, 'SESSIONS'),
-                    _buildTopNavItem(2, 'PROGRESS'),
-                    _buildTopNavItem(3, 'MEDITATION'),
-                    _buildTopNavItem(4, 'PROFILE'),
+                    _buildTopNavItem(0, AppLocalizations.of(context)!.navHome),
+                    _buildTopNavItem(1, AppLocalizations.of(context)!.navSessions),
+                    _buildTopNavItem(2, AppLocalizations.of(context)!.navProgress),
+                    _buildTopNavItem(3, AppLocalizations.of(context)!.navMeditation),
+                    _buildTopNavItem(4, AppLocalizations.of(context)!.navProfile),
                   ],
                 ),
               ],

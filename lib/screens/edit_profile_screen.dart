@@ -80,7 +80,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       _experienceLevel = profile['experience_level'] ?? 'Beginner';
       _sessionLength = profile['preferred_session_length'] ?? '15 minutes';
       _language = profile['preferred_language'] ?? 'English';
-      appLocale.value = _language == 'Mandarin' ? const Locale('zh') : const Locale('en');
+      // Logic to handle old data
+      if (_language == 'Mandarin') {
+        _language = 'Mandarin (Simplified)'; // Map old value to new default
+      } else {
+        _language = _language;
+      }
+      // Update the locale based on the corrected _language
+      if (_language == 'Mandarin (Simplified)') {
+        appLocale.value = const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans');
+      } else if (_language == 'Mandarin (Traditional)') {
+        appLocale.value = const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant');
+      } else {
+        appLocale.value = const Locale('en');
+      }
 
       _pushNotifications = profile['push_notifications_enabled'] ?? true;
       _profileImageUrl = profile['profile_image_url'];
@@ -387,15 +400,23 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     _language,
                     [
                       'English',
-                      'Mandarin',
+                      'Mandarin (Simplified)',
+                      'Mandarin (Traditional)',
                     ],
                     (v) {
                       setState(() => _language = v);
-                      appLocale.value = v == 'Mandarin' ? const Locale('zh') : const Locale('en');
+                      if (v == 'Mandarin (Simplified)') {
+                        appLocale.value = const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans');
+                      } else if (v == 'Mandarin (Traditional)') {
+                        appLocale.value = const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant');
+                      } else {
+                        appLocale.value = const Locale('en');
+                      }
                     },
                     itemLabelBuilder: (value) {
                       if (value == 'English') return AppLocalizations.of(context)!.english;
-                      if (value == 'Mandarin') return AppLocalizations.of(context)!.mandarin;
+                      if (value == 'Mandarin (Simplified)') return AppLocalizations.of(context)!.mandarinSimplified;
+                      if (value == 'Mandarin (Traditional)') return AppLocalizations.of(context)!.mandarinTraditional;
                         return value;
                     },                
                   ),

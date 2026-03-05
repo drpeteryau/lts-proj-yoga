@@ -170,7 +170,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
 
                         // Header - Motivating text
                         Text(
-                          'Begin Your',
+                          AppLocalizations.of(context)!.beginYour,
                           style: GoogleFonts.poppins(
                             fontSize: isWeb ? 36 : 32,
                             fontWeight: FontWeight.w600,
@@ -179,7 +179,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                           ),
                         ),
                         Text(
-                          'Wellness Journey',
+                          AppLocalizations.of(context)!.wellnessJourney,
                           style: GoogleFonts.poppins(
                             fontSize: isWeb ? 36 : 32,
                             fontWeight: FontWeight.bold,
@@ -425,7 +425,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                       // Unlock message
                       if (needsIntermediate)
                         Text(
-                          'Complete Intermediate first',
+                          AppLocalizations.of(context)!.unlockIntermediateFirst,
                           style: GoogleFonts.poppins(
                             fontSize: 18, // Larger
                             fontWeight: FontWeight.w600,
@@ -437,7 +437,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Complete ${requiredSessions - currentLevelSessions} more sessions to unlock',
+                              AppLocalizations.of(context)!.completeSessionsToUnlock(requiredSessions - currentLevelSessions),
                               style: GoogleFonts.poppins(
                                 fontSize: 18, // Larger
                                 fontWeight: FontWeight.w600,
@@ -446,7 +446,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                             ),
                             const SizedBox(height: 6),
                             Text(
-                              '$currentLevelSessions of $requiredSessions sessions completed',
+                              AppLocalizations.of(context)!.sessionsProgress(currentLevelSessions, requiredSessions),
                               style: GoogleFonts.poppins(
                                 fontSize: 15, // Larger
                                 color: Colors.white.withOpacity(0.95),
@@ -503,7 +503,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                             ),
                             const SizedBox(width: 6),
                             Text(
-                              '$sessionsCompleted sessions completed',
+                              AppLocalizations.of(context)!.sessionsCompletedCount(sessionsCompleted),
                               style: GoogleFonts.poppins(
                                 fontSize: 14, // Larger
                                 color: Colors.white,
@@ -526,11 +526,13 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
   }
 
   void _showLockedDialog(
-      String levelName,
-      int requiredSessions,
-      int currentSessions, {
-        String? message,
-      }) {
+    String levelName,
+    int requiredSessions,
+    int currentSessions, {
+      String? message,
+    }) {
+      final TextEditingController passcodeController = TextEditingController();
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -555,8 +557,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              message ??
-                  AppLocalizations.of(context)!.completeSessionsToUnlock(requiredSessions - currentSessions),
+              message ?? AppLocalizations.of(context)!.completeSessionsToUnlock(requiredSessions - currentSessions),
               style: GoogleFonts.poppins(fontSize: 15),
             ),
             const SizedBox(height: 16),

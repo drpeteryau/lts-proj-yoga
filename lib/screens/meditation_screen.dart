@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'meditation_session_screen.dart';
 import '../services/global_audio_service.dart';
+import '../l10n/app_localizations.dart';
 
 
 enum MeditationType { guided, breathing, silent }
@@ -83,8 +84,8 @@ class _MeditationScreenState extends State<MeditationScreen> {
                   children: [
                     _buildQuickStartCard(),
                     const SizedBox(height: 30),
-                    const Text(
-                      "All Meditations",
+                    Text(
+                      AppLocalizations.of(context)!.meditationAllSection,
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -93,7 +94,7 @@ class _MeditationScreenState extends State<MeditationScreen> {
                     const SizedBox(height: 20),
                     ...sessions
                         .map((session) => _buildSessionCard(session))
-                        .toList(),
+                        ,
                   ],
                 ),
               ),
@@ -106,18 +107,18 @@ class _MeditationScreenState extends State<MeditationScreen> {
 
   Widget _buildHeader() {
     return Row(
-      children: const [
+      children: [
         Icon(Icons.self_improvement, size: 32, color: Colors.teal),
         SizedBox(width: 12),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Pause & Breathe",
+              AppLocalizations.of(context)!.meditationHeaderSubtitle,
               style: TextStyle(fontSize: 14, color: Colors.grey),
             ),
             Text(
-              "Choose Your Meditation",
+              AppLocalizations.of(context)!.meditationHeaderTitle,
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
@@ -156,10 +157,10 @@ class _MeditationScreenState extends State<MeditationScreen> {
             ),
           ),
           padding: const EdgeInsets.all(20),
-          child: const Align(
+          child: Align(
             alignment: Alignment.bottomLeft,
             child: Text(
-              "Quick Start • 5-10 min",
+              AppLocalizations.of(context)!.meditationQuickStart,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 18,
@@ -217,7 +218,7 @@ class _MeditationScreenState extends State<MeditationScreen> {
               ),
               const SizedBox(height: 6),
               Text(
-                "${session.durationMinutes} min",
+                AppLocalizations.of(context)!.meditationDurationMin(session.durationMinutes),
                 style: const TextStyle(color: Colors.white70),
               ),
             ],
@@ -243,7 +244,7 @@ void _startSession(MeditationSession session) {
     audioService.startMeditationWithWelcome(
       assetFile: session.audioFile,
       title: session.title,
-      category: "Meditation",
+      category: AppLocalizations.of(context)!.meditationCategoryLabel,
       imageUrl: session.imageUrl,
       duration: Duration(minutes: session.durationMinutes),
     );

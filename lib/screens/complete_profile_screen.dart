@@ -214,7 +214,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen>
                           icon: Icons.language,
                           label: AppLocalizations.of(context)!.preferredLanguage,
                           value: _preferredLanguage,
-                          items: const ['English', 'Mandarin'],
+                          items: const ['English', 'Mandarin (Simplified)', 'Mandarin (Traditional)'],
                           onChanged: (v) => setState(() => _preferredLanguage = v!),
                         ),
                         const SizedBox(height: 16),

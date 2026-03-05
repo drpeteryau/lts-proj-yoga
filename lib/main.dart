@@ -58,8 +58,12 @@ class HealYogaApp extends StatelessWidget {
               ),
             ),
           ),
-          locale: locale, // <--- This controls the current language
-          supportedLocales: const [Locale('en'), Locale('zh')],
+          locale: locale, // This controls the current language
+          supportedLocales: const [
+            Locale('en'), 
+            Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans'), // Simplified
+            Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'), // Traditional
+          ],
           localizationsDelegates: const [
             AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,

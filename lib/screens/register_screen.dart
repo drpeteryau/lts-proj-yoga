@@ -615,7 +615,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           icon: Icons.language,
           label: AppLocalizations.of(context)!.language,
           value: _preferredLanguage,
-          items: const ['English', 'Mandarin'],
+          items: const ['English', 'Mandarin (Simplified)', 'Mandarin (Traditional)'],
           onChanged: (value) => setState(() => _preferredLanguage = value!),
         ),
         const SizedBox(height: 16),
@@ -852,7 +852,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       case '20 minutes': displayLabel = AppLocalizations.of(context)!.min20; break;
                       case '30 minutes': displayLabel = AppLocalizations.of(context)!.min30; break;
                       case 'English': displayLabel = AppLocalizations.of(context)!.english; break;
-                      case 'Mandarin': displayLabel = AppLocalizations.of(context)!.mandarin; break;
+                      case 'Mandarin (Simplified)': displayLabel = AppLocalizations.of(context)!.mandarinSimplified; break;
+                      case 'Mandarin (Traditional)': displayLabel = AppLocalizations.of(context)!.mandarinTraditional; break;
                       default: displayLabel = item;
                     }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:math' as math;
+import '../l10n/app_localizations.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -248,7 +249,7 @@ class _SplashScreenState extends State<SplashScreen>
                               ),
                               const SizedBox(height: 16),
                               Text(
-                                'Find Your Inner Peace',
+                                AppLocalizations.of(context)!.appTagline, 
                                 style: GoogleFonts.poppins(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w300,
