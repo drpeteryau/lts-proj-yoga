@@ -50,6 +50,7 @@ dependencies:
   volume_controller: ^3.4.1
   flutter_localizations:
     sdk: flutter
+  web: ^1.0.0
 
 
 dev_dependencies:

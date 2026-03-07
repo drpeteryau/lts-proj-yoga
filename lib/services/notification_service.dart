@@ -2,6 +2,9 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter/foundation.dart';
+import 'package:web/web.dart' as web; // For browser notifications
+import 'dart:js_interop';
+import 'dart:async';
 
 class NotificationService {
   // Singleton pattern
@@ -13,8 +16,16 @@ class NotificationService {
   final FlutterLocalNotificationsPlugin notificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
+  // Keep track of active timers for the web so we can cancel them if needed
+  final Map<int, Timer> _webTimers = {};
+
   // Initialize the notification service
   Future<void> init() async {
+    if (kIsWeb) {
+      debugPrint('🌐 Web Notification Service Initialized');
+      return;
+    }
+
     tz.initializeTimeZones();
 
     const AndroidInitializationSettings androidSettings =
@@ -39,8 +50,9 @@ class NotificationService {
 
   // Request necessary permissions for Android
   Future<void> _requestPermissions() async {
-    final androidPlugin =
-        notificationsPlugin.resolvePlatformSpecificImplementation<
+    if (kIsWeb) return;
+    final androidPlugin = notificationsPlugin
+        .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin
         >();
 
@@ -58,6 +70,7 @@ class NotificationService {
 
   // Create notification channels for Android
   Future<void> _createNotificationChannels() async {
+    if (kIsWeb) return;
     const AndroidNotificationChannel dailyChannel = AndroidNotificationChannel(
       'daily_yoga_reminder_channel',
       'Daily Yoga Exercise Reminders',
@@ -91,6 +104,25 @@ class NotificationService {
     );
   }
 
+  // Web notification helper
+  void _showWebNotification(String? title, String? body) {
+    if (web.Notification.permission == 'granted') {
+      web.Notification(
+        title ?? 'HealYoga',
+        web.NotificationOptions(body: body ?? ''),
+      );
+    } else {
+      web.Notification.requestPermission().toDart.then((permission) {
+        if (permission == 'granted') {
+          web.Notification(
+            title ?? 'HealYoga',
+            web.NotificationOptions(body: body ?? ''),
+          );
+        }
+      });
+    }
+  }
+
   // Show an immediate notification
   Future<void> showNotification({
     int id = 0,
@@ -98,13 +130,17 @@ class NotificationService {
     String? body,
     String? payload,
   }) async {
-    await notificationsPlugin.show(
-      id,
-      title,
-      body,
-      _notificationDetails(),
-      payload: payload,
-    );
+    if (kIsWeb) {
+      _showWebNotification(title, body);
+    } else {
+      await notificationsPlugin.show(
+        id,
+        title,
+        body,
+        _notificationDetails(),
+        payload: payload,
+      );
+    }
   }
 
   // Schedule a daily recurring notification at a specific time
@@ -115,26 +151,45 @@ class NotificationService {
     required int hour, // in 24-hour format (0-23)
     required int minute, // minute (0-59)
   }) async {
-    try {
-      final scheduledTime = _nextInstanceOfTime(hour, minute);
+    if (kIsWeb) {
+      // WEB LOGIC: Use Dart Timer (only works while the app/tab is open)
+      _webTimers[id]?.cancel();
 
-      await notificationsPlugin.zonedSchedule(
-        id,
-        title,
-        body,
-        scheduledTime,
-        _notificationDetails(),
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
-        matchDateTimeComponents: DateTimeComponents.time,
+      final now = DateTime.now();
+      var scheduledDate = DateTime(now.year, now.month, now.day, hour, minute);
+      if (scheduledDate.isBefore(now)) {
+        scheduledDate = scheduledDate.add(const Duration(days: 1));
+      }
+
+      final delay = scheduledDate.difference(now);
+      debugPrint(
+        '⏳ Web notification $id scheduled in ${delay.inMinutes} minutes',
       );
 
-      debugPrint('🔔 Daily notification scheduled for: $scheduledTime');
-    } catch (e) {
-      debugPrint('❌ Error scheduling notification: $e');
-      rethrow;
+      // First firing after computed delay, then once per day thereafter.
+      _webTimers[id] = Timer(delay, () {
+        _showWebNotification(title, body);
+        _webTimers[id] = Timer.periodic(const Duration(days: 1), (_) {
+          _showWebNotification(title, body);
+        });
+      });
+
+      return;
     }
+
+    // MOBILE LOGIC: Use Native zoned schedule.
+    final scheduledTime = _nextInstanceOfTime(hour, minute);
+    await notificationsPlugin.zonedSchedule(
+      id,
+      title,
+      body,
+      scheduledTime,
+      _notificationDetails(),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents: DateTimeComponents.time,
+    );
   }
 
   // If the time has passed today, returns tomorrow's time
@@ -158,13 +213,25 @@ class NotificationService {
 
   // Cancel a specific notification by ID
   Future<void> cancelNotification(int id) async {
-    await notificationsPlugin.cancel(id);
+    if (kIsWeb) {
+      _webTimers[id]?.cancel();
+      _webTimers.remove(id);
+    } else {
+      await notificationsPlugin.cancel(id);
+    }
     debugPrint('✅ Notification $id cancelled');
   }
 
   // Cancel all scheduled notifications
   Future<void> cancelAllNotifications() async {
-    await notificationsPlugin.cancelAll();
+    if (kIsWeb) {
+      for (final timer in _webTimers.values) {
+        timer.cancel();
+      }
+      _webTimers.clear();
+    } else {
+      await notificationsPlugin.cancelAll();
+    }
     debugPrint('✅ All notifications cancelled');
   }
 }

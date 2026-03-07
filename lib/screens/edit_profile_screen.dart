@@ -89,9 +89,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       }
       // Update the locale based on the corrected _language
       if (_language == 'Mandarin (Simplified)') {
-        appLocale.value = const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans');
+        appLocale.value =
+            const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans');
       } else if (_language == 'Mandarin (Traditional)') {
-        appLocale.value = const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant');
+        appLocale.value =
+            const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant');
       } else {
         appLocale.value = const Locale('en');
       }
@@ -117,7 +119,43 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       await GlobalAudioService().setVolume(savedVolume);
     }
 
+    // Schedule daily reminder (web only: will only fire while the app/tab is open)
+    if (_dailyPracticeReminder) {
+      try {
+        final time = _parseTimeOfDay(_reminderTime);
+        NotificationService().scheduleDailyNotification(
+          id: 101,
+          title: AppLocalizations.of(context)!.dailyReminderNotification,
+          body: AppLocalizations.of(context)!.dailyReminderBody,
+          hour: time.hour,
+          minute: time.minute,
+        );
+      } catch (_) {
+        // Ignore parsing errors; user can re-select time if needed.
+      }
+    }
+
     setState(() => _isLoading = false);
+  }
+
+  TimeOfDay _parseTimeOfDay(String formatted) {
+    final parts = formatted.trim().split(' ');
+    if (parts.isEmpty) return TimeOfDay(hour: 9, minute: 0);
+
+    final timePart = parts[0];
+    final period = parts.length > 1 ? parts[1].toUpperCase() : 'AM';
+    final segments = timePart.split(':');
+
+    var hour = int.tryParse(segments.first) ?? 9;
+    final minute = segments.length > 1 ? int.tryParse(segments[1]) ?? 0 : 0;
+
+    if (period == 'PM' && hour < 12) {
+      hour += 12;
+    } else if (period == 'AM' && hour == 12) {
+      hour = 0;
+    }
+
+    return TimeOfDay(hour: hour, minute: minute);
   }
 
   // ===================== IMAGE PICK + UPLOAD =====================
@@ -139,15 +177,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       if (_isWebPlatform) {
         // Web: dart:io File doesn't exist — read as bytes directly
         final bytes = await pickedFile.readAsBytes();
-        await supabase.storage
-            .from('avatars')
-            .uploadBinary(filePath, bytes, fileOptions: const FileOptions(upsert: true));
+        await supabase.storage.from('avatars').uploadBinary(filePath, bytes,
+            fileOptions: const FileOptions(upsert: true));
       } else {
         // Native: use File as before
         final file = File(pickedFile.path);
-        await supabase.storage
-            .from('avatars')
-            .upload(filePath, file, fileOptions: const FileOptions(upsert: true));
+        await supabase.storage.from('avatars').upload(filePath, file,
+            fileOptions: const FileOptions(upsert: true));
       }
 
       // ✅ Get public URL + cache buster
@@ -166,11 +202,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.photoUpdated)));
+      ).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.photoUpdated)));
     } catch (e) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('${AppLocalizations.of(context)!.photoFail}: $e')));
+      ).showSnackBar(SnackBar(
+          content: Text('${AppLocalizations.of(context)!.photoFail}: $e')));
     }
   }
 
@@ -266,7 +304,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   // ===================== UI =====================
   @override
   Widget build(BuildContext context) {
-
     const turquoise = Color(0xFF40E0D0);
 
     if (_isLoading) {
@@ -332,10 +369,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: _isSaving ? null : () async {
-                        GlobalAudioService.playClickSound();
-                        _saveProfile();
-                      },
+                      onPressed: _isSaving
+                          ? null
+                          : () async {
+                              GlobalAudioService.playClickSound();
+                              _saveProfile();
+                            },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: turquoise,
                         foregroundColor: Colors.white,
@@ -363,321 +402,369 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               Expanded(
                 child: SingleChildScrollView(
                   padding: EdgeInsets.symmetric(horizontal: isWeb ? 28 : 20),
-                  child: Column(
-                      children: [
-                        // ===================== PROFILE IMAGE =====================
-                        Center(
-                          child: Stack(
-                            children: [
-                              CircleAvatar(
-                                radius: 60,
-                                backgroundColor: turquoise.withOpacity(0.2),
-                                backgroundImage: _profileImageUrl != null
-                                    ? NetworkImage(_profileImageUrl!)
-                                    : null,
-                                child: _profileImageUrl == null
-                                    ? const Icon(Icons.person, size: 60, color: turquoise)
-                                    : null,
+                  child: Column(children: [
+                    // ===================== PROFILE IMAGE =====================
+                    Center(
+                      child: Stack(
+                        children: [
+                          CircleAvatar(
+                            radius: 60,
+                            backgroundColor: turquoise.withOpacity(0.2),
+                            backgroundImage: _profileImageUrl != null
+                                ? NetworkImage(_profileImageUrl!)
+                                : null,
+                            child: _profileImageUrl == null
+                                ? const Icon(Icons.person,
+                                    size: 60, color: turquoise)
+                                : null,
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: PopupMenuButton<String>(
+                              icon: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: const BoxDecoration(
+                                  color: turquoise,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(Icons.camera_alt,
+                                    color: Colors.white, size: 20),
                               ),
-                              Positioned(
-                                bottom: 0,
-                                right: 0,
-                                child: PopupMenuButton<String>(
-                                  icon: Container(
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: const BoxDecoration(
-                                      color: turquoise,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: const Icon(Icons.camera_alt,
-                                        color: Colors.white, size: 20),
+                              onSelected: (value) {
+                                if (value == 'upload') {
+                                  _pickAndUploadImage();
+                                } else if (value == 'remove') {
+                                  _removeProfileImage();
+                                }
+                              },
+                              itemBuilder: (context) => [
+                                PopupMenuItem(
+                                  value: 'upload',
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.upload,
+                                          color: Color(0xFF2E6F68)),
+                                      SizedBox(width: 8),
+                                      Text(AppLocalizations.of(context)!
+                                          .uploadPhoto),
+                                    ],
                                   ),
-                                  onSelected: (value) {
-                                    if (value == 'upload') {
-                                      _pickAndUploadImage();
-                                    } else if (value == 'remove') {
-                                      _removeProfileImage();
-                                    }
-                                  },
-                                  itemBuilder: (context) => [
-                                    PopupMenuItem(
-                                      value: 'upload',
-                                      child: Row(
-                                        children: [
-                                          Icon(Icons.upload, color: Color(0xFF2E6F68)),
-                                          SizedBox(width: 8),
-                                          Text(AppLocalizations.of(context)!.uploadPhoto),
-                                        ],
-                                      ),
+                                ),
+                                if (_profileImageUrl != null)
+                                  PopupMenuItem(
+                                    value: 'remove',
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.delete, color: Colors.red),
+                                        SizedBox(width: 8),
+                                        Text(AppLocalizations.of(context)!
+                                            .removePhoto),
+                                      ],
                                     ),
-                                    if (_profileImageUrl != null)
-                                      PopupMenuItem(
-                                        value: 'remove',
-                                        child: Row(
-                                          children: [
-                                            Icon(Icons.delete, color: Colors.red),
-                                            SizedBox(width: 8),
-                                            Text(AppLocalizations.of(context)!.removePhoto),
-                                          ],
-                                        ),
-                                      ),
-                                  ],
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // ===================== BASIC INFO =====================
+                    _card(
+                      title: AppLocalizations.of(context)!.basicInfo,
+                      children: [
+                        _textField(AppLocalizations.of(context)!.fullName,
+                            _nameController),
+                        _textField(
+                            AppLocalizations.of(context)!.age, _ageController,
+                            keyboardType: TextInputType.number),
+                        // _dropdown(AppLocalizations.of(context)!.experienceLevel, _experienceLevel,
+                        //     ['Beginner', 'Intermediate', 'Advanced'],
+                        //         (v) => setState(() => _experienceLevel = v)),
+                        _dropdown(
+                            AppLocalizations.of(context)!.sessionLength,
+                            _sessionLength,
+                            [
+                              '5 minutes',
+                              '10 minutes',
+                              '15 minutes',
+                              '20 minutes',
+                              '30 minutes'
+                            ],
+                            (v) => setState(() => _sessionLength = v),
+                            itemLabelBuilder: (value) {
+                          if (value == '5 minutes')
+                            return AppLocalizations.of(context)!.min5;
+                          if (value == '10 minutes')
+                            return AppLocalizations.of(context)!.min10;
+                          if (value == '15 minutes')
+                            return AppLocalizations.of(context)!.min15;
+                          if (value == '20 minutes')
+                            return AppLocalizations.of(context)!.min20;
+                          if (value == '30 minutes')
+                            return AppLocalizations.of(context)!.min30;
+                          return value;
+                        }),
+                        _dropdown(
+                          AppLocalizations.of(context)!.language,
+                          _language,
+                          [
+                            'English',
+                            'Mandarin (Simplified)',
+                            'Mandarin (Traditional)',
+                          ],
+                          (v) {
+                            setState(() => _language = v);
+                            if (v == 'Mandarin (Simplified)') {
+                              appLocale.value = const Locale.fromSubtags(
+                                  languageCode: 'zh', scriptCode: 'Hans');
+                            } else if (v == 'Mandarin (Traditional)') {
+                              appLocale.value = const Locale.fromSubtags(
+                                  languageCode: 'zh', scriptCode: 'Hant');
+                            } else {
+                              appLocale.value = const Locale('en');
+                            }
+                          },
+                          itemLabelBuilder: (value) {
+                            if (value == 'English')
+                              return AppLocalizations.of(context)!.english;
+                            if (value == 'Mandarin (Simplified)')
+                              return AppLocalizations.of(context)!
+                                  .mandarinSimplified;
+                            if (value == 'Mandarin (Traditional)')
+                              return AppLocalizations.of(context)!
+                                  .mandarinTraditional;
+                            return value;
+                          },
+                        ),
+                      ],
+                    ),
+
+                    _card(
+                      title: AppLocalizations.of(context)!.notifications,
+                      children: [
+                        SwitchListTile(
+                            title: Text(AppLocalizations.of(context)!
+                                .pushNotifications),
+                            value: _pushNotifications,
+                            activeThumbColor: turquoise,
+                            onChanged: (v) {
+                              GlobalAudioService.playClickSound();
+                              setState(() => _pushNotifications = v);
+                              // Trigger the local notification if turned on
+                              if (v == true) {
+                                NotificationService().showNotification(
+                                  title: 'HealYoga',
+                                  body: AppLocalizations.of(context)!
+                                      .pushEnabledMsg,
+                                );
+                              }
+                            }),
+                        SwitchListTile(
+                            title: Text(
+                                AppLocalizations.of(context)!.dailyReminder),
+                            value: _dailyPracticeReminder,
+                            activeThumbColor: turquoise,
+                            onChanged: (v) {
+                              GlobalAudioService.playClickSound();
+                              setState(() => _dailyPracticeReminder = v);
+
+                              if (v == true) {
+                                final time = _parseTimeOfDay(_reminderTime);
+                                NotificationService().scheduleDailyNotification(
+                                  id: 101,
+                                  title: AppLocalizations.of(context)!
+                                      .dailyReminderNotification,
+                                  body: AppLocalizations.of(context)!
+                                      .dailyReminderBody,
+                                  hour: time.hour,
+                                  minute: time.minute,
+                                );
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    backgroundColor: turquoise,
+                                    content: Text(
+                                      '${AppLocalizations.of(context)!.dailyEnabledMsg} $_reminderTime',
+                                    ),
+                                    behavior: SnackBarBehavior.floating,
+                                    duration: const Duration(seconds: 3),
+                                  ),
+                                );
+                              } else {
+                                NotificationService().cancelNotification(101);
+                              }
+                            }),
+                        ListTile(
+                          title:
+                              Text(AppLocalizations.of(context)!.reminderTime),
+                          trailing: Text(
+                            _reminderTime,
+                            style: const TextStyle(color: Color(0xFF6B8F8A)),
+                          ),
+                          onTap: () async {
+                            GlobalAudioService.playClickSound();
+                            final time = await showTimePicker(
+                              context: context,
+                              initialTime: TimeOfDay.now(),
+                            );
+                            if (time != null) {
+                              setState(() {
+                                _reminderTime = time.format(context);
+                              });
+
+                              if (_dailyPracticeReminder == true) {
+                                NotificationService().scheduleDailyNotification(
+                                  id: 101, // Unique ID for this daily reminder
+                                  title: AppLocalizations.of(context)!
+                                      .dailyReminderNotification,
+                                  body: AppLocalizations.of(context)!
+                                      .dailyReminderBody,
+                                  hour: time.hour,
+                                  minute: time.minute,
+                                );
+                              } else {
+                                NotificationService().cancelNotification(101);
+                              }
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+
+                    _card(
+                      title: AppLocalizations.of(context)!.sound,
+                      children: [
+                        SwitchListTile(
+                            title: Text(
+                                AppLocalizations.of(context)!.soundEffects),
+                            value: _soundEffectsEnabled,
+                            activeThumbColor: turquoise,
+                            onChanged: (v) {
+                              setState(() => _soundEffectsEnabled = v);
+                              GlobalAudioService.isSoundEffectsEnabled = v;
+                              if (v) {
+                                GlobalAudioService.playClickSound();
+                              }
+                            }),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    _isWebPlatform
+                                        ? AppLocalizations.of(context)!
+                                            .appVolume
+                                        : AppLocalizations.of(context)!
+                                            .systemVolume,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: Color(0xFF2E6F68),
+                                    ),
+                                  ),
+                                  Text(
+                                    '${(_volumeLevel * 100).round()}%',
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Color(0xFF6B8F8A),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  // --- Mute Button ---
+                                  IconButton(
+                                    icon: Icon(
+                                      _volumeLevel == 0
+                                          ? Icons.volume_off
+                                          : Icons.volume_mute,
+                                      color: const Color(0xFF6B8F8A),
+                                    ),
+                                    onPressed: () async {
+                                      setState(() {
+                                        if (_volumeLevel > 0) {
+                                          _previousVolume = _volumeLevel;
+                                          _volumeLevel = 0;
+                                        } else {
+                                          _volumeLevel = _previousVolume;
+                                        }
+                                      });
+                                      if (!_isWebPlatform) {
+                                        await VolumeController.instance
+                                            .setVolume(_volumeLevel);
+                                      }
+                                      await GlobalAudioService()
+                                          .setVolume(_volumeLevel);
+                                    },
+                                  ),
+
+                                  // --- The Slider ---
+                                  Expanded(
+                                    child: Slider(
+                                      value: _volumeLevel,
+                                      min: 0,
+                                      max: 1,
+                                      divisions: 10,
+                                      label: '${(_volumeLevel * 100).round()}%',
+                                      activeColor: turquoise,
+                                      onChanged: (v) async {
+                                        setState(() => _volumeLevel = v);
+                                        if (!_isWebPlatform) {
+                                          await VolumeController.instance
+                                              .setVolume(v);
+                                        }
+                                        await GlobalAudioService().setVolume(v);
+                                      },
+                                    ),
+                                  ),
+
+                                  // --- Max Button ---
+                                  IconButton(
+                                    icon: const Icon(Icons.volume_up,
+                                        color: Color(0xFF6B8F8A)),
+                                    onPressed: () async {
+                                      setState(() {
+                                        _volumeLevel = 1.0;
+                                      });
+                                      if (!_isWebPlatform) {
+                                        await VolumeController.instance
+                                            .setVolume(1.0);
+                                      }
+                                      await GlobalAudioService().setVolume(1.0);
+                                    },
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                _isWebPlatform
+                                    ? AppLocalizations.of(context)!
+                                        .appVolumeDesc
+                                    : AppLocalizations.of(context)!
+                                        .systemVolumeDesc,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Color(0xFF9CA3AF),
+                                  fontStyle: FontStyle.italic,
                                 ),
                               ),
                             ],
                           ),
                         ),
-                        const SizedBox(height: 24),
-
-                        // ===================== BASIC INFO =====================
-                        _card(
-                          title: AppLocalizations.of(context)!.basicInfo,
-                          children: [
-                            _textField(AppLocalizations.of(context)!.fullName, _nameController),
-                            _textField(AppLocalizations.of(context)!.age, _ageController,
-                                keyboardType: TextInputType.number),
-                            // _dropdown(AppLocalizations.of(context)!.experienceLevel, _experienceLevel,
-                            //     ['Beginner', 'Intermediate', 'Advanced'],
-                            //         (v) => setState(() => _experienceLevel = v)),
-                            _dropdown(
-                                AppLocalizations.of(context)!.sessionLength,
-                                _sessionLength,
-                                [
-                                  '5 minutes',
-                                  '10 minutes',
-                                  '15 minutes',
-                                  '20 minutes',
-                                  '30 minutes'
-                                ],
-                                    (v) => setState(() => _sessionLength = v),
-                                itemLabelBuilder: (value) {
-                                  if (value == '5 minutes') return AppLocalizations.of(context)!.min5;
-                                  if (value == '10 minutes') return AppLocalizations.of(context)!.min10;
-                                  if (value == '15 minutes') return AppLocalizations.of(context)!.min15;
-                                  if (value == '20 minutes') return AppLocalizations.of(context)!.min20;
-                                  if (value == '30 minutes') return AppLocalizations.of(context)!.min30;
-                                  return value;
-                                }),
-                            _dropdown(
-                              AppLocalizations.of(context)!.language,
-                              _language,
-                              [
-                                'English',
-                                'Mandarin (Simplified)',
-                                'Mandarin (Traditional)',
-                              ],
-                              (v) {
-                                setState(() => _language = v);
-                                if (v == 'Mandarin (Simplified)') {
-                                  appLocale.value = const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans');
-                                } else if (v == 'Mandarin (Traditional)') {
-                                  appLocale.value = const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant');
-                                } else {
-                                  appLocale.value = const Locale('en');
-                                }
-                              },
-                              itemLabelBuilder: (value) {
-                                if (value == 'English') return AppLocalizations.of(context)!.english;
-                                if (value == 'Mandarin (Simplified)') return AppLocalizations.of(context)!.mandarinSimplified;
-                                if (value == 'Mandarin (Traditional)') return AppLocalizations.of(context)!.mandarinTraditional;
-                                  return value;
-                              },                
-                            ),
-                          ],
-                        ),
-
-                        _card(
-                          title: AppLocalizations.of(context)!.notifications,
-                          children: [
-                            SwitchListTile(
-                                title: Text(AppLocalizations.of(context)!.pushNotifications),
-                                value: _pushNotifications,
-                                activeThumbColor: turquoise,
-                                onChanged: (v) {
-                                  GlobalAudioService.playClickSound();
-                                  setState(() => _pushNotifications = v);
-                                  // Trigger the local notification if turned on
-                                  if (v == true) {
-                                    NotificationService().showNotification(
-                                      title: 'HealYoga',
-                                      body: AppLocalizations.of(context)!.pushEnabledMsg,
-                                    );
-                                  }
-                                }),
-                            SwitchListTile(
-                                title: Text(AppLocalizations.of(context)!.dailyReminder),
-                                value: _dailyPracticeReminder,
-                                activeThumbColor: turquoise,
-                                onChanged: (v) {
-                                  GlobalAudioService.playClickSound();
-                                  setState(() => _dailyPracticeReminder = v);
-                                  // Trigger the local notification if turned on
-                                  if (v == true) {
-                                    NotificationService().showNotification(
-                                      title: AppLocalizations.of(context)!.dailyReminderEnabled,
-                                      body: '${AppLocalizations.of(context)!.dailyEnabledMsg} $_reminderTime',
-                                    );
-                                  }
-                                }),
-                            ListTile(
-                              title: Text(AppLocalizations.of(context)!.reminderTime),
-                              trailing: Text(
-                                _reminderTime,
-                                style: const TextStyle(color: Color(0xFF6B8F8A)),
-                              ),
-                              onTap: () async {
-                                GlobalAudioService.playClickSound();
-                                final time = await showTimePicker(
-                                  context: context,
-                                  initialTime: TimeOfDay.now(),
-                                );
-                                if (time != null) {
-                                  setState(() {
-                                    _reminderTime = time.format(context);
-                                  });
-
-                                  if (_dailyPracticeReminder == true) {
-                                    NotificationService().scheduleDailyNotification(
-                                      id: 101, // Unique ID for this daily reminder
-                                      title: AppLocalizations.of(context)!.dailyReminderNotification,
-                                      body: AppLocalizations.of(context)!.dailyReminderBody,
-                                      hour: time.hour,
-                                      minute: time.minute,
-                                    );
-
-                                    // NotificationService().showNotification(
-                                    //   title: 'Reminder Time Set!',
-                                    //   body:
-                                    //   'We will remind you every day at $_reminderTime 🕓',
-                                    // );
-                                  } else {
-                                    NotificationService().cancelNotification(101);
-                                  }
-                                }
-                              },
-                            ),
-                          ],
-                        ),
-
-                        _card(
-                          title: AppLocalizations.of(context)!.sound,
-                          children: [
-                            SwitchListTile(
-                                title: Text(AppLocalizations.of(context)!.soundEffects),
-                                value: _soundEffectsEnabled,
-                                activeThumbColor: turquoise,
-                                onChanged: (v) {
-                                  setState(() => _soundEffectsEnabled = v);
-                                  GlobalAudioService.isSoundEffectsEnabled = v;
-                                  if (v) {
-                                    GlobalAudioService.playClickSound();
-                                  }
-                                }
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        _isWebPlatform ? AppLocalizations.of(context)!.appVolume : AppLocalizations.of(context)!.systemVolume,
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500,
-                                          color: Color(0xFF2E6F68),
-                                        ),
-                                      ),
-                                      Text(
-                                        '${(_volumeLevel * 100).round()}%',
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          color: Color(0xFF6B8F8A),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Row(
-                                    children: [
-                                      // --- Mute Button ---
-                                      IconButton(
-                                        icon: Icon(
-                                          _volumeLevel == 0
-                                              ? Icons.volume_off
-                                              : Icons.volume_mute,
-                                          color: const Color(0xFF6B8F8A),
-                                        ),
-                                        onPressed: () async {
-                                          setState(() {
-                                            if (_volumeLevel > 0) {
-                                              _previousVolume = _volumeLevel;
-                                              _volumeLevel = 0;
-                                            } else {
-                                              _volumeLevel = _previousVolume;
-                                            }
-                                          });
-                                          if (!_isWebPlatform) {
-                                            await VolumeController.instance.setVolume(_volumeLevel);
-                                          }
-                                          await GlobalAudioService().setVolume(_volumeLevel);
-                                        },
-                                      ),
-
-                                      // --- The Slider ---
-                                      Expanded(
-                                        child: Slider(
-                                          value: _volumeLevel,
-                                          min: 0,
-                                          max: 1,
-                                          divisions: 10,
-                                          label: '${(_volumeLevel * 100).round()}%',
-                                          activeColor: turquoise,
-                                          onChanged: (v) async {
-                                            setState(() => _volumeLevel = v);
-                                            if (!_isWebPlatform) {
-                                              await VolumeController.instance.setVolume(v);
-                                            }
-                                            await GlobalAudioService().setVolume(v);
-                                          },
-                                        ),
-                                      ),
-
-                                      // --- Max Button ---
-                                      IconButton(
-                                        icon: const Icon(Icons.volume_up,
-                                            color: Color(0xFF6B8F8A)),
-                                        onPressed: () async {
-                                          setState(() {
-                                            _volumeLevel = 1.0;
-                                          });
-                                          if (!_isWebPlatform) {
-                                            await VolumeController.instance.setVolume(1.0);
-                                          }
-                                          await GlobalAudioService().setVolume(1.0);
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    _isWebPlatform
-                                        ? AppLocalizations.of(context)!.appVolumeDesc
-                                        : AppLocalizations.of(context)!.systemVolumeDesc,
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      color: Color(0xFF9CA3AF),
-                                      fontStyle: FontStyle.italic,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ]),                
+                      ],
+                    ),
+                  ]),
                 ),
               ),
             ],
@@ -725,10 +812,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Widget _textField(
-      String label,
-      TextEditingController controller, {
-        TextInputType keyboardType = TextInputType.text,
-      }) {
+    String label,
+    TextEditingController controller, {
+    TextInputType keyboardType = TextInputType.text,
+  }) {
     return Padding(
       padding: EdgeInsets.only(bottom: isWeb ? 18 : 16),
       child: TextField(
@@ -763,12 +850,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Widget _dropdown(
-      String label,
-      String value,
-      List<String> items,
-      ValueChanged<String> onChanged, {
-        String Function(String)? itemLabelBuilder,
-      }) {
+    String label,
+    String value,
+    List<String> items,
+    ValueChanged<String> onChanged, {
+    String Function(String)? itemLabelBuilder,
+  }) {
     return Padding(
       padding: EdgeInsets.only(bottom: isWeb ? 18 : 16),
       child: DropdownButtonFormField<String>(
@@ -806,8 +893,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               GlobalAudioService.playClickSound();
               onChanged(v);
             }
-          }
-      ),
+          }),
     );
   }
 }
