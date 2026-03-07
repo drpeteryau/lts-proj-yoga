@@ -2,9 +2,9 @@ import '../models/yoga_pose.dart';
 import '../models/yoga_session.dart';
 
 class YogaDataComplete {
-  // ============================================
-  // BEGINNER LEVEL - Chair Yoga
-  // ============================================
+// ============================================
+// BEGINNER LEVEL - Chair Yoga
+// ============================================
 // ============================================
 // BEGINNER LEVEL — Sitting Warmups
 // ============================================
@@ -16,13 +16,8 @@ class YogaDataComplete {
       descriptionKey: 'yogaDescHeadNeck',
       imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=500',
       durationSeconds: 180,
-      modifications: [
-        'Move slowly',
-        'Stop if dizzy',
-        'Use chair back for support'
-      ],
-      instructions:
-      'Tilt head up/down for 5–10 breaths each. Turn head right/left 3 rounds. Drop ear to shoulder with light hand support.',
+      modifications: ['yogaModMoveSlowly', 'yogaModStopDizzy', 'yogaModChairSupport'],
+      instructions: 'yogaInstHeadNeck',
       category: 'warmup',
     ),
     YogaPose(
@@ -31,9 +26,8 @@ class YogaDataComplete {
       descriptionKey: 'yogaDescStraightArms',
       imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=500',
       durationSeconds: 60,
-      modifications: ['Keep elbows straight', 'Smooth controlled movement'],
-      instructions:
-      'Make fists, rotate straight arms 10 times forward and 10 times backward.',
+      modifications: ['yogaModElbowsStraight', 'yogaModControlledMove'],
+      instructions: 'yogaInstStraightArms',
       category: 'warmup',
     ),
     YogaPose(
@@ -42,9 +36,8 @@ class YogaDataComplete {
       descriptionKey: 'yogaDescBentArms',
       imageUrl: 'https://images.unsplash.com/photo-1588286840104-8957b019727f?w=500',
       durationSeconds: 60,
-      modifications: ['Keep fingers on shoulders', 'Slow controlled rolls'],
-      instructions:
-      'Touch elbows in front, circle up behind head and back down. 10 rounds each direction.',
+      modifications: ['yogaModFingersShoulders', 'yogaModSlowRolls'],
+      instructions: 'yogaInstBentArms',
       category: 'warmup',
     ),
     YogaPose(
@@ -53,9 +46,8 @@ class YogaDataComplete {
       descriptionKey: 'yogaDescShouldersLateral',
       imageUrl: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=500',
       durationSeconds: 120,
-      modifications: ['Keep buttocks down', 'Face forward'],
-      instructions:
-      'Drop right hand to chair, lift left arm overhead. Hold 5–10 breaths. Switch sides.',
+      modifications: ['yogaModButtocksDown', 'yogaModFaceForward'],
+      instructions: 'yogaInstShouldersLateral',
       category: 'warmup',
     ),
     YogaPose(
@@ -64,9 +56,8 @@ class YogaDataComplete {
       descriptionKey: 'yogaDescShouldersTorsoTwist',
       imageUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500',
       durationSeconds: 120,
-      modifications: ['Keep hips stable', 'Keep shoulders level'],
-      instructions:
-      'Lift arms, rotate torso right, hold chair for support. Hold 5–10 breaths each side.',
+      modifications: ['yogaModHipsStable', 'yogaModShouldersLevel'],
+      instructions: 'yogaInstShouldersTorsoTwist',
       category: 'warmup',
     ),
     YogaPose(
@@ -75,9 +66,8 @@ class YogaDataComplete {
       descriptionKey: 'yogaDescLegRaiseBent',
       imageUrl: 'https://images.unsplash.com/photo-1603988363607-e1e4a66962c6?w=500',
       durationSeconds: 90,
-      modifications: ['Use chair back for support', 'Keep back straight'],
-      instructions:
-      'Lift bent leg with back straight. Hold, lower with control. Switch legs.',
+      modifications: ['yogaModChairSupport', 'yogaModBackStraight'],
+      instructions: 'yogaInstLegRaiseBent',
       category: 'warmup',
     ),
     YogaPose(
@@ -86,10 +76,9 @@ class YogaDataComplete {
       descriptionKey: 'yogaDescLegRaiseStraight',
       imageUrl: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=500',
       durationSeconds: 90,
-      modifications: ['Begin with bent-knee version', 'Use chair for support'],
-      instructions:
-      'Lift straightened leg, hold as long as possible. Release and switch legs.',
-      category: 'warmup',
+      modifications: ['yogaModBeginBent', 'yogaModUseChairForSupport'],
+      instructions: 'yogaInstLegRaiseStraight',
+      category: 'warmup',  
     ),
     YogaPose(
       id: 'bw_sit_08',
@@ -97,9 +86,8 @@ class YogaDataComplete {
       descriptionKey: 'yogaDescGoddessTwist',
       imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=500',
       durationSeconds: 120,
-      modifications: ['Align knees with toes', 'Keep hips grounded'],
-      instructions:
-      'Open knees wide, stretch torso to side. Hold 5–10 breaths, switch side.',
+      modifications: ['yogaModKneesToes', 'yogaModHipsGrounded'],
+      instructions: 'yogaInstGoddessTwist',
       category: 'warmup',
     ),
     YogaPose(
@@ -108,9 +96,8 @@ class YogaDataComplete {
       descriptionKey: 'yogaDescGoddessStrength',
       imageUrl: 'https://images.unsplash.com/photo-1599447292326-e6daae7ae9cb?w=500',
       durationSeconds: 120,
-      modifications: ['Keep torso upright', 'Use chair for balance'],
-      instructions:
-      'Lift thighs off chair while in Goddess stance. Hold 5–10 breaths. Repeat.',
+      modifications: ['yogaModTorsoUpright', 'yogaModChairBalance'],
+      instructions: 'yogaInstGoddessStrength',
       category: 'warmup',
     ),
   ];
@@ -127,9 +114,8 @@ class YogaDataComplete {
       descriptionKey: 'yogaDescBackChestStretch',
       imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=500',
       durationSeconds: 120,
-      modifications: ['Keep arms and legs straight', 'Engage core'],
-      instructions:
-      'Hold chair, hinge into L-shape, keep back flat. Hold 5–10 breaths.',
+      modifications: ['yogaModArmsLegsStraight', 'yogaModEngageCore'],
+      instructions: 'yogaInstBackChestStretch',
       category: 'main',
     ),
     YogaPose(
@@ -138,9 +124,8 @@ class YogaDataComplete {
       descriptionKey: 'yogaDescStandingCrunch',
       imageUrl: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=500',
       durationSeconds: 150,
-      modifications: ['Avoid during pregnancy', 'Move slowly'],
-      instructions:
-      'From L-shape, extend leg back on inhale, crunch knee forward on exhale. Repeat.',
+      modifications: ['yogaModAvoidPregnancy', 'yogaModMoveSlowly'],
+      instructions: 'yogaInstStandingCrunch',
       category: 'main',
     ),
     YogaPose(
@@ -149,9 +134,8 @@ class YogaDataComplete {
       descriptionKey: 'yogaDescWarrior3Supported',
       imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=500',
       durationSeconds: 120,
-      modifications: ['Keep one hand on chair', 'Maintain a straight line'],
-      instructions:
-      'Lift hand off chair, hold balance. Switch legs and repeat.',
+      modifications: ['yogaModOneHandChair', 'yogaModStraightLine'],
+      instructions: 'yogaInstWarrior3',
       category: 'main',
     ),
     YogaPose(
@@ -160,9 +144,8 @@ class YogaDataComplete {
       descriptionKey: 'yogaDescWarrior1Supported',
       imageUrl: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=500',
       durationSeconds: 120,
-      modifications: ['Shorten stance', 'Square hips'],
-      instructions:
-      'Step back, bend front knee, raise arms. Hold 5–10 breaths.',
+      modifications: ['yogaModShortenStance', 'yogaModSquareHips'],
+      instructions: 'yogaInstWarrior1',
       category: 'main',
     ),
     YogaPose(
@@ -171,9 +154,8 @@ class YogaDataComplete {
       descriptionKey: 'yogaDescWarrior2Supported',
       imageUrl: 'https://images.unsplash.com/photo-1599447292326-e6daae7ae9cb?w=500',
       durationSeconds: 120,
-      modifications: ['Align knee with toes', 'Level shoulders'],
-      instructions:
-      'Turn toes outward, stretch arms, look forward. Hold.',
+      modifications: ['yogaModKneesToes', 'yogaModLevelShoulders'],
+      instructions: 'yogaInstWarrior2',
       category: 'main',
     ),
     YogaPose(
@@ -182,9 +164,8 @@ class YogaDataComplete {
       descriptionKey: 'yogaDescTriangleSupported',
       imageUrl: 'https://images.unsplash.com/photo-1588286840104-8957b019727f?w=500',
       durationSeconds: 120,
-      modifications: ['Use block', 'Keep hips forward'],
-      instructions:
-      'Straighten front leg, lower hand to ankle or block, reach upward.',
+      modifications: ['yogaModUseBlock', 'yogaModHipsForward'],
+      instructions: 'yogaInstTriangle',
       category: 'main',
     ),
     YogaPose(
@@ -193,9 +174,8 @@ class YogaDataComplete {
       descriptionKey: 'yogaDescReverseWarrior2',
       imageUrl: 'https://images.unsplash.com/photo-1603988363607-e1e4a66962c6?w=500',
       durationSeconds: 120,
-      modifications: ['Keep front knee bent', 'Choose gaze direction'],
-      instructions:
-      'Sweep top arm overhead while leaning back. Hold.',
+      modifications: ['yogaModFrontKneeBent', 'yogaModGazeDirection'],
+      instructions: 'yogaInstReverseWarrior',
       category: 'main',
     ),
     YogaPose(
@@ -204,9 +184,8 @@ class YogaDataComplete {
       descriptionKey: 'yogaDescSideAngleSupported',
       imageUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500',
       durationSeconds: 120,
-      modifications: ['Use block', 'Tuck tailbone slightly'],
-      instructions:
-      'Lower hand inside foot, stretch upper arm diagonally overhead.',
+      modifications: ['yogaModUseBlock', 'yogaModTuckTailbone'],
+      instructions: 'yogaInstSideAngle',
       category: 'main',
     ),
   ];
@@ -223,9 +202,8 @@ class YogaDataComplete {
       descriptionKey: 'yogaDescGentleBreathing',
       imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=500',
       durationSeconds: 180,
-      modifications: ['Sit or lie down', 'Close eyes if comfortable'],
-      instructions:
-      'Relax shoulders, place hands on lap, breathe slowly through the nose.',
+      modifications: ['yogaModSitOrLieDown', 'yogaModCloseEyesIfComfortable'],
+      instructions: 'yogaInstGentleBreathing',
       category: 'cooldown',
     ),
   ];
@@ -280,12 +258,8 @@ static final List<YogaPose> intermediateMain = [
     descriptionKey: 'yogaDescDownwardDog',
     imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=500',
     durationSeconds: 120,
-    modifications: [
-      'Bend knees if hamstrings are tight',
-      'Practice with heels lifted'
-    ],
-    instructions:
-    'Place hands shoulder-width apart, feet hip-width apart. Lift hips high, press chest towards thighs. Hold 5–10 breaths.',
+    modifications: ['yogaModBendKnees', 'yogaModHeelsLifted'],
+    instructions: 'yogaInstDownwardDog',
     category: 'main',
   ),
   YogaPose(
@@ -294,12 +268,8 @@ static final List<YogaPose> intermediateMain = [
     descriptionKey: 'yogaDescPlank',
     imageUrl: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=500',
     durationSeconds: 90,
-    modifications: [
-      'Lower knees for a gentler version',
-      'Feet together for added challenge'
-    ],
-    instructions:
-    'Stack shoulders over wrists, engage core, lengthen from head to heels. Hold 5–10 breaths.',
+    modifications: ['yogaModLowerKnees', 'yogaModFeetTogether'],
+    instructions: 'yogaInstPlank',
     category: 'main',
   ),
   YogaPose(
@@ -308,12 +278,8 @@ static final List<YogaPose> intermediateMain = [
     descriptionKey: 'yogaDescEightPoint',
     imageUrl: 'https://images.unsplash.com/photo-1588286840104-8957b019727f?w=500',
     durationSeconds: 90,
-    modifications: [
-      'Avoid during pregnancy',
-      'Lower with slow control to protect shoulders'
-    ],
-    instructions:
-    'From tabletop, lower chest and chin to mat while hips stay lifted. Hold 5–10 breaths.',
+    modifications: ['yogaModAvoidPregnancy', 'yogaModSlowControl'],
+    instructions: 'yogaInstEightPoint',
     category: 'main',
   ),
   YogaPose(
@@ -322,12 +288,8 @@ static final List<YogaPose> intermediateMain = [
     descriptionKey: 'yogaDescBabyCobra',
     imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=500',
     durationSeconds: 90,
-    modifications: [
-      'Lift palms for challenge',
-      'Press feet down for stability'
-    ],
-    instructions:
-    'From prone, press chest up lightly, keep elbows close and shoulders away from ears. Hold 5–10 breaths.',
+    modifications: ['yogaModLiftPalms', 'yogaModPressFeet'],
+    instructions: 'yogaInstBabyCobra',
     category: 'main',
   ),
   YogaPose(
@@ -336,12 +298,8 @@ static final List<YogaPose> intermediateMain = [
     descriptionKey: 'yogaDescFullCobra',
     imageUrl: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=500',
     durationSeconds: 90,
-    modifications: [
-      'Do not lock elbows',
-      'Tuck stomach slightly for spine support'
-    ],
-    instructions:
-    'Straighten elbows, lift chest higher without scrunching shoulders. Hold 5–10 breaths.',
+    modifications: ['yogaModNoLockElbows', 'yogaModTuckStomach'],
+    instructions: 'yogaInstFullCobra',
     category: 'main',
   ),
 ];
@@ -359,9 +317,8 @@ static final List<YogaPose> intermediateCooldown = [
     descriptionKey: 'Cooldown breathing to settle heart rate and calm the mind.',
     imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=500',
     durationSeconds: 180,
-    modifications: ['Sit or lie down', 'Close eyes if comfortable'],
-    instructions:
-    'Place hands on belly or lap, relax shoulders, breathe through the nose slowly and naturally.',
+    modifications: ['yogaModSitOrLieDown', 'yogaModCloseEyesIfComfortable'],
+    instructions: 'yogaInstGentleBreathingIntermediate',
     category: 'cooldown',
   ),
 ];
@@ -415,34 +372,31 @@ static final List<YogaSession> intermediateSessions = [
       descriptionKey: 'yogaDescSunSalutation',
       imageUrl: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=500',
       durationSeconds: 300, // 5 minutes
-      modifications: [
-        'Rest in Child’s Pose between rounds if needed',
-        'Slow down transitions if breath becomes strained',
-        'Bend knees in Downward Dog for comfort'
-      ],
-      instructions: '''
-This flowing sequence repeats continuously — one breath per movement.
+      modifications: ['yogaModRestChildPose', 'yogaModSlowTransitions', 'yogaModBendDownwardDog'],
+      instructions: 'yogaInstSunSalutation',
+      // '''
+      // This flowing sequence repeats continuously — one breath per movement.
 
-1. Inhale — Downward Dog  
-   Lift hips high, lengthen spine.
+      // 1. Inhale — Downward Dog  
+      //   Lift hips high, lengthen spine.
 
-2. Exhale — Plank  
-   Shift forward into strong plank position.
+      // 2. Exhale — Plank  
+      //   Shift forward into strong plank position.
 
-3. Inhale — Knees-Chest-Chin (Eight-Point Pose)  
-   Lower down with control, hips lifted.
+      // 3. Inhale — Knees-Chest-Chin (Eight-Point Pose)  
+      //   Lower down with control, hips lifted.
 
-4. Exhale — Baby Cobra  
-   Lift chest gently, elbows close.
+      // 4. Exhale — Baby Cobra  
+      //   Lift chest gently, elbows close.
 
-5. Inhale — Full Cobra  
-   Straighten arms slightly, open chest.
+      // 5. Inhale — Full Cobra  
+      //   Straighten arms slightly, open chest.
 
-6. Exhale — Return to Downward Dog  
-   Press back into inverted V-shape.
+      // 6. Exhale — Return to Downward Dog  
+      //   Press back into inverted V-shape.
 
-Repeat for 5–10 rounds or to your ability level.
-''',
+      // Repeat for 5–10 rounds or to your ability level.
+      // ''',
       category: 'main',
     ),
   ];
@@ -459,9 +413,8 @@ Repeat for 5–10 rounds or to your ability level.
       descriptionKey: 'Final calming breathwork to restore balance after a strong flow.',
       imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=500',
       durationSeconds: 180,
-      modifications: ['Sit upright or lie flat', 'Place cushion under knees'],
-      instructions:
-      'Breathe softly through the nose, lengthening exhales. Allow the entire body to settle and cool down.',
+      modifications: ['yogaModSitOrLie', 'yogaModCushionUnderKnees'],
+      instructions: 'yogaGentleBreathingAdvanced',
       category: 'cooldown',
     ),
   ];

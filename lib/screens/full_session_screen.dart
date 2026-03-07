@@ -7,6 +7,8 @@ import 'dart:async';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/pose_progress_service.dart';
 import '../services/global_audio_service.dart';
+import '../services/simple_pin_service.dart';
+import '../services/simple_pin_dialog.dart';
 import '../l10n/app_localizations.dart';
 import '../utils/yoga_localization_helper.dart';
 
@@ -44,44 +46,119 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
   bool get isWeb => MediaQuery.of(context).size.width > 600;
 
   YogaPose get currentPose => widget.session.allPoses[_currentPoseIndex];
-  bool get isLastPose => _currentPoseIndex == widget.session.allPoses.length - 1;
-  double get progress => (_currentPoseIndex + 1) / widget.session.allPoses.length;
+  bool get isLastPose =>
+      _currentPoseIndex == widget.session.allPoses.length - 1;
+  double get progress =>
+      (_currentPoseIndex + 1) / widget.session.allPoses.length;
 
   @override
   void initState() {
     super.initState();
+    _checkPinAndInitialize();
+  }
+
+  Future<void> _checkPinAndInitialize() async {
+    if (SimplePinService.isPinVerifiedThisSession()) {
+      await _initializeSession();
+      return;
+    }
+
+    // Show PIN dialog immediately (no delay)
+    Future.microtask(() {
+      if (mounted) {
+        _showPinDialog();
+      }
+    });
+  }
+
+  void _showPinDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => SimplePinDialog(
+        onSuccess: () async {
+          // PIN verified - initialize session
+          await _initializeSession();
+        },
+      ),
+    );
+  }
+
+  Future<void> _initializeSession() async {
     _remainingSeconds = currentPose.durationSeconds;
-    _loadCompletedPoses();
-    _initializeVideo();
+    await _loadCompletedPoses();
+    _findFirstIncompletePose();
+    await _initializeVideo();
     _startTimer();
   }
 
   Future<void> _loadCompletedPoses() async {
     final userId = Supabase.instance.client.auth.currentUser?.id;
-    if (userId == null) return;
+    if (userId == null) {
+      print('❌ No user ID - cannot load progress');
+      return;
+    }
 
     try {
       final supabase = Supabase.instance.client;
 
-      // Load all completed poses for this session level
+      print('🔍 Loading completed poses for ${widget.session.levelKey}...');
+
+      // Query pose_activity table for unique completed poses
       final response = await supabase
-          .from('user_progress')
+          .from('pose_activity')
           .select('pose_id')
           .eq('user_id', userId)
-          .eq('session_level', widget.session.levelKey)
-          .eq('is_completed', true);
+          .eq('session_level', widget.session.levelKey);
+
+      // Get unique pose IDs
+      final uniquePoseIds = <String>{};
+      for (final row in response) {
+        uniquePoseIds.add(row['pose_id'].toString());
+      }
 
       if (mounted) {
         setState(() {
           _completedPoseIds.clear();
-          for (final row in response) {
-            _completedPoseIds.add(row['pose_id'].toString());
+          _completedPoseIds.addAll(uniquePoseIds);
+          for (final poseId in uniquePoseIds) {
+            print('  ✓ Pose completed: $poseId');
           }
         });
+        print('✅ Loaded ${_completedPoseIds.length} completed poses');
       }
     } catch (e) {
-      print('Error loading completed poses: $e');
+      print('❌ Error loading completed poses: $e');
     }
+  }
+
+  void _findFirstIncompletePose() {
+    print('🔍 Finding first incomplete pose...');
+    print('🔍 Completed poses: ${_completedPoseIds.length}');
+
+    // Find the first pose that's not completed
+    for (int i = 0; i < widget.session.allPoses.length; i++) {
+      final pose = widget.session.allPoses[i];
+
+      if (!_completedPoseIds.contains(pose.id)) {
+        // Found first incomplete pose!
+        setState(() {
+          _currentPoseIndex = i;
+          _remainingSeconds = pose.durationSeconds;
+        });
+
+        print(
+            '✅ Resuming at pose ${i + 1}/${widget.session.allPoses.length}: ${pose.nameKey}');
+        return;
+      }
+    }
+
+    // All poses completed - start from beginning
+    print('🎉 All poses completed! Starting from beginning.');
+    setState(() {
+      _currentPoseIndex = 0;
+      _remainingSeconds = widget.session.allPoses[0].durationSeconds;
+    });
   }
 
   Future<void> _initializeVideo() async {
@@ -238,7 +315,8 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
       await supabase.from('pose_activity').insert({
         'user_id': userId,
         'pose_id': currentPose.id,
-        'pose_name': YogaLocalizationHelper.getPoseName(context, currentPose.nameKey),
+        'pose_name':
+            YogaLocalizationHelper.getPoseName(context, currentPose.nameKey),
         'session_level': widget.session.levelKey,
         'duration_seconds': currentPose.durationSeconds,
         'completed_at': DateTime.now().toIso8601String(),
@@ -288,7 +366,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
             Text(
               AppLocalizations.of(context)!.poseComplete,
               style: GoogleFonts.poppins(
-                fontSize: 26,  // Larger for elderly
+                fontSize: 26, // Larger for elderly
                 fontWeight: FontWeight.bold,
                 color: Colors.black87,
               ),
@@ -298,7 +376,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
             Text(
               YogaLocalizationHelper.getPoseName(context, currentPose.nameKey),
               style: GoogleFonts.poppins(
-                fontSize: 18,  // Larger
+                fontSize: 18, // Larger
                 color: Colors.grey[700],
               ),
               textAlign: TextAlign.center,
@@ -307,7 +385,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
             Text(
               AppLocalizations.of(context)!.greatWorkChoice,
               style: GoogleFonts.poppins(
-                fontSize: 16,  // Larger
+                fontSize: 16, // Larger
                 color: Colors.grey[600],
               ),
               textAlign: TextAlign.center,
@@ -339,7 +417,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
               child: Text(
                 AppLocalizations.of(context)!.retryPose,
                 style: GoogleFonts.poppins(
-                  fontSize: 18,  // Larger
+                  fontSize: 18, // Larger
                   fontWeight: FontWeight.w600,
                   color: const Color(0xFF40E0D0),
                 ),
@@ -366,9 +444,11 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
                 elevation: 0,
               ),
               child: Text(
-                isLastPose ? AppLocalizations.of(context)!.finishSession : AppLocalizations.of(context)!.nextPose,
+                isLastPose
+                    ? AppLocalizations.of(context)!.finishSession
+                    : AppLocalizations.of(context)!.nextPose,
                 style: GoogleFonts.poppins(
-                  fontSize: 18,  // Larger
+                  fontSize: 18, // Larger
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -407,8 +487,34 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
 
   Future<void> _saveSessionProgress() async {
     // This is called at the end of session
-    // Individual poses are already saved, so just log completion
-    print('✅ Session complete! ${_completedPoseIds.length} poses completed');
+    final userId = Supabase.instance.client.auth.currentUser?.id;
+    if (userId == null) return;
+
+    try {
+      final supabase = Supabase.instance.client;
+
+      // Calculate total duration for the session
+      final totalDuration = widget.session.allPoses
+          .fold<int>(0, (sum, pose) => sum + pose.durationSeconds);
+
+      // Save session completion
+      await supabase.from('session_completions').insert({
+        'user_id': userId,
+        'session_id': widget.session.id,
+        'session_name': widget.session.titleKey,
+        'session_level': widget.session.levelKey,
+        'total_poses': widget.session.allPoses.length,
+        'total_duration_seconds': totalDuration,
+        'completed_at': DateTime.now().toIso8601String(),
+        'completion_date': DateTime.now().toIso8601String().split('T')[0],
+      });
+
+      print('✅ Session complete! ${_completedPoseIds.length} poses completed');
+      print('✅ Session completion saved to database');
+    } catch (e) {
+      print('❌ Error saving session completion: $e');
+      // Don't block the UI if save fails
+    }
   }
 
   void _showSessionCompleteDialog() {
@@ -440,7 +546,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
             Text(
               AppLocalizations.of(context)!.sessionComplete,
               style: GoogleFonts.poppins(
-                fontSize: 28,  // Larger
+                fontSize: 28, // Larger
                 fontWeight: FontWeight.bold,
                 color: Colors.black87,
               ),
@@ -448,9 +554,10 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
             ),
             const SizedBox(height: 12),
             Text(
-              AppLocalizations.of(context)!.completedPosesCount(widget.session.allPoses.length),
+              AppLocalizations.of(context)!
+                  .completedPosesCount(widget.session.allPoses.length),
               style: GoogleFonts.poppins(
-                fontSize: 18,  // Larger
+                fontSize: 18, // Larger
                 color: Colors.grey[700],
               ),
               textAlign: TextAlign.center,
@@ -458,11 +565,11 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
             const SizedBox(height: 8),
             Text(
               AppLocalizations.of(context)!.totalMinutesSpent(
-                _totalTimeSpent ~/ 60,                     // The number (int)
-                AppLocalizations.of(context)!.minutes,     // The label "minutes"
+                _totalTimeSpent ~/ 60, // The number (int)
+                AppLocalizations.of(context)!.minutes, // The label "minutes"
               ),
               style: GoogleFonts.poppins(
-                fontSize: 16,  // Larger
+                fontSize: 16, // Larger
                 color: Colors.grey[600],
               ),
               textAlign: TextAlign.center,
@@ -548,7 +655,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
                 icon: const Icon(Icons.close, color: Colors.white),
                 onPressed: () async {
                   await GlobalAudioService.playClickSound();
-                  _showExitDialog();
+                  _showExitConfirmation();
                 },
               ),
             ),
@@ -615,6 +722,34 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
   }
 
   Widget _buildVideoSection() {
+    // Show PIN waiting message only if PIN not verified yet
+    if (!SimplePinService.isPinVerifiedThisSession()) {
+      return Container(
+        color: Colors.black,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.lock_outline,
+                size: 64,
+                color: Color(0xFF40E0D0),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                AppLocalizations.of(context)!.waitingForPin,
+                style: GoogleFonts.poppins(
+                  color: Colors.white70,
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // PIN verified - show video player or loading spinner
     return GestureDetector(
       onTap: _showControlsTemporarily,
       child: Container(
@@ -680,7 +815,8 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
                           // Playback speed button
                           PopupMenuButton<double>(
                             icon: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 8),
                               decoration: BoxDecoration(
                                 color: Colors.white.withOpacity(0.2),
                                 borderRadius: BorderRadius.circular(8),
@@ -701,12 +837,30 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
                               });
                             },
                             itemBuilder: (context) => [
-                              PopupMenuItem(value: 0.5, child: Text('0.5x', style: GoogleFonts.poppins())),
-                              PopupMenuItem(value: 0.75, child: Text('0.75x', style: GoogleFonts.poppins())),
-                              PopupMenuItem(value: 1.0, child: Text('1.0x (Normal)', style: GoogleFonts.poppins())),
-                              PopupMenuItem(value: 1.25, child: Text('1.25x', style: GoogleFonts.poppins())),
-                              PopupMenuItem(value: 1.5, child: Text('1.5x', style: GoogleFonts.poppins())),
-                              PopupMenuItem(value: 2.0, child: Text('2.0x', style: GoogleFonts.poppins())),
+                              PopupMenuItem(
+                                  value: 0.5,
+                                  child: Text('0.5x',
+                                      style: GoogleFonts.poppins())),
+                              PopupMenuItem(
+                                  value: 0.75,
+                                  child: Text('0.75x',
+                                      style: GoogleFonts.poppins())),
+                              PopupMenuItem(
+                                  value: 1.0,
+                                  child: Text('1.0x (Normal)',
+                                      style: GoogleFonts.poppins())),
+                              PopupMenuItem(
+                                  value: 1.25,
+                                  child: Text('1.25x',
+                                      style: GoogleFonts.poppins())),
+                              PopupMenuItem(
+                                  value: 1.5,
+                                  child: Text('1.5x',
+                                      style: GoogleFonts.poppins())),
+                              PopupMenuItem(
+                                  value: 2.0,
+                                  child: Text('2.0x',
+                                      style: GoogleFonts.poppins())),
                             ],
                           ),
 
@@ -715,7 +869,9 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
                           // Volume button
                           IconButton(
                             icon: Icon(
-                              _videoController!.value.volume > 0 ? Icons.volume_up : Icons.volume_off,
+                              _videoController!.value.volume > 0
+                                  ? Icons.volume_up
+                                  : Icons.volume_off,
                               color: Colors.white,
                               size: 26,
                             ),
@@ -743,7 +899,9 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
                                 MaterialPageRoute(
                                   builder: (context) => _FullscreenVideoPlayer(
                                     controller: _videoController!,
-                                    poseName: YogaLocalizationHelper.getPoseName(context, currentPose.nameKey),
+                                    poseName:
+                                        YogaLocalizationHelper.getPoseName(
+                                            context, currentPose.nameKey),
                                     playbackSpeed: _playbackSpeed,
                                     onSpeedChanged: (speed) {
                                       setState(() {
@@ -777,7 +935,9 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
                       ),
                       child: IconButton(
                         icon: Icon(
-                          _videoController!.value.isPlaying ? Icons.pause : Icons.play_arrow,
+                          _videoController!.value.isPlaying
+                              ? Icons.pause
+                              : Icons.play_arrow,
                           size: 48,
                           color: Colors.white,
                         ),
@@ -802,7 +962,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
           Text(
             YogaLocalizationHelper.getPoseName(context, currentPose.nameKey),
             style: GoogleFonts.poppins(
-              fontSize: 24,  // Larger for elderly
+              fontSize: 24, // Larger for elderly
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
@@ -827,7 +987,12 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
                 ),
                 const SizedBox(width: 6),
                 Text(
-                  '${currentPose.durationSeconds ~/ 60}:${(currentPose.durationSeconds % 60).toString().padLeft(2, '0')} min',
+                  AppLocalizations.of(context)!.durationFormat(
+                    (currentPose.durationSeconds ~/ 60).toInt(),
+                    (currentPose.durationSeconds % 60)
+                        .toString()
+                        .padLeft(2, '0'),
+                  ),
                   style: GoogleFonts.poppins(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -844,7 +1009,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
           Text(
             _formatTime(_remainingSeconds),
             style: GoogleFonts.poppins(
-              fontSize: 64,  // Even larger
+              fontSize: 64, // Even larger
               fontWeight: FontWeight.bold,
               color: const Color(0xFF40E0D0),
               height: 1,
@@ -859,7 +1024,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
               Text(
                 ' ${AppLocalizations.of(context)!.totalTime}',
                 style: GoogleFonts.poppins(
-                  fontSize: 14,  // Larger
+                  fontSize: 14, // Larger
                   color: Colors.grey[400],
                   fontWeight: FontWeight.w500,
                   letterSpacing: 0.5,
@@ -869,15 +1034,15 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
               Text(
                 _formatTime(_totalTimeSpent),
                 style: GoogleFonts.poppins(
-                  fontSize: 18,  // Larger
-                  color: Colors.white,  // Better contrast
+                  fontSize: 18, // Larger
+                  color: Colors.white, // Better contrast
                   fontWeight: FontWeight.w500,
                 ),
               ),
-
               const SizedBox(width: 16),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: Colors.grey[800],
                   borderRadius: BorderRadius.circular(12),
@@ -885,8 +1050,8 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
                 child: Text(
                   '${(progress * 100).round()}% ${AppLocalizations.of(context)!.completed}',
                   style: GoogleFonts.poppins(
-                    fontSize: 13,  // Larger
-                    color: Colors.white,  // Better contrast
+                    fontSize: 13, // Larger
+                    color: Colors.white, // Better contrast
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.5,
                   ),
@@ -908,14 +1073,12 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
           Expanded(
             child: OutlinedButton.icon(
               onPressed: _currentPoseIndex > 0 ? _goToPreviousPose : null,
-
               label: Text(
-                AppLocalizations.of(context)!.previous,
+                AppLocalizations.of(context)!.back,
                 style: GoogleFonts.poppins(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.grey
-                ),
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey),
               ),
               style: OutlinedButton.styleFrom(
                 foregroundColor: Colors.white,
@@ -937,7 +1100,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
 
           // Play/Pause button - large circular (centered)
           Container(
-            width: 80,  // Larger for easier tapping
+            width: 80, // Larger for easier tapping
             height: 80,
             decoration: const BoxDecoration(
               color: Color(0xFF40E0D0),
@@ -946,7 +1109,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
             child: IconButton(
               icon: Icon(
                 _isPaused || !_isTimerRunning ? Icons.play_arrow : Icons.pause,
-                size: 40,  // Larger
+                size: 40, // Larger
                 color: Colors.white,
               ),
               onPressed: () async {
@@ -966,7 +1129,6 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
           Expanded(
             child: ElevatedButton.icon(
               onPressed: _skipToNextPose,
-
               label: Text(
                 AppLocalizations.of(context)!.next,
                 style: GoogleFonts.poppins(
@@ -1004,7 +1166,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
           Text(
             AppLocalizations.of(context)!.aboutThisPose,
             style: GoogleFonts.poppins(
-              fontSize: 20,  // Larger for elderly
+              fontSize: 20, // Larger for elderly
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
@@ -1012,10 +1174,10 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
           const SizedBox(height: 16),
           // Use instructions, not description
           Text(
-            currentPose.instructions,  // Changed from descriptionKey
+            YogaLocalizationHelper.getPoseInstructions(context, currentPose.instructions), // Changed from descriptionKey
             style: GoogleFonts.poppins(
-              fontSize: 17,  // Larger, easier to read
-              color: Colors.white,  // Better contrast
+              fontSize: 17, // Larger, easier to read
+              color: Colors.white, // Better contrast
               height: 1.7,
             ),
           ),
@@ -1039,7 +1201,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
               Text(
                 AppLocalizations.of(context)!.safetyTips,
                 style: GoogleFonts.poppins(
-                  fontSize: 20,  // Larger for elderly
+                  fontSize: 20, // Larger for elderly
                   fontWeight: FontWeight.bold,
                   color: Colors.orange,
                 ),
@@ -1048,38 +1210,42 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
           ),
           const SizedBox(height: 12),
           // Use modifications as safety tips
-          ...currentPose.modifications.map((tip) => Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(top: 4),
-                  padding: const EdgeInsets.all(4),
-                  decoration: const BoxDecoration(
-                    color: Colors.orange,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.check,
-                    size: 14,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    tip,
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,  // Larger, easier to read
-                      color: Colors.white,  // Better contrast
-                      height: 1.6,
+          ...currentPose.modifications.map((tipKey) {
+            String translatedTip =
+                YogaLocalizationHelper.getPoseModifications(context, tipKey);
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(top: 4),
+                    padding: const EdgeInsets.all(4),
+                    decoration: const BoxDecoration(
+                      color: Colors.orange,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.check,
+                      size: 14,
+                      color: Colors.white,
                     ),
                   ),
-                ),
-              ],
-            ),
-          )),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      translatedTip,
+                      style: GoogleFonts.poppins(
+                        fontSize: 16, // Larger, easier to read
+                        color: Colors.white, // Better contrast
+                        height: 1.6,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
         ],
       ),
     );
@@ -1098,14 +1264,15 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
                 Text(
                   AppLocalizations.of(context)!.sessionPlaylist,
                   style: GoogleFonts.poppins(
-                    fontSize: 22,  // Larger for elderly
+                    fontSize: 22, // Larger for elderly
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
                 ),
                 const SizedBox(width: 12),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: const Color(0xFF40E0D0).withOpacity(0.2),
                     borderRadius: BorderRadius.circular(20),
@@ -1113,7 +1280,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
                   child: Text(
                     '${_completedPoseIds.length}/${widget.session.allPoses.length}',
                     style: GoogleFonts.poppins(
-                      fontSize: 16,  // Larger
+                      fontSize: 16, // Larger
                       fontWeight: FontWeight.w600,
                       color: const Color(0xFF40E0D0),
                     ),
@@ -1130,13 +1297,14 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
 
             return Container(
               margin: const EdgeInsets.only(bottom: 14),
-              padding: const EdgeInsets.all(18),  // More padding
+              padding: const EdgeInsets.all(18), // More padding
               decoration: BoxDecoration(
                 color: isCurrent
                     ? const Color(0xFF40E0D0).withOpacity(0.15)
-                    : const Color(0xFF2A2A2A),  // Dark theme
+                    : const Color(0xFF2A2A2A), // Dark theme
                 border: Border.all(
-                  color: isCurrent ? const Color(0xFF40E0D0) : Colors.grey[800]!,
+                  color:
+                      isCurrent ? const Color(0xFF40E0D0) : Colors.grey[800]!,
                   width: isCurrent ? 2 : 1,
                 ),
                 borderRadius: BorderRadius.circular(16),
@@ -1145,31 +1313,33 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
                 children: [
                   // Pose number or checkmark - larger
                   Container(
-                    width: 42,  // Larger
+                    width: 42, // Larger
                     height: 42,
                     decoration: BoxDecoration(
                       color: isCompleted
                           ? const Color(0xFF40E0D0)
                           : isCurrent
-                          ? const Color(0xFF40E0D0).withOpacity(0.2)
-                          : Colors.grey[800],
+                              ? const Color(0xFF40E0D0).withOpacity(0.2)
+                              : Colors.grey[800],
                       shape: BoxShape.circle,
                     ),
                     child: Center(
                       child: isCompleted
                           ? const Icon(
-                        Icons.check,
-                        size: 24,  // Larger
-                        color: Colors.white,
-                      )
+                              Icons.check,
+                              size: 24, // Larger
+                              color: Colors.white,
+                            )
                           : Text(
-                        '${index + 1}',
-                        style: GoogleFonts.poppins(
-                          fontSize: 18,  // Larger
-                          fontWeight: FontWeight.bold,
-                          color: isCurrent ? const Color(0xFF40E0D0) : Colors.grey[500],
-                        ),
-                      ),
+                              '${index + 1}',
+                              style: GoogleFonts.poppins(
+                                fontSize: 18, // Larger
+                                fontWeight: FontWeight.bold,
+                                color: isCurrent
+                                    ? const Color(0xFF40E0D0)
+                                    : Colors.grey[500],
+                              ),
+                            ),
                     ),
                   ),
                   const SizedBox(width: 14),
@@ -1180,18 +1350,25 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          YogaLocalizationHelper.getPoseName(context, pose.nameKey),
+                          YogaLocalizationHelper.getPoseName(
+                              context, pose.nameKey),
                           style: GoogleFonts.poppins(
-                            fontSize: 17,  // Larger
-                            fontWeight: isCurrent ? FontWeight.bold : FontWeight.w600,
-                            color: Colors.white,  // White for dark theme
+                            fontSize: 17, // Larger
+                            fontWeight:
+                                isCurrent ? FontWeight.bold : FontWeight.w600,
+                            color: Colors.white, // White for dark theme
                           ),
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          '${pose.durationSeconds ~/ 60}:${(pose.durationSeconds % 60).toString().padLeft(2, '0')} min',
+                          AppLocalizations.of(context)!.durationFormat(
+                            (currentPose.durationSeconds ~/ 60).toInt(),
+                            (currentPose.durationSeconds % 60)
+                                .toString()
+                                .padLeft(2, '0'),
+                          ),
                           style: GoogleFonts.poppins(
-                            fontSize: 14,  // Larger
+                            fontSize: 14, // Larger
                             color: Colors.grey[400],
                           ),
                         ),
@@ -1202,7 +1379,8 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
                   // Current playing indicator
                   if (isCurrent)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
                         color: const Color(0xFF40E0D0),
                         borderRadius: BorderRadius.circular(10),
@@ -1210,7 +1388,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
                       child: Text(
                         AppLocalizations.of(context)!.playing,
                         style: GoogleFonts.poppins(
-                          fontSize: 13,  // Larger
+                          fontSize: 13, // Larger
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
                         ),
@@ -1225,48 +1403,152 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
     );
   }
 
-  void _showExitDialog() {
+  void _showExitConfirmation() {
+    // Pause timer when showing dialog
+    if (_isTimerRunning) {
+      _pauseTimer();
+    }
+
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
         title: Text(
-          AppLocalizations.of(context)!.exitSession,
+          AppLocalizations.of(context)!.exitSessionTitle,
           style: GoogleFonts.poppins(
-            fontSize: 20,
+            fontSize: 22,
             fontWeight: FontWeight.bold,
+            color: Colors.black87,
           ),
         ),
-        content: Text(
-          AppLocalizations.of(context)!.exitSessionMessage,
-          style: GoogleFonts.poppins(
-            fontSize: 14,
-            color: Colors.grey[700],
-          ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Show progress if any poses completed
+            if (_completedPoseIds.isNotEmpty) ...[
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.green.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: Colors.green.withOpacity(0.3),
+                    width: 1,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.check_circle,
+                      color: Colors.green,
+                      size: 24,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            AppLocalizations.of(context)!.posesCompletedInfo(
+                                _completedPoseIds.length,
+                                widget.session.allPoses.length),
+                            style: GoogleFonts.poppins(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            AppLocalizations.of(context)!.progressSaved,
+                            style: GoogleFonts.poppins(
+                              fontSize: 13,
+                              color: Colors.green[700],
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                AppLocalizations.of(context)!.continueLater,
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  color: Colors.grey[700],
+                  height: 1.4,
+                ),
+              ),
+            ] else ...[
+              // No poses completed yet
+              Row(
+                children: [
+                  Icon(
+                    Icons.info_outline,
+                    color: Colors.orange,
+                    size: 24,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      AppLocalizations.of(context)!.noPosesCompleted,
+                      style: GoogleFonts.poppins(
+                        fontSize: 15,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Text(
+                AppLocalizations.of(context)!.completeOneToSave,
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  color: Colors.grey[600],
+                ),
+              ),
+            ],
+          ],
         ),
         actions: [
           TextButton(
-            onPressed: () async {
-              await GlobalAudioService.playClickSound();
-              Navigator.pop(context);
+            onPressed: () {
+              Navigator.pop(context); // Close dialog
+              // Resume timer if it was running
+              if (!_isTimerRunning && _remainingSeconds > 0) {
+                _startTimer();
+              }
             },
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            ),
             child: Text(
-              AppLocalizations.of(context)!.cancel,
+              AppLocalizations.of(context)!.stayButton,
               style: GoogleFonts.poppins(
-                color: Colors.grey[600],
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF40E0D0),
               ),
             ),
           ),
           ElevatedButton(
-            onPressed: () async {
-              await GlobalAudioService.playClickSound();
+            onPressed: () {
+              GlobalAudioService.playClickSound();
               Navigator.pop(context); // Close dialog
               Navigator.pop(context); // Exit session
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
+              backgroundColor: Colors.red[400],
+              elevation: 0,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -1274,6 +1556,8 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
             child: Text(
               AppLocalizations.of(context)!.exit,
               style: GoogleFonts.poppins(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
                 color: Colors.white,
               ),
             ),
@@ -1448,7 +1732,9 @@ class _FullscreenVideoPlayerState extends State<_FullscreenVideoPlayer> {
                       ),
                       child: IconButton(
                         icon: Icon(
-                          widget.controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
+                          widget.controller.value.isPlaying
+                              ? Icons.pause
+                              : Icons.play_arrow,
                           size: 48,
                           color: Colors.white,
                         ),
@@ -1496,7 +1782,8 @@ class _FullscreenVideoPlayerState extends State<_FullscreenVideoPlayer> {
                                   // Playback speed
                                   PopupMenuButton<double>(
                                     icon: Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 6),
                                       decoration: BoxDecoration(
                                         color: Colors.white.withOpacity(0.2),
                                         borderRadius: BorderRadius.circular(8),
@@ -1513,17 +1800,36 @@ class _FullscreenVideoPlayerState extends State<_FullscreenVideoPlayer> {
                                     onSelected: (speed) {
                                       setState(() {
                                         _currentSpeed = speed;
-                                        widget.controller.setPlaybackSpeed(speed);
+                                        widget.controller
+                                            .setPlaybackSpeed(speed);
                                         widget.onSpeedChanged(speed);
                                       });
                                     },
                                     itemBuilder: (context) => [
-                                      PopupMenuItem(value: 0.5, child: Text('0.5x', style: GoogleFonts.poppins())),
-                                      PopupMenuItem(value: 0.75, child: Text('0.75x', style: GoogleFonts.poppins())),
-                                      PopupMenuItem(value: 1.0, child: Text('1.0x (Normal)', style: GoogleFonts.poppins())),
-                                      PopupMenuItem(value: 1.25, child: Text('1.25x', style: GoogleFonts.poppins())),
-                                      PopupMenuItem(value: 1.5, child: Text('1.5x', style: GoogleFonts.poppins())),
-                                      PopupMenuItem(value: 2.0, child: Text('2.0x', style: GoogleFonts.poppins())),
+                                      PopupMenuItem(
+                                          value: 0.5,
+                                          child: Text('0.5x',
+                                              style: GoogleFonts.poppins())),
+                                      PopupMenuItem(
+                                          value: 0.75,
+                                          child: Text('0.75x',
+                                              style: GoogleFonts.poppins())),
+                                      PopupMenuItem(
+                                          value: 1.0,
+                                          child: Text('1.0x (Normal)',
+                                              style: GoogleFonts.poppins())),
+                                      PopupMenuItem(
+                                          value: 1.25,
+                                          child: Text('1.25x',
+                                              style: GoogleFonts.poppins())),
+                                      PopupMenuItem(
+                                          value: 1.5,
+                                          child: Text('1.5x',
+                                              style: GoogleFonts.poppins())),
+                                      PopupMenuItem(
+                                          value: 2.0,
+                                          child: Text('2.0x',
+                                              style: GoogleFonts.poppins())),
                                     ],
                                   ),
 
@@ -1532,13 +1838,16 @@ class _FullscreenVideoPlayerState extends State<_FullscreenVideoPlayer> {
                                   // Volume
                                   IconButton(
                                     icon: Icon(
-                                      widget.controller.value.volume > 0 ? Icons.volume_up : Icons.volume_off,
+                                      widget.controller.value.volume > 0
+                                          ? Icons.volume_up
+                                          : Icons.volume_off,
                                       color: Colors.white,
                                       size: 24,
                                     ),
                                     onPressed: () {
                                       setState(() {
-                                        if (widget.controller.value.volume > 0) {
+                                        if (widget.controller.value.volume >
+                                            0) {
                                           widget.controller.setVolume(0);
                                         } else {
                                           widget.controller.setVolume(1.0);

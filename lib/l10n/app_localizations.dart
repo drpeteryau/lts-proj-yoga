@@ -676,6 +676,42 @@ abstract class AppLocalizations {
   /// **'More Info'**
   String get moreInfo;
 
+  /// No description provided for @enterPinCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter PIN Code'**
+  String get enterPinCode;
+
+  /// No description provided for @pinInstructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter 4-digit code to watch videos'**
+  String get pinInstructions;
+
+  /// No description provided for @incorrectPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect PIN'**
+  String get incorrectPin;
+
+  /// No description provided for @backdoorAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Backdoor Access'**
+  String get backdoorAccess;
+
+  /// No description provided for @backdoorAdminMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'You have admin access to change the video PIN.'**
+  String get backdoorAdminMsg;
+
+  /// No description provided for @backdoorPathInstructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Profile > Settings to change the PIN code.'**
+  String get backdoorPathInstructions;
+
   /// No description provided for @beginnerTitle.
   ///
   /// In en, this message translates to:
@@ -1198,6 +1234,444 @@ abstract class AppLocalizations {
   /// **'A dynamic sequence linking breath and movement. Builds strength, heat, coordination, and stamina.'**
   String get yogaDescSunSalutation;
 
+  /// No description provided for @yogaInstHeadNeck.
+  ///
+  /// In en, this message translates to:
+  /// **'Tilt head up/down for 5–10 breaths each. Turn head right/left 3 rounds. Drop ear to shoulder with light hand support.'**
+  String get yogaInstHeadNeck;
+
+  /// No description provided for @yogaInstStraightArms.
+  ///
+  /// In en, this message translates to:
+  /// **'Make fists, rotate straight arms 10 times forward and 10 times backward.'**
+  String get yogaInstStraightArms;
+
+  /// No description provided for @yogaInstBentArms.
+  ///
+  /// In en, this message translates to:
+  /// **'Touch elbows in front, circle up behind head and back down. 10 rounds each direction.'**
+  String get yogaInstBentArms;
+
+  /// No description provided for @yogaInstShouldersLateral.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop right hand to chair, lift left arm overhead. Hold 5–10 breaths. Switch sides.'**
+  String get yogaInstShouldersLateral;
+
+  /// No description provided for @yogaInstShouldersTorsoTwist.
+  ///
+  /// In en, this message translates to:
+  /// **'Lift arms, rotate torso right, hold chair for support. Hold 5–10 breaths each side.'**
+  String get yogaInstShouldersTorsoTwist;
+
+  /// No description provided for @yogaInstLegRaiseBent.
+  ///
+  /// In en, this message translates to:
+  /// **'Lift bent leg with back straight. Hold, lower with control. Switch legs.'**
+  String get yogaInstLegRaiseBent;
+
+  /// No description provided for @yogaInstLegRaiseStraight.
+  ///
+  /// In en, this message translates to:
+  /// **'Lift straightened leg, hold as long as possible. Release and switch legs.'**
+  String get yogaInstLegRaiseStraight;
+
+  /// No description provided for @yogaInstGoddessTwist.
+  ///
+  /// In en, this message translates to:
+  /// **'Open knees wide, stretch torso to side. Hold 5–10 breaths, switch side.'**
+  String get yogaInstGoddessTwist;
+
+  /// No description provided for @yogaInstGoddessStrength.
+  ///
+  /// In en, this message translates to:
+  /// **'Lift thighs off chair while in Goddess stance. Hold 5–10 breaths. Repeat.'**
+  String get yogaInstGoddessStrength;
+
+  /// No description provided for @yogaInstBackChestStretch.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold chair, hinge into L-shape, keep back flat. Hold 5–10 breaths.'**
+  String get yogaInstBackChestStretch;
+
+  /// No description provided for @yogaInstStandingCrunch.
+  ///
+  /// In en, this message translates to:
+  /// **'From L-shape, extend leg back on inhale, crunch knee forward on exhale. Repeat.'**
+  String get yogaInstStandingCrunch;
+
+  /// No description provided for @yogaInstWarrior3.
+  ///
+  /// In en, this message translates to:
+  /// **'Lift hand off chair, hold balance. Switch legs and repeat.'**
+  String get yogaInstWarrior3;
+
+  /// No description provided for @yogaInstWarrior1.
+  ///
+  /// In en, this message translates to:
+  /// **'Step back, bend front knee, raise arms. Hold 5–10 breaths.'**
+  String get yogaInstWarrior1;
+
+  /// No description provided for @yogaInstWarrior2.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn toes outward, stretch arms, look forward. Hold.'**
+  String get yogaInstWarrior2;
+
+  /// No description provided for @yogaInstTriangle.
+  ///
+  /// In en, this message translates to:
+  /// **'Straighten front leg, lower hand to ankle or block, reach upward.'**
+  String get yogaInstTriangle;
+
+  /// No description provided for @yogaInstReverseWarrior.
+  ///
+  /// In en, this message translates to:
+  /// **'Sweep top arm overhead while leaning back. Hold.'**
+  String get yogaInstReverseWarrior;
+
+  /// No description provided for @yogaInstSideAngle.
+  ///
+  /// In en, this message translates to:
+  /// **'Lower hand inside foot, stretch upper arm diagonally overhead.'**
+  String get yogaInstSideAngle;
+
+  /// No description provided for @yogaInstGentleBreathing.
+  ///
+  /// In en, this message translates to:
+  /// **'Relax shoulders, place hands on lap, breathe slowly through the nose.'**
+  String get yogaInstGentleBreathing;
+
+  /// No description provided for @yogaInstDownwardDog.
+  ///
+  /// In en, this message translates to:
+  /// **'Place hands shoulder-width apart, feet hip-width apart. Lift hips high, press chest towards thighs. Hold 5–10 breaths.'**
+  String get yogaInstDownwardDog;
+
+  /// No description provided for @yogaInstPlank.
+  ///
+  /// In en, this message translates to:
+  /// **'Stack shoulders over wrists, engage core, lengthen from head to heels. Hold 5–10 breaths.'**
+  String get yogaInstPlank;
+
+  /// No description provided for @yogaInstEightPoint.
+  ///
+  /// In en, this message translates to:
+  /// **'From tabletop, lower chest and chin to mat while hips stay lifted. Hold 5–10 breaths.'**
+  String get yogaInstEightPoint;
+
+  /// No description provided for @yogaInstBabyCobra.
+  ///
+  /// In en, this message translates to:
+  /// **'From prone, press chest up lightly, keep elbows close and shoulders away from ears. Hold 5–10 breaths.'**
+  String get yogaInstBabyCobra;
+
+  /// No description provided for @yogaInstFullCobra.
+  ///
+  /// In en, this message translates to:
+  /// **'Straighten elbows, lift chest higher without scrunching shoulders. Hold 5–10 breaths.'**
+  String get yogaInstFullCobra;
+
+  /// No description provided for @yogaInstGentleBreathingIntermediate.
+  ///
+  /// In en, this message translates to:
+  /// **'Place hands on belly or lap, relax shoulders, breathe through the nose slowly and naturally.'**
+  String get yogaInstGentleBreathingIntermediate;
+
+  /// No description provided for @yogaInstSunSalutation.
+  ///
+  /// In en, this message translates to:
+  /// **'This flowing sequence repeats continuously — one breath per movement.\n 1. Inhale — Downward Dog\n Lift hips high, lengthen spine.\n 2. Exhale — Plank\n Shift forward into strong plank position.\n 3. Inhale — Knees-Chest-Chin (Eight-Point Pose)\n Lower down with control, hips lifted.\n 4. Exhale — Baby Cobra\n Lift chest gently, elbows close.\n 5. Inhale — Full Cobra\n Straighten arms slightly, open chest.\n 6. Exhale — Return to Downward Dog\n Press back into inverted V-shape.\n Repeat for 5–10 rounds or to your ability level.'**
+  String get yogaInstSunSalutation;
+
+  /// No description provided for @yogaGentleBreathingAdvanced.
+  ///
+  /// In en, this message translates to:
+  /// **'Breathe softly through the nose, lengthening exhales. Allow the entire body to settle and cool down.'**
+  String get yogaGentleBreathingAdvanced;
+
+  /// No description provided for @yogaModMoveSlowly.
+  ///
+  /// In en, this message translates to:
+  /// **'Move slowly'**
+  String get yogaModMoveSlowly;
+
+  /// No description provided for @yogaModStopDizzy.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop if dizzy'**
+  String get yogaModStopDizzy;
+
+  /// No description provided for @yogaModChairSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Use chair back for support'**
+  String get yogaModChairSupport;
+
+  /// No description provided for @yogaModElbowsStraight.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep elbows straight'**
+  String get yogaModElbowsStraight;
+
+  /// No description provided for @yogaModControlledMove.
+  ///
+  /// In en, this message translates to:
+  /// **'Smooth controlled movement'**
+  String get yogaModControlledMove;
+
+  /// No description provided for @yogaModFingersShoulders.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep fingers on shoulders'**
+  String get yogaModFingersShoulders;
+
+  /// No description provided for @yogaModSlowRolls.
+  ///
+  /// In en, this message translates to:
+  /// **'Slow controlled rolls'**
+  String get yogaModSlowRolls;
+
+  /// No description provided for @yogaModButtocksDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep buttocks down'**
+  String get yogaModButtocksDown;
+
+  /// No description provided for @yogaModFaceForward.
+  ///
+  /// In en, this message translates to:
+  /// **'Face forward'**
+  String get yogaModFaceForward;
+
+  /// No description provided for @yogaModHipsStable.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep hips stable'**
+  String get yogaModHipsStable;
+
+  /// No description provided for @yogaModShouldersLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep shoulders level'**
+  String get yogaModShouldersLevel;
+
+  /// No description provided for @yogaModBackStraight.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep back straight'**
+  String get yogaModBackStraight;
+
+  /// No description provided for @yogaModBeginBent.
+  ///
+  /// In en, this message translates to:
+  /// **'Begin with bent-knee version'**
+  String get yogaModBeginBent;
+
+  /// No description provided for @yogaModUseChairForSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Use chair for support'**
+  String get yogaModUseChairForSupport;
+
+  /// No description provided for @yogaModKneesToes.
+  ///
+  /// In en, this message translates to:
+  /// **'Align knees with toes'**
+  String get yogaModKneesToes;
+
+  /// No description provided for @yogaModHipsGrounded.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep hips grounded'**
+  String get yogaModHipsGrounded;
+
+  /// No description provided for @yogaModTorsoUpright.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep torso upright'**
+  String get yogaModTorsoUpright;
+
+  /// No description provided for @yogaModChairBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Use chair for balance'**
+  String get yogaModChairBalance;
+
+  /// No description provided for @yogaModArmsLegsStraight.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep arms and legs straight'**
+  String get yogaModArmsLegsStraight;
+
+  /// No description provided for @yogaModEngageCore.
+  ///
+  /// In en, this message translates to:
+  /// **'Engage core'**
+  String get yogaModEngageCore;
+
+  /// No description provided for @yogaModAvoidPregnancy.
+  ///
+  /// In en, this message translates to:
+  /// **'Avoid during pregnancy'**
+  String get yogaModAvoidPregnancy;
+
+  /// No description provided for @yogaModOneHandChair.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep one hand on chair'**
+  String get yogaModOneHandChair;
+
+  /// No description provided for @yogaModStraightLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Maintain a straight line'**
+  String get yogaModStraightLine;
+
+  /// No description provided for @yogaModShortenStance.
+  ///
+  /// In en, this message translates to:
+  /// **'Shorten stance'**
+  String get yogaModShortenStance;
+
+  /// No description provided for @yogaModSquareHips.
+  ///
+  /// In en, this message translates to:
+  /// **'Square hips'**
+  String get yogaModSquareHips;
+
+  /// No description provided for @yogaModLevelShoulders.
+  ///
+  /// In en, this message translates to:
+  /// **'Level shoulders'**
+  String get yogaModLevelShoulders;
+
+  /// No description provided for @yogaModUseBlock.
+  ///
+  /// In en, this message translates to:
+  /// **'Use block'**
+  String get yogaModUseBlock;
+
+  /// No description provided for @yogaModHipsForward.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep hips forward'**
+  String get yogaModHipsForward;
+
+  /// No description provided for @yogaModFrontKneeBent.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep front knee bent'**
+  String get yogaModFrontKneeBent;
+
+  /// No description provided for @yogaModGazeDirection.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose gaze direction'**
+  String get yogaModGazeDirection;
+
+  /// No description provided for @yogaModTuckTailbone.
+  ///
+  /// In en, this message translates to:
+  /// **'Tuck tailbone slightly'**
+  String get yogaModTuckTailbone;
+
+  /// No description provided for @yogaModSitOrLieDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Sit or lie down'**
+  String get yogaModSitOrLieDown;
+
+  /// No description provided for @yogaModCloseEyesIfComfortable.
+  ///
+  /// In en, this message translates to:
+  /// **'Close eyes if comfortable'**
+  String get yogaModCloseEyesIfComfortable;
+
+  /// No description provided for @yogaModBendKnees.
+  ///
+  /// In en, this message translates to:
+  /// **'Bend knees if hamstrings are tight'**
+  String get yogaModBendKnees;
+
+  /// No description provided for @yogaModHeelsLifted.
+  ///
+  /// In en, this message translates to:
+  /// **'Practice with heels lifted'**
+  String get yogaModHeelsLifted;
+
+  /// No description provided for @yogaModLowerKnees.
+  ///
+  /// In en, this message translates to:
+  /// **'Lower knees for a gentler version'**
+  String get yogaModLowerKnees;
+
+  /// No description provided for @yogaModFeetTogether.
+  ///
+  /// In en, this message translates to:
+  /// **'Feet together for added challenge'**
+  String get yogaModFeetTogether;
+
+  /// No description provided for @yogaModSlowControl.
+  ///
+  /// In en, this message translates to:
+  /// **'Lower with slow control to protect shoulders'**
+  String get yogaModSlowControl;
+
+  /// No description provided for @yogaModLiftPalms.
+  ///
+  /// In en, this message translates to:
+  /// **'Lift palms for challenge'**
+  String get yogaModLiftPalms;
+
+  /// No description provided for @yogaModPressFeet.
+  ///
+  /// In en, this message translates to:
+  /// **'Press feet down for stability'**
+  String get yogaModPressFeet;
+
+  /// No description provided for @yogaModNoLockElbows.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not lock elbows'**
+  String get yogaModNoLockElbows;
+
+  /// No description provided for @yogaModTuckStomach.
+  ///
+  /// In en, this message translates to:
+  /// **'Tuck stomach slightly for spine support'**
+  String get yogaModTuckStomach;
+
+  /// No description provided for @yogaModRestChildPose.
+  ///
+  /// In en, this message translates to:
+  /// **'Rest in Child’s Pose between rounds if needed'**
+  String get yogaModRestChildPose;
+
+  /// No description provided for @yogaModSlowTransitions.
+  ///
+  /// In en, this message translates to:
+  /// **'Slow down transitions if breath becomes strained'**
+  String get yogaModSlowTransitions;
+
+  /// No description provided for @yogaModBendDownwardDog.
+  ///
+  /// In en, this message translates to:
+  /// **'Bend knees in Downward Dog for comfort'**
+  String get yogaModBendDownwardDog;
+
+  /// No description provided for @yogaModSitOrLie.
+  ///
+  /// In en, this message translates to:
+  /// **'Sit upright or lie flat'**
+  String get yogaModSitOrLie;
+
+  /// No description provided for @yogaModCushionUnderKnees.
+  ///
+  /// In en, this message translates to:
+  /// **'Place cushion under knees'**
+  String get yogaModCushionUnderKnees;
+
   /// No description provided for @sessionLevelLabel.
   ///
   /// In en, this message translates to:
@@ -1300,6 +1774,12 @@ abstract class AppLocalizations {
   /// **'{count} Mins'**
   String minsLabel(int count);
 
+  /// No description provided for @completeCurrentPoseFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Please complete the current pose first!'**
+  String get completeCurrentPoseFirst;
+
   /// No description provided for @poseComplete.
   ///
   /// In en, this message translates to:
@@ -1309,14 +1789,20 @@ abstract class AppLocalizations {
   /// No description provided for @greatWorkChoice.
   ///
   /// In en, this message translates to:
-  /// **'Great work! What would you like to do?'**
+  /// **'Great work! What would you like to do next?'**
   String get greatWorkChoice;
 
   /// No description provided for @retryPose.
   ///
   /// In en, this message translates to:
-  /// **'Retry This Pose'**
+  /// **'Repeat Pose'**
   String get retryPose;
+
+  /// No description provided for @nextPose.
+  ///
+  /// In en, this message translates to:
+  /// **'Next Pose'**
+  String get nextPose;
 
   /// No description provided for @finishSession.
   ///
@@ -1324,10 +1810,40 @@ abstract class AppLocalizations {
   /// **'Finish Session'**
   String get finishSession;
 
+  /// No description provided for @sessionComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Session Complete!'**
+  String get sessionComplete;
+
+  /// No description provided for @completedPoses.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} poses completed'**
+  String completedPoses(int count);
+
+  /// No description provided for @totalMinutesSpent.
+  ///
+  /// In en, this message translates to:
+  /// **'You practiced for {value} {unit}'**
+  String totalMinutesSpent(int value, String unit);
+
+  /// No description provided for @totaltime.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Time:'**
+  String get totaltime;
+
+  /// No description provided for @howToPose.
+  ///
+  /// In en, this message translates to:
+  /// **'How to do this pose'**
+  String get howToPose;
+
   /// No description provided for @sessionPlaylist.
   ///
   /// In en, this message translates to:
-  /// **'Session Playlist'**
+  /// **'Session Poses'**
   String get sessionPlaylist;
 
   /// No description provided for @playing.
@@ -1336,29 +1852,59 @@ abstract class AppLocalizations {
   /// **'Playing'**
   String get playing;
 
-  /// No description provided for @poseCountProgress.
+  /// No description provided for @waitingForPin.
   ///
   /// In en, this message translates to:
-  /// **'{completed}/{total}'**
-  String poseCountProgress(int completed, int total);
+  /// **'Waiting for PIN...'**
+  String get waitingForPin;
 
-  /// No description provided for @totalMinutesSpent.
+  /// No description provided for @exitSessionTitle.
   ///
   /// In en, this message translates to:
-  /// **'{minutes} {minutesLabel} total'**
-  String totalMinutesSpent(int minutes, String minutesLabel);
+  /// **'Exit Session?'**
+  String get exitSessionTitle;
 
-  /// No description provided for @previous.
+  /// No description provided for @posesCompletedInfo.
   ///
   /// In en, this message translates to:
-  /// **'Previous'**
-  String get previous;
+  /// **'{completed} of {total} poses completed'**
+  String posesCompletedInfo(int completed, int total);
 
-  /// No description provided for @completeCurrentPoseFirst.
+  /// No description provided for @progressSaved.
   ///
   /// In en, this message translates to:
-  /// **'Please complete the current pose before moving to the next one'**
-  String get completeCurrentPoseFirst;
+  /// **'Progress saved ✓'**
+  String get progressSaved;
+
+  /// No description provided for @continueLater.
+  ///
+  /// In en, this message translates to:
+  /// **'You can continue from where you left off anytime!'**
+  String get continueLater;
+
+  /// No description provided for @noPosesCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'No poses completed yet'**
+  String get noPosesCompleted;
+
+  /// No description provided for @completeOneToSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete at least one pose to save your progress.'**
+  String get completeOneToSave;
+
+  /// No description provided for @stayButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay'**
+  String get stayButton;
+
+  /// No description provided for @playbackNormal.
+  ///
+  /// In en, this message translates to:
+  /// **'Normal'**
+  String get playbackNormal;
 
   /// No description provided for @poseProgress.
   ///
@@ -1425,12 +1971,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pose marked as completed!'**
   String get poseMarkedSuccess;
-
-  /// No description provided for @nextPose.
-  ///
-  /// In en, this message translates to:
-  /// **'Next Pose'**
-  String get nextPose;
 
   /// No description provided for @completeSession.
   ///
@@ -2230,6 +2770,168 @@ abstract class AppLocalizations {
   /// **'• Enhances overall well-being'**
   String get soundBenefit4;
 
+  /// No description provided for @meditationHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Meditation & Sounds'**
+  String get meditationHeader;
+
+  /// No description provided for @quickStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Start'**
+  String get quickStart;
+
+  /// No description provided for @guidedMeditationSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Guided Meditations'**
+  String get guidedMeditationSection;
+
+  /// No description provided for @ambientSoundsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Ambient Sounds'**
+  String get ambientSoundsSection;
+
+  /// No description provided for @ambientSoundsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Real nature sounds to help you relax'**
+  String get ambientSoundsSubtitle;
+
+  /// No description provided for @morningClarityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Morning Clarity'**
+  String get morningClarityTitle;
+
+  /// No description provided for @morningClarityDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Start your day with calm intention'**
+  String get morningClarityDesc;
+
+  /// No description provided for @deepBreathingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Deep Breathing'**
+  String get deepBreathingTitle;
+
+  /// No description provided for @deepBreathingDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Reduce stress with focused breath'**
+  String get deepBreathingDesc;
+
+  /// No description provided for @eveningWindDownTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Evening Wind Down'**
+  String get eveningWindDownTitle;
+
+  /// No description provided for @eveningWindDownDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Release the day and prepare for rest'**
+  String get eveningWindDownDesc;
+
+  /// No description provided for @oceanWavesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ocean Waves'**
+  String get oceanWavesTitle;
+
+  /// No description provided for @oceanWavesDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Gentle waves on the shore'**
+  String get oceanWavesDesc;
+
+  /// No description provided for @rainSoundsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rain Sounds'**
+  String get rainSoundsTitle;
+
+  /// No description provided for @rainSoundsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Soft rain and thunder'**
+  String get rainSoundsDesc;
+
+  /// No description provided for @forestBirdsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Forest Birds'**
+  String get forestBirdsTitle;
+
+  /// No description provided for @forestBirdsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Birds chirping in nature'**
+  String get forestBirdsDesc;
+
+  /// No description provided for @cracklingFireTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Crackling Fire'**
+  String get cracklingFireTitle;
+
+  /// No description provided for @cracklingFireDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Warm fireplace sounds'**
+  String get cracklingFireDesc;
+
+  /// No description provided for @whiteNoiseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'White Noise'**
+  String get whiteNoiseTitle;
+
+  /// No description provided for @whiteNoiseDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Pure white noise for focus'**
+  String get whiteNoiseDesc;
+
+  /// No description provided for @flowingWaterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Flowing Water'**
+  String get flowingWaterTitle;
+
+  /// No description provided for @flowingWaterDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Gentle stream sounds'**
+  String get flowingWaterDesc;
+
+  /// No description provided for @windChimesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Wind Chimes'**
+  String get windChimesTitle;
+
+  /// No description provided for @windChimesDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Peaceful wind chimes'**
+  String get windChimesDesc;
+
+  /// No description provided for @nightCricketsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Night Crickets'**
+  String get nightCricketsTitle;
+
+  /// No description provided for @nightCricketsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Evening cricket sounds'**
+  String get nightCricketsDesc;
+
   /// No description provided for @meditationHeaderTitle.
   ///
   /// In en, this message translates to:
@@ -2362,72 +3064,6 @@ abstract class AppLocalizations {
   /// **'End'**
   String get meditationConfirmEnd;
 
-  /// No description provided for @soundOceanWaves.
-  ///
-  /// In en, this message translates to:
-  /// **'Ocean Waves'**
-  String get soundOceanWaves;
-
-  /// No description provided for @soundForestRain.
-  ///
-  /// In en, this message translates to:
-  /// **'Forest Rain'**
-  String get soundForestRain;
-
-  /// No description provided for @soundTibetanBowls.
-  ///
-  /// In en, this message translates to:
-  /// **'Tibetan Bowls'**
-  String get soundTibetanBowls;
-
-  /// No description provided for @soundPeacefulPiano.
-  ///
-  /// In en, this message translates to:
-  /// **'Peaceful Piano'**
-  String get soundPeacefulPiano;
-
-  /// No description provided for @soundMountainStream.
-  ///
-  /// In en, this message translates to:
-  /// **'Mountain Stream'**
-  String get soundMountainStream;
-
-  /// No description provided for @soundWindChimes.
-  ///
-  /// In en, this message translates to:
-  /// **'Wind Chimes'**
-  String get soundWindChimes;
-
-  /// No description provided for @soundGentleThunder.
-  ///
-  /// In en, this message translates to:
-  /// **'Gentle Thunder'**
-  String get soundGentleThunder;
-
-  /// No description provided for @soundSingingBirds.
-  ///
-  /// In en, this message translates to:
-  /// **'Singing Birds'**
-  String get soundSingingBirds;
-
-  /// No description provided for @categoryNature.
-  ///
-  /// In en, this message translates to:
-  /// **'Nature'**
-  String get categoryNature;
-
-  /// No description provided for @categoryMeditation.
-  ///
-  /// In en, this message translates to:
-  /// **'Meditation'**
-  String get categoryMeditation;
-
-  /// No description provided for @categoryAmbient.
-  ///
-  /// In en, this message translates to:
-  /// **'Ambient'**
-  String get categoryAmbient;
-
   /// No description provided for @profileTitle.
   ///
   /// In en, this message translates to:
@@ -2449,7 +3085,7 @@ abstract class AppLocalizations {
   /// No description provided for @daily.
   ///
   /// In en, this message translates to:
-  /// **'Daily 🔥'**
+  /// **'Streak'**
   String get daily;
 
   /// No description provided for @streakSummary.
@@ -2734,12 +3370,6 @@ abstract class AppLocalizations {
   /// **'Mandarin (Traditional)'**
   String get mandarinTraditional;
 
-  /// No description provided for @sessionComplete.
-  ///
-  /// In en, this message translates to:
-  /// **'Session Complete!'**
-  String get sessionComplete;
-
   /// No description provided for @completedPosesCount.
   ///
   /// In en, this message translates to:
@@ -2788,59 +3418,35 @@ abstract class AppLocalizations {
   /// **'About Us'**
   String get aboutUsTitle;
 
-  /// No description provided for @appSubtitle.
+  /// No description provided for @appName.
   ///
   /// In en, this message translates to:
-  /// **'Helping you build healthier habits through guided yoga.'**
-  String get appSubtitle;
+  /// **'Zencore'**
+  String get appName;
 
-  /// No description provided for @missionTitle.
+  /// No description provided for @appVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Version 1.0.0'**
+  String get appVersion;
+
+  /// No description provided for @ourMission.
   ///
   /// In en, this message translates to:
   /// **'Our Mission'**
-  String get missionTitle;
+  String get ourMission;
 
-  /// No description provided for @missionContent.
+  /// No description provided for @missionStatement.
   ///
   /// In en, this message translates to:
-  /// **'HealYoga is designed to encourage regular yoga practice through guided sessions, calming music, and progress tracking. We focus on accessibility and simplicity to make wellness available to everyone.'**
-  String get missionContent;
+  /// **'Making wellness accessible to everyone through gentle chair yoga, calming meditation, and mindful practice.'**
+  String get missionStatement;
 
-  /// No description provided for @featuresTitle.
+  /// No description provided for @projectTeam.
   ///
   /// In en, this message translates to:
-  /// **'Key Features'**
-  String get featuresTitle;
-
-  /// No description provided for @feature1.
-  ///
-  /// In en, this message translates to:
-  /// **'Guided yoga sessions'**
-  String get feature1;
-
-  /// No description provided for @feature2.
-  ///
-  /// In en, this message translates to:
-  /// **'Relaxing music & meditation'**
-  String get feature2;
-
-  /// No description provided for @feature3.
-  ///
-  /// In en, this message translates to:
-  /// **'Progress tracking'**
-  String get feature3;
-
-  /// No description provided for @feature4.
-  ///
-  /// In en, this message translates to:
-  /// **'User authentication & profiles'**
-  String get feature4;
-
-  /// No description provided for @creditsTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Credits'**
-  String get creditsTitle;
+  /// **'Project Team'**
+  String get projectTeam;
 
   /// No description provided for @projectSupervisor.
   ///
@@ -2848,35 +3454,53 @@ abstract class AppLocalizations {
   /// **'Project Supervisor'**
   String get projectSupervisor;
 
-  /// No description provided for @teamMembers.
+  /// No description provided for @developmentTeam.
   ///
   /// In en, this message translates to:
-  /// **'Team Members'**
-  String get teamMembers;
+  /// **'Development Team'**
+  String get developmentTeam;
 
-  /// No description provided for @yogaInstructor.
+  /// No description provided for @keyFeatures.
   ///
   /// In en, this message translates to:
-  /// **'Yoga Instructor'**
-  String get yogaInstructor;
+  /// **'Key Features'**
+  String get keyFeatures;
 
-  /// No description provided for @licensesTitle.
+  /// No description provided for @featureChairYoga.
   ///
   /// In en, this message translates to:
-  /// **'Open Source Licenses'**
-  String get licensesTitle;
+  /// **'Chair Yoga Sessions'**
+  String get featureChairYoga;
 
-  /// No description provided for @viewLicensesButton.
+  /// No description provided for @featureMeditation.
   ///
   /// In en, this message translates to:
-  /// **'View All Licenses'**
-  String get viewLicensesButton;
+  /// **'Guided Meditation'**
+  String get featureMeditation;
+
+  /// No description provided for @featureProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress Tracking'**
+  String get featureProgress;
+
+  /// No description provided for @featureSounds.
+  ///
+  /// In en, this message translates to:
+  /// **'Calming Sounds'**
+  String get featureSounds;
 
   /// No description provided for @copyright.
   ///
   /// In en, this message translates to:
-  /// **'© 2026 HealYoga Project\nAll Rights Reserved'**
+  /// **'© 2026 ZENCORE'**
   String get copyright;
+
+  /// No description provided for @allRightsReserved.
+  ///
+  /// In en, this message translates to:
+  /// **'All Rights Reserved'**
+  String get allRightsReserved;
 }
 
 class _AppLocalizationsDelegate

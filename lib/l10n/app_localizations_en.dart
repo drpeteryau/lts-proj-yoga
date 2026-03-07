@@ -330,6 +330,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get moreInfo => 'More Info';
 
   @override
+  String get enterPinCode => 'Enter PIN Code';
+
+  @override
+  String get pinInstructions => 'Enter 4-digit code to watch videos';
+
+  @override
+  String get incorrectPin => 'Incorrect PIN';
+
+  @override
+  String get backdoorAccess => 'Backdoor Access';
+
+  @override
+  String get backdoorAdminMsg =>
+      'You have admin access to change the video PIN.';
+
+  @override
+  String get backdoorPathInstructions =>
+      'Go to Profile > Settings to change the PIN code.';
+
+  @override
   String get beginnerTitle => 'Beginner Sessions';
 
   @override
@@ -631,6 +651,254 @@ class AppLocalizationsEn extends AppLocalizations {
       'A dynamic sequence linking breath and movement. Builds strength, heat, coordination, and stamina.';
 
   @override
+  String get yogaInstHeadNeck =>
+      'Tilt head up/down for 5–10 breaths each. Turn head right/left 3 rounds. Drop ear to shoulder with light hand support.';
+
+  @override
+  String get yogaInstStraightArms =>
+      'Make fists, rotate straight arms 10 times forward and 10 times backward.';
+
+  @override
+  String get yogaInstBentArms =>
+      'Touch elbows in front, circle up behind head and back down. 10 rounds each direction.';
+
+  @override
+  String get yogaInstShouldersLateral =>
+      'Drop right hand to chair, lift left arm overhead. Hold 5–10 breaths. Switch sides.';
+
+  @override
+  String get yogaInstShouldersTorsoTwist =>
+      'Lift arms, rotate torso right, hold chair for support. Hold 5–10 breaths each side.';
+
+  @override
+  String get yogaInstLegRaiseBent =>
+      'Lift bent leg with back straight. Hold, lower with control. Switch legs.';
+
+  @override
+  String get yogaInstLegRaiseStraight =>
+      'Lift straightened leg, hold as long as possible. Release and switch legs.';
+
+  @override
+  String get yogaInstGoddessTwist =>
+      'Open knees wide, stretch torso to side. Hold 5–10 breaths, switch side.';
+
+  @override
+  String get yogaInstGoddessStrength =>
+      'Lift thighs off chair while in Goddess stance. Hold 5–10 breaths. Repeat.';
+
+  @override
+  String get yogaInstBackChestStretch =>
+      'Hold chair, hinge into L-shape, keep back flat. Hold 5–10 breaths.';
+
+  @override
+  String get yogaInstStandingCrunch =>
+      'From L-shape, extend leg back on inhale, crunch knee forward on exhale. Repeat.';
+
+  @override
+  String get yogaInstWarrior3 =>
+      'Lift hand off chair, hold balance. Switch legs and repeat.';
+
+  @override
+  String get yogaInstWarrior1 =>
+      'Step back, bend front knee, raise arms. Hold 5–10 breaths.';
+
+  @override
+  String get yogaInstWarrior2 =>
+      'Turn toes outward, stretch arms, look forward. Hold.';
+
+  @override
+  String get yogaInstTriangle =>
+      'Straighten front leg, lower hand to ankle or block, reach upward.';
+
+  @override
+  String get yogaInstReverseWarrior =>
+      'Sweep top arm overhead while leaning back. Hold.';
+
+  @override
+  String get yogaInstSideAngle =>
+      'Lower hand inside foot, stretch upper arm diagonally overhead.';
+
+  @override
+  String get yogaInstGentleBreathing =>
+      'Relax shoulders, place hands on lap, breathe slowly through the nose.';
+
+  @override
+  String get yogaInstDownwardDog =>
+      'Place hands shoulder-width apart, feet hip-width apart. Lift hips high, press chest towards thighs. Hold 5–10 breaths.';
+
+  @override
+  String get yogaInstPlank =>
+      'Stack shoulders over wrists, engage core, lengthen from head to heels. Hold 5–10 breaths.';
+
+  @override
+  String get yogaInstEightPoint =>
+      'From tabletop, lower chest and chin to mat while hips stay lifted. Hold 5–10 breaths.';
+
+  @override
+  String get yogaInstBabyCobra =>
+      'From prone, press chest up lightly, keep elbows close and shoulders away from ears. Hold 5–10 breaths.';
+
+  @override
+  String get yogaInstFullCobra =>
+      'Straighten elbows, lift chest higher without scrunching shoulders. Hold 5–10 breaths.';
+
+  @override
+  String get yogaInstGentleBreathingIntermediate =>
+      'Place hands on belly or lap, relax shoulders, breathe through the nose slowly and naturally.';
+
+  @override
+  String get yogaInstSunSalutation =>
+      'This flowing sequence repeats continuously — one breath per movement.\n 1. Inhale — Downward Dog\n Lift hips high, lengthen spine.\n 2. Exhale — Plank\n Shift forward into strong plank position.\n 3. Inhale — Knees-Chest-Chin (Eight-Point Pose)\n Lower down with control, hips lifted.\n 4. Exhale — Baby Cobra\n Lift chest gently, elbows close.\n 5. Inhale — Full Cobra\n Straighten arms slightly, open chest.\n 6. Exhale — Return to Downward Dog\n Press back into inverted V-shape.\n Repeat for 5–10 rounds or to your ability level.';
+
+  @override
+  String get yogaGentleBreathingAdvanced =>
+      'Breathe softly through the nose, lengthening exhales. Allow the entire body to settle and cool down.';
+
+  @override
+  String get yogaModMoveSlowly => 'Move slowly';
+
+  @override
+  String get yogaModStopDizzy => 'Stop if dizzy';
+
+  @override
+  String get yogaModChairSupport => 'Use chair back for support';
+
+  @override
+  String get yogaModElbowsStraight => 'Keep elbows straight';
+
+  @override
+  String get yogaModControlledMove => 'Smooth controlled movement';
+
+  @override
+  String get yogaModFingersShoulders => 'Keep fingers on shoulders';
+
+  @override
+  String get yogaModSlowRolls => 'Slow controlled rolls';
+
+  @override
+  String get yogaModButtocksDown => 'Keep buttocks down';
+
+  @override
+  String get yogaModFaceForward => 'Face forward';
+
+  @override
+  String get yogaModHipsStable => 'Keep hips stable';
+
+  @override
+  String get yogaModShouldersLevel => 'Keep shoulders level';
+
+  @override
+  String get yogaModBackStraight => 'Keep back straight';
+
+  @override
+  String get yogaModBeginBent => 'Begin with bent-knee version';
+
+  @override
+  String get yogaModUseChairForSupport => 'Use chair for support';
+
+  @override
+  String get yogaModKneesToes => 'Align knees with toes';
+
+  @override
+  String get yogaModHipsGrounded => 'Keep hips grounded';
+
+  @override
+  String get yogaModTorsoUpright => 'Keep torso upright';
+
+  @override
+  String get yogaModChairBalance => 'Use chair for balance';
+
+  @override
+  String get yogaModArmsLegsStraight => 'Keep arms and legs straight';
+
+  @override
+  String get yogaModEngageCore => 'Engage core';
+
+  @override
+  String get yogaModAvoidPregnancy => 'Avoid during pregnancy';
+
+  @override
+  String get yogaModOneHandChair => 'Keep one hand on chair';
+
+  @override
+  String get yogaModStraightLine => 'Maintain a straight line';
+
+  @override
+  String get yogaModShortenStance => 'Shorten stance';
+
+  @override
+  String get yogaModSquareHips => 'Square hips';
+
+  @override
+  String get yogaModLevelShoulders => 'Level shoulders';
+
+  @override
+  String get yogaModUseBlock => 'Use block';
+
+  @override
+  String get yogaModHipsForward => 'Keep hips forward';
+
+  @override
+  String get yogaModFrontKneeBent => 'Keep front knee bent';
+
+  @override
+  String get yogaModGazeDirection => 'Choose gaze direction';
+
+  @override
+  String get yogaModTuckTailbone => 'Tuck tailbone slightly';
+
+  @override
+  String get yogaModSitOrLieDown => 'Sit or lie down';
+
+  @override
+  String get yogaModCloseEyesIfComfortable => 'Close eyes if comfortable';
+
+  @override
+  String get yogaModBendKnees => 'Bend knees if hamstrings are tight';
+
+  @override
+  String get yogaModHeelsLifted => 'Practice with heels lifted';
+
+  @override
+  String get yogaModLowerKnees => 'Lower knees for a gentler version';
+
+  @override
+  String get yogaModFeetTogether => 'Feet together for added challenge';
+
+  @override
+  String get yogaModSlowControl =>
+      'Lower with slow control to protect shoulders';
+
+  @override
+  String get yogaModLiftPalms => 'Lift palms for challenge';
+
+  @override
+  String get yogaModPressFeet => 'Press feet down for stability';
+
+  @override
+  String get yogaModNoLockElbows => 'Do not lock elbows';
+
+  @override
+  String get yogaModTuckStomach => 'Tuck stomach slightly for spine support';
+
+  @override
+  String get yogaModRestChildPose =>
+      'Rest in Child’s Pose between rounds if needed';
+
+  @override
+  String get yogaModSlowTransitions =>
+      'Slow down transitions if breath becomes strained';
+
+  @override
+  String get yogaModBendDownwardDog => 'Bend knees in Downward Dog for comfort';
+
+  @override
+  String get yogaModSitOrLie => 'Sit upright or lie flat';
+
+  @override
+  String get yogaModCushionUnderKnees => 'Place cushion under knees';
+
+  @override
   String get sessionLevelLabel => 'Level';
 
   @override
@@ -688,39 +956,79 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get completeCurrentPoseFirst =>
+      'Please complete the current pose first!';
+
+  @override
   String get poseComplete => 'Pose Complete!';
 
   @override
-  String get greatWorkChoice => 'Great work! What would you like to do?';
+  String get greatWorkChoice => 'Great work! What would you like to do next?';
 
   @override
-  String get retryPose => 'Retry This Pose';
+  String get retryPose => 'Repeat Pose';
+
+  @override
+  String get nextPose => 'Next Pose';
 
   @override
   String get finishSession => 'Finish Session';
 
   @override
-  String get sessionPlaylist => 'Session Playlist';
+  String get sessionComplete => 'Session Complete!';
+
+  @override
+  String completedPoses(int count) {
+    return '$count poses completed';
+  }
+
+  @override
+  String totalMinutesSpent(int value, String unit) {
+    return 'You practiced for $value $unit';
+  }
+
+  @override
+  String get totaltime => 'Total Time:';
+
+  @override
+  String get howToPose => 'How to do this pose';
+
+  @override
+  String get sessionPlaylist => 'Session Poses';
 
   @override
   String get playing => 'Playing';
 
   @override
-  String poseCountProgress(int completed, int total) {
-    return '$completed/$total';
+  String get waitingForPin => 'Waiting for PIN...';
+
+  @override
+  String get exitSessionTitle => 'Exit Session?';
+
+  @override
+  String posesCompletedInfo(int completed, int total) {
+    return '$completed of $total poses completed';
   }
 
   @override
-  String totalMinutesSpent(int minutes, String minutesLabel) {
-    return '$minutes $minutesLabel total';
-  }
+  String get progressSaved => 'Progress saved ✓';
 
   @override
-  String get previous => 'Previous';
+  String get continueLater =>
+      'You can continue from where you left off anytime!';
 
   @override
-  String get completeCurrentPoseFirst =>
-      'Please complete the current pose before moving to the next one';
+  String get noPosesCompleted => 'No poses completed yet';
+
+  @override
+  String get completeOneToSave =>
+      'Complete at least one pose to save your progress.';
+
+  @override
+  String get stayButton => 'Stay';
+
+  @override
+  String get playbackNormal => 'Normal';
 
   @override
   String poseProgress(int current, int total) {
@@ -756,9 +1064,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get poseMarkedSuccess => 'Pose marked as completed!';
-
-  @override
-  String get nextPose => 'Next Pose';
 
   @override
   String get completeSession => 'Complete Session';
@@ -1179,6 +1484,87 @@ class AppLocalizationsEn extends AppLocalizations {
   String get soundBenefit4 => '• Enhances overall well-being';
 
   @override
+  String get meditationHeader => 'Meditation & Sounds';
+
+  @override
+  String get quickStart => 'Quick Start';
+
+  @override
+  String get guidedMeditationSection => 'Guided Meditations';
+
+  @override
+  String get ambientSoundsSection => 'Ambient Sounds';
+
+  @override
+  String get ambientSoundsSubtitle => 'Real nature sounds to help you relax';
+
+  @override
+  String get morningClarityTitle => 'Morning Clarity';
+
+  @override
+  String get morningClarityDesc => 'Start your day with calm intention';
+
+  @override
+  String get deepBreathingTitle => 'Deep Breathing';
+
+  @override
+  String get deepBreathingDesc => 'Reduce stress with focused breath';
+
+  @override
+  String get eveningWindDownTitle => 'Evening Wind Down';
+
+  @override
+  String get eveningWindDownDesc => 'Release the day and prepare for rest';
+
+  @override
+  String get oceanWavesTitle => 'Ocean Waves';
+
+  @override
+  String get oceanWavesDesc => 'Gentle waves on the shore';
+
+  @override
+  String get rainSoundsTitle => 'Rain Sounds';
+
+  @override
+  String get rainSoundsDesc => 'Soft rain and thunder';
+
+  @override
+  String get forestBirdsTitle => 'Forest Birds';
+
+  @override
+  String get forestBirdsDesc => 'Birds chirping in nature';
+
+  @override
+  String get cracklingFireTitle => 'Crackling Fire';
+
+  @override
+  String get cracklingFireDesc => 'Warm fireplace sounds';
+
+  @override
+  String get whiteNoiseTitle => 'White Noise';
+
+  @override
+  String get whiteNoiseDesc => 'Pure white noise for focus';
+
+  @override
+  String get flowingWaterTitle => 'Flowing Water';
+
+  @override
+  String get flowingWaterDesc => 'Gentle stream sounds';
+
+  @override
+  String get windChimesTitle => 'Wind Chimes';
+
+  @override
+  String get windChimesDesc => 'Peaceful wind chimes';
+
+  @override
+  String get nightCricketsTitle => 'Night Crickets';
+
+  @override
+  String get nightCricketsDesc => 'Evening cricket sounds';
+
+  @override
   String get meditationHeaderTitle => 'Choose Your Meditation';
 
   @override
@@ -1251,39 +1637,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get meditationConfirmEnd => 'End';
 
   @override
-  String get soundOceanWaves => 'Ocean Waves';
-
-  @override
-  String get soundForestRain => 'Forest Rain';
-
-  @override
-  String get soundTibetanBowls => 'Tibetan Bowls';
-
-  @override
-  String get soundPeacefulPiano => 'Peaceful Piano';
-
-  @override
-  String get soundMountainStream => 'Mountain Stream';
-
-  @override
-  String get soundWindChimes => 'Wind Chimes';
-
-  @override
-  String get soundGentleThunder => 'Gentle Thunder';
-
-  @override
-  String get soundSingingBirds => 'Singing Birds';
-
-  @override
-  String get categoryNature => 'Nature';
-
-  @override
-  String get categoryMeditation => 'Meditation';
-
-  @override
-  String get categoryAmbient => 'Ambient';
-
-  @override
   String get profileTitle => 'Profile';
 
   @override
@@ -1293,7 +1646,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get minutesLabel => 'Minutes';
 
   @override
-  String get daily => 'Daily 🔥';
+  String get daily => 'Streak';
 
   @override
   String get streakSummary => 'Streak Summary';
@@ -1437,9 +1790,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mandarinTraditional => 'Mandarin (Traditional)';
 
   @override
-  String get sessionComplete => 'Session Complete!';
-
-  @override
   String completedPosesCount(int count) {
     return 'You completed $count poses!';
   }
@@ -1467,49 +1817,45 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aboutUsTitle => 'About Us';
 
   @override
-  String get appSubtitle =>
-      'Helping you build healthier habits through guided yoga.';
+  String get appName => 'Zencore';
 
   @override
-  String get missionTitle => 'Our Mission';
+  String get appVersion => 'Version 1.0.0';
 
   @override
-  String get missionContent =>
-      'HealYoga is designed to encourage regular yoga practice through guided sessions, calming music, and progress tracking. We focus on accessibility and simplicity to make wellness available to everyone.';
+  String get ourMission => 'Our Mission';
 
   @override
-  String get featuresTitle => 'Key Features';
+  String get missionStatement =>
+      'Making wellness accessible to everyone through gentle chair yoga, calming meditation, and mindful practice.';
 
   @override
-  String get feature1 => 'Guided yoga sessions';
-
-  @override
-  String get feature2 => 'Relaxing music & meditation';
-
-  @override
-  String get feature3 => 'Progress tracking';
-
-  @override
-  String get feature4 => 'User authentication & profiles';
-
-  @override
-  String get creditsTitle => 'Credits';
+  String get projectTeam => 'Project Team';
 
   @override
   String get projectSupervisor => 'Project Supervisor';
 
   @override
-  String get teamMembers => 'Team Members';
+  String get developmentTeam => 'Development Team';
 
   @override
-  String get yogaInstructor => 'Yoga Instructor';
+  String get keyFeatures => 'Key Features';
 
   @override
-  String get licensesTitle => 'Open Source Licenses';
+  String get featureChairYoga => 'Chair Yoga Sessions';
 
   @override
-  String get viewLicensesButton => 'View All Licenses';
+  String get featureMeditation => 'Guided Meditation';
 
   @override
-  String get copyright => '© 2026 HealYoga Project\nAll Rights Reserved';
+  String get featureProgress => 'Progress Tracking';
+
+  @override
+  String get featureSounds => 'Calming Sounds';
+
+  @override
+  String get copyright => '© 2026 ZENCORE';
+
+  @override
+  String get allRightsReserved => 'All Rights Reserved';
 }

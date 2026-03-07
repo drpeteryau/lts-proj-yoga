@@ -319,6 +319,24 @@ class AppLocalizationsZh extends AppLocalizations {
   String get moreInfo => '更多信息';
 
   @override
+  String get enterPinCode => '输入密码';
+
+  @override
+  String get pinInstructions => '请输入4位密码以观看视频';
+
+  @override
+  String get incorrectPin => '密码错误';
+
+  @override
+  String get backdoorAccess => '管理员访问';
+
+  @override
+  String get backdoorAdminMsg => '您拥有更改视频密码的管理员权限。';
+
+  @override
+  String get backdoorPathInstructions => '请前往 个人资料 > 设置 以更改密码。';
+
+  @override
   String get beginnerTitle => '初级课程';
 
   @override
@@ -404,140 +422,139 @@ class AppLocalizationsZh extends AppLocalizations {
   String get step6 => '6. 回到下犬式';
 
   @override
-  String get yogaHeadNeckShoulders => '头、颈、肩拉伸';
+  String get yogaHeadNeckShoulders => '头部、颈部与肩部伸展';
 
   @override
-  String get yogaStraightArms => '直臂转动';
+  String get yogaStraightArms => '直臂旋转';
 
   @override
-  String get yogaBentArms => '屈臂转动';
+  String get yogaBentArms => '屈臂旋转';
 
   @override
-  String get yogaShouldersLateral => '肩膀侧向拉伸';
+  String get yogaShouldersLateral => '肩膀侧向伸展';
 
   @override
-  String get yogaShouldersTorsoTwist => '肩部与躯干扭转';
+  String get yogaShouldersTorsoTwist => '肩膀与躯干转体';
 
   @override
-  String get yogaLegRaiseBent => '屈膝抬腿';
+  String get yogaLegRaiseBent => '抬腿（屈膝）';
 
   @override
-  String get yogaLegRaiseStraight => '直腿抬腿';
+  String get yogaLegRaiseStraight => '抬腿（直膝）';
 
   @override
-  String get yogaGoddessTwist => '女神式 — 躯干扭转';
+  String get yogaGoddessTwist => '女神式 — 躯干转体';
 
   @override
   String get yogaGoddessStrength => '女神式 — 腿部强化';
 
   @override
-  String get yogaBackChestStretch => '背部与胸部拉伸';
+  String get yogaBackChestStretch => '背部与胸部伸展';
 
   @override
-  String get yogaStandingCrunch => '站立仰卧起坐';
+  String get yogaStandingCrunch => '站姿卷腹';
 
   @override
-  String get yogaWarrior3Supported => '战士三式（支撑版）';
+  String get yogaWarrior3Supported => '战士三式（有支撑）';
 
   @override
-  String get yogaWarrior1Supported => '战士一式（支撑版）';
+  String get yogaWarrior1Supported => '战士一式（有支撑）';
 
   @override
-  String get yogaWarrior2Supported => '战士二式（支撑版）';
+  String get yogaWarrior2Supported => '战士二式（有支撑）';
 
   @override
-  String get yogaTriangleSupported => '三角式（支撑版）';
+  String get yogaTriangleSupported => '三角式（有支撑）';
 
   @override
   String get yogaReverseWarrior2 => '反向战士二式';
 
   @override
-  String get yogaSideAngleSupported => '侧角式（支撑版）';
+  String get yogaSideAngleSupported => '侧角式（有支撑）';
 
   @override
-  String get yogaGentleBreathing => '轻柔呼吸';
+  String get yogaGentleBreathing => '温和呼吸';
 
   @override
   String get yogaDownwardDog => '下犬式';
 
   @override
-  String get yogaPlank => '板式';
+  String get yogaPlank => '板式 / 平板支撑';
 
   @override
-  String get yogaEightPoint => '八点式 (Ashtangasana)';
+  String get yogaEightPoint => '八点式';
 
   @override
-  String get yogaBabyCobra => '眼镜蛇式（婴儿版）';
+  String get yogaBabyCobra => '小眼镜蛇式';
 
   @override
-  String get yogaFullCobra => '眼镜蛇式（完整版）';
+  String get yogaFullCobra => '眼镜蛇式';
 
   @override
-  String get yogaSunSalutation => '向日式流';
+  String get yogaSunSalutation => '拜日式流动';
 
   @override
-  String get yogaSessionGentleChair => '轻柔椅子瑜伽';
+  String get yogaSessionGentleChair => '温和椅子瑜伽';
 
   @override
-  String get yogaSessionMorningMobility => '晨间活动性练习';
+  String get yogaSessionMorningMobility => '晨间灵活练习';
 
   @override
   String get yogaSessionWarriorSeries => '战士系列';
 
   @override
-  String get yogaSessionHathaFundamentals => '哈他基础';
+  String get yogaSessionHathaFundamentals => '哈达瑜伽基础';
 
   @override
-  String get yogaSessionCoreStrength => '核心力量增强';
+  String get yogaSessionCoreStrength => '核心力量强化';
 
   @override
-  String get yogaSessionBackbendFlow => '后弯流';
+  String get yogaSessionBackbendFlow => '后弯流动';
 
   @override
-  String get yogaSessionSunSalutation => '向日式流';
+  String get yogaSessionSunSalutation => '拜日式流动';
 
   @override
-  String get yogaSessionExtendedFlow => '扩展流练习';
+  String get yogaSessionExtendedFlow => '进阶流动练习';
 
   @override
-  String get yogaDescHeadNeck => '轻柔的坐姿拉伸，缓解颈部和肩部紧张。';
+  String get yogaDescHeadNeck => '温和的坐姿伸展，释放颈部和肩膀的紧张感。';
 
   @override
   String get yogaDescGentleChair =>
-      '确保椅子靠墙放置以保持稳定。初级椅子瑜伽适合大多数人。建议空腹或饭后至少 2 小时练习。';
+      '确保椅子稳定（可靠墙放置）。初级椅子瑜伽适合大多数人。建议空腹练习，或在餐后至少 2 小时进行。';
 
   @override
-  String get yogaDescMorningMobility => '轻松的晨间练习，专注于关节活动度、呼吸和辅助力量训练。';
+  String get yogaDescMorningMobility => '轻松的晨间练习，专注于关节灵活性、呼吸和有支撑的力量训练。';
 
   @override
-  String get yogaDescWarriorSeries => '建立自信的序列，探索战士一、二式及辅助过渡动作。';
+  String get yogaDescWarriorSeries => '建立自信的序列，探索战士一式、二式及相关过渡动作。';
 
   @override
   String get yogaDescHathaFundamentals =>
-      '经典的垫上哈他序列，专注于对位、呼吸和全身参与。适合准备脱离椅子辅助的练习者。';
+      '经典的垫上哈达序列，专注于对齐、呼吸和全身参与。适合准备超越椅子支撑的练习者。';
 
   @override
-  String get yogaDescCoreStrength => '简短而强大的课程，专注于板式、八点式和受控过渡。增强核心力量和肩部稳定性。';
+  String get yogaDescCoreStrength => '短小精悍的课程，专注于板式、八点式和受控过渡。增强核心力量和肩膀稳定性。';
 
   @override
-  String get yogaDescBackbendFlow => '增强脊柱力量的序列，从八点式过渡到婴儿眼镜蛇和完整眼镜蛇式。建立后弯的信心。';
+  String get yogaDescBackbendFlow => '强化脊椎的序列，从八点式过渡到小眼镜蛇式和眼镜蛇式。建立后弯的信心。';
 
   @override
   String get yogaDescSunSalutationSession =>
-      '动态垫上流练习，旨在同步呼吸与动作。通过重复的向日式循环增强耐力和全身力量。';
+      '充满活力的垫上流动，旨在同步呼吸与动作。通过重复拜日式循环建立耐力和全身力量。';
 
   @override
-  String get yogaDescExtendedFlow =>
-      '更深层、更长时间的向日式练习 —— 非常适合想要接受呼吸引导动作挑战的资深练习者。';
+  String get yogaDescExtendedFlow => '更深、更长的拜日式练习——适合希望在呼吸引导下挑战连续动作的经验丰富者。';
 
   @override
-  String get yogaDescStraightArms => '手臂旋转练习，预热肩膀和上背部。';
+  String get yogaDescStraightArms => '手臂旋转以热身肩膀和上背部。';
 
   @override
-  String get yogaDescBentArms => '屈肘肩部活动练习。';
+  String get yogaDescBentArms => '屈肘的肩部灵活性练习。';
 
   @override
-  String get yogaDescShouldersLateral => '改善身体灵活性的侧向拉伸。';
+  String get yogaDescShouldersLateral => '改善灵活性的身体侧面伸展。';
 
   @override
   String get yogaDescShouldersTorsoTwist => '温和的排毒扭转动作。';
@@ -546,58 +563,280 @@ class AppLocalizationsZh extends AppLocalizations {
   String get yogaDescLegRaiseBent => '加强腿部力量并激活核心。';
 
   @override
-  String get yogaDescLegRaiseStraight => '直腿抬高以获得更高级的力量训练。';
+  String get yogaDescLegRaiseStraight => '直腿抬高以进行进阶力量训练。';
 
   @override
-  String get yogaDescGoddessTwist => '宽腿坐姿以提高灵活性。';
+  String get yogaDescGoddessTwist => '开胯坐姿以增进灵活性。';
 
   @override
   String get yogaDescGoddessStrength => '坐姿女神式的强化变体。';
 
   @override
-  String get yogaDescBackChestStretch => 'L型拉伸，改善上半身灵活性。';
+  String get yogaDescBackChestStretch => 'L 型伸展以改善上半身灵活性。';
 
   @override
   String get yogaDescStandingCrunch => '动态核心强化动作。';
 
   @override
-  String get yogaDescWarrior3Supported => '利用椅子辅助练习平衡与力量。';
+  String get yogaDescWarrior3Supported => '利用椅子支撑进行平衡与力量训练。';
 
   @override
   String get yogaDescWarrior1Supported => '适合初学者的战士站姿。';
 
   @override
-  String get yogaDescWarrior2Supported => '侧向战士式，用于开胯。';
+  String get yogaDescWarrior2Supported => '面向侧边的战士式，用于打开髋关节。';
 
   @override
-  String get yogaDescTriangleSupported => '深层侧面身体延展。';
+  String get yogaDescTriangleSupported => '深层侧身延伸。';
 
   @override
-  String get yogaDescReverseWarrior2 => '后拱战士拉伸。';
+  String get yogaDescReverseWarrior2 => '后弯的战士式伸展。';
 
   @override
-  String get yogaDescSideAngleSupported => '强化腿部并扩张肋骨。';
+  String get yogaDescSideAngleSupported => '强化腿部并打开肋骨。';
 
   @override
-  String get yogaDescGentleBreathing => '全身放松与平静呼吸。';
+  String get yogaDescGentleBreathing => '全身放紧与平静呼吸。';
 
   @override
-  String get yogaDescDownwardDog => '基础的倒 V 姿势，拉伸全身。';
+  String get yogaDescDownwardDog => '基础的倒 V 姿势，伸展全身。';
 
   @override
-  String get yogaDescPlank => '锻炼核心、手臂和腿部的全身力量训练。';
+  String get yogaDescPlank => '全身力量构建，参与核心、手臂和腿部。';
 
   @override
-  String get yogaDescEightPoint => '通过降低胸部、下巴、膝盖和脚趾来建立力量的姿势。';
+  String get yogaDescEightPoint => '强化力量的姿势，放下胸部、下巴、膝盖和脚趾。';
 
   @override
   String get yogaDescBabyCobra => '温和的后弯，强化上背部和脊柱。';
 
   @override
-  String get yogaDescFullCobra => '更有力的开胸后弯，调动全身。';
+  String get yogaDescFullCobra => '更强的开胸后弯，全身参与。';
 
   @override
   String get yogaDescSunSalutation => '连接呼吸与动作的动态序列。建立力量、热量、协调性和耐力。';
+
+  @override
+  String get yogaInstHeadNeck =>
+      '上下倾斜头部，各保持 5-10 次呼吸。转动头部左右各 3 圈。将耳朵靠向肩膀，可用手轻轻辅助。';
+
+  @override
+  String get yogaInstStraightArms => '握拳，直臂向前旋转 10 次，向后旋转 10 次。';
+
+  @override
+  String get yogaInstBentArms => '双肘在前方接触，向上绕过头后再向下。每个方向 10 圈。';
+
+  @override
+  String get yogaInstShouldersLateral => '右手垂向椅子，左臂向上举过头顶。保持 5-10 次呼吸，然后换边。';
+
+  @override
+  String get yogaInstShouldersTorsoTwist => '举起手臂，向右转动躯干，扶住椅子支撑。每侧保持 5-10 次呼吸。';
+
+  @override
+  String get yogaInstLegRaiseBent => '保持背部挺直，抬起弯曲的腿。保持后受控放下。换腿。';
+
+  @override
+  String get yogaInstLegRaiseStraight => '抬起伸直的腿，尽可能长时间保持。放松并换腿。';
+
+  @override
+  String get yogaInstGoddessTwist => '双膝张开，向侧面伸展躯干。保持 5-10 次呼吸，换边。';
+
+  @override
+  String get yogaInstGoddessStrength => '在女神式站姿中将大腿抬离椅子。保持 5-10 次呼吸。重复。';
+
+  @override
+  String get yogaInstBackChestStretch => '扶住椅子，铰链式下折呈 L 型，保持背部平坦。保持 5-10 次呼吸。';
+
+  @override
+  String get yogaInstStandingCrunch => '从 L 型开始，吸气时腿向后伸展，呼气时膝盖向前收缩。重复。';
+
+  @override
+  String get yogaInstWarrior3 => '手离开椅子，保持平衡。换腿并重复。';
+
+  @override
+  String get yogaInstWarrior1 => '向后迈步，弯曲前膝，举起双臂。保持 5-10 次呼吸。';
+
+  @override
+  String get yogaInstWarrior2 => '脚趾转向外侧，伸展手臂，看向前方。保持。';
+
+  @override
+  String get yogaInstTriangle => '伸直前腿，手向下触碰脚踝或瑜伽砖，另一手向上伸展。';
+
+  @override
+  String get yogaInstReverseWarrior => '向后倾斜时，上方手臂划过头顶。保持。';
+
+  @override
+  String get yogaInstSideAngle => '手降至脚内侧，上方手臂沿对角线向头顶上方延伸。';
+
+  @override
+  String get yogaInstGentleBreathing => '放松肩膀，双手放在大腿上，用鼻子缓慢呼吸。';
+
+  @override
+  String get yogaInstDownwardDog => '双手与肩同宽，双脚与髋同宽。抬高臀部，胸部向大腿方向下压。保持 5-10 次呼吸。';
+
+  @override
+  String get yogaInstPlank => '肩膀位于手腕正上方，收紧核心，身体从头到脚跟成一直线。保持 5-10 次呼吸。';
+
+  @override
+  String get yogaInstEightPoint => '从四足跪姿开始，放低胸部和下巴至垫上，臀部保持抬高。保持 5-10 次呼吸。';
+
+  @override
+  String get yogaInstBabyCobra => '俯卧，轻轻推起胸部，手肘夹紧身体，肩膀远离耳朵。保持 5-10 次呼吸。';
+
+  @override
+  String get yogaInstFullCobra => '伸直手肘，进一步抬高胸部，不要耸肩。保持 5-10 次呼吸。';
+
+  @override
+  String get yogaInstGentleBreathingIntermediate =>
+      '双手放在腹部或大腿上，放松肩膀，用鼻子缓慢自然地呼吸。';
+
+  @override
+  String get yogaInstSunSalutation =>
+      '此流动序列连续重复——一呼一吸配合一个动作。\n 1. 吸气 — 下犬式\n 抬高臀部，拉长脊柱。\n 2. 呼气 — 板式\n 向前移动进入强壮的板式位置。\n 3. 吸气 — 膝胸叩首（八点式）\n 受控下降，臀部抬高。\n 4. 呼气 — 小眼镜蛇式\n 轻轻抬起胸部，手肘靠近身体。\n 5. 吸气 — 眼镜蛇式\n 稍稍伸直手臂，打开胸腔。\n 6. 呼气 — 回到下犬式\n 向后压回倒 V 字型。\n 重复 5-10 轮或根据您的能力进行。';
+
+  @override
+  String get yogaGentleBreathingAdvanced => '通过鼻子柔和呼吸，拉长呼气。让全身沉静并放松。';
+
+  @override
+  String get yogaModMoveSlowly => '动作缓慢';
+
+  @override
+  String get yogaModStopDizzy => '若感到晕眩请停止';
+
+  @override
+  String get yogaModChairSupport => '使用椅背支撑';
+
+  @override
+  String get yogaModElbowsStraight => '保持手肘伸直';
+
+  @override
+  String get yogaModControlledMove => '动作平稳且受控';
+
+  @override
+  String get yogaModFingersShoulders => '手指保持在肩膀上';
+
+  @override
+  String get yogaModSlowRolls => '缓慢且受控地转动';
+
+  @override
+  String get yogaModButtocksDown => '保持臀部坐稳';
+
+  @override
+  String get yogaModFaceForward => '面向前方';
+
+  @override
+  String get yogaModHipsStable => '保持髋部稳定';
+
+  @override
+  String get yogaModShouldersLevel => '保持双肩齐平';
+
+  @override
+  String get yogaModBackStraight => '保持背部挺直';
+
+  @override
+  String get yogaModBeginBent => '从屈膝版本开始';
+
+  @override
+  String get yogaModUseChairForSupport => '使用椅子支撑';
+
+  @override
+  String get yogaModKneesToes => '膝盖与脚趾对齐';
+
+  @override
+  String get yogaModHipsGrounded => '保持臀部贴地/贴椅';
+
+  @override
+  String get yogaModTorsoUpright => '保持躯干挺直';
+
+  @override
+  String get yogaModChairBalance => '使用椅子保持平衡';
+
+  @override
+  String get yogaModArmsLegsStraight => '保持手臂和腿部伸直';
+
+  @override
+  String get yogaModEngageCore => '收紧核心';
+
+  @override
+  String get yogaModAvoidPregnancy => '怀孕期间请避免';
+
+  @override
+  String get yogaModOneHandChair => '保持一只手扶着椅子';
+
+  @override
+  String get yogaModStraightLine => '保持身体呈一直线';
+
+  @override
+  String get yogaModShortenStance => '缩短站距';
+
+  @override
+  String get yogaModSquareHips => '摆正髋部';
+
+  @override
+  String get yogaModLevelShoulders => '水平肩膀';
+
+  @override
+  String get yogaModUseBlock => '使用瑜伽砖';
+
+  @override
+  String get yogaModHipsForward => '保持髋部朝前';
+
+  @override
+  String get yogaModFrontKneeBent => '保持前膝弯曲';
+
+  @override
+  String get yogaModGazeDirection => '选择凝视方向';
+
+  @override
+  String get yogaModTuckTailbone => '轻微收尾骨';
+
+  @override
+  String get yogaModSitOrLieDown => '坐下或躺下';
+
+  @override
+  String get yogaModCloseEyesIfComfortable => '若感觉舒适可闭上眼睛';
+
+  @override
+  String get yogaModBendKnees => '若腿筋紧绷可弯曲膝盖';
+
+  @override
+  String get yogaModHeelsLifted => '练习时脚跟抬起';
+
+  @override
+  String get yogaModLowerKnees => '放下膝盖以进行温和版本';
+
+  @override
+  String get yogaModFeetTogether => '双脚并拢以增加挑战';
+
+  @override
+  String get yogaModSlowControl => '缓慢受控下降以保护肩膀';
+
+  @override
+  String get yogaModLiftPalms => '抬起手掌以增加挑战';
+
+  @override
+  String get yogaModPressFeet => '双脚向下踩实以增加稳定性';
+
+  @override
+  String get yogaModNoLockElbows => '不要锁死手肘';
+
+  @override
+  String get yogaModTuckStomach => '轻微收腹以支持脊柱';
+
+  @override
+  String get yogaModRestChildPose => '如有需要，在两轮之间于婴儿式休息';
+
+  @override
+  String get yogaModSlowTransitions => '如果呼吸变得吃力，请放慢过渡动作';
+
+  @override
+  String get yogaModBendDownwardDog => '在下犬式中弯曲膝盖以增加舒适感';
+
+  @override
+  String get yogaModSitOrLie => '坐直或平躺';
+
+  @override
+  String get yogaModCushionUnderKnees => '在膝盖下放置垫子';
 
   @override
   String get sessionLevelLabel => '难度等级';
@@ -657,16 +896,41 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get poseComplete => '姿势完成！';
+  String get completeCurrentPoseFirst => '请先完成当前的动作！';
 
   @override
-  String get greatWorkChoice => '太棒了！您接下来想做什么？';
+  String get poseComplete => '动作完成！';
 
   @override
-  String get retryPose => '重新练习此姿势';
+  String get greatWorkChoice => '做得好！接下来您想做什么？';
+
+  @override
+  String get retryPose => '再做一次';
+
+  @override
+  String get nextPose => '下一个姿势';
 
   @override
   String get finishSession => '结束课程';
+
+  @override
+  String get sessionComplete => '课程完成！';
+
+  @override
+  String completedPoses(int count) {
+    return '已完成 $count 个动作';
+  }
+
+  @override
+  String totalMinutesSpent(int value, String unit) {
+    return '您已练习了 $value $unit';
+  }
+
+  @override
+  String get totaltime => '总练习时长：';
+
+  @override
+  String get howToPose => '动作指南';
 
   @override
   String get sessionPlaylist => '课程列表';
@@ -675,20 +939,33 @@ class AppLocalizationsZh extends AppLocalizations {
   String get playing => '播放中';
 
   @override
-  String poseCountProgress(int completed, int total) {
-    return '$completed/$total';
+  String get waitingForPin => '等待输入密码...';
+
+  @override
+  String get exitSessionTitle => '退出练习？';
+
+  @override
+  String posesCompletedInfo(int completed, int total) {
+    return '已完成 $completed / $total 个动作';
   }
 
   @override
-  String totalMinutesSpent(int minutes, String minutesLabel) {
-    return '总计 $minutes $minutesLabel';
-  }
+  String get progressSaved => '进度已保存 ✓';
 
   @override
-  String get previous => '上一个';
+  String get continueLater => '您可以随时回来继续练习！';
 
   @override
-  String get completeCurrentPoseFirst => '请在进入下一个姿势前完成当前练习';
+  String get noPosesCompleted => '尚未完成任何动作';
+
+  @override
+  String get completeOneToSave => '请至少完成一个动作以保存您的进度。';
+
+  @override
+  String get stayButton => '继续练习';
+
+  @override
+  String get playbackNormal => '正常';
 
   @override
   String poseProgress(int current, int total) {
@@ -724,9 +1001,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get poseMarkedSuccess => '姿势已标记为完成！';
-
-  @override
-  String get nextPose => '下一个姿势';
 
   @override
   String get completeSession => '完成课程';
@@ -1134,6 +1408,87 @@ class AppLocalizationsZh extends AppLocalizations {
   String get soundBenefit4 => '• 提升整体幸福感';
 
   @override
+  String get meditationHeader => '冥想与白噪音';
+
+  @override
+  String get quickStart => '快速开始';
+
+  @override
+  String get guidedMeditationSection => '引导式冥想';
+
+  @override
+  String get ambientSoundsSection => '大自然的声音';
+
+  @override
+  String get ambientSoundsSubtitle => '纯净的大自然声音助您放松';
+
+  @override
+  String get morningClarityTitle => '晨间清爽';
+
+  @override
+  String get morningClarityDesc => '开启充满宁静与力量的一天';
+
+  @override
+  String get deepBreathingTitle => '深呼吸练习';
+
+  @override
+  String get deepBreathingDesc => '通过专注呼吸缓解压力';
+
+  @override
+  String get eveningWindDownTitle => '晚间放松';
+
+  @override
+  String get eveningWindDownDesc => '卸下疲惫，准备进入梦乡';
+
+  @override
+  String get oceanWavesTitle => '海浪声';
+
+  @override
+  String get oceanWavesDesc => '海浪拍打沙滩的柔和声';
+
+  @override
+  String get rainSoundsTitle => '雨声';
+
+  @override
+  String get rainSoundsDesc => '淅沥的雨声与闷雷';
+
+  @override
+  String get forestBirdsTitle => '森林鸟鸣';
+
+  @override
+  String get forestBirdsDesc => '置身于大自然的鸟语花香';
+
+  @override
+  String get cracklingFireTitle => '木柴燃烧声';
+
+  @override
+  String get cracklingFireDesc => '壁炉火堆的温暖声';
+
+  @override
+  String get whiteNoiseTitle => '白噪音';
+
+  @override
+  String get whiteNoiseDesc => '纯净白噪音，助力专注';
+
+  @override
+  String get flowingWaterTitle => '流水潺潺';
+
+  @override
+  String get flowingWaterDesc => '溪水流过的清脆声';
+
+  @override
+  String get windChimesTitle => '清脆风铃';
+
+  @override
+  String get windChimesDesc => '宁静祥和的风铃声';
+
+  @override
+  String get nightCricketsTitle => '夏夜虫鸣';
+
+  @override
+  String get nightCricketsDesc => '宁静夜晚的蛐蛐叫声';
+
+  @override
   String get meditationHeaderTitle => '选择您的冥想课程';
 
   @override
@@ -1200,39 +1555,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get meditationConfirmEnd => '结束';
-
-  @override
-  String get soundOceanWaves => '海浪声';
-
-  @override
-  String get soundForestRain => '森林雨声';
-
-  @override
-  String get soundTibetanBowls => '西藏颂钵';
-
-  @override
-  String get soundPeacefulPiano => '宁静钢琴';
-
-  @override
-  String get soundMountainStream => '山间溪流';
-
-  @override
-  String get soundWindChimes => '风铃声';
-
-  @override
-  String get soundGentleThunder => '柔和雷声';
-
-  @override
-  String get soundSingingBirds => '鸟鸣声';
-
-  @override
-  String get categoryNature => '大自然';
-
-  @override
-  String get categoryMeditation => '冥想';
-
-  @override
-  String get categoryAmbient => '氛围音';
 
   @override
   String get profileTitle => '个人中心';
@@ -1388,9 +1710,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get mandarinTraditional => '繁体中文';
 
   @override
-  String get sessionComplete => '课程完成！';
-
-  @override
   String completedPosesCount(int count) {
     return '您完成了 $count 个姿势！';
   }
@@ -1417,50 +1736,46 @@ class AppLocalizationsZh extends AppLocalizations {
   String get aboutUsTitle => '关于我们';
 
   @override
-  String get appSubtitle => '通过引导瑜伽帮助您建立更健康的生活习惯。';
+  String get appName => 'Zencore';
 
   @override
-  String get missionTitle => '我们的使命';
+  String get appVersion => '版本 1.0.0';
 
   @override
-  String get missionContent =>
-      'HealYoga 旨在通过引导课程、舒缓音乐和进度追踪来鼓励规律的瑜伽练习。我们专注于易用性和简化流程，让每个人都能享受健康生活。';
+  String get ourMission => '我们的使命';
 
   @override
-  String get featuresTitle => '核心功能';
+  String get missionStatement => '通过温和的椅子瑜伽、舒缓的冥想和正念练习，让每个人都能享受健康生活。';
 
   @override
-  String get feature1 => '引导式瑜伽课程';
+  String get projectTeam => '项目团队';
 
   @override
-  String get feature2 => '放松音乐与冥想';
+  String get projectSupervisor => '项目主管';
 
   @override
-  String get feature3 => '进度追踪';
+  String get developmentTeam => '开发团队';
 
   @override
-  String get feature4 => '用户认证与个人资料';
+  String get keyFeatures => '核心功能';
 
   @override
-  String get creditsTitle => '制作团队';
+  String get featureChairYoga => '椅子瑜伽课程';
 
   @override
-  String get projectSupervisor => '项目指导';
+  String get featureMeditation => '专业冥想指导';
 
   @override
-  String get teamMembers => '团队成员';
+  String get featureProgress => '进度跟踪';
 
   @override
-  String get yogaInstructor => '瑜伽导师';
+  String get featureSounds => '助眠舒缓音效';
 
   @override
-  String get licensesTitle => '开源许可';
+  String get copyright => '© 2026 ZENCORE';
 
   @override
-  String get viewLicensesButton => '查看所有许可';
-
-  @override
-  String get copyright => '© 2026 HealYoga 项目\n保留所有权利';
+  String get allRightsReserved => '保留所有权利';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hans`).
@@ -1778,6 +2093,24 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get moreInfo => '更多信息';
 
   @override
+  String get enterPinCode => '输入密码';
+
+  @override
+  String get pinInstructions => '请输入4位密码以观看视频';
+
+  @override
+  String get incorrectPin => '密码错误';
+
+  @override
+  String get backdoorAccess => '管理员访问';
+
+  @override
+  String get backdoorAdminMsg => '您拥有更改视频密码的管理员权限。';
+
+  @override
+  String get backdoorPathInstructions => '请前往 个人资料 > 设置 以更改密码。';
+
+  @override
   String get beginnerTitle => '初级课程';
 
   @override
@@ -1863,140 +2196,139 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get step6 => '6. 回到下犬式';
 
   @override
-  String get yogaHeadNeckShoulders => '头、颈、肩拉伸';
+  String get yogaHeadNeckShoulders => '头部、颈部与肩部伸展';
 
   @override
-  String get yogaStraightArms => '直臂转动';
+  String get yogaStraightArms => '直臂旋转';
 
   @override
-  String get yogaBentArms => '屈臂转动';
+  String get yogaBentArms => '屈臂旋转';
 
   @override
-  String get yogaShouldersLateral => '肩膀侧向拉伸';
+  String get yogaShouldersLateral => '肩膀侧向伸展';
 
   @override
-  String get yogaShouldersTorsoTwist => '肩部与躯干扭转';
+  String get yogaShouldersTorsoTwist => '肩膀与躯干转体';
 
   @override
-  String get yogaLegRaiseBent => '屈膝抬腿';
+  String get yogaLegRaiseBent => '抬腿（屈膝）';
 
   @override
-  String get yogaLegRaiseStraight => '直腿抬腿';
+  String get yogaLegRaiseStraight => '抬腿（直膝）';
 
   @override
-  String get yogaGoddessTwist => '女神式 — 躯干扭转';
+  String get yogaGoddessTwist => '女神式 — 躯干转体';
 
   @override
   String get yogaGoddessStrength => '女神式 — 腿部强化';
 
   @override
-  String get yogaBackChestStretch => '背部与胸部拉伸';
+  String get yogaBackChestStretch => '背部与胸部伸展';
 
   @override
-  String get yogaStandingCrunch => '站立仰卧起坐';
+  String get yogaStandingCrunch => '站姿卷腹';
 
   @override
-  String get yogaWarrior3Supported => '战士三式（支撑版）';
+  String get yogaWarrior3Supported => '战士三式（有支撑）';
 
   @override
-  String get yogaWarrior1Supported => '战士一式（支撑版）';
+  String get yogaWarrior1Supported => '战士一式（有支撑）';
 
   @override
-  String get yogaWarrior2Supported => '战士二式（支撑版）';
+  String get yogaWarrior2Supported => '战士二式（有支撑）';
 
   @override
-  String get yogaTriangleSupported => '三角式（支撑版）';
+  String get yogaTriangleSupported => '三角式（有支撑）';
 
   @override
   String get yogaReverseWarrior2 => '反向战士二式';
 
   @override
-  String get yogaSideAngleSupported => '侧角式（支撑版）';
+  String get yogaSideAngleSupported => '侧角式（有支撑）';
 
   @override
-  String get yogaGentleBreathing => '轻柔呼吸';
+  String get yogaGentleBreathing => '温和呼吸';
 
   @override
   String get yogaDownwardDog => '下犬式';
 
   @override
-  String get yogaPlank => '板式';
+  String get yogaPlank => '板式 / 平板支撑';
 
   @override
-  String get yogaEightPoint => '八点式 (Ashtangasana)';
+  String get yogaEightPoint => '八点式';
 
   @override
-  String get yogaBabyCobra => '眼镜蛇式（婴儿版）';
+  String get yogaBabyCobra => '小眼镜蛇式';
 
   @override
-  String get yogaFullCobra => '眼镜蛇式（完整版）';
+  String get yogaFullCobra => '眼镜蛇式';
 
   @override
-  String get yogaSunSalutation => '向日式流';
+  String get yogaSunSalutation => '拜日式流动';
 
   @override
-  String get yogaSessionGentleChair => '轻柔椅子瑜伽';
+  String get yogaSessionGentleChair => '温和椅子瑜伽';
 
   @override
-  String get yogaSessionMorningMobility => '晨间活动性练习';
+  String get yogaSessionMorningMobility => '晨间灵活练习';
 
   @override
   String get yogaSessionWarriorSeries => '战士系列';
 
   @override
-  String get yogaSessionHathaFundamentals => '哈他基础';
+  String get yogaSessionHathaFundamentals => '哈达瑜伽基础';
 
   @override
-  String get yogaSessionCoreStrength => '核心力量增强';
+  String get yogaSessionCoreStrength => '核心力量强化';
 
   @override
-  String get yogaSessionBackbendFlow => '后弯流';
+  String get yogaSessionBackbendFlow => '后弯流动';
 
   @override
-  String get yogaSessionSunSalutation => '向日式流';
+  String get yogaSessionSunSalutation => '拜日式流动';
 
   @override
-  String get yogaSessionExtendedFlow => '扩展流练习';
+  String get yogaSessionExtendedFlow => '进阶流动练习';
 
   @override
-  String get yogaDescHeadNeck => '轻柔的坐姿拉伸，缓解颈部和肩部紧张。';
+  String get yogaDescHeadNeck => '温和的坐姿伸展，释放颈部和肩膀的紧张感。';
 
   @override
   String get yogaDescGentleChair =>
-      '确保椅子靠墙放置以保持稳定。初级椅子瑜伽适合大多数人。建议空腹或饭后至少 2 小时练习。';
+      '确保椅子稳定（可靠墙放置）。初级椅子瑜伽适合大多数人。建议空腹练习，或在餐后至少 2 小时进行。';
 
   @override
-  String get yogaDescMorningMobility => '轻松的晨间练习，专注于关节活动度、呼吸和辅助力量训练。';
+  String get yogaDescMorningMobility => '轻松的晨间练习，专注于关节灵活性、呼吸和有支撑的力量训练。';
 
   @override
-  String get yogaDescWarriorSeries => '建立自信的序列，探索战士一、二式及辅助过渡动作。';
+  String get yogaDescWarriorSeries => '建立自信的序列，探索战士一式、二式及相关过渡动作。';
 
   @override
   String get yogaDescHathaFundamentals =>
-      '经典的垫上哈他序列，专注于对位、呼吸和全身参与。适合准备脱离椅子辅助的练习者。';
+      '经典的垫上哈达序列，专注于对齐、呼吸和全身参与。适合准备超越椅子支撑的练习者。';
 
   @override
-  String get yogaDescCoreStrength => '简短而强大的课程，专注于板式、八点式和受控过渡。增强核心力量和肩部稳定性。';
+  String get yogaDescCoreStrength => '短小精悍的课程，专注于板式、八点式和受控过渡。增强核心力量和肩膀稳定性。';
 
   @override
-  String get yogaDescBackbendFlow => '增强脊柱力量的序列，从八点式过渡到婴儿眼镜蛇和完整眼镜蛇式。建立后弯的信心。';
+  String get yogaDescBackbendFlow => '强化脊椎的序列，从八点式过渡到小眼镜蛇式和眼镜蛇式。建立后弯的信心。';
 
   @override
   String get yogaDescSunSalutationSession =>
-      '动态垫上流练习，旨在同步呼吸与动作。通过重复的向日式循环增强耐力和全身力量。';
+      '充满活力的垫上流动，旨在同步呼吸与动作。通过重复拜日式循环建立耐力和全身力量。';
 
   @override
-  String get yogaDescExtendedFlow =>
-      '更深层、更长时间的向日式练习 —— 非常适合想要接受呼吸引导动作挑战的资深练习者。';
+  String get yogaDescExtendedFlow => '更深、更长的拜日式练习——适合希望在呼吸引导下挑战连续动作的经验丰富者。';
 
   @override
-  String get yogaDescStraightArms => '手臂旋转练习，预热肩膀和上背部。';
+  String get yogaDescStraightArms => '手臂旋转以热身肩膀和上背部。';
 
   @override
-  String get yogaDescBentArms => '屈肘肩部活动练习。';
+  String get yogaDescBentArms => '屈肘的肩部灵活性练习。';
 
   @override
-  String get yogaDescShouldersLateral => '改善身体灵活性的侧向拉伸。';
+  String get yogaDescShouldersLateral => '改善灵活性的身体侧面伸展。';
 
   @override
   String get yogaDescShouldersTorsoTwist => '温和的排毒扭转动作。';
@@ -2005,58 +2337,280 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get yogaDescLegRaiseBent => '加强腿部力量并激活核心。';
 
   @override
-  String get yogaDescLegRaiseStraight => '直腿抬高以获得更高级的力量训练。';
+  String get yogaDescLegRaiseStraight => '直腿抬高以进行进阶力量训练。';
 
   @override
-  String get yogaDescGoddessTwist => '宽腿坐姿以提高灵活性。';
+  String get yogaDescGoddessTwist => '开胯坐姿以增进灵活性。';
 
   @override
   String get yogaDescGoddessStrength => '坐姿女神式的强化变体。';
 
   @override
-  String get yogaDescBackChestStretch => 'L型拉伸，改善上半身灵活性。';
+  String get yogaDescBackChestStretch => 'L 型伸展以改善上半身灵活性。';
 
   @override
   String get yogaDescStandingCrunch => '动态核心强化动作。';
 
   @override
-  String get yogaDescWarrior3Supported => '利用椅子辅助练习平衡与力量。';
+  String get yogaDescWarrior3Supported => '利用椅子支撑进行平衡与力量训练。';
 
   @override
   String get yogaDescWarrior1Supported => '适合初学者的战士站姿。';
 
   @override
-  String get yogaDescWarrior2Supported => '侧向战士式，用于开胯。';
+  String get yogaDescWarrior2Supported => '面向侧边的战士式，用于打开髋关节。';
 
   @override
-  String get yogaDescTriangleSupported => '深层侧面身体延展。';
+  String get yogaDescTriangleSupported => '深层侧身延伸。';
 
   @override
-  String get yogaDescReverseWarrior2 => '后拱战士拉伸。';
+  String get yogaDescReverseWarrior2 => '后弯的战士式伸展。';
 
   @override
-  String get yogaDescSideAngleSupported => '强化腿部并扩张肋骨。';
+  String get yogaDescSideAngleSupported => '强化腿部并打开肋骨。';
 
   @override
-  String get yogaDescGentleBreathing => '全身放松与平静呼吸。';
+  String get yogaDescGentleBreathing => '全身放紧与平静呼吸。';
 
   @override
-  String get yogaDescDownwardDog => '基础的倒 V 姿势，拉伸全身。';
+  String get yogaDescDownwardDog => '基础的倒 V 姿势，伸展全身。';
 
   @override
-  String get yogaDescPlank => '锻炼核心、手臂和腿部的全身力量训练。';
+  String get yogaDescPlank => '全身力量构建，参与核心、手臂和腿部。';
 
   @override
-  String get yogaDescEightPoint => '通过降低胸部、下巴、膝盖和脚趾来建立力量的姿势。';
+  String get yogaDescEightPoint => '强化力量的姿势，放下胸部、下巴、膝盖和脚趾。';
 
   @override
   String get yogaDescBabyCobra => '温和的后弯，强化上背部和脊柱。';
 
   @override
-  String get yogaDescFullCobra => '更有力的开胸后弯，调动全身。';
+  String get yogaDescFullCobra => '更强的开胸后弯，全身参与。';
 
   @override
   String get yogaDescSunSalutation => '连接呼吸与动作的动态序列。建立力量、热量、协调性和耐力。';
+
+  @override
+  String get yogaInstHeadNeck =>
+      '上下倾斜头部，各保持 5-10 次呼吸。转动头部左右各 3 圈。将耳朵靠向肩膀，可用手轻轻辅助。';
+
+  @override
+  String get yogaInstStraightArms => '握拳，直臂向前旋转 10 次，向后旋转 10 次。';
+
+  @override
+  String get yogaInstBentArms => '双肘在前方接触，向上绕过头后再向下。每个方向 10 圈。';
+
+  @override
+  String get yogaInstShouldersLateral => '右手垂向椅子，左臂向上举过头顶。保持 5-10 次呼吸，然后换边。';
+
+  @override
+  String get yogaInstShouldersTorsoTwist => '举起手臂，向右转动躯干，扶住椅子支撑。每侧保持 5-10 次呼吸。';
+
+  @override
+  String get yogaInstLegRaiseBent => '保持背部挺直，抬起弯曲的腿。保持后受控放下。换腿。';
+
+  @override
+  String get yogaInstLegRaiseStraight => '抬起伸直的腿，尽可能长时间保持。放松并换腿。';
+
+  @override
+  String get yogaInstGoddessTwist => '双膝张开，向侧面伸展躯干。保持 5-10 次呼吸，换边。';
+
+  @override
+  String get yogaInstGoddessStrength => '在女神式站姿中将大腿抬离椅子。保持 5-10 次呼吸。重复。';
+
+  @override
+  String get yogaInstBackChestStretch => '扶住椅子，铰链式下折呈 L 型，保持背部平坦。保持 5-10 次呼吸。';
+
+  @override
+  String get yogaInstStandingCrunch => '从 L 型开始，吸气时腿向后伸展，呼气时膝盖向前收缩。重复。';
+
+  @override
+  String get yogaInstWarrior3 => '手离开椅子，保持平衡。换腿并重复。';
+
+  @override
+  String get yogaInstWarrior1 => '向后迈步，弯曲前膝，举起双臂。保持 5-10 次呼吸。';
+
+  @override
+  String get yogaInstWarrior2 => '脚趾转向外侧，伸展手臂，看向前方。保持。';
+
+  @override
+  String get yogaInstTriangle => '伸直前腿，手向下触碰脚踝或瑜伽砖，另一手向上伸展。';
+
+  @override
+  String get yogaInstReverseWarrior => '向后倾斜时，上方手臂划过头顶。保持。';
+
+  @override
+  String get yogaInstSideAngle => '手降至脚内侧，上方手臂沿对角线向头顶上方延伸。';
+
+  @override
+  String get yogaInstGentleBreathing => '放松肩膀，双手放在大腿上，用鼻子缓慢呼吸。';
+
+  @override
+  String get yogaInstDownwardDog => '双手与肩同宽，双脚与髋同宽。抬高臀部，胸部向大腿方向下压。保持 5-10 次呼吸。';
+
+  @override
+  String get yogaInstPlank => '肩膀位于手腕正上方，收紧核心，身体从头到脚跟成一直线。保持 5-10 次呼吸。';
+
+  @override
+  String get yogaInstEightPoint => '从四足跪姿开始，放低胸部和下巴至垫上，臀部保持抬高。保持 5-10 次呼吸。';
+
+  @override
+  String get yogaInstBabyCobra => '俯卧，轻轻推起胸部，手肘夹紧身体，肩膀远离耳朵。保持 5-10 次呼吸。';
+
+  @override
+  String get yogaInstFullCobra => '伸直手肘，进一步抬高胸部，不要耸肩。保持 5-10 次呼吸。';
+
+  @override
+  String get yogaInstGentleBreathingIntermediate =>
+      '双手放在腹部或大腿上，放松肩膀，用鼻子缓慢自然地呼吸。';
+
+  @override
+  String get yogaInstSunSalutation =>
+      '此流动序列连续重复——一呼一吸配合一个动作。\n 1. 吸气 — 下犬式\n 抬高臀部，拉长脊柱。\n 2. 呼气 — 板式\n 向前移动进入强壮的板式位置。\n 3. 吸气 — 膝胸叩首（八点式）\n 受控下降，臀部抬高。\n 4. 呼气 — 小眼镜蛇式\n 轻轻抬起胸部，手肘靠近身体。\n 5. 吸气 — 眼镜蛇式\n 稍稍伸直手臂，打开胸腔。\n 6. 呼气 — 回到下犬式\n 向后压回倒 V 字型。\n 重复 5-10 轮或根据您的能力进行。';
+
+  @override
+  String get yogaGentleBreathingAdvanced => '通过鼻子柔和呼吸，拉长呼气。让全身沉静并放松。';
+
+  @override
+  String get yogaModMoveSlowly => '动作缓慢';
+
+  @override
+  String get yogaModStopDizzy => '若感到晕眩请停止';
+
+  @override
+  String get yogaModChairSupport => '使用椅背支撑';
+
+  @override
+  String get yogaModElbowsStraight => '保持手肘伸直';
+
+  @override
+  String get yogaModControlledMove => '动作平稳且受控';
+
+  @override
+  String get yogaModFingersShoulders => '手指保持在肩膀上';
+
+  @override
+  String get yogaModSlowRolls => '缓慢且受控地转动';
+
+  @override
+  String get yogaModButtocksDown => '保持臀部坐稳';
+
+  @override
+  String get yogaModFaceForward => '面向前方';
+
+  @override
+  String get yogaModHipsStable => '保持髋部稳定';
+
+  @override
+  String get yogaModShouldersLevel => '保持双肩齐平';
+
+  @override
+  String get yogaModBackStraight => '保持背部挺直';
+
+  @override
+  String get yogaModBeginBent => '从屈膝版本开始';
+
+  @override
+  String get yogaModUseChairForSupport => '使用椅子支撑';
+
+  @override
+  String get yogaModKneesToes => '膝盖与脚趾对齐';
+
+  @override
+  String get yogaModHipsGrounded => '保持臀部贴地/贴椅';
+
+  @override
+  String get yogaModTorsoUpright => '保持躯干挺直';
+
+  @override
+  String get yogaModChairBalance => '使用椅子保持平衡';
+
+  @override
+  String get yogaModArmsLegsStraight => '保持手臂和腿部伸直';
+
+  @override
+  String get yogaModEngageCore => '收紧核心';
+
+  @override
+  String get yogaModAvoidPregnancy => '怀孕期间请避免';
+
+  @override
+  String get yogaModOneHandChair => '保持一只手扶着椅子';
+
+  @override
+  String get yogaModStraightLine => '保持身体呈一直线';
+
+  @override
+  String get yogaModShortenStance => '缩短站距';
+
+  @override
+  String get yogaModSquareHips => '摆正髋部';
+
+  @override
+  String get yogaModLevelShoulders => '水平肩膀';
+
+  @override
+  String get yogaModUseBlock => '使用瑜伽砖';
+
+  @override
+  String get yogaModHipsForward => '保持髋部朝前';
+
+  @override
+  String get yogaModFrontKneeBent => '保持前膝弯曲';
+
+  @override
+  String get yogaModGazeDirection => '选择凝视方向';
+
+  @override
+  String get yogaModTuckTailbone => '轻微收尾骨';
+
+  @override
+  String get yogaModSitOrLieDown => '坐下或躺下';
+
+  @override
+  String get yogaModCloseEyesIfComfortable => '若感觉舒适可闭上眼睛';
+
+  @override
+  String get yogaModBendKnees => '若腿筋紧绷可弯曲膝盖';
+
+  @override
+  String get yogaModHeelsLifted => '练习时脚跟抬起';
+
+  @override
+  String get yogaModLowerKnees => '放下膝盖以进行温和版本';
+
+  @override
+  String get yogaModFeetTogether => '双脚并拢以增加挑战';
+
+  @override
+  String get yogaModSlowControl => '缓慢受控下降以保护肩膀';
+
+  @override
+  String get yogaModLiftPalms => '抬起手掌以增加挑战';
+
+  @override
+  String get yogaModPressFeet => '双脚向下踩实以增加稳定性';
+
+  @override
+  String get yogaModNoLockElbows => '不要锁死手肘';
+
+  @override
+  String get yogaModTuckStomach => '轻微收腹以支持脊柱';
+
+  @override
+  String get yogaModRestChildPose => '如有需要，在两轮之间于婴儿式休息';
+
+  @override
+  String get yogaModSlowTransitions => '如果呼吸变得吃力，请放慢过渡动作';
+
+  @override
+  String get yogaModBendDownwardDog => '在下犬式中弯曲膝盖以增加舒适感';
+
+  @override
+  String get yogaModSitOrLie => '坐直或平躺';
+
+  @override
+  String get yogaModCushionUnderKnees => '在膝盖下放置垫子';
 
   @override
   String get sessionLevelLabel => '难度等级';
@@ -2116,16 +2670,41 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   }
 
   @override
-  String get poseComplete => '姿势完成！';
+  String get completeCurrentPoseFirst => '请先完成当前的动作！';
 
   @override
-  String get greatWorkChoice => '太棒了！您接下来想做什么？';
+  String get poseComplete => '动作完成！';
 
   @override
-  String get retryPose => '重新练习此姿势';
+  String get greatWorkChoice => '做得好！接下来您想做什么？';
+
+  @override
+  String get retryPose => '再做一次';
+
+  @override
+  String get nextPose => '下一个姿势';
 
   @override
   String get finishSession => '结束课程';
+
+  @override
+  String get sessionComplete => '课程完成！';
+
+  @override
+  String completedPoses(int count) {
+    return '已完成 $count 个动作';
+  }
+
+  @override
+  String totalMinutesSpent(int value, String unit) {
+    return '您已练习了 $value $unit';
+  }
+
+  @override
+  String get totaltime => '总练习时长：';
+
+  @override
+  String get howToPose => '动作指南';
 
   @override
   String get sessionPlaylist => '课程列表';
@@ -2134,20 +2713,33 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get playing => '播放中';
 
   @override
-  String poseCountProgress(int completed, int total) {
-    return '$completed/$total';
+  String get waitingForPin => '等待输入密码...';
+
+  @override
+  String get exitSessionTitle => '退出练习？';
+
+  @override
+  String posesCompletedInfo(int completed, int total) {
+    return '已完成 $completed / $total 个动作';
   }
 
   @override
-  String totalMinutesSpent(int minutes, String minutesLabel) {
-    return '总计 $minutes $minutesLabel';
-  }
+  String get progressSaved => '进度已保存 ✓';
 
   @override
-  String get previous => '上一个';
+  String get continueLater => '您可以随时回来继续练习！';
 
   @override
-  String get completeCurrentPoseFirst => '请在进入下一个姿势前完成当前练习';
+  String get noPosesCompleted => '尚未完成任何动作';
+
+  @override
+  String get completeOneToSave => '请至少完成一个动作以保存您的进度。';
+
+  @override
+  String get stayButton => '继续练习';
+
+  @override
+  String get playbackNormal => '正常';
 
   @override
   String poseProgress(int current, int total) {
@@ -2183,9 +2775,6 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get poseMarkedSuccess => '姿势已标记为完成！';
-
-  @override
-  String get nextPose => '下一个姿势';
 
   @override
   String get completeSession => '完成课程';
@@ -2593,6 +3182,87 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get soundBenefit4 => '• 提升整体幸福感';
 
   @override
+  String get meditationHeader => '冥想与白噪音';
+
+  @override
+  String get quickStart => '快速开始';
+
+  @override
+  String get guidedMeditationSection => '引导式冥想';
+
+  @override
+  String get ambientSoundsSection => '大自然的声音';
+
+  @override
+  String get ambientSoundsSubtitle => '纯净的大自然声音助您放松';
+
+  @override
+  String get morningClarityTitle => '晨间清爽';
+
+  @override
+  String get morningClarityDesc => '开启充满宁静与力量的一天';
+
+  @override
+  String get deepBreathingTitle => '深呼吸练习';
+
+  @override
+  String get deepBreathingDesc => '通过专注呼吸缓解压力';
+
+  @override
+  String get eveningWindDownTitle => '晚间放松';
+
+  @override
+  String get eveningWindDownDesc => '卸下疲惫，准备进入梦乡';
+
+  @override
+  String get oceanWavesTitle => '海浪声';
+
+  @override
+  String get oceanWavesDesc => '海浪拍打沙滩的柔和声';
+
+  @override
+  String get rainSoundsTitle => '雨声';
+
+  @override
+  String get rainSoundsDesc => '淅沥的雨声与闷雷';
+
+  @override
+  String get forestBirdsTitle => '森林鸟鸣';
+
+  @override
+  String get forestBirdsDesc => '置身于大自然的鸟语花香';
+
+  @override
+  String get cracklingFireTitle => '木柴燃烧声';
+
+  @override
+  String get cracklingFireDesc => '壁炉火堆的温暖声';
+
+  @override
+  String get whiteNoiseTitle => '白噪音';
+
+  @override
+  String get whiteNoiseDesc => '纯净白噪音，助力专注';
+
+  @override
+  String get flowingWaterTitle => '流水潺潺';
+
+  @override
+  String get flowingWaterDesc => '溪水流过的清脆声';
+
+  @override
+  String get windChimesTitle => '清脆风铃';
+
+  @override
+  String get windChimesDesc => '宁静祥和的风铃声';
+
+  @override
+  String get nightCricketsTitle => '夏夜虫鸣';
+
+  @override
+  String get nightCricketsDesc => '宁静夜晚的蛐蛐叫声';
+
+  @override
   String get meditationHeaderTitle => '选择您的冥想课程';
 
   @override
@@ -2659,39 +3329,6 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get meditationConfirmEnd => '结束';
-
-  @override
-  String get soundOceanWaves => '海浪声';
-
-  @override
-  String get soundForestRain => '森林雨声';
-
-  @override
-  String get soundTibetanBowls => '西藏颂钵';
-
-  @override
-  String get soundPeacefulPiano => '宁静钢琴';
-
-  @override
-  String get soundMountainStream => '山间溪流';
-
-  @override
-  String get soundWindChimes => '风铃声';
-
-  @override
-  String get soundGentleThunder => '柔和雷声';
-
-  @override
-  String get soundSingingBirds => '鸟鸣声';
-
-  @override
-  String get categoryNature => '大自然';
-
-  @override
-  String get categoryMeditation => '冥想';
-
-  @override
-  String get categoryAmbient => '氛围音';
 
   @override
   String get profileTitle => '个人中心';
@@ -2847,9 +3484,6 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get mandarinTraditional => '繁体中文';
 
   @override
-  String get sessionComplete => '课程完成！';
-
-  @override
   String completedPosesCount(int count) {
     return '您完成了 $count 个姿势！';
   }
@@ -2876,50 +3510,46 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get aboutUsTitle => '关于我们';
 
   @override
-  String get appSubtitle => '通过引导瑜伽帮助您建立更健康的生活习惯。';
+  String get appName => 'Zencore';
 
   @override
-  String get missionTitle => '我们的使命';
+  String get appVersion => '版本 1.0.0';
 
   @override
-  String get missionContent =>
-      'HealYoga 旨在通过引导课程、舒缓音乐和进度追踪来鼓励规律的瑜伽练习。我们专注于易用性和简化流程，让每个人都能享受健康生活。';
+  String get ourMission => '我们的使命';
 
   @override
-  String get featuresTitle => '核心功能';
+  String get missionStatement => '通过温和的椅子瑜伽、舒缓的冥想和正念练习，让每个人都能享受健康生活。';
 
   @override
-  String get feature1 => '引导式瑜伽课程';
+  String get projectTeam => '项目团队';
 
   @override
-  String get feature2 => '放松音乐与冥想';
+  String get projectSupervisor => '项目主管';
 
   @override
-  String get feature3 => '进度追踪';
+  String get developmentTeam => '开发团队';
 
   @override
-  String get feature4 => '用户认证与个人资料';
+  String get keyFeatures => '核心功能';
 
   @override
-  String get creditsTitle => '制作团队';
+  String get featureChairYoga => '椅子瑜伽课程';
 
   @override
-  String get projectSupervisor => '项目指导';
+  String get featureMeditation => '专业冥想指导';
 
   @override
-  String get teamMembers => '团队成员';
+  String get featureProgress => '进度跟踪';
 
   @override
-  String get yogaInstructor => '瑜伽导师';
+  String get featureSounds => '助眠舒缓音效';
 
   @override
-  String get licensesTitle => '开源许可';
+  String get copyright => '© 2026 ZENCORE';
 
   @override
-  String get viewLicensesButton => '查看所有许可';
-
-  @override
-  String get copyright => '© 2026 HealYoga 项目\n保留所有权利';
+  String get allRightsReserved => '保留所有权利';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -3237,6 +3867,24 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get moreInfo => '更多資訊';
 
   @override
+  String get enterPinCode => '輸入密碼';
+
+  @override
+  String get pinInstructions => '請輸入4位密碼以觀看影片';
+
+  @override
+  String get incorrectPin => '密碼錯誤';
+
+  @override
+  String get backdoorAccess => '管理員存取';
+
+  @override
+  String get backdoorAdminMsg => '您擁有更改影片密碼的管理員權限。';
+
+  @override
+  String get backdoorPathInstructions => '請前往 個人資料 > 設置 以更改密碼。';
+
+  @override
   String get beginnerTitle => '初級課程';
 
   @override
@@ -3322,140 +3970,139 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get step6 => '6. 回到下犬式';
 
   @override
-  String get yogaHeadNeckShoulders => '頭、頸、肩拉伸';
+  String get yogaHeadNeckShoulders => '頭部、頸部與肩部伸展';
 
   @override
-  String get yogaStraightArms => '直臂轉動';
+  String get yogaStraightArms => '直臂旋轉';
 
   @override
-  String get yogaBentArms => '屈臂轉動';
+  String get yogaBentArms => '屈臂旋轉';
 
   @override
-  String get yogaShouldersLateral => '肩膀側向拉伸';
+  String get yogaShouldersLateral => '肩膀側向伸展';
 
   @override
-  String get yogaShouldersTorsoTwist => '肩部與軀幹扭轉';
+  String get yogaShouldersTorsoTwist => '肩膀與軀幹轉體';
 
   @override
-  String get yogaLegRaiseBent => '屈膝抬腿';
+  String get yogaLegRaiseBent => '抬腿（屈膝）';
 
   @override
-  String get yogaLegRaiseStraight => '直腿抬腿';
+  String get yogaLegRaiseStraight => '抬腿（直膝）';
 
   @override
-  String get yogaGoddessTwist => '女神式 — 軀幹扭轉';
+  String get yogaGoddessTwist => '女神式 — 軀幹轉體';
 
   @override
   String get yogaGoddessStrength => '女神式 — 腿部強化';
 
   @override
-  String get yogaBackChestStretch => '背部與胸部拉伸';
+  String get yogaBackChestStretch => '背部與胸部伸展';
 
   @override
-  String get yogaStandingCrunch => '站立仰臥起坐';
+  String get yogaStandingCrunch => '站姿捲腹';
 
   @override
-  String get yogaWarrior3Supported => '戰士三式（支撐版）';
+  String get yogaWarrior3Supported => '戰士三式（有支撐）';
 
   @override
-  String get yogaWarrior1Supported => '戰士一式（支撐版）';
+  String get yogaWarrior1Supported => '戰士一式（有支撐）';
 
   @override
-  String get yogaWarrior2Supported => '戰士二式（支撐版）';
+  String get yogaWarrior2Supported => '戰士二式（有支撐）';
 
   @override
-  String get yogaTriangleSupported => '三角式（支撐版）';
+  String get yogaTriangleSupported => '三角式（有支撐）';
 
   @override
   String get yogaReverseWarrior2 => '反向戰士二式';
 
   @override
-  String get yogaSideAngleSupported => '側角式（支撐版）';
+  String get yogaSideAngleSupported => '側角式（有支撐）';
 
   @override
-  String get yogaGentleBreathing => '輕柔呼吸';
+  String get yogaGentleBreathing => '溫和呼吸';
 
   @override
   String get yogaDownwardDog => '下犬式';
 
   @override
-  String get yogaPlank => '板式';
+  String get yogaPlank => '板式 / 平板支撐';
 
   @override
-  String get yogaEightPoint => '八點式 (Ashtangasana)';
+  String get yogaEightPoint => '八點式';
 
   @override
-  String get yogaBabyCobra => '眼鏡蛇式（嬰兒版）';
+  String get yogaBabyCobra => '小眼鏡蛇式';
 
   @override
-  String get yogaFullCobra => '眼鏡蛇式（完整版）';
+  String get yogaFullCobra => '眼鏡蛇式';
 
   @override
-  String get yogaSunSalutation => '向日式流';
+  String get yogaSunSalutation => '向陽起航 / 拜日式流動';
 
   @override
-  String get yogaSessionGentleChair => '輕柔椅子瑜伽';
+  String get yogaSessionGentleChair => '溫和椅子瑜珈';
 
   @override
-  String get yogaSessionMorningMobility => '晨間活動性練習';
+  String get yogaSessionMorningMobility => '晨間靈活練習';
 
   @override
   String get yogaSessionWarriorSeries => '戰士系列';
 
   @override
-  String get yogaSessionHathaFundamentals => '哈他基礎';
+  String get yogaSessionHathaFundamentals => '哈達瑜珈基礎';
 
   @override
-  String get yogaSessionCoreStrength => '核心力量增強';
+  String get yogaSessionCoreStrength => '核心力量強化';
 
   @override
-  String get yogaSessionBackbendFlow => '後彎流';
+  String get yogaSessionBackbendFlow => '後彎流動';
 
   @override
-  String get yogaSessionSunSalutation => '向日式流';
+  String get yogaSessionSunSalutation => '拜日式流動';
 
   @override
-  String get yogaSessionExtendedFlow => '擴展流練習';
+  String get yogaSessionExtendedFlow => '進階流動練習';
 
   @override
-  String get yogaDescHeadNeck => '輕柔的坐姿拉伸，緩解頸部和肩部緊張。';
+  String get yogaDescHeadNeck => '溫和的坐姿伸展，釋放頸部和肩膀的緊張感。';
 
   @override
   String get yogaDescGentleChair =>
-      '確保椅子靠牆放置以保持穩定。初級椅子瑜伽適合大多數人。建議空腹或飯後至少 2 小時練習。';
+      '確保椅子穩定（可靠牆放置）。初級椅子瑜珈適合大多數人。建議空腹練習，或在餐後至少 2 小時進行。';
 
   @override
-  String get yogaDescMorningMobility => '輕鬆的晨間練習，專注於關節活動度、呼吸和輔助力量訓練。';
+  String get yogaDescMorningMobility => '輕鬆的晨間練習，專注於關節靈活性、呼吸和有支撐的力量訓練。';
 
   @override
-  String get yogaDescWarriorSeries => '建立自信的序列，探索戰士一、二式及輔助過渡動作。';
+  String get yogaDescWarriorSeries => '建立自信的序列，探索戰士一式、二式及相關過渡動作。';
 
   @override
   String get yogaDescHathaFundamentals =>
-      '經典的墊上哈他序列，專注於對位、呼吸和全身參與。適合準備脫離椅子輔助的練習者。';
+      '經典的墊上哈達序列，專注於對齊、呼吸和全身參與。適合準備超越椅子支撐的練習者。';
 
   @override
-  String get yogaDescCoreStrength => '簡短而強大的課程，專注於板式、八點式和受控過渡。增強核心力量和肩部穩定性。';
+  String get yogaDescCoreStrength => '短小精悍的課程，專注於板式、八點式和受控過渡。增強核心力量和肩膀穩定性。';
 
   @override
-  String get yogaDescBackbendFlow => '增強脊椎力量的序列，從八點式過渡到嬰兒眼鏡蛇和完整眼鏡蛇式。建立後彎的信心。';
+  String get yogaDescBackbendFlow => '強化脊椎的序列，從八點式過渡到小眼鏡蛇式和眼鏡蛇式。建立後彎的信心。';
 
   @override
   String get yogaDescSunSalutationSession =>
-      '動態墊上流練習，旨在同步呼吸與動作。透過重複的向日式循環增強耐力和全身力量。';
+      '充滿活力的墊上流動，旨在同步呼吸與動作。通過重複拜日式循環建立耐力和全身力量。';
 
   @override
-  String get yogaDescExtendedFlow =>
-      '更深層、更長時間的向日式練習 —— 非常適合想要接受呼吸引導動作挑戰的資深練習者。';
+  String get yogaDescExtendedFlow => '更深、更長的拜日式練習——適合希望在呼吸引導下挑戰連續動作的經驗豐富者。';
 
   @override
-  String get yogaDescStraightArms => '手臂旋轉練習，預熱肩膀和上背部。';
+  String get yogaDescStraightArms => '手臂旋轉以熱身肩膀和上背部。';
 
   @override
-  String get yogaDescBentArms => '屈肘肩部活動練習。';
+  String get yogaDescBentArms => '屈肘的肩部靈活性練習。';
 
   @override
-  String get yogaDescShouldersLateral => '改善身體靈活性的側向拉伸。';
+  String get yogaDescShouldersLateral => '改善靈活性的身體側面伸展。';
 
   @override
   String get yogaDescShouldersTorsoTwist => '溫和的排毒扭轉動作。';
@@ -3464,58 +4111,280 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get yogaDescLegRaiseBent => '加強腿部力量並激活核心。';
 
   @override
-  String get yogaDescLegRaiseStraight => '直腿抬高以獲得更高級的力量訓練。';
+  String get yogaDescLegRaiseStraight => '直腿抬高以進行進階力量訓練。';
 
   @override
-  String get yogaDescGoddessTwist => '寬腿坐姿以提高靈活性。';
+  String get yogaDescGoddessTwist => '開胯坐姿以增進靈活性。';
 
   @override
   String get yogaDescGoddessStrength => '坐姿女神式的強化變體。';
 
   @override
-  String get yogaDescBackChestStretch => 'L型拉伸，改善上半身靈活性。';
+  String get yogaDescBackChestStretch => 'L 型伸展以改善上半身靈活性。';
 
   @override
   String get yogaDescStandingCrunch => '動態核心強化動作。';
 
   @override
-  String get yogaDescWarrior3Supported => '利用椅子輔助練習平衡與力量。';
+  String get yogaDescWarrior3Supported => '利用椅子支撐進行平衡與力量訓練。';
 
   @override
   String get yogaDescWarrior1Supported => '適合初學者的戰士站姿。';
 
   @override
-  String get yogaDescWarrior2Supported => '側向戰士式，用於開胯。';
+  String get yogaDescWarrior2Supported => '面向側邊的戰士式，用於打開髖關節。';
 
   @override
-  String get yogaDescTriangleSupported => '深層側面身體延展。';
+  String get yogaDescTriangleSupported => '深層側身延伸。';
 
   @override
-  String get yogaDescReverseWarrior2 => '後拱戰士拉伸。';
+  String get yogaDescReverseWarrior2 => '後彎的戰士式伸展。';
 
   @override
-  String get yogaDescSideAngleSupported => '強化腿部並擴張肋骨。';
+  String get yogaDescSideAngleSupported => '強化腿部並打開肋骨。';
 
   @override
   String get yogaDescGentleBreathing => '全身放鬆與平靜呼吸。';
 
   @override
-  String get yogaDescDownwardDog => '基礎的倒 V 姿勢，拉伸全身。';
+  String get yogaDescDownwardDog => '基礎的倒 V 姿勢，伸展全身。';
 
   @override
-  String get yogaDescPlank => '鍛鍊核心、手臂和腿部的全身力量訓練。';
+  String get yogaDescPlank => '全身力量構建，參與核心、手臂和腿部。';
 
   @override
-  String get yogaDescEightPoint => '透過降低胸部、下巴、膝蓋和腳趾來建立力量的姿勢。';
+  String get yogaDescEightPoint => '強化力量的姿勢，放下胸部、下巴、膝蓋和腳趾。';
 
   @override
   String get yogaDescBabyCobra => '溫和的後彎，強化上背部和脊椎。';
 
   @override
-  String get yogaDescFullCobra => '更有力的開胸後彎，調動全身。';
+  String get yogaDescFullCobra => '更強的開胸後彎，全身參與。';
 
   @override
-  String get yogaDescSunSalutation => '連接呼吸與動作的動態序列。建立力量、熱量、協調性和耐力。';
+  String get yogaDescSunSalutation => '連結呼吸與動作的動態序列。建立力量、熱量、協調性和耐力。';
+
+  @override
+  String get yogaInstHeadNeck =>
+      '上下傾斜頭部，各保持 5-10 次呼吸。轉動頭部左右各 3 圈。將耳朵靠向肩膀，可用手輕輕輔助。';
+
+  @override
+  String get yogaInstStraightArms => '握拳，直臂向前旋轉 10 次，向後旋轉 10 次。';
+
+  @override
+  String get yogaInstBentArms => '雙肘在前方接觸，向上繞過頭後再向下。每個方向 10 圈。';
+
+  @override
+  String get yogaInstShouldersLateral => '右手垂向椅子，左臂向上舉過頭頂。保持 5-10 次呼吸，然後換邊。';
+
+  @override
+  String get yogaInstShouldersTorsoTwist => '舉起手臂，向右轉動軀幹，扶住椅子支撐。每側保持 5-10 次呼吸。';
+
+  @override
+  String get yogaInstLegRaiseBent => '保持背部挺直，抬起彎曲的腿。保持後受控放下。換腿。';
+
+  @override
+  String get yogaInstLegRaiseStraight => '抬起伸直的腿，盡可能長時間保持。放鬆並換腿。';
+
+  @override
+  String get yogaInstGoddessTwist => '雙膝張開，向側面伸展軀幹。保持 5-10 次呼吸，換邊。';
+
+  @override
+  String get yogaInstGoddessStrength => '在女神式站姿中將大腿抬離椅子。保持 5-10 次呼吸。重複。';
+
+  @override
+  String get yogaInstBackChestStretch => '扶住椅子，鉸鏈式下折呈 L 型，保持背部平坦。保持 5-10 次呼吸。';
+
+  @override
+  String get yogaInstStandingCrunch => '從 L 型開始，吸氣時腿向後伸展，呼氣時膝蓋向前收縮。重複。';
+
+  @override
+  String get yogaInstWarrior3 => '手離開椅子，保持平衡。換腿並重複。';
+
+  @override
+  String get yogaInstWarrior1 => '向後邁步，彎曲前膝，舉起雙臂。保持 5-10 次呼吸。';
+
+  @override
+  String get yogaInstWarrior2 => '腳趾轉向外側，伸展手臂，看向前方。保持。';
+
+  @override
+  String get yogaInstTriangle => '伸直前腿，手向下觸碰腳踝或瑜珈磚，另一手向上伸展。';
+
+  @override
+  String get yogaInstReverseWarrior => '向後傾斜時，上方手臂劃過頭頂。保持。';
+
+  @override
+  String get yogaInstSideAngle => '手降至腳內側，上方手臂沿對角線向頭頂上方延伸。';
+
+  @override
+  String get yogaInstGentleBreathing => '放鬆肩膀，雙手放在大腿上，用鼻子緩慢呼吸。';
+
+  @override
+  String get yogaInstDownwardDog => '雙手與肩同寬，雙腳與髖同寬。抬高臀部，胸部向大腿方向下壓。保持 5-10 次呼吸。';
+
+  @override
+  String get yogaInstPlank => '肩膀位於手腕正上方，收緊核心，身體從頭到腳跟成一直線。保持 5-10 次呼吸。';
+
+  @override
+  String get yogaInstEightPoint => '從四足跪姿開始，放低胸部和下巴至墊上，臀部保持抬高。保持 5-10 次呼吸。';
+
+  @override
+  String get yogaInstBabyCobra => '俯臥，輕輕推起胸部，手肘夾緊身體，肩膀遠離耳朵。保持 5-10 次呼吸。';
+
+  @override
+  String get yogaInstFullCobra => '伸直手肘，進一步抬高胸部，不要聳肩。保持 5-10 次呼吸。';
+
+  @override
+  String get yogaInstGentleBreathingIntermediate =>
+      '雙手放在腹部或大腿上，放鬆肩膀，用鼻子緩慢自然地呼吸。';
+
+  @override
+  String get yogaInstSunSalutation =>
+      '此流動序列連續重複——一呼一吸配合一個動作。\n 1. 吸氣 — 下犬式\n 抬高臀部，拉長脊椎。\n 2. 呼氣 — 板式\n 向前移動進入強壯的板式位置。\n 3. 吸氣 — 膝胸叩首（八點式）\n 受控下降，臀部抬高。\n 4. 呼氣 — 小眼鏡蛇式\n 輕輕抬起胸部，手肘靠近身體。\n 5. 吸氣 — 眼鏡蛇式\n 稍稍伸直手臂，打開胸腔。\n 6. 呼氣 — 回到下犬式\n 向後壓回倒 V 字型。\n 重複 5-10 輪或根據您的能力進行。';
+
+  @override
+  String get yogaGentleBreathingAdvanced => '通過鼻子柔和呼吸，拉長呼氣。讓全身沉靜並放鬆。';
+
+  @override
+  String get yogaModMoveSlowly => '動作緩慢';
+
+  @override
+  String get yogaModStopDizzy => '若感到暈眩請停止';
+
+  @override
+  String get yogaModChairSupport => '使用椅背支撐';
+
+  @override
+  String get yogaModElbowsStraight => '保持手肘伸直';
+
+  @override
+  String get yogaModControlledMove => '動作平穩且受控';
+
+  @override
+  String get yogaModFingersShoulders => '手指保持在肩膀上';
+
+  @override
+  String get yogaModSlowRolls => '緩慢且受控地轉動';
+
+  @override
+  String get yogaModButtocksDown => '保持臀部坐穩';
+
+  @override
+  String get yogaModFaceForward => '面向前方';
+
+  @override
+  String get yogaModHipsStable => '保持髖部穩定';
+
+  @override
+  String get yogaModShouldersLevel => '保持雙肩齊平';
+
+  @override
+  String get yogaModBackStraight => '保持背部挺直';
+
+  @override
+  String get yogaModBeginBent => '從屈膝版本開始';
+
+  @override
+  String get yogaModUseChairForSupport => '使用椅子支撐';
+
+  @override
+  String get yogaModKneesToes => '膝蓋與腳趾對齊';
+
+  @override
+  String get yogaModHipsGrounded => '保持臀部貼地/貼椅';
+
+  @override
+  String get yogaModTorsoUpright => '保持軀幹挺直';
+
+  @override
+  String get yogaModChairBalance => '使用椅子保持平衡';
+
+  @override
+  String get yogaModArmsLegsStraight => '保持手臂和腿部伸直';
+
+  @override
+  String get yogaModEngageCore => '收緊核心';
+
+  @override
+  String get yogaModAvoidPregnancy => '懷孕期間請避免';
+
+  @override
+  String get yogaModOneHandChair => '保持一隻手扶著椅子';
+
+  @override
+  String get yogaModStraightLine => '保持身體呈一直線';
+
+  @override
+  String get yogaModShortenStance => '縮短站距';
+
+  @override
+  String get yogaModSquareHips => '擺正髖部';
+
+  @override
+  String get yogaModLevelShoulders => '水平肩膀';
+
+  @override
+  String get yogaModUseBlock => '使用瑜珈磚';
+
+  @override
+  String get yogaModHipsForward => '保持髖部朝前';
+
+  @override
+  String get yogaModFrontKneeBent => '保持前膝彎曲';
+
+  @override
+  String get yogaModGazeDirection => '選擇凝視方向';
+
+  @override
+  String get yogaModTuckTailbone => '輕微收尾骨';
+
+  @override
+  String get yogaModSitOrLieDown => '坐下或躺下';
+
+  @override
+  String get yogaModCloseEyesIfComfortable => '若感覺舒適可閉上眼睛';
+
+  @override
+  String get yogaModBendKnees => '若腿筋緊繃可彎曲膝蓋';
+
+  @override
+  String get yogaModHeelsLifted => '練習時腳跟抬起';
+
+  @override
+  String get yogaModLowerKnees => '放下膝蓋以進行溫和版本';
+
+  @override
+  String get yogaModFeetTogether => '雙腳併攏以增加挑戰';
+
+  @override
+  String get yogaModSlowControl => '緩慢受控下降以保護肩膀';
+
+  @override
+  String get yogaModLiftPalms => '抬起手掌以增加挑戰';
+
+  @override
+  String get yogaModPressFeet => '雙腳向下踩實以增加穩定性';
+
+  @override
+  String get yogaModNoLockElbows => '不要鎖死手肘';
+
+  @override
+  String get yogaModTuckStomach => '輕微收腹以支持脊椎';
+
+  @override
+  String get yogaModRestChildPose => '如有需要，在兩輪之間於嬰兒式休息';
+
+  @override
+  String get yogaModSlowTransitions => '如果呼吸變得吃力，請放慢過渡動作';
+
+  @override
+  String get yogaModBendDownwardDog => '在下犬式中彎曲膝蓋以增加舒適感';
+
+  @override
+  String get yogaModSitOrLie => '坐直或平躺';
+
+  @override
+  String get yogaModCushionUnderKnees => '在膝蓋下放置墊子';
 
   @override
   String get sessionLevelLabel => '難度等級';
@@ -3575,16 +4444,41 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String get poseComplete => '姿勢完成！';
+  String get completeCurrentPoseFirst => '請先完成目前的動作！';
 
   @override
-  String get greatWorkChoice => '太棒了！您接下來想做什麼？';
+  String get poseComplete => '動作完成！';
 
   @override
-  String get retryPose => '重新練習此姿勢';
+  String get greatWorkChoice => '做得好！接下來您想做什麼？';
+
+  @override
+  String get retryPose => '再做一次';
+
+  @override
+  String get nextPose => '下一個姿勢';
 
   @override
   String get finishSession => '結束課程';
+
+  @override
+  String get sessionComplete => '課程完成！';
+
+  @override
+  String completedPoses(int count) {
+    return '已完成 $count 個動作';
+  }
+
+  @override
+  String totalMinutesSpent(int value, String unit) {
+    return '您已練習了 $value $unit';
+  }
+
+  @override
+  String get totaltime => '總練習時長：';
+
+  @override
+  String get howToPose => '動作指南';
 
   @override
   String get sessionPlaylist => '課程列表';
@@ -3593,20 +4487,33 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get playing => '播放中';
 
   @override
-  String poseCountProgress(int completed, int total) {
-    return '$completed/$total';
+  String get waitingForPin => '等待輸入密碼...';
+
+  @override
+  String get exitSessionTitle => '退出練習？';
+
+  @override
+  String posesCompletedInfo(int completed, int total) {
+    return '已完成 $completed / $total 個動作';
   }
 
   @override
-  String totalMinutesSpent(int minutes, String minutesLabel) {
-    return '總計 $minutes $minutesLabel';
-  }
+  String get progressSaved => '進度已保存 ✓';
 
   @override
-  String get previous => '上一個';
+  String get continueLater => '您可以隨時回來繼續練習！';
 
   @override
-  String get completeCurrentPoseFirst => '請在進入下一個姿勢前完成當前練習';
+  String get noPosesCompleted => '尚未完成任何動作';
+
+  @override
+  String get completeOneToSave => '請至少完成一個動作以保存您的進度。';
+
+  @override
+  String get stayButton => '繼續練習';
+
+  @override
+  String get playbackNormal => '正常';
 
   @override
   String poseProgress(int current, int total) {
@@ -3642,9 +4549,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get poseMarkedSuccess => '姿勢已標記為完成！';
-
-  @override
-  String get nextPose => '下一個姿勢';
 
   @override
   String get completeSession => '完成課程';
@@ -4052,6 +4956,87 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get soundBenefit4 => '• 提升整體幸福感';
 
   @override
+  String get meditationHeader => '冥想與白噪音';
+
+  @override
+  String get quickStart => '快速開始';
+
+  @override
+  String get guidedMeditationSection => '引導式冥想';
+
+  @override
+  String get ambientSoundsSection => '大自然的聲音';
+
+  @override
+  String get ambientSoundsSubtitle => '純淨的大自然聲音助您放鬆';
+
+  @override
+  String get morningClarityTitle => '晨間清爽';
+
+  @override
+  String get morningClarityDesc => '開啟充滿寧靜與力量的一天';
+
+  @override
+  String get deepBreathingTitle => '深呼吸練習';
+
+  @override
+  String get deepBreathingDesc => '通過專注呼吸緩解壓力';
+
+  @override
+  String get eveningWindDownTitle => '晚間放鬆';
+
+  @override
+  String get eveningWindDownDesc => '卸下疲憊，準備進入夢鄉';
+
+  @override
+  String get oceanWavesTitle => '海浪聲';
+
+  @override
+  String get oceanWavesDesc => '海浪拍打沙灘的柔和聲';
+
+  @override
+  String get rainSoundsTitle => '雨聲';
+
+  @override
+  String get rainSoundsDesc => '淅瀝的雨聲與悶雷';
+
+  @override
+  String get forestBirdsTitle => '森林鳥鳴';
+
+  @override
+  String get forestBirdsDesc => '置身於大自然的鳥語花香';
+
+  @override
+  String get cracklingFireTitle => '木柴燃燒聲';
+
+  @override
+  String get cracklingFireDesc => '壁爐火堆的溫暖聲';
+
+  @override
+  String get whiteNoiseTitle => '白噪音';
+
+  @override
+  String get whiteNoiseDesc => '純淨白噪音，助力專注';
+
+  @override
+  String get flowingWaterTitle => '流水潺潺';
+
+  @override
+  String get flowingWaterDesc => '溪水流過的清脆聲';
+
+  @override
+  String get windChimesTitle => '清脆風鈴';
+
+  @override
+  String get windChimesDesc => '寧靜祥和的風鈴聲';
+
+  @override
+  String get nightCricketsTitle => '夏夜蟲鳴';
+
+  @override
+  String get nightCricketsDesc => '寧靜夜晚的蛐蛐叫聲';
+
+  @override
   String get meditationHeaderTitle => '選擇您的冥想課程';
 
   @override
@@ -4118,39 +5103,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get meditationConfirmEnd => '結束';
-
-  @override
-  String get soundOceanWaves => '海浪聲';
-
-  @override
-  String get soundForestRain => '森林雨聲';
-
-  @override
-  String get soundTibetanBowls => '西藏頌缽';
-
-  @override
-  String get soundPeacefulPiano => '寧靜鋼琴';
-
-  @override
-  String get soundMountainStream => '山間溪流';
-
-  @override
-  String get soundWindChimes => '風鈴聲';
-
-  @override
-  String get soundGentleThunder => '柔和雷聲';
-
-  @override
-  String get soundSingingBirds => '鳥鳴聲';
-
-  @override
-  String get categoryNature => '大自然';
-
-  @override
-  String get categoryMeditation => '冥想';
-
-  @override
-  String get categoryAmbient => '環境音';
 
   @override
   String get profileTitle => '個人中心';
@@ -4306,9 +5258,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get mandarinTraditional => '繁體中文';
 
   @override
-  String get sessionComplete => '課程完成！';
-
-  @override
   String completedPosesCount(int count) {
     return '您完成了 $count 個姿勢！';
   }
@@ -4335,48 +5284,44 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get aboutUsTitle => '關於我們';
 
   @override
-  String get appSubtitle => '透過引導瑜伽幫助您建立更健康的生活習慣。';
+  String get appName => 'Zencore';
 
   @override
-  String get missionTitle => '我們的使命';
+  String get appVersion => '版本 1.0.0';
 
   @override
-  String get missionContent =>
-      'HealYoga 旨在透過引導課程、舒緩音樂和進度追蹤來鼓勵規律的瑜伽練習。我們專注於易用性和簡化流程，讓每個人都能享受健康生活。';
+  String get ourMission => '我們的使命';
 
   @override
-  String get featuresTitle => '核心功能';
+  String get missionStatement => '通過溫和的椅子瑜伽、舒緩的冥想和正念練習，讓每個人都能享受健康生活。';
 
   @override
-  String get feature1 => '引導式瑜伽課程';
+  String get projectTeam => '項目團隊';
 
   @override
-  String get feature2 => '放鬆音樂與冥想';
+  String get projectSupervisor => '項目主管';
 
   @override
-  String get feature3 => '進度追蹤';
+  String get developmentTeam => '開發團隊';
 
   @override
-  String get feature4 => '使用者認證與個人資料';
+  String get keyFeatures => '核心功能';
 
   @override
-  String get creditsTitle => '製作團隊';
+  String get featureChairYoga => '椅子瑜伽課程';
 
   @override
-  String get projectSupervisor => '專案指導';
+  String get featureMeditation => '專業冥想指導';
 
   @override
-  String get teamMembers => '團隊成員';
+  String get featureProgress => '進度跟蹤';
 
   @override
-  String get yogaInstructor => '瑜伽導師';
+  String get featureSounds => '助眠舒緩音效';
 
   @override
-  String get licensesTitle => '開源授權';
+  String get copyright => '© 2026 ZENCORE';
 
   @override
-  String get viewLicensesButton => '查看所有授權';
-
-  @override
-  String get copyright => '© 2026 HealYoga 專案\n保留所有權利';
+  String get allRightsReserved => '保留所有權利';
 }

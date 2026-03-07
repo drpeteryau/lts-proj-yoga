@@ -35,8 +35,8 @@ class MiniPlaybackBar extends StatelessWidget {
               MaterialPageRoute(
                 builder: (_) => MeditationSessionScreen(
                   session: MeditationSession(
-                    title: audioService.currentSoundTitle ?? '',
-                    description: '',
+                    titleKey: audioService.currentSoundTitle ?? '',
+                    descriptionKey: '',
                     durationMinutes:
                         total.inMinutes > 0 ? total.inMinutes : 5,
                     imageUrl:

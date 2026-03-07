@@ -28,7 +28,9 @@ final allYogaPoses = [
 ];
 
 class HomeTabScreen extends StatefulWidget {
-  const HomeTabScreen({super.key});
+  final void Function(int index)? onNavigateToTab;
+
+  const HomeTabScreen({super.key, this.onNavigateToTab});
 
   @override
   State<HomeTabScreen> createState() => _HomeTabScreenState();
@@ -83,6 +85,13 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
     if (userId == null) return;
 
     try {
+      // Query actual completed sessions from session_completions table
+      final sessionsResponse = await Supabase.instance.client
+          .from('session_completions')
+          .select('id, total_duration_seconds, completion_date')
+          .eq('user_id', userId)
+          .order('completed_at', ascending: false);
+
       final poseActivitiesResponse = await Supabase.instance.client
           .from('pose_activity')
           .select()
@@ -97,6 +106,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
       final today = DateTime(now.year, now.month, now.day);
       final weekStart = today.subtract(Duration(days: today.weekday - 1));
 
+      // Process pose activities for minutes and streak
       for (var row in poseActivitiesResponse) {
         final raw = DateTime.parse(row['completed_at']).toLocal();
         final date = DateTime(raw.year, raw.month, raw.day);
@@ -111,6 +121,11 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
         }
       }
 
+      // Count actual completed sessions (accurate!)
+      int sessionCount = sessionsResponse.length;
+
+      print('✅ HOME: Loaded $sessionCount completed sessions from database');
+
       // Calculate streak
       int streak = 0;
       DateTime checkDate = today;
@@ -124,14 +139,12 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
         }
       }
 
-      int sessions = activityDays.length;
-
       if (mounted) {
         setState(() {
           _currentStreak = streak;
-          _totalSessions = sessions;
-          _weeklyMinutes = (weekSeconds / 60).round();
-          _totalMinutes = (totalSeconds / 60).round();
+          _totalSessions = sessionCount; // Now accurate!
+          _weeklyMinutes = (weekSeconds / 60).ceil();
+          _totalMinutes = (totalSeconds / 60).ceil();
         });
       }
     } catch (e) {
@@ -403,13 +416,20 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: GestureDetector(
-        onTap: () async {
-          await GlobalAudioService.playClickSound();
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const MeditationScreen()),
-          );
-        },
+          onTap: () async {
+            await GlobalAudioService.playClickSound();
+
+            if (widget.onNavigateToTab != null) {
+              widget.onNavigateToTab!(3); // Meditation tab index
+              return;
+            }
+
+            // fallback if callback not provided
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const MeditationScreen()),
+            );
+          },
         child: Container(
           width: double.infinity,
           padding: const EdgeInsets.all(28),

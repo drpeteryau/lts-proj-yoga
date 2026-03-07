@@ -91,6 +91,7 @@ class YogaLocalizationHelper {
       case 'yogaDescEightPoint': return l10n.yogaDescEightPoint;
       case 'yogaDescBabyCobra': return l10n.yogaDescBabyCobra;
       case 'yogaDescFullCobra': return l10n.yogaDescFullCobra;
+      case 'yogaDescSunSalutationSession': return l10n.yogaDescSunSalutationSession;
 
       default: return key;
     }
@@ -112,7 +113,6 @@ class YogaLocalizationHelper {
 
       default: return key;
     }
-    // return key;
   }
 
   // Get session level from key
@@ -123,6 +123,99 @@ class YogaLocalizationHelper {
       case 'Beginner': return l10n.beginner;
       case 'Intermediate': return l10n.intermediate;
       case 'Advanced': return l10n.advanced;
+
+      default: return key;
+    }
+  }
+
+  // Get pose instruction from key
+  static String getPoseInstructions(BuildContext context, String key) {
+    final l10n = AppLocalizations.of(context)!;
+    
+    switch (key) {
+      case 'yogaInstHeadNeck': return l10n.yogaInstHeadNeck;
+      case 'yogaInstStraightArms': return l10n.yogaInstStraightArms;
+      case 'yogaInstBentArms': return l10n.yogaInstBentArms;
+      case 'yogaInstShouldersLateral': return l10n.yogaInstShouldersLateral;
+      case 'yogaInstShouldersTorsoTwist': return l10n.yogaInstShouldersTorsoTwist;
+      case 'yogaInstLegRaiseBent': return l10n.yogaInstLegRaiseBent;
+      case 'yogaInstLegRaiseStraight': return l10n.yogaInstLegRaiseStraight;
+      case 'yogaInstGoddessTwist': return l10n.yogaInstGoddessTwist;
+      case 'yogaInstGoddessStrength': return l10n.yogaInstGoddessStrength;
+      case 'yogaInstBackChestStretch': return l10n.yogaInstBackChestStretch;
+      case 'yogaInstStandingCrunch': return l10n.yogaInstStandingCrunch;
+      case 'yogaInstWarrior3': return l10n.yogaInstWarrior3;
+      case 'yogaInstWarrior1': return l10n.yogaInstWarrior1;
+      case 'yogaInstWarrior2': return l10n.yogaInstWarrior2;
+      case 'yogaInstTriangle': return l10n.yogaInstTriangle;
+      case 'yogaInstReverseWarrior': return l10n.yogaInstReverseWarrior;
+      case 'yogaInstSideAngle': return l10n.yogaInstSideAngle;
+      case 'yogaInstGentleBreathing': return l10n.yogaInstGentleBreathing;
+      case 'yogaInstDownwardDog': return l10n.yogaInstDownwardDog;
+      case 'yogaInstPlank': return l10n.yogaInstPlank;
+      case 'yogaInstEightPoint': return l10n.yogaInstEightPoint;
+      case 'yogaInstBabyCobra': return l10n.yogaInstBabyCobra;
+      case 'yogaInstFullCobra': return l10n.yogaInstFullCobra;
+      case 'yogaInstGentleBreathingIntermediate': return l10n.yogaInstGentleBreathingIntermediate;
+      case 'yogaInstSunSalutation': return l10n.yogaInstSunSalutation;
+      case 'yogaGentleBreathingAdvanced': return l10n.yogaGentleBreathingAdvanced;
+
+      default: return key;
+    }
+  }
+
+    // Get pose modification from key
+  static String getPoseModifications(BuildContext context, String key) {
+    final l10n = AppLocalizations.of(context)!;
+    
+    switch (key) {
+      case 'yogaModMoveSlowly': return l10n.yogaModMoveSlowly;
+      case 'yogaModStopDizzy': return l10n.yogaModStopDizzy;
+      case 'yogaModChairSupport': return l10n.yogaModChairSupport;
+      case 'yogaModElbowsStraight': return l10n.yogaModElbowsStraight;
+      case 'yogaModControlledMove': return l10n.yogaModControlledMove;
+      case 'yogaModFingersShoulders': return l10n.yogaModFingersShoulders;
+      case 'yogaModSlowRolls': return l10n.yogaModSlowRolls;
+      case 'yogaModButtocksDown': return l10n.yogaModButtocksDown;
+      case 'yogaModFaceForward': return l10n.yogaModFaceForward;
+      case 'yogaModHipsStable': return l10n.yogaModHipsStable;
+      case 'yogaModBackStraight': return l10n.yogaModBackStraight;
+      case 'yogaModBeginBent': return l10n.yogaModBeginBent;
+      case 'yogaModKneesToes': return l10n.yogaModKneesToes;
+      case 'yogaModHipsGrounded': return l10n.yogaModHipsGrounded;
+      case 'yogaModTorsoUpright': return l10n.yogaModTorsoUpright;
+      case 'yogaModChairBalance': return l10n.yogaModChairBalance;
+      case 'yogaModArmsLegsStraight': return l10n.yogaModArmsLegsStraight;
+      case 'yogaModEngageCore': return l10n.yogaModEngageCore;
+      case 'yogaModAvoidPregnancy': return l10n.yogaModAvoidPregnancy;
+      case 'yogaModOneHandChair': return l10n.yogaModOneHandChair;
+      case 'yogaModStraightLine': return l10n.yogaModStraightLine;
+      case 'yogaModShortenStance': return l10n.yogaModShortenStance;
+      case 'yogaModSquareHips': return l10n.yogaModSquareHips;
+      case 'yogaModShouldersLevel': return l10n.yogaModShouldersLevel;
+      case 'yogaModUseBlock': return l10n.yogaModUseBlock;
+      case 'yogaModHipsForward': return l10n.yogaModHipsForward;
+      case 'yogaModFrontKneeBent': return l10n.yogaModFrontKneeBent;
+      case 'yogaModGazeDirection': return l10n.yogaModGazeDirection;
+      case 'yogaModTuckTailbone': return l10n.yogaModTuckTailbone;
+      case 'yogaModBendKnees': return l10n.yogaModBendKnees;
+      case 'yogaModHeelsLifted': return l10n.yogaModHeelsLifted;
+      case 'yogaModLowerKnees': return l10n.yogaModLowerKnees;
+      case 'yogaModFeetTogether': return l10n.yogaModFeetTogether;
+      case 'yogaModSlowControl': return l10n.yogaModSlowControl;
+      case 'yogaModLiftPalms': return l10n.yogaModLiftPalms;
+      case 'yogaModPressFeet': return l10n.yogaModPressFeet;
+      case 'yogaModNoLockElbows': return l10n.yogaModNoLockElbows;
+      case 'yogaModTuckStomach': return l10n.yogaModTuckStomach;
+      case 'yogaModUseChairForSupport': return l10n.yogaModUseChairForSupport;
+      case 'yogaModLevelShoulders': return l10n.yogaModLevelShoulders;
+      case 'yogaModRestChildPose': return l10n.yogaModRestChildPose;
+      case 'yogaModSlowTransitions': return l10n.yogaModSlowTransitions;
+      case 'yogaModBendDownwardDog': return l10n.yogaModBendDownwardDog;
+      case 'yogaModSitOrLie': return l10n.yogaModSitOrLie;
+      case 'yogaModSitOrLieDown': return l10n.yogaModSitOrLieDown;
+      case 'yogaModCushionUnderKnees': return l10n.yogaModCushionUnderKnees;
+      case 'yogaModCloseEyesIfComfortable': return l10n.yogaModCloseEyesIfComfortable;
 
       default: return key;
     }

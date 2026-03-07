@@ -30,6 +30,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
   int _totalMinutes = 0;
   final Map<String, bool> _activityDays = {};
   DateTime _currentMonth = DateTime.now();
+  final Map<String, int> _dailyMinutes = {}; // dateKey -> actual minutes per day
 
   // Wellness data
   List<Map<String, dynamic>> _reflections = [];
@@ -62,8 +63,6 @@ class _ProgressScreenState extends State<ProgressScreen> {
       print('🔍 DEBUG: Found ${poseActivitiesResponse.length} pose activities');
       print('🔍 DEBUG: First few records: ${poseActivitiesResponse.take(3).toList()}');
 
-      _activityDays.clear();
-
       // Used to infer sessions
       final Map<String, List<DateTime>> grouped = {};
 
@@ -77,18 +76,24 @@ class _ProgressScreenState extends State<ProgressScreen> {
       print('🔍 DEBUG: Week starts on: ${DateFormat('yyyy-MM-dd').format(weekStart)}');
 
       // Process pose activities
+      _activityDays.clear();
+      _dailyMinutes.clear(); // ADD THIS
+
       for (var row in poseActivitiesResponse) {
         final raw = DateTime.parse(row['completed_at']).toLocal();
         final date = DateTime(raw.year, raw.month, raw.day);
         final key = DateFormat('yyyy-MM-dd').format(date);
         _activityDays[key] = true;
 
+        final durationSeconds = (row['duration_seconds'] ?? 0) as int;
+        final minutes = (durationSeconds / 60).ceil();
+        _dailyMinutes[key] = (_dailyMinutes[key] ?? 0) + minutes;
+
         final level = row['session_level'] as String;
         final completedAt = raw;
 
         grouped.putIfAbsent(level, () => []).add(completedAt);
 
-        final durationSeconds = (row['duration_seconds'] ?? 0) as int;
         totalSeconds += durationSeconds;
 
         if (!date.isBefore(weekStart)) {
@@ -97,20 +102,14 @@ class _ProgressScreenState extends State<ProgressScreen> {
         }
       }
 
-      // Infer sessions (30 min gap rule)
-      int sessionCount = 0;
+      // NEW: Count actual completed sessions
+      final sessionsResponse = await supabase
+          .from('session_completions')
+          .select('id')
+          .eq('user_id', userId);
 
-      grouped.forEach((level, times) {
-        times.sort();
-        DateTime? last;
-
-        for (final t in times) {
-          if (last == null || t.difference(last).inMinutes > 30) {
-            sessionCount++;
-          }
-          last = t;
-        }
-      });
+      int sessionCount = sessionsResponse.length;
+      print('🔍 DEBUG: Completed sessions: $sessionCount');
 
       final totalMinutesConverted = (totalSeconds / 60).ceil();
       final weekMinutesConverted = (weekSeconds / 60).ceil();
@@ -443,14 +442,8 @@ class _ProgressScreenState extends State<ProgressScreen> {
       // Use the locale-aware short day name (Mon, Tue, etc.)
       final dayName = DateFormat('E', Localizations.localeOf(context).toString()).format(date);
 
-      // Logic to get minutes for that specific day
-      // (Using your existing logic or checking specific records if available)
-      int minutesForDay = 0;
-      if (_activityDays[dateKey] == true) {
-        // This is a placeholder for your daily minute logic. 
-        // If your DB records have exact minutes per day, you should fetch them in _loadProgressData
-        minutesForDay = (_totalMinutes / max(_activityDays.length, 1)).round();
-      }
+      // Calculate minutes for this day (simplified - you may need to adjust based on your data structure)
+      int minutesForDay = _dailyMinutes[dateKey] ?? 0;
 
       weekData.add({
         'day': dayName,

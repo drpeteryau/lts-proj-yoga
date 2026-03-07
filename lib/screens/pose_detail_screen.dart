@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:video_player/video_player.dart';
-
+import '../l10n/app_localizations.dart';
 import '../models/yoga_pose.dart';
 import '../services/global_audio_service.dart';
+import '../services/simple_pin_dialog.dart';
+import '../services/simple_pin_service.dart';
 import '../utils/yoga_localization_helper.dart';
 import '../l10n/app_localizations.dart';
 
@@ -51,7 +53,34 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
     super.initState();
     _currentPoseIndex = widget.currentIndex.clamp(0, widget.allPoses.length - 1);
     _poseStartTime = DateTime.now();
-    _initializeVideo();
+    _checkPinAndInitialize();
+  }
+
+  Future<void> _checkPinAndInitialize() async {
+    if (SimplePinService.isPinVerifiedThisSession()) {
+      await _initializeVideo();
+      return;
+    }
+
+    // Show PIN dialog immediately (no delay)
+    Future.microtask(() {
+      if (mounted) {
+        _showPinDialog();
+      }
+    });
+  }
+
+  void _showPinDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => SimplePinDialog(
+        onSuccess: () async {
+          // PIN verified - initialize video
+          await _initializeVideo();
+        },
+      ),
+    );
   }
 
   Future<void> _initializeVideo() async {
@@ -223,6 +252,34 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
   }
 
   Widget _buildVideoSection() {
+    // Show PIN waiting message only if PIN not verified yet
+    if (!SimplePinService.isPinVerifiedThisSession()) {
+      return Container(
+        color: Colors.black,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.lock_outline,
+                size: 64,
+                color: Color(0xFF40E0D0),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Waiting for PIN...',
+                style: GoogleFonts.poppins(
+                  color: Colors.white70,
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // PIN verified - show video player or loading spinner
     return GestureDetector(
       onTap: _showControlsTemporarily,
       child: Container(
@@ -491,7 +548,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
 
                   // Instructions
                   Text(
-                    currentPose.instructions,
+                    YogaLocalizationHelper.getPoseInstructions(context, currentPose.instructions),
                     style: GoogleFonts.poppins(
                       fontSize: 17,  // Large, easy to read
                       color: Colors.white,  // Good contrast
@@ -532,38 +589,41 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
                   const SizedBox(height: 14),
 
                   // Safety tips list
-                  ...currentPose.modifications.map((tip) => Padding(
-                    padding: const EdgeInsets.only(bottom: 14),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.only(top: 4),
-                          padding: const EdgeInsets.all(4),
-                          decoration: const BoxDecoration(
-                            color: Colors.orange,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.check,
-                            size: 14,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            tip,
-                            style: GoogleFonts.poppins(
-                              fontSize: 16,  // Large
+                  ...currentPose.modifications.map((tipKey) {
+                    String translatedTip = YogaLocalizationHelper.getPoseModifications(context, tipKey);
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 14),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.only(top: 4),
+                            padding: const EdgeInsets.all(4),
+                            decoration: const BoxDecoration(
+                              color: Colors.orange,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.check,
+                              size: 14,
                               color: Colors.white,
-                              height: 1.6,
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  )),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              translatedTip,
+                              style: GoogleFonts.poppins(
+                                fontSize: 16,  // Large
+                                color: Colors.white,
+                                height: 1.6,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
 
                   const SizedBox(height: 32),
 
@@ -619,10 +679,10 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
                         : null,
 
                     label: Text(
-                      AppLocalizations.of(context)!.previous,
+                      AppLocalizations.of(context)!.back,
                       style: GoogleFonts.poppins(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
                           color: Colors.grey
                       ),
                     ),
@@ -654,7 +714,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
                     label: Text(
                       AppLocalizations.of(context)!.next,
                       style: GoogleFonts.poppins(
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
