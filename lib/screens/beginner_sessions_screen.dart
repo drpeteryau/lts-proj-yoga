@@ -11,7 +11,7 @@ class BeginnerSessionsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sessions = YogaData.beginnerSessions;
+    final sessions = YogaDataComplete.beginnerSessions;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF0F9F8), // Light turquoise background

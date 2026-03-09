@@ -3,6 +3,7 @@ import '../services/global_audio_service.dart';
 import '../screens/meditation_session_screen.dart';
 import '../screens/meditation_screen.dart';
 import '../utils/meditation_sounds_localization_helper.dart';
+import '../screens/sound_player_screen.dart';
 
 class MiniPlaybackBar extends StatelessWidget {
   const MiniPlaybackBar({super.key});
@@ -21,36 +22,69 @@ class MiniPlaybackBar extends StatelessWidget {
           return const SizedBox.shrink();
         }
 
-        // 🔥 USE SESSION TIMER INSTEAD OF AUDIO DURATION
-        final total = audioService.sessionTotal;
-        final remaining = audioService.sessionRemaining;
+final isAmbient =
+    audioService.currentSoundCategory == "Ambient";
 
-        final progress = total.inSeconds > 0
-            ? (total.inSeconds - remaining.inSeconds) /
-                total.inSeconds
-            : 0.0;
+double progress;
+
+Duration total;
+Duration remaining;
+
+if (isAmbient) {
+  // 🔊 Ambient sounds use real audio duration
+  total = audioService.totalDuration;
+  remaining = audioService.totalDuration - audioService.currentPosition;
+
+  progress = total.inSeconds > 0
+      ? audioService.currentPosition.inSeconds / total.inSeconds
+      : 0.0;
+} else {
+  // 🧘 Meditation uses session timer
+  total = audioService.sessionTotal;
+  remaining = audioService.sessionRemaining;
+
+  progress = total.inSeconds > 0
+      ? (total.inSeconds - remaining.inSeconds) / total.inSeconds
+      : 0.0;
+}
 
         return GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => MeditationSessionScreen(
-                  session: MeditationSession(
-                    titleKey: audioService.currentSoundTitle ?? '',
-                    descriptionKey: '',
-                    durationMinutes:
-                        total.inMinutes > 0 ? total.inMinutes : 5,
-                    imageUrl:
-                        audioService.currentSoundImageUrl ?? '',
-                    audioFile:
-                        audioService.currentAudioUrl ?? '',
-                    type: MeditationType.guided,
-                  ),
-                ),
-              ),
-            );
-          },
+onTap: () {
+
+  final isAmbient =
+      audioService.currentSoundCategory == "Ambient";
+
+  if (isAmbient) {
+   Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (_) => SoundPlayerScreen(
+      sounds: audioService.playlist.cast<MeditationSession>(),
+      initialIndex: audioService.currentIndex,
+    ),
+  ),
+);
+  } else {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MeditationSessionScreen(
+          session: MeditationSession(
+            titleKey: audioService.currentSoundTitle ?? '',
+            descriptionKey: '',
+            durationMinutes:
+                total.inMinutes > 0 ? total.inMinutes : 5,
+            imageUrl:
+                audioService.currentSoundImageUrl ?? '',
+            audioFile:
+                audioService.currentAudioUrl ?? '',
+            type: MeditationType.guided,
+          ),
+        ),
+      ),
+    );
+  }
+},
           child: Container(
             height: 72,
             decoration: BoxDecoration(

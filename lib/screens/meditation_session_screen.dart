@@ -197,30 +197,31 @@ class _MeditationSessionScreenState
                     child: Column(
                       children: [
 
-                        Align(
-                          alignment: Alignment.topLeft,
-                         child: Padding(
-    padding: const EdgeInsets.only(left: 8),
-    child: GestureDetector(
-      onTap: () {
-        Navigator.pop(context);
-      },
-      child: Container(
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.6),
-          shape: BoxShape.circle,
-          border: Border.all(color: Colors.white70, width: 1.5),
-        ),
-        child: const Icon(
-          Icons.remove,
-          color: Colors.white,
-          size: 28,
+if (!isPreparing && !isComplete)
+  Align(
+    alignment: Alignment.topLeft,
+    child: Padding(
+      padding: const EdgeInsets.only(left: 8),
+      child: GestureDetector(
+        onTap: () {
+          Navigator.pop(context);
+        },
+        child: Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: Colors.black.withOpacity(0.6),
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.white70, width: 1.5),
+          ),
+          child: const Icon(
+            Icons.remove,
+            color: Colors.white,
+            size: 28,
+          ),
         ),
       ),
     ),
   ),
-),
 
                         const Spacer(),
 

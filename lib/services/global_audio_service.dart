@@ -62,6 +62,83 @@ bool _isManuallyStopped = false;
   Duration get sessionTotal => _sessionTotal;
   Duration get sessionRemaining => _sessionRemaining;
 
+  List<dynamic> _playlist = [];
+int _currentIndex = 0;
+bool _shuffle = false;
+
+List<dynamic> get playlist => _playlist;
+int get currentIndex => _currentIndex;
+bool get shuffle => _shuffle;
+
+
+Future<void> startAmbientPlaylist({
+  required List<dynamic> sounds,
+  required int index,
+}) async {
+  _playlist = sounds;
+  _currentIndex = index;
+
+  final sound = _playlist[_currentIndex];
+
+  await startAmbientSound(
+    audioUrl: sound.audioFile,
+    title: sound.titleKey,
+    imageUrl: sound.imageUrl,
+    duration: Duration(minutes: sound.durationMinutes),
+    isLooping: sound.isLooping,
+  );
+}
+
+Future<void> nextSound() async {
+  if (_playlist.isEmpty) return;
+
+  if (_shuffle) {
+    _currentIndex =
+        (DateTime.now().millisecondsSinceEpoch % _playlist.length);
+  } else {
+    _currentIndex = (_currentIndex + 1) % _playlist.length;
+  }
+
+  final sound = _playlist[_currentIndex];
+
+  await startAmbientSound(
+    audioUrl: sound.audioFile,
+    title: sound.titleKey,
+    imageUrl: sound.imageUrl,
+    duration: Duration(minutes: sound.durationMinutes),
+    isLooping: sound.isLooping,
+  );
+
+  notifyListeners();
+}
+
+void toggleShuffle() {
+  _shuffle = !_shuffle;
+  notifyListeners();
+}
+
+Future<void> previousSound() async {
+  if (_playlist.isEmpty) return;
+
+  _currentIndex--;
+
+  if (_currentIndex < 0) {
+    _currentIndex = _playlist.length - 1;
+  }
+
+  final sound = _playlist[_currentIndex];
+
+  await startAmbientSound(
+    audioUrl: sound.audioFile,
+    title: sound.titleKey,
+    imageUrl: sound.imageUrl,
+    duration: Duration(minutes: sound.durationMinutes),
+    isLooping: sound.isLooping,
+  );
+
+  notifyListeners();
+}
+
   Future<void> initialize() async {
     _audioPlayer.onPlayerStateChanged.listen((state) {
       _isPlaying = state == PlayerState.playing;
@@ -79,10 +156,25 @@ bool _isManuallyStopped = false;
     });
 
     _audioPlayer.onPlayerComplete.listen((event) {
+
+  if (_isRepeating) {
+    _audioPlayer.seek(Duration.zero);
+    _audioPlayer.resume();
+    return;
+  }
+        // If a playlist exists, play the next sound
+  if (_playlist.isNotEmpty) {
+    nextSound();
+    return;
+
+  }
+
       _isPlaying = false;
       _currentPosition = Duration.zero;
       notifyListeners();
     });
+
+
 
     // 🔥 MAIN FIX STARTS HERE
     await _effectPlayer.setPlayerMode(PlayerMode.lowLatency);
@@ -161,35 +253,40 @@ bool _isManuallyStopped = false;
     if (_isPlaying && _sessionRemaining.inSeconds > 0) {
       _sessionRemaining -= const Duration(seconds: 1);
 
-      // 🔥 BREATHING PHASE LOGIC MOVED HERE
-      final seconds = _sessionRemaining.inSeconds;
-      final phase = seconds % 24;
+// Only run breathing cues for meditation sessions
+if (_currentSoundCategory == "Meditation") {
 
-      int currentPhaseIndex;
+  final seconds = _sessionRemaining.inSeconds;
+  final phase = seconds % 24;
 
-      if (phase < 6) {
-        currentPhaseIndex = 0;
-      } else if (phase < 12) {
-        currentPhaseIndex = 1;
-      } else if (phase < 18) {
-        currentPhaseIndex = 2;
-      } else {
-        currentPhaseIndex = 3;
-      }
+  int currentPhaseIndex;
 
-      if (currentPhaseIndex != _lastPhaseIndex) {
-        _lastPhaseIndex = currentPhaseIndex;
+  if (phase < 6) {
+    currentPhaseIndex = 0;
+  } else if (phase < 12) {
+    currentPhaseIndex = 1;
+  } else if (phase < 18) {
+    currentPhaseIndex = 2;
+  } else {
+    currentPhaseIndex = 3;
+  }
 
-        if (currentPhaseIndex == 0) {
-          playBreathingCue("inhale");
-        } else if (currentPhaseIndex == 1) {
-          playBreathingCue("hold");
-        } else if (currentPhaseIndex == 2) {
-          playBreathingCue("exhale");
-        } else {
-          playBreathingCue("hold");
-        }
-      }
+  if (currentPhaseIndex != _lastPhaseIndex) {
+    _lastPhaseIndex = currentPhaseIndex;
+
+    if (currentPhaseIndex == 0) {
+      playBreathingCue("inhale");
+    } else if (currentPhaseIndex == 1) {
+      playBreathingCue("hold");
+    } else if (currentPhaseIndex == 2) {
+      playBreathingCue("exhale");
+    } else {
+      playBreathingCue("hold");
+    }
+  }
+}
+
+
 
       notifyListeners();
 
@@ -211,35 +308,37 @@ void _resumeSessionTimer() {
     if (_isPlaying && _sessionRemaining.inSeconds > 0) {
       _sessionRemaining -= const Duration(seconds: 1);
 
-      // 🔥 ADD BREATHING LOGIC HERE (same as startSessionTimer)
-      final seconds = _sessionRemaining.inSeconds;
-      final phase = seconds % 24;
+if (_currentSoundCategory == "Meditation") {
 
-      int currentPhaseIndex;
+  final seconds = _sessionRemaining.inSeconds;
+  final phase = seconds % 24;
 
-      if (phase < 6) {
-        currentPhaseIndex = 0;
-      } else if (phase < 12) {
-        currentPhaseIndex = 1;
-      } else if (phase < 18) {
-        currentPhaseIndex = 2;
-      } else {
-        currentPhaseIndex = 3;
-      }
+  int currentPhaseIndex;
 
-      if (currentPhaseIndex != _lastPhaseIndex) {
-        _lastPhaseIndex = currentPhaseIndex;
+  if (phase < 6) {
+    currentPhaseIndex = 0;
+  } else if (phase < 12) {
+    currentPhaseIndex = 1;
+  } else if (phase < 18) {
+    currentPhaseIndex = 2;
+  } else {
+    currentPhaseIndex = 3;
+  }
 
-        if (currentPhaseIndex == 0) {
-          playBreathingCue("inhale");
-        } else if (currentPhaseIndex == 1) {
-          playBreathingCue("hold");
-        } else if (currentPhaseIndex == 2) {
-          playBreathingCue("exhale");
-        } else {
-          playBreathingCue("hold");
-        }
-      }
+  if (currentPhaseIndex != _lastPhaseIndex) {
+    _lastPhaseIndex = currentPhaseIndex;
+
+    if (currentPhaseIndex == 0) {
+      playBreathingCue("inhale");
+    } else if (currentPhaseIndex == 1) {
+      playBreathingCue("hold");
+    } else if (currentPhaseIndex == 2) {
+      playBreathingCue("exhale");
+    } else {
+      playBreathingCue("hold");
+    }
+  }
+}
 
       notifyListeners();
 
@@ -337,46 +436,53 @@ Future<void> togglePlayPause() async {
   notifyListeners();
 }
 
-  Future<void> startAmbientSound({
-    required String audioUrl,
-    required String title,
-    required String imageUrl,
-    Duration? duration,
-    bool isLooping = true,
-  }) async {
-    await _audioPlayer.stop();
+ Future<void> startAmbientSound({
+  required String audioUrl,
+  required String title,
+  required String imageUrl,
+  Duration? duration,
+  bool isLooping = true,
+}) async {
+  await clearSound();
+  await Future.delayed(const Duration(milliseconds: 300));
 
-    _currentAudioUrl = audioUrl;
-    _currentSoundTitle = title;
-    _currentSoundCategory = "Ambient";
-    _currentSoundImageUrl = imageUrl;
+  await _audioPlayer.stop();
 
-    if (_volume == 0) {
-      _volume = 0.8; // default fallback
-    }
+  _currentAudioUrl = audioUrl;
+  _currentSoundTitle = title;
+  _currentSoundCategory = "Ambient";
+  _currentSoundImageUrl = imageUrl;
 
-    // Play from URL (Pixabay links)
-    if (audioUrl.startsWith("http://") || audioUrl.startsWith("https://")) {
-      await _audioPlayer.setSource(UrlSource(audioUrl));
-    } else {
-      // Fallback: if you ever pass an asset filename by mistake
-      await _audioPlayer.setSource(AssetSource("audio/$audioUrl"));
-    }
-
-    await _audioPlayer.setVolume(_volume);
-    await _audioPlayer.setReleaseMode(
-      isLooping ? ReleaseMode.loop : ReleaseMode.release,
-    );
-
-    await _audioPlayer.resume();
-    _isPlaying = true;
-    notifyListeners();
-
-    // Optional session countdown (no breathing cues)
-    if (duration != null && duration > Duration.zero) {
-      _startAmbientSessionTimer(duration);
-    }
+  if (_volume == 0) {
+    _volume = 0.8;
   }
+
+await _audioPlayer.setSource(
+  AssetSource("audio/$audioUrl"),
+);
+
+// 🔥 Force metadata to load
+final d = await _audioPlayer.getDuration();
+if (d != null) {
+  _totalDuration = d;
+}
+
+
+  await _audioPlayer.setVolume(_volume);
+
+  await _audioPlayer.setReleaseMode(
+    isLooping ? ReleaseMode.loop : ReleaseMode.release,
+  );
+
+  await _audioPlayer.resume();
+
+  _isPlaying = true;
+  notifyListeners();
+
+  if (duration != null && duration > Duration.zero) {
+    _startAmbientSessionTimer(duration);
+  }
+}
 
   /// Simple timer for ambient sounds (no inhale/hold/exhale cues)
   void _startAmbientSessionTimer(Duration duration) {
@@ -518,6 +624,9 @@ Future<void> startMeditationWithWelcome({
   required Duration duration,
 }) async {
   try {
+    await clearSound();
+    await Future.delayed(const Duration(milliseconds: 300));
+
     _sessionStartCancelled = false;
 
     _isPreparing = true;

@@ -4,6 +4,7 @@ import 'meditation_session_screen.dart';
 import '../services/global_audio_service.dart';
 import '../l10n/app_localizations.dart';
 import '../utils/meditation_sounds_localization_helper.dart';
+import 'sound_player_screen.dart';
 
 enum MeditationType { guided, breathing, silent, sound }
 
@@ -76,8 +77,8 @@ class _MeditationScreenState extends State<MeditationScreen> {
       durationMinutes: 60,
       imageUrl:
       "https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=800",
-      // Ocean waves - Pixabay free audio
-      audioFile: "https://cdn.pixabay.com/download/audio/2022/03/10/audio_c1c0c7a4d6.mp3",
+      // Ocean waves 
+      audioFile: "oceanwaves.mp3",
       type: MeditationType.sound,
       isLooping: true,
     ),
@@ -87,8 +88,8 @@ class _MeditationScreenState extends State<MeditationScreen> {
       durationMinutes: 60,
       imageUrl:
       "https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?w=800",
-      // Rain sounds - Pixabay free audio
-      audioFile: "https://cdn.pixabay.com/download/audio/2021/08/04/audio_12b0c7a7d3.mp3",
+      // Rain sounds 
+      audioFile: "raining.mp3",
       type: MeditationType.sound,
       isLooping: true,
     ),
@@ -98,8 +99,8 @@ class _MeditationScreenState extends State<MeditationScreen> {
       durationMinutes: 60,
       imageUrl:
       "https://images.unsplash.com/photo-1511497584788-876760111969?w=800",
-      // Forest ambience - Pixabay free audio
-      audioFile: "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3",
+      // Forest ambience 
+      audioFile: "forestbirds.mp3",
       type: MeditationType.sound,
       isLooping: true,
     ),
@@ -110,7 +111,7 @@ class _MeditationScreenState extends State<MeditationScreen> {
       imageUrl:
       "https://images.unsplash.com/photo-1518098268026-4e89f1a2cd8e?w=800",
       // Fireplace crackling - Pixabay free audio
-      audioFile: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_4c0f6a4b82.mp3",
+      audioFile: "firecracking.mp3",
       type: MeditationType.sound,
       isLooping: true,
     ),
@@ -121,7 +122,7 @@ class _MeditationScreenState extends State<MeditationScreen> {
       imageUrl:
       "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800",
       // White noise - Pixabay free audio
-      audioFile: "https://cdn.pixabay.com/download/audio/2022/10/13/audio_2f2e3b3d4e.mp3",
+      audioFile: "whitenoise.mp3",
       type: MeditationType.sound,
       isLooping: true,
     ),
@@ -132,7 +133,7 @@ class _MeditationScreenState extends State<MeditationScreen> {
       imageUrl:
       "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800",
       // Stream water - Pixabay free audio
-      audioFile: "https://cdn.pixabay.com/download/audio/2022/06/07/audio_0c0e7c1f3d.mp3",
+      audioFile: "flowingwater.mp3",
       type: MeditationType.sound,
       isLooping: true,
     ),
@@ -143,7 +144,7 @@ class _MeditationScreenState extends State<MeditationScreen> {
       imageUrl:
       "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800",
       // Wind chimes - Pixabay free audio
-      audioFile: "https://cdn.pixabay.com/download/audio/2023/02/28/audio_5f3c9a2e1b.mp3",
+      audioFile: "windchime.mp3",
       type: MeditationType.sound,
       isLooping: true,
     ),
@@ -154,7 +155,7 @@ class _MeditationScreenState extends State<MeditationScreen> {
       imageUrl:
       "https://images.unsplash.com/photo-1475274047050-1d0c0975c63e?w=800",
       // Cricket sounds - Pixabay free audio
-      audioFile: "https://cdn.pixabay.com/download/audio/2022/06/08/audio_7e5c9b8f2a.mp3",
+      audioFile: "nightcricket.mp3",
       type: MeditationType.sound,
       isLooping: true,
     ),
@@ -580,10 +581,39 @@ class _MeditationScreenState extends State<MeditationScreen> {
     );
   }
 
-  void _startSession(MeditationSession session) {
-    if (MeditationSessionScreen.isActive) return;
+void _startSession(MeditationSession session) async {
+  if (MeditationSessionScreen.isActive) return;
 
-    final audioService = GlobalAudioService();
+  final audioService = GlobalAudioService();
+
+  // Stop current audio before switching
+  if (audioService.hasSound) {
+    await audioService.clearSound();
+    await Future.delayed(const Duration(milliseconds: 300));
+  }
+
+  if (session.type == MeditationType.sound) {
+
+    final index = sounds.indexOf(session);
+
+    // Start ambient playlist
+    await audioService.startAmbientPlaylist(
+      sounds: sounds,
+      index: index,
+    );
+
+    // Open ambient player
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => SoundPlayerScreen(
+          sounds: sounds,
+          initialIndex: index,
+        ),
+      ),
+    );
+
+  } else {
 
     Navigator.push(
       context,
@@ -592,26 +622,13 @@ class _MeditationScreenState extends State<MeditationScreen> {
       ),
     );
 
-    if (audioService.sessionRemaining == Duration.zero) {
-      if (session.type == MeditationType.sound) {
-        // For ambient sounds, play looping audio
-        audioService.startAmbientSound(
-          audioUrl: session.audioFile,
-          title: session.titleKey,
-          imageUrl: session.imageUrl,
-          duration: Duration(minutes: session.durationMinutes),
-          isLooping: session.isLooping,
-        );
-      } else {
-        // For meditations, use guided session
-        audioService.startMeditationWithWelcome(
-          assetFile: session.audioFile,
-          title: session.titleKey,
-          category: "Meditation",
-          imageUrl: session.imageUrl,
-          duration: Duration(minutes: session.durationMinutes),
-        );
-      }
-    }
+    audioService.startMeditationWithWelcome(
+      assetFile: session.audioFile,
+      title: session.titleKey,
+      category: "Meditation",
+      imageUrl: session.imageUrl,
+      duration: Duration(minutes: session.durationMinutes),
+    );
   }
+}
 }

@@ -90,6 +90,15 @@ flutter:
     - assets/videos/downwardfacingdog.mp4
     - assets/videos/shouldertorsotwist.mp4
     - assets/videos/sunsalutation.mp4
+    - assets/audio/firecracking.mp3
+    - assets/audio/flowingwater.mp3
+    - assets/audio/forestbirds.mp3
+    - assets/audio/nightcricket.mp3
+    - assets/audio/oceanwaves.mp3
+    - assets/audio/whitenoise.mp3
+    - assets/audio/windchime.mp3
+    - assets/audio/raining.mp3
+
 
 
   # To add assets to your application, add an assets section, like this:
