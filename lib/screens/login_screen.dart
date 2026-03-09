@@ -1,11 +1,8 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'main_navigation_screen.dart';
 import 'register_screen.dart';
-import 'complete_profile_screen.dart';
 import '../services/global_audio_service.dart';
 import '../l10n/app_localizations.dart';
 

@@ -119,7 +119,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       await GlobalAudioService().setVolume(savedVolume);
     }
 
-    // Schedule daily reminder (web only: will only fire while the app/tab is open)
+    // Schedule daily reminder
     if (_dailyPracticeReminder) {
       try {
         final time = _parseTimeOfDay(_reminderTime);
@@ -131,7 +131,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           minute: time.minute,
         );
       } catch (_) {
-        // Ignore parsing errors; user can re-select time if needed.
+        // Ignore parsing errors
       }
     }
 
@@ -528,14 +528,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             }
                           },
                           itemLabelBuilder: (value) {
-                            if (value == 'English')
+                            if (value == 'English') {
                               return AppLocalizations.of(context)!.english;
-                            if (value == 'Mandarin (Simplified)')
+                            }
+                            if (value == 'Mandarin (Simplified)') {
                               return AppLocalizations.of(context)!
                                   .mandarinSimplified;
-                            if (value == 'Mandarin (Traditional)')
+                            }
+                            if (value == 'Mandarin (Traditional)') {
                               return AppLocalizations.of(context)!
                                   .mandarinTraditional;
+                            }
                             return value;
                           },
                         ),
@@ -550,16 +553,29 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 .pushNotifications),
                             value: _pushNotifications,
                             activeThumbColor: turquoise,
-                            onChanged: (v) {
+                            onChanged: (v) async {
                               GlobalAudioService.playClickSound();
                               setState(() => _pushNotifications = v);
                               // Trigger the local notification if turned on
                               if (v == true) {
-                                NotificationService().showNotification(
+                                final shown = await NotificationService()
+                                    .showNotification(
                                   title: 'HealYoga',
                                   body: AppLocalizations.of(context)!
                                       .pushEnabledMsg,
                                 );
+                                if (!shown) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      backgroundColor: Colors.redAccent,
+                                      content: Text(
+                                        'Notifications are blocked. Please enable them in your browser settings.',
+                                      ),
+                                      behavior: SnackBarBehavior.floating,
+                                      duration: Duration(seconds: 4),
+                                    ),
+                                  );
+                                }
                               }
                             }),
                         SwitchListTile(

@@ -36,7 +36,7 @@ class AboutUsScreen extends StatelessWidget {
             const SizedBox(height: 20),
             // App Name
             Text(
-              AppLocalizations.of(context)!.appName,                       
+              AppLocalizations.of(context)!.appName,
               style: GoogleFonts.poppins(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
@@ -58,14 +58,7 @@ class AboutUsScreen extends StatelessWidget {
             const SizedBox(height: 40),
 
             // Mission
-            Text(
-              AppLocalizations.of(context)!.ourMission,
-              style: GoogleFonts.poppins(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
+            _sectionTitle(AppLocalizations.of(context)!.ourMission),
 
             const SizedBox(height: 16),
 
@@ -82,26 +75,12 @@ class AboutUsScreen extends StatelessWidget {
             const SizedBox(height: 40),
 
             // Divider
-            Container(
-              width: 60,
-              height: 4,
-              decoration: BoxDecoration(
-                color: turquoise,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
+            _sectionDivider(),
 
             const SizedBox(height: 40),
 
             // Team Section
-            Text(
-              AppLocalizations.of(context)!.projectTeam,
-              style: GoogleFonts.poppins(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
+            _sectionTitle(AppLocalizations.of(context)!.projectTeam),
 
             const SizedBox(height: 24),
 
@@ -113,13 +92,9 @@ class AboutUsScreen extends StatelessWidget {
 
             const SizedBox(height: 32),
 
-            Text(
+            _sectionTitle(
               AppLocalizations.of(context)!.developmentTeam,
-              style: GoogleFonts.poppins(
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-              ),
+              fontSize: 20,
             ),
 
             const SizedBox(height: 16),
@@ -135,27 +110,21 @@ class AboutUsScreen extends StatelessWidget {
 
             const SizedBox(height: 40),
 
-            // Divider
-            Container(
-              width: 60,
-              height: 4,
-              decoration: BoxDecoration(
-                color: turquoise,
-                borderRadius: BorderRadius.circular(2),
-              ),
+            // Yoga Instructor
+            _teamMember(
+              name: "Ms. Lim Li Peng",
+              role: AppLocalizations.of(context)!.yogaInstructor,
             ),
+
+            const SizedBox(height: 32),
+
+            // Divider
+            _sectionDivider(),
 
             const SizedBox(height: 40),
 
             // Features
-            Text(
-              AppLocalizations.of(context)!.keyFeatures,
-              style: GoogleFonts.poppins(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
+            _sectionTitle(AppLocalizations.of(context)!.keyFeatures),
 
             const SizedBox(height: 20),
 
@@ -164,7 +133,72 @@ class AboutUsScreen extends StatelessWidget {
             _feature(AppLocalizations.of(context)!.featureProgress),
             _feature(AppLocalizations.of(context)!.featureSounds),
 
-            const SizedBox(height: 50),
+            const SizedBox(height: 40),
+
+            // Divider
+            _sectionDivider(),
+
+            const SizedBox(height: 30),
+
+            // Package Licenses Card
+            _card(
+              title: AppLocalizations.of(context)!.licensesTitle,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    AppLocalizations.of(context)!.licenseDescription,
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 400), 
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            showLicensePage(
+                              context: context,
+                              applicationName: 'HealYoga',
+                              applicationVersion: '1.0.0',
+                              applicationIcon: const Padding(
+                                padding: EdgeInsets.all(12.0),
+                                child: Icon(Icons.self_improvement, size: 48, color: turquoise),
+                              ),
+                              applicationLegalese: AppLocalizations.of(context)!.copyright,
+                            );
+                          },
+                          icon: const Icon(Icons.description_outlined, color: Colors.white),
+                          label: Text(
+                            AppLocalizations.of(context)!.viewLicensesButton,
+                            style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              color: Colors.white,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: turquoise,
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 30),
 
             // Footer
             Text(
@@ -238,6 +272,53 @@ class AboutUsScreen extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _card({required String title, required Widget child}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            title,
+            style: GoogleFonts.poppins(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 16),
+          child,
+        ],
+      ),
+    );
+  }
+
+  Widget _sectionTitle(String title, {double fontSize = 24}) {
+    return Text(
+      title,
+      style: GoogleFonts.poppins(
+        fontSize: fontSize,
+        fontWeight: FontWeight.bold,
+        color: Colors.black87,
+      ),
+    );
+  }
+
+  Widget _sectionDivider() {
+    return Container(
+      width: 60,
+      height: 4,
+      decoration: BoxDecoration(
+        color: turquoise,
+        borderRadius: BorderRadius.circular(2),
       ),
     );
   }

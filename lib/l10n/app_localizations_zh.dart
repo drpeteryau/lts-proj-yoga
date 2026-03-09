@@ -1527,6 +1527,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get meditationSessionEveningDesc => '放下疲惫，为休息做好准备';
 
   @override
+  String get soundCategory => '环境音';
+
+  @override
   String get meditationPreparing => '正在为您准备课程...';
 
   @override
@@ -1757,6 +1760,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get developmentTeam => '开发团队';
 
   @override
+  String get yogaInstructor => '瑜伽导师';
+
+  @override
   String get keyFeatures => '核心功能';
 
   @override
@@ -1770,6 +1776,15 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get featureSounds => '助眠舒缓音效';
+
+  @override
+  String get licensesTitle => '开源许可';
+
+  @override
+  String get licenseDescription => 'HealYoga 是使用開源軟體構建的。您可以在下方查看完整的許可列表。';
+
+  @override
+  String get viewLicensesButton => '查看所有许可';
 
   @override
   String get copyright => '© 2026 ZENCORE';
@@ -3301,6 +3316,9 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get meditationSessionEveningDesc => '放下疲惫，为休息做好准备';
 
   @override
+  String get soundCategory => '环境音';
+
+  @override
   String get meditationPreparing => '正在为您准备课程...';
 
   @override
@@ -3531,6 +3549,9 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get developmentTeam => '开发团队';
 
   @override
+  String get yogaInstructor => '瑜伽导师';
+
+  @override
   String get keyFeatures => '核心功能';
 
   @override
@@ -3544,6 +3565,15 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get featureSounds => '助眠舒缓音效';
+
+  @override
+  String get licensesTitle => '开源许可';
+
+  @override
+  String get licenseDescription => 'HealYoga 是使用開源軟體構建的。您可以在下方查看完整的許可列表。';
+
+  @override
+  String get viewLicensesButton => '查看所有许可';
 
   @override
   String get copyright => '© 2026 ZENCORE';
@@ -5075,6 +5105,9 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get meditationSessionEveningDesc => '放下疲憊，為休息做好準備';
 
   @override
+  String get soundCategory => '環境音';
+
+  @override
   String get meditationPreparing => '正在為您準備課程...';
 
   @override
@@ -5305,6 +5338,9 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get developmentTeam => '開發團隊';
 
   @override
+  String get yogaInstructor => '瑜伽導師';
+
+  @override
   String get keyFeatures => '核心功能';
 
   @override
@@ -5318,6 +5354,15 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get featureSounds => '助眠舒緩音效';
+
+  @override
+  String get licensesTitle => '開源授權';
+
+  @override
+  String get licenseDescription => 'HealYoga 是使用開源軟體構建的。您可以在下方查看完整的許可列表。';
+
+  @override
+  String get viewLicensesButton => '查看所有授權';
 
   @override
   String get copyright => '© 2026 ZENCORE';

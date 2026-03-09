@@ -39,7 +39,7 @@ class HomeTabScreen extends StatefulWidget {
 class _HomeTabScreenState extends State<HomeTabScreen> {
   String _userName = '';
   String? _profileImageUrl;
-  int _selectedDayIndex = DateTime.now().weekday - 1;
+  final int _selectedDayIndex = DateTime.now().weekday - 1;
 
   // Wellness data
   int _currentStreak = 0;
@@ -350,62 +350,59 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
   }
 
   Widget _buildWeekCalendar() {
+    final String todayDate = DateTime.now().day.toString(); 
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: List.generate(7, (index) {
-          final isSelected = index == _selectedDayIndex;
           final day = _weekDays[index];
+          // Check if this specific day is "Today" based on the date string
+          final bool isToday = day['date'] == todayDate;
 
-          return GestureDetector(
-            onTap: () {
-              setState(() => _selectedDayIndex = index);
-            },
-            child: Column(
-              children: [
-                const SizedBox(height: 7),
-                Text(
-                  day['initial']!,
-                  style: GoogleFonts.poppins(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color:
-                        isSelected ? const Color(0xFF40E0D0) : Colors.black45,
-                  ),
+          return Column(
+            children: [
+              const SizedBox(height: 7),
+              Text(
+                day['initial']!,
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: isToday ? const Color(0xFF40E0D0) : Colors.black45,
                 ),
-                const SizedBox(height: 14),
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? const Color(0xFF40E0D0)
-                        : const Color(0xCAFFFFFF),
-                    shape: BoxShape.circle,
-                    boxShadow: isSelected
-                        ? [
-                            BoxShadow(
-                              color: const Color(0xFF40E0D0).withOpacity(0.3),
-                              blurRadius: 10,
-                              spreadRadius: 4,
-                            ),
-                          ]
-                        : null,
-                  ),
-                  child: Center(
-                    child: Text(
-                      day['date']!,
-                      style: GoogleFonts.poppins(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: isSelected ? Colors.white : Colors.grey[700],
-                      ),
+              ),
+              const SizedBox(height: 14),
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: isToday
+                      ? const Color(0xFF40E0D0)
+                      : const Color(0xCAFFFFFF),
+                  shape: BoxShape.circle,
+                  boxShadow: isToday
+                      ? [
+                          BoxShadow(
+                            color: const Color(0xFF40E0D0).withOpacity(0.3),
+                            blurRadius: 10,
+                            spreadRadius: 4,
+                          ),
+                        ]
+                      : null,
+                ),
+                child: Center(
+                  child: Text(
+                    day['date']!,
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: isToday ? Colors.white : Colors.grey[700],
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           );
         }),
       ),

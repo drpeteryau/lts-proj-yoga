@@ -523,6 +523,7 @@
   "meditationSessionBreathingDesc": "透過專注呼吸緩解壓力",
   "meditationSessionEveningTitle": "睡前放鬆",
   "meditationSessionEveningDesc": "放下疲憊，為休息做好準備",
+  "soundCategory": "環境音",
 
   
   "meditationPreparing": "正在為您準備課程...",
@@ -608,11 +609,15 @@
   "projectTeam": "項目團隊",
   "projectSupervisor": "項目主管",
   "developmentTeam": "開發團隊",
+  "yogaInstructor": "瑜伽導師",
   "keyFeatures": "核心功能",
   "featureChairYoga": "椅子瑜伽課程",
   "featureMeditation": "專業冥想指導",
   "featureProgress": "進度跟蹤",
   "featureSounds": "助眠舒緩音效",
+  "licensesTitle": "開源授權",
+  "licenseDescription": "HealYoga 是使用開源軟體構建的。您可以在下方查看完整的許可列表。",
+  "viewLicensesButton": "查看所有授權",
   "copyright": "© 2026 ZENCORE",
   "allRightsReserved": "保留所有權利"
 }

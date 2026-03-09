@@ -649,6 +649,7 @@
   "meditationSessionBreathingDesc": "Reduce stress with focused breath",
   "meditationSessionEveningTitle": "Evening Wind Down",
   "meditationSessionEveningDesc": "Release the day and prepare for rest",
+  "soundCategory": "Ambient",
 
 
   "meditationPreparing": "Preparing your session...",
@@ -739,11 +740,15 @@
   "projectTeam": "Project Team",
   "projectSupervisor": "Project Supervisor",
   "developmentTeam": "Development Team",
+  "yogaInstructor": "Yoga Instructor",
   "keyFeatures": "Key Features",
   "featureChairYoga": "Chair Yoga Sessions",
   "featureMeditation": "Guided Meditation",
   "featureProgress": "Progress Tracking",
   "featureSounds": "Calming Sounds",
+  "licensesTitle": "Open Source Licenses",
+  "licenseDescription": "HealYoga is built with open-source software. You can view the full list of licenses below.",
+  "viewLicensesButton": "View All Licenses",
   "copyright": "© 2026 ZENCORE",
   "allRightsReserved": "All Rights Reserved"
 }

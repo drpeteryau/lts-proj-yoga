@@ -2,9 +2,10 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter/foundation.dart';
-import 'package:web/web.dart' as web; // For browser notifications
-import 'dart:js_interop';
 import 'dart:async';
+
+import 'notification_web_stub.dart'
+    if (dart.library.html) 'notification_web.dart';
 
 class NotificationService {
   // Singleton pattern
@@ -27,6 +28,29 @@ class NotificationService {
     }
 
     tz.initializeTimeZones();
+
+    // Attempt to set local timezone for correct scheduled notifications.
+    // Some devices may report a timeZoneName that doesn't match TZ database keys.
+    final now = DateTime.now();
+    final offset = now.timeZoneOffset;
+    final name = now.timeZoneName;
+
+    try {
+      final location = tz.getLocation(name);
+      tz.setLocalLocation(location);
+      debugPrint('✅ Timezone set to $name (from DateTime.timeZoneName)');
+    } catch (_) {
+      // Fallback: match by offset (best-effort)
+      final match = tz.timeZoneDatabase.locations.entries.firstWhere((entry) {
+        try {
+          return tz.TZDateTime.now(entry.value).timeZoneOffset == offset;
+        } catch (_) {
+          return false;
+        }
+      }, orElse: () => MapEntry('UTC', tz.UTC));
+      tz.setLocalLocation(match.value);
+      debugPrint('✅ Timezone set to ${match.key} (matched offset $offset)');
+    }
 
     const AndroidInitializationSettings androidSettings =
         AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -100,38 +124,31 @@ class NotificationService {
         importance: Importance.max,
         priority: Priority.high,
         showWhen: true,
+        icon: 'zencore_icon',
+        largeIcon: DrawableResourceAndroidBitmap('zencore_icon'),
       ),
     );
   }
 
-  // Web notification helper
-  void _showWebNotification(String? title, String? body) {
-    if (web.Notification.permission == 'granted') {
-      web.Notification(
-        title ?? 'HealYoga',
-        web.NotificationOptions(body: body ?? ''),
-      );
-    } else {
-      web.Notification.requestPermission().toDart.then((permission) {
-        if (permission == 'granted') {
-          web.Notification(
-            title ?? 'HealYoga',
-            web.NotificationOptions(body: body ?? ''),
-          );
-        }
-      });
-    }
+  // Web notification helper (delegates to platform-specific implementation)
+  Future<bool> _showWebNotification(String? title, String? body) async {
+    WebNotificationHelper.show(
+      title: title ?? 'HealYoga',
+      body: body ?? '',
+      icon: '/icons/zencore_icon.png',
+    );
+    return true;
   }
 
-  // Show an immediate notification
-  Future<void> showNotification({
+  // Show an immediate notification. Returns true if shown (web) or on success (native).
+  Future<bool> showNotification({
     int id = 0,
     String? title,
     String? body,
     String? payload,
   }) async {
     if (kIsWeb) {
-      _showWebNotification(title, body);
+      return _showWebNotification(title, body);
     } else {
       await notificationsPlugin.show(
         id,
@@ -140,6 +157,7 @@ class NotificationService {
         _notificationDetails(),
         payload: payload,
       );
+      return true;
     }
   }
 

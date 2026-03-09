@@ -7,7 +7,7 @@ import '../l10n/app_localizations.dart';
 class SimplePinDialog extends StatefulWidget {
   final VoidCallback onSuccess;
 
-  const SimplePinDialog({Key? key, required this.onSuccess}) : super(key: key);
+  const SimplePinDialog({super.key, required this.onSuccess});
 
   @override
   State<SimplePinDialog> createState() => _SimplePinDialogState();

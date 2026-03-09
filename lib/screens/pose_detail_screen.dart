@@ -10,7 +10,6 @@ import '../services/global_audio_service.dart';
 import '../services/simple_pin_dialog.dart';
 import '../services/simple_pin_service.dart';
 import '../utils/yoga_localization_helper.dart';
-import '../l10n/app_localizations.dart';
 
 /// Pose Detail Screen - Information/Learning page
 /// No timer, no completion tracking, just educational content

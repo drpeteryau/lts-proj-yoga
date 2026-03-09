@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../services/global_audio_service.dart';
 import '../screens/meditation_session_screen.dart';
 import '../screens/meditation_screen.dart';
+import '../utils/meditation_sounds_localization_helper.dart';
 
 class MiniPlaybackBar extends StatelessWidget {
   const MiniPlaybackBar({super.key});
@@ -9,6 +10,7 @@ class MiniPlaybackBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final audioService = GlobalAudioService();
+    final lookup = MeditationLookup(context);
 
     return AnimatedBuilder(
       animation: audioService,
@@ -108,19 +110,14 @@ class MiniPlaybackBar extends StatelessWidget {
                         // Title + Category
                         Expanded(
                           child: Column(
-                            crossAxisAlignment:
-                                CrossAxisAlignment.start,
-                            mainAxisAlignment:
-                                MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                audioService
-                                        .currentSoundTitle ??
-                                    '',
+                                lookup.getTitle(audioService.currentSoundTitle ?? ''),
                                 style: const TextStyle(
                                   fontSize: 14,
-                                  fontWeight:
-                                      FontWeight.w600,
+                                  fontWeight: FontWeight.w600,
                                 ),
                                 maxLines: 1,
                                 overflow:
@@ -128,16 +125,13 @@ class MiniPlaybackBar extends StatelessWidget {
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                audioService
-                                        .currentSoundCategory ??
-                                    '',
+                                lookup.getCategory(audioService.currentSoundCategory ?? ''),
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: Colors.grey[600],
                                 ),
                                 maxLines: 1,
-                                overflow:
-                                    TextOverflow.ellipsis,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ],
                           ),

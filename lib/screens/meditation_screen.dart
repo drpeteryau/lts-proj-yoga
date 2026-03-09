@@ -194,7 +194,7 @@ class _MeditationScreenState extends State<MeditationScreen> {
                     const SizedBox(height: 32),
                     _buildSectionTitle(AppLocalizations.of(context)!.guidedMeditationSection),
                     const SizedBox(height: 16),
-                    ...sessions.map((session) => _buildMeditationCard(session, lookup)).toList(),
+                    ...sessions.map((session) => _buildMeditationCard(session, lookup)),
                     const SizedBox(height: 32),
                     _buildSectionTitle(AppLocalizations.of(context)!.ambientSoundsSection),
                     const SizedBox(height: 8),

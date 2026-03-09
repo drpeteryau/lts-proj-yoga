@@ -1606,6 +1606,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Release the day and prepare for rest';
 
   @override
+  String get soundCategory => 'Ambient';
+
+  @override
   String get meditationPreparing => 'Preparing your session...';
 
   @override
@@ -1839,6 +1842,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get developmentTeam => 'Development Team';
 
   @override
+  String get yogaInstructor => 'Yoga Instructor';
+
+  @override
   String get keyFeatures => 'Key Features';
 
   @override
@@ -1852,6 +1858,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get featureSounds => 'Calming Sounds';
+
+  @override
+  String get licensesTitle => 'Open Source Licenses';
+
+  @override
+  String get licenseDescription =>
+      'HealYoga is built with open-source software. You can view the full list of licenses below.';
+
+  @override
+  String get viewLicensesButton => 'View All Licenses';
 
   @override
   String get copyright => '© 2026 ZENCORE';

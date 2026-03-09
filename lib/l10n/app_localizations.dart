@@ -3004,6 +3004,12 @@ abstract class AppLocalizations {
   /// **'Release the day and prepare for rest'**
   String get meditationSessionEveningDesc;
 
+  /// No description provided for @soundCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Ambient'**
+  String get soundCategory;
+
   /// No description provided for @meditationPreparing.
   ///
   /// In en, this message translates to:
@@ -3460,6 +3466,12 @@ abstract class AppLocalizations {
   /// **'Development Team'**
   String get developmentTeam;
 
+  /// No description provided for @yogaInstructor.
+  ///
+  /// In en, this message translates to:
+  /// **'Yoga Instructor'**
+  String get yogaInstructor;
+
   /// No description provided for @keyFeatures.
   ///
   /// In en, this message translates to:
@@ -3489,6 +3501,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Calming Sounds'**
   String get featureSounds;
+
+  /// No description provided for @licensesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Source Licenses'**
+  String get licensesTitle;
+
+  /// No description provided for @licenseDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'HealYoga is built with open-source software. You can view the full list of licenses below.'**
+  String get licenseDescription;
+
+  /// No description provided for @viewLicensesButton.
+  ///
+  /// In en, this message translates to:
+  /// **'View All Licenses'**
+  String get viewLicensesButton;
 
   /// No description provided for @copyright.
   ///
