@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../data/yoga_data.dart';
+import '../data/yoga_data_complete.dart';
 import '../models/yoga_session.dart';
 import 'session_detail_screen.dart';
 import '../services/global_audio_service.dart';

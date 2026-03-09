@@ -178,6 +178,67 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get forgotPassword => 'Forgot Password?';
+
+  @override
+  String get resetPassword => 'Reset Password';
+
+  @override
+  String get resetPasswordTitle => 'Reset Your Password';
+
+  @override
+  String get resetPasswordSubtitle =>
+      'Enter your email and we\'ll send you a reset link';
+
+  @override
+  String get sendResetLink => 'Send Reset Link';
+
+  @override
+  String get resetLinkSent => 'Password reset link sent! Check your email 📧';
+
+  @override
+  String resetLinkFailed(String error) {
+    return 'Failed to send reset link: $error';
+  }
+
+  @override
+  String get backToLogin => 'Back to Login';
+
+  @override
+  String get invalidCredentials =>
+      'Invalid email or password. Please try again.';
+
+  @override
+  String get emailNotVerified =>
+      'Please verify your email before logging in. Check your inbox.';
+
+  @override
+  String get accountNotFound =>
+      'No account found with this email. Please register first.';
+
+  @override
+  String get tooManyAttempts =>
+      'Too many login attempts. Please try again later.';
+
+  @override
+  String get networkError =>
+      'Network error. Please check your connection and try again.';
+
+  @override
+  String get unknownError => 'An unexpected error occurred. Please try again.';
+
+  @override
+  String get emailAlreadyExists =>
+      'This email is already registered. Please log in instead.';
+
+  @override
+  String get weakPassword =>
+      'Password is too weak. Please follow the requirements.';
+
+  @override
+  String get changeLanguage => 'Change Language';
+
+  @override
   String get onboardingHeading => '感受更强健的自己';
 
   @override
@@ -1967,6 +2028,59 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   }
 
   @override
+  String get forgotPassword => '忘记密码？';
+
+  @override
+  String get resetPassword => '重置密码';
+
+  @override
+  String get resetPasswordTitle => '重置您的密码';
+
+  @override
+  String get resetPasswordSubtitle => '输入您的电子邮箱，我们将向您发送重置链接';
+
+  @override
+  String get sendResetLink => '发送重置链接';
+
+  @override
+  String get resetLinkSent => '密码重置链接已发送！请检查您的电子邮箱 📧';
+
+  @override
+  String resetLinkFailed(String error) {
+    return '发送重置链接失败：$error';
+  }
+
+  @override
+  String get backToLogin => '返回登录';
+
+  @override
+  String get invalidCredentials => '电子邮箱或密码无效。请重试。';
+
+  @override
+  String get emailNotVerified => '请在登录前验证您的电子邮箱。请检查您的收件箱。';
+
+  @override
+  String get accountNotFound => '未找到该电子邮箱的账户。请先注册。';
+
+  @override
+  String get tooManyAttempts => '登录尝试次数过多。请稍后重试。';
+
+  @override
+  String get networkError => '网络错误。请检查您的连接后重试。';
+
+  @override
+  String get unknownError => '发生意外错误。请重试。';
+
+  @override
+  String get emailAlreadyExists => '该电子邮箱已注册。请改用登录。';
+
+  @override
+  String get weakPassword => '密码太弱。请遵循要求。';
+
+  @override
+  String get changeLanguage => '更改语言';
+
+  @override
   String get onboardingHeading => '感受更强健的自己';
 
   @override
@@ -3754,6 +3868,59 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String googleSignInFailed(String error) {
     return 'Google 登入失敗：$error';
   }
+
+  @override
+  String get forgotPassword => '忘記密碼？';
+
+  @override
+  String get resetPassword => '重設密碼';
+
+  @override
+  String get resetPasswordTitle => '重設您的密碼';
+
+  @override
+  String get resetPasswordSubtitle => '輸入您的電子郵件，我們將向您發送重設連結';
+
+  @override
+  String get sendResetLink => '發送重設連結';
+
+  @override
+  String get resetLinkSent => '密碼重設連結已發送！請檢查您的電子郵件 📧';
+
+  @override
+  String resetLinkFailed(String error) {
+    return '發送重設連結失敗：$error';
+  }
+
+  @override
+  String get backToLogin => '返回登入';
+
+  @override
+  String get invalidCredentials => '電子郵件或密碼無效。請重試。';
+
+  @override
+  String get emailNotVerified => '請在登入前驗證您的電子郵件。請檢查您的收件匣。';
+
+  @override
+  String get accountNotFound => '未找到該電子郵件的帳號。請先註冊。';
+
+  @override
+  String get tooManyAttempts => '登入嘗試次數過多。請稍後重試。';
+
+  @override
+  String get networkError => '網路錯誤。請檢查您的連線後重試。';
+
+  @override
+  String get unknownError => '發生意外錯誤。請重試。';
+
+  @override
+  String get emailAlreadyExists => '該電子郵件已註冊。請改用登入。';
+
+  @override
+  String get weakPassword => '密碼太弱。請遵循要求。';
+
+  @override
+  String get changeLanguage => '更改語言';
 
   @override
   String get onboardingHeading => '感受更強健的自己';

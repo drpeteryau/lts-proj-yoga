@@ -41,4 +41,8 @@ flutter:
   - assets/audio/inhale.mp3
   - assets/audio/hold.mp3
   - assets/audio/exhale.mp3
+  - assets/videos/
+  - assets/videos/downwardfacingdog.mp4
+  - assets/videos/shouldertorsotwist.mp4
+  - assets/videos/sunsalutation.mp4
 

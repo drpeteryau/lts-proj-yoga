@@ -78,6 +78,7 @@ Drop your right ear to your right shoulder without lifting your left shoulder. U
       nameKey: 'yogaShouldersTorsoTwist',
       descriptionKey: 'yogaShouldersTorsoTwistDesc',
       imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=500',
+      videoAsset: 'assets/videos/shouldertorsotwist.mp4',
       durationSeconds: 90,
       modifications: [
         'Keep hips stable and not moving',
@@ -340,6 +341,7 @@ Drop your right ear to your right shoulder without lifting your left shoulder. U
       nameKey: 'yogaDownwardDog',
       descriptionKey: 'yogaDownwardDogDesc',
       imageUrl: 'https://images.unsplash.com/photo-1588286840104-8957b019727f?w=500',
+      videoAsset: 'assets/videos/downwardfacingdog.mp4',
       durationSeconds: 90,
       modifications: [
         'Fingers spread like spider web',
@@ -440,6 +442,7 @@ Drop your right ear to your right shoulder without lifting your left shoulder. U
       nameKey: 'yogaSunSalutation',
       descriptionKey: 'yogaSunSalutationDesc',
       imageUrl: 'https://images.unsplash.com/photo-1588286840104-8957b019727f?w=500',
+      videoAsset: 'assets/videos/sunsalutation.mp4',
       durationSeconds: 300, // 5 minutes for full flow
       modifications: [
         'One breath, one movement',

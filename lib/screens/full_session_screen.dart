@@ -26,7 +26,7 @@ class FullSessionScreen extends StatefulWidget {
 
 class _FullSessionScreenState extends State<FullSessionScreen> {
   int _currentPoseIndex = 0;
-  late int _remainingSeconds;
+  int _remainingSeconds = 0; // Initialize with 0 instead of late
   Timer? _timer;
   bool _isTimerRunning = false;
   bool _isPaused = false;
@@ -99,75 +99,48 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
       return;
     }
 
-    try {
-      final supabase = Supabase.instance.client;
-
-      print('🔍 Loading completed poses for ${widget.session.levelKey}...');
-
-      // Query pose_activity table for unique completed poses
-      final response = await supabase
-          .from('pose_activity')
-          .select('pose_id')
-          .eq('user_id', userId)
-          .eq('session_level', widget.session.levelKey);
-
-      // Get unique pose IDs
-      final uniquePoseIds = <String>{};
-      for (final row in response) {
-        uniquePoseIds.add(row['pose_id'].toString());
-      }
-
-      if (mounted) {
-        setState(() {
-          _completedPoseIds.clear();
-          _completedPoseIds.addAll(uniquePoseIds);
-          for (final poseId in uniquePoseIds) {
-            print('  ✓ Pose completed: $poseId');
-          }
-        });
-        print('✅ Loaded ${_completedPoseIds.length} completed poses');
-      }
-    } catch (e) {
-      print('❌ Error loading completed poses: $e');
-    }
+    // Don't load historical completed poses - only track what's completed in THIS session
+    // The _completedPoseIds set will be populated as the user completes poses
+    print('🔍 Starting fresh session - no historical data loaded');
   }
 
   void _findFirstIncompletePose() {
-    print('🔍 Finding first incomplete pose...');
-    print('🔍 Completed poses: ${_completedPoseIds.length}');
+    print('🔍 Starting at first pose of session...');
 
-    // Find the first pose that's not completed
-    for (int i = 0; i < widget.session.allPoses.length; i++) {
-      final pose = widget.session.allPoses[i];
-
-      if (!_completedPoseIds.contains(pose.id)) {
-        // Found first incomplete pose!
-        setState(() {
-          _currentPoseIndex = i;
-          _remainingSeconds = pose.durationSeconds;
-        });
-
-        print(
-            '✅ Resuming at pose ${i + 1}/${widget.session.allPoses.length}: ${pose.nameKey}');
-        return;
-      }
-    }
-
-    // All poses completed - start from beginning
-    print('🎉 All poses completed! Starting from beginning.');
+    // Always start at the beginning since we're not loading historical data
     setState(() {
       _currentPoseIndex = 0;
       _remainingSeconds = widget.session.allPoses[0].durationSeconds;
     });
+
+    print('✅ Starting at pose 1/${widget.session.allPoses.length}: ${widget.session.allPoses[0].nameKey}');
   }
 
   Future<void> _initializeVideo() async {
-    // Placeholder video URL - replace with actual video based on pose
-    _videoController = VideoPlayerController.networkUrl(
-      Uri.parse(
-        'https://rkhmailqbmbijsfzhcch.supabase.co/storage/v1/object/public/pose-videos/beginner/NeckHeadShoulders.MOV',
-      ),
-    );
+    await _videoController?.dispose();
+
+    // Priority: Local asset > Network URL > Placeholder
+    if (currentPose.videoAsset != null && currentPose.videoAsset!.isNotEmpty) {
+      // Use local asset video
+      print('📹 Loading video from asset: ${currentPose.videoAsset}');
+      _videoController = VideoPlayerController.asset(
+        currentPose.videoAsset!,
+      );
+    } else if (currentPose.videoUrl != null && currentPose.videoUrl!.isNotEmpty) {
+      // Use network video URL
+      print('📹 Loading video from URL: ${currentPose.videoUrl}');
+      _videoController = VideoPlayerController.networkUrl(
+        Uri.parse(currentPose.videoUrl!),
+      );
+    } else {
+      // Fallback to placeholder video
+      print('📹 Loading placeholder video');
+      _videoController = VideoPlayerController.networkUrl(
+        Uri.parse(
+          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+        ),
+      );
+    }
 
     try {
       await _videoController!.initialize();
@@ -178,8 +151,14 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
           _isVideoInitialized = true;
         });
       }
+      print('✅ Video initialized and playing');
     } catch (e) {
-      print('Error initializing video: $e');
+      print('❌ Error initializing video: $e');
+      if (mounted) {
+        setState(() {
+          _isVideoInitialized = false;
+        });
+      }
     }
   }
 
@@ -286,6 +265,29 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
     // User needs to press play
   }
 
+  // Load a specific pose (for jumping via pose list)
+  Future<void> _loadCurrentPose() async {
+    GlobalAudioService.playClickSound();
+
+    // Dispose old video controller
+    await _videoController?.dispose();
+
+    setState(() {
+      _remainingSeconds = currentPose.durationSeconds;
+      _isVideoInitialized = false;
+      _isPaused = false;
+      _isTimerRunning = false;
+    });
+
+    // Stop timer
+    _timer?.cancel();
+
+    // Initialize new video
+    await _initializeVideo();
+
+    // Don't auto-start timer - user needs to press play
+  }
+
   void _onPoseComplete() async {
     _timer?.cancel();
     setState(() {
@@ -316,7 +318,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
         'user_id': userId,
         'pose_id': currentPose.id,
         'pose_name':
-            YogaLocalizationHelper.getPoseName(context, currentPose.nameKey),
+        YogaLocalizationHelper.getPoseName(context, currentPose.nameKey),
         'session_level': widget.session.levelKey,
         'duration_seconds': currentPose.durationSeconds,
         'completed_at': DateTime.now().toIso8601String(),
@@ -624,7 +626,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       body: Stack(
         children: [
           // Main content
@@ -648,11 +650,18 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
             left: 16,
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.5),
+                color: Colors.white.withOpacity(0.9),
                 shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
               child: IconButton(
-                icon: const Icon(Icons.close, color: Colors.white),
+                icon: const Icon(Icons.close, color: Color(0xFF40E0D0)),
                 onPressed: () async {
                   await GlobalAudioService.playClickSound();
                   _showExitConfirmation();
@@ -668,8 +677,15 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.5),
+                color: const Color(0xFF40E0D0),
                 borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
               child: Text(
                 '${_currentPoseIndex + 1}/${widget.session.allPoses.length}',
@@ -689,11 +705,18 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
   Widget _buildBottomPanel() {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF1A1A1A), // Dark theme like pose detail
+        color: Colors.white,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(28),
           topRight: Radius.circular(28),
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, -2),
+          ),
+        ],
       ),
       child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
@@ -705,7 +728,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
               width: 44,
               height: 5,
               decoration: BoxDecoration(
-                color: Colors.grey[700],
+                color: Colors.grey[300],
                 borderRadius: BorderRadius.circular(3),
               ),
             ),
@@ -725,7 +748,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
     // Show PIN waiting message only if PIN not verified yet
     if (!SimplePinService.isPinVerifiedThisSession()) {
       return Container(
-        color: Colors.black,
+        color: Colors.grey[100],
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -739,7 +762,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
               Text(
                 AppLocalizations.of(context)!.waitingForPin,
                 style: GoogleFonts.poppins(
-                  color: Colors.white70,
+                  color: Colors.grey[700],
                   fontSize: 16,
                 ),
               ),
@@ -900,8 +923,8 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
                                   builder: (context) => _FullscreenVideoPlayer(
                                     controller: _videoController!,
                                     poseName:
-                                        YogaLocalizationHelper.getPoseName(
-                                            context, currentPose.nameKey),
+                                    YogaLocalizationHelper.getPoseName(
+                                        context, currentPose.nameKey),
                                     playbackSpeed: _playbackSpeed,
                                     onSpeedChanged: (speed) {
                                       setState(() {
@@ -959,12 +982,13 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
       child: Column(
         children: [
           // Pose name - larger font
+          const SizedBox(height: 12),
           Text(
             YogaLocalizationHelper.getPoseName(context, currentPose.nameKey),
             style: GoogleFonts.poppins(
-              fontSize: 24, // Larger for elderly
+              fontSize: 28, // Larger for elderly
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: Colors.black,
             ),
             textAlign: TextAlign.center,
           ),
@@ -974,7 +998,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
             decoration: BoxDecoration(
-              color: const Color(0xFF40E0D0).withOpacity(0.15),
+              color: const Color(0xFF40E0D0).withOpacity(0.2),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
@@ -1035,23 +1059,23 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
                 _formatTime(_totalTimeSpent),
                 style: GoogleFonts.poppins(
                   fontSize: 18, // Larger
-                  color: Colors.white, // Better contrast
+                  color: Colors.black87, // Better contrast
                   fontWeight: FontWeight.w500,
                 ),
               ),
               const SizedBox(width: 16),
               Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: Colors.grey[800],
+                  color: const Color(0xFF40E0D0).withOpacity(0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   '${(progress * 100).round()}% ${AppLocalizations.of(context)!.completed}',
                   style: GoogleFonts.poppins(
                     fontSize: 13, // Larger
-                    color: Colors.white, // Better contrast
+                    color: const Color(0xFF40E0D0), // Turquoise text
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.5,
                   ),
@@ -1078,20 +1102,23 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
                 style: GoogleFonts.poppins(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
-                    color: Colors.grey),
+                    color: _currentPoseIndex > 0
+                        ? const Color(0xFF40E0D0)
+                        : Colors.grey[400]),
               ),
               style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.white,
+                foregroundColor: const Color(0xFF40E0D0),
                 side: BorderSide(
                   color: _currentPoseIndex > 0
-                      ? Colors.white.withOpacity(0.3)
-                      : Colors.grey[800]!,
+                      ? const Color(0xFF40E0D0)
+                      : Colors.grey[300]!,
                   width: 2,
                 ),
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
+                disabledForegroundColor: Colors.grey[400],
               ),
             ),
           ),
@@ -1157,8 +1184,12 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
-        color: const Color(0xFF2A2A2A), // Slightly lighter dark gray
+        color: Colors.grey[50], // Very light gray background
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: Colors.grey[300]!,
+          width: 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1168,7 +1199,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
             style: GoogleFonts.poppins(
               fontSize: 20, // Larger for elderly
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: Colors.black87,
             ),
           ),
           const SizedBox(height: 16),
@@ -1177,7 +1208,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
             YogaLocalizationHelper.getPoseInstructions(context, currentPose.instructions), // Changed from descriptionKey
             style: GoogleFonts.poppins(
               fontSize: 17, // Larger, easier to read
-              color: Colors.white, // Better contrast
+              color: Colors.black87, // Better contrast
               height: 1.7,
             ),
           ),
@@ -1212,7 +1243,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
           // Use modifications as safety tips
           ...currentPose.modifications.map((tipKey) {
             String translatedTip =
-                YogaLocalizationHelper.getPoseModifications(context, tipKey);
+            YogaLocalizationHelper.getPoseModifications(context, tipKey);
             return Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: Row(
@@ -1237,7 +1268,7 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
                       translatedTip,
                       style: GoogleFonts.poppins(
                         fontSize: 16, // Larger, easier to read
-                        color: Colors.white, // Better contrast
+                        color: Colors.black87, // Better contrast
                         height: 1.6,
                       ),
                     ),
@@ -1266,13 +1297,13 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
                   style: GoogleFonts.poppins(
                     fontSize: 22, // Larger for elderly
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: Colors.black87,
                   ),
                 ),
                 const SizedBox(width: 12),
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: const Color(0xFF40E0D0).withOpacity(0.2),
                     borderRadius: BorderRadius.circular(20),
@@ -1294,107 +1325,160 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
             final pose = entry.value;
             final isCompleted = _completedPoseIds.contains(pose.id);
             final isCurrent = index == _currentPoseIndex;
+            final canClick = isCompleted || isCurrent; // Can click if completed or currently playing
 
-            return Container(
-              margin: const EdgeInsets.only(bottom: 14),
-              padding: const EdgeInsets.all(18), // More padding
-              decoration: BoxDecoration(
-                color: isCurrent
-                    ? const Color(0xFF40E0D0).withOpacity(0.15)
-                    : const Color(0xFF2A2A2A), // Dark theme
-                border: Border.all(
-                  color:
-                      isCurrent ? const Color(0xFF40E0D0) : Colors.grey[800]!,
-                  width: isCurrent ? 2 : 1,
+            return GestureDetector(
+              onTap: canClick ? () {
+                // Jump to this pose if it's completed or current
+                setState(() {
+                  _currentPoseIndex = index;
+                  _loadCurrentPose();
+                });
+              } : null, // Disable tap if not completed
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 14),
+                padding: const EdgeInsets.all(18), // More padding
+                decoration: BoxDecoration(
+                  color: isCurrent
+                      ? const Color(0xFF40E0D0).withOpacity(0.2)
+                      : isCompleted
+                      ? Colors.grey[100] // Light gray for completed
+                      : Colors.grey[200], // Lighter gray for locked
+                  border: Border.all(
+                    color: isCurrent
+                        ? const Color(0xFF40E0D0)
+                        : isCompleted
+                        ? Colors.grey[300]!
+                        : Colors.grey[400]!, // Visible border for locked
+                    width: isCurrent ? 2 : 1,
+                  ),
+                  borderRadius: BorderRadius.circular(16),
                 ),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Row(
-                children: [
-                  // Pose number or checkmark - larger
-                  Container(
-                    width: 42, // Larger
-                    height: 42,
-                    decoration: BoxDecoration(
-                      color: isCompleted
-                          ? const Color(0xFF40E0D0)
-                          : isCurrent
-                              ? const Color(0xFF40E0D0).withOpacity(0.2)
-                              : Colors.grey[800],
-                      shape: BoxShape.circle,
+                child: Row(
+                  children: [
+                    // Pose number or checkmark - larger
+                    Container(
+                      width: 42, // Larger
+                      height: 42,
+                      decoration: BoxDecoration(
+                        color: isCompleted
+                            ? const Color(0xFF40E0D0)
+                            : isCurrent
+                            ? const Color(0xFF40E0D0).withOpacity(0.2)
+                            : Colors.grey[300], // Light gray for locked
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(
+                        child: isCompleted
+                            ? const Icon(
+                          Icons.check,
+                          size: 24, // Larger
+                          color: Colors.white,
+                        )
+                            : !canClick
+                            ? Icon(
+                          Icons.lock_outline,
+                          size: 20,
+                          color: Colors.grey[600],
+                        )
+                            : Text(
+                          '${index + 1}',
+                          style: GoogleFonts.poppins(
+                            fontSize: 18, // Larger
+                            fontWeight: FontWeight.bold,
+                            color: isCurrent
+                                ? const Color(0xFF40E0D0)
+                                : Colors.grey[600],
+                          ),
+                        ),
+                      ),
                     ),
-                    child: Center(
-                      child: isCompleted
-                          ? const Icon(
-                              Icons.check,
-                              size: 24, // Larger
+                    const SizedBox(width: 14),
+
+                    // Pose name and duration
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            YogaLocalizationHelper.getPoseName(
+                                context, pose.nameKey),
+                            style: GoogleFonts.poppins(
+                              fontSize: 17, // Larger
+                              fontWeight:
+                              isCurrent ? FontWeight.bold : FontWeight.w600,
+                              color: canClick
+                                  ? Colors.black87
+                                  : Colors.grey[600], // Dimmed for locked
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            AppLocalizations.of(context)!.durationFormat(
+                              (pose.durationSeconds ~/ 60).toInt(),
+                              (pose.durationSeconds % 60)
+                                  .toString()
+                                  .padLeft(2, '0'),
+                            ),
+                            style: GoogleFonts.poppins(
+                              fontSize: 14, // Larger
+                              color: canClick
+                                  ? Colors.grey[600]
+                                  : Colors.grey[500], // More dimmed for locked
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Current playing indicator OR locked indicator
+                    if (isCurrent)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF40E0D0),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          AppLocalizations.of(context)!.playing,
+                          style: GoogleFonts.poppins(
+                            fontSize: 13, // Larger
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      )
+                    else if (!canClick)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[400],
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.lock,
+                              size: 14,
                               color: Colors.white,
-                            )
-                          : Text(
-                              '${index + 1}',
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Locked',
                               style: GoogleFonts.poppins(
-                                fontSize: 18, // Larger
-                                fontWeight: FontWeight.bold,
-                                color: isCurrent
-                                    ? const Color(0xFF40E0D0)
-                                    : Colors.grey[500],
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
                               ),
                             ),
-                    ),
-                  ),
-                  const SizedBox(width: 14),
-
-                  // Pose name and duration
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          YogaLocalizationHelper.getPoseName(
-                              context, pose.nameKey),
-                          style: GoogleFonts.poppins(
-                            fontSize: 17, // Larger
-                            fontWeight:
-                                isCurrent ? FontWeight.bold : FontWeight.w600,
-                            color: Colors.white, // White for dark theme
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          AppLocalizations.of(context)!.durationFormat(
-                            (currentPose.durationSeconds ~/ 60).toInt(),
-                            (currentPose.durationSeconds % 60)
-                                .toString()
-                                .padLeft(2, '0'),
-                          ),
-                          style: GoogleFonts.poppins(
-                            fontSize: 14, // Larger
-                            color: Colors.grey[400],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Current playing indicator
-                  if (isCurrent)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF40E0D0),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Text(
-                        AppLocalizations.of(context)!.playing,
-                        style: GoogleFonts.poppins(
-                          fontSize: 13, // Larger
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
+                          ],
                         ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             );
           }),

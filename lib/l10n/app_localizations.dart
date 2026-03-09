@@ -418,6 +418,108 @@ abstract class AppLocalizations {
   /// **'Google Sign-In failed: {error}'**
   String googleSignInFailed(String error);
 
+  /// No description provided for @forgotPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot Password?'**
+  String get forgotPassword;
+
+  /// No description provided for @resetPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Password'**
+  String get resetPassword;
+
+  /// No description provided for @resetPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Your Password'**
+  String get resetPasswordTitle;
+
+  /// No description provided for @resetPasswordSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email and we\'ll send you a reset link'**
+  String get resetPasswordSubtitle;
+
+  /// No description provided for @sendResetLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Reset Link'**
+  String get sendResetLink;
+
+  /// No description provided for @resetLinkSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Password reset link sent! Check your email 📧'**
+  String get resetLinkSent;
+
+  /// No description provided for @resetLinkFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to send reset link: {error}'**
+  String resetLinkFailed(String error);
+
+  /// No description provided for @backToLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Login'**
+  String get backToLogin;
+
+  /// No description provided for @invalidCredentials.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid email or password. Please try again.'**
+  String get invalidCredentials;
+
+  /// No description provided for @emailNotVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Please verify your email before logging in. Check your inbox.'**
+  String get emailNotVerified;
+
+  /// No description provided for @accountNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No account found with this email. Please register first.'**
+  String get accountNotFound;
+
+  /// No description provided for @tooManyAttempts.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many login attempts. Please try again later.'**
+  String get tooManyAttempts;
+
+  /// No description provided for @networkError.
+  ///
+  /// In en, this message translates to:
+  /// **'Network error. Please check your connection and try again.'**
+  String get networkError;
+
+  /// No description provided for @unknownError.
+  ///
+  /// In en, this message translates to:
+  /// **'An unexpected error occurred. Please try again.'**
+  String get unknownError;
+
+  /// No description provided for @emailAlreadyExists.
+  ///
+  /// In en, this message translates to:
+  /// **'This email is already registered. Please log in instead.'**
+  String get emailAlreadyExists;
+
+  /// No description provided for @weakPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Password is too weak. Please follow the requirements.'**
+  String get weakPassword;
+
+  /// No description provided for @changeLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Language'**
+  String get changeLanguage;
+
   /// No description provided for @onboardingHeading.
   ///
   /// In en, this message translates to:
@@ -2041,7 +2143,7 @@ abstract class AppLocalizations {
   /// No description provided for @totalMinutes.
   ///
   /// In en, this message translates to:
-  /// **'Total Minutes'**
+  /// **'Minutes'**
   String get totalMinutes;
 
   /// No description provided for @thisWeek.
@@ -2083,7 +2185,7 @@ abstract class AppLocalizations {
   /// No description provided for @weeklyBadges.
   ///
   /// In en, this message translates to:
-  /// **'Weekly Badges'**
+  /// **'Badges'**
   String get weeklyBadges;
 
   /// No description provided for @wellnessCheckIn.

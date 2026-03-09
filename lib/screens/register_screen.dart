@@ -5,6 +5,7 @@ import 'main_navigation_screen.dart';
 import 'login_screen.dart';
 import '../services/global_audio_service.dart';
 import '../l10n/app_localizations.dart';
+import '../main.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -27,6 +28,67 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   // Current step in registration flow
   int _currentStep = 0;
+
+  String _getErrorMessage(dynamic error) {
+    final errorString = error.toString().toLowerCase();
+
+    if (errorString.contains('user already registered') ||
+        errorString.contains('email_exists') ||
+        errorString.contains('duplicate')) {
+      return AppLocalizations.of(context)!.emailAlreadyExists;
+    } else if (errorString.contains('weak password') ||
+        errorString.contains('password is too weak')) {
+      return AppLocalizations.of(context)!.weakPassword;
+    } else if (errorString.contains('invalid email')) {
+      return AppLocalizations.of(context)!.errEmailInvalid;
+    } else if (errorString.contains('network') ||
+        errorString.contains('connection')) {
+      return AppLocalizations.of(context)!.networkError;
+    } else {
+      return AppLocalizations.of(context)!.unknownError;
+    }
+  }
+
+  void _showLanguageDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(AppLocalizations.of(context)!.changeLanguage),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: const Text('English'),
+              onTap: () {
+                appLocale.value = const Locale('en');
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: const Text('简体中文'),
+              onTap: () {
+                appLocale.value = const Locale.fromSubtags(
+                  languageCode: 'zh',
+                  scriptCode: 'Hans',
+                );
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: const Text('繁體中文'),
+              onTap: () {
+                appLocale.value = const Locale.fromSubtags(
+                  languageCode: 'zh',
+                  scriptCode: 'Hant',
+                );
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   Future<void> _register() async {
     // Validate email
@@ -177,14 +239,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              AppLocalizations.of(context)!.welcomeName(_nameController.text.trim())),
+                AppLocalizations.of(context)!.welcomeName(_nameController.text.trim())),
             backgroundColor: const Color(0xFF40E0D0),
           ),
         );
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (_) => const MainNavigationScreen()),
-          (route) => false,
+              (route) => false,
         );
       }
     } catch (e) {
@@ -192,8 +254,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Registration failed: ${e.toString()}'),
+            content: Text(_getErrorMessage(e)),
             backgroundColor: Colors.red,
+            duration: const Duration(seconds: 4),
           ),
         );
       }
@@ -265,165 +328,195 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ),
         child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-            child: Column(
+          child: Stack(
               children: [
-                const SizedBox(height: 10),
+          // Main content
+          SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+          child: Column(
+            children: [
+              const SizedBox(height: 10),
 
-                // Animated Lottie header based on step
-                SizedBox(
-                  height: 140,
-                  child: _buildStepAnimation(),
-                ),
-                const SizedBox(height: 10),
+              // Animated Lottie header based on step
+              SizedBox(
+                height: 140,
+                child: _buildStepAnimation(),
+              ),
+              const SizedBox(height: 10),
 
-                Text(
-                  AppLocalizations.of(context)!.registerTitle,
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                  textAlign: TextAlign.center,
+              Text(
+                AppLocalizations.of(context)!.registerTitle,
+                style: const TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
-                const SizedBox(height: 10),
-                Text(
-                  AppLocalizations.of(context)!.registerSubtitle,
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 16,
-                  ),
-                  textAlign: TextAlign.center,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 10),
+              Text(
+                AppLocalizations.of(context)!.registerSubtitle,
+                style: const TextStyle(
+                  color: Colors.white70,
+                  fontSize: 16,
                 ),
-                const SizedBox(height: 25),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 25),
 
-                // Progress indicator
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _buildStepIndicator(0, AppLocalizations.of(context)!.stepPersonal),
-                    _buildStepLine(0),
-                    _buildStepIndicator(1, AppLocalizations.of(context)!.stepPreferences),
-                    _buildStepLine(1),
-                    _buildStepIndicator(2, AppLocalizations.of(context)!.stepAccount),
+              // Progress indicator
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildStepIndicator(0, AppLocalizations.of(context)!.stepPersonal),
+                  _buildStepLine(0),
+                  _buildStepIndicator(1, AppLocalizations.of(context)!.stepPreferences),
+                  _buildStepLine(1),
+                  _buildStepIndicator(2, AppLocalizations.of(context)!.stepAccount),
+                ],
+              ),
+              const SizedBox(height: 25),
+
+              // White card with form
+              Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
                   ],
                 ),
-                const SizedBox(height: 25),
+                child: _buildStepContent(),
+              ),
 
-                // White card with form
-                Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(24),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 20,
-                        offset: const Offset(0, 10),
-                      ),
-                    ],
-                  ),
-                  child: _buildStepContent(),
-                ),
+              const SizedBox(height: 20),
 
-                const SizedBox(height: 20),
-
-                // Navigation buttons
-                Row(
-                  children: [
-                    if (_currentStep > 0)
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: _isLoading
-                              ? null
-                              : () async {
-                                  await GlobalAudioService.playClickSound();
-                                  _previousStep();
-                                },
-                          style: OutlinedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                          ),
-                          child: Text(
-                            AppLocalizations.of(context)!.back,
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-                    if (_currentStep > 0) const SizedBox(width: 12),
+              // Navigation buttons
+              Row(
+                children: [
+                  if (_currentStep > 0)
                     Expanded(
-                      child: ElevatedButton(
+                      child: OutlinedButton(
                         onPressed: _isLoading
                             ? null
                             : () async {
-                                await GlobalAudioService.playClickSound();
-                                _currentStep < 2 ? _nextStep() : _register();
-                              },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: turquoise,
+                          await GlobalAudioService.playClickSound();
+                          _previousStep();
+                        },
+                        style: OutlinedButton.styleFrom(
+                          backgroundColor: Colors.red,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),
                         ),
-                        child: _isLoading
-                            ? const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Colors.white,
-                                ),
-                              )
-                            : Text(
-                                _currentStep < 2
-                                    ? AppLocalizations.of(context)!.continueButton
-                                    : AppLocalizations.of(context)!.createAccount,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                        child: Text(
+                          AppLocalizations.of(context)!.back,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     ),
-                  ],
-                ),
-
-                const SizedBox(height: 20),
-
-                // Link to login
-                TextButton(
-                  onPressed: _isLoading
-                      ? null
-                      : () async {
-                          await GlobalAudioService.playClickSound();
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) => const LoginScreen()),
-                          );
-                        },
-                  child: Text(
-                    AppLocalizations.of(context)!.alreadyHaveAccount,
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontWeight: FontWeight.w600,
+                  if (_currentStep > 0) const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: _isLoading
+                          ? null
+                          : () async {
+                        await GlobalAudioService.playClickSound();
+                        _currentStep < 2 ? _nextStep() : _register();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: turquoise,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                      child: _isLoading
+                          ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                          : Text(
+                        _currentStep < 2
+                            ? AppLocalizations.of(context)!.continueButton
+                            : AppLocalizations.of(context)!.createAccount,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
+                ],
+              ),
+
+              const SizedBox(height: 20),
+
+              // Link to login
+              TextButton(
+                onPressed: _isLoading
+                    ? null
+                    : () async {
+                  await GlobalAudioService.playClickSound();
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => const LoginScreen()),
+                  );
+                },
+                child: Text(
+                  AppLocalizations.of(context)!.alreadyHaveAccount,
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
+        ),
+
+          // Language selector button (top right) - positioned AFTER content for proper z-index
+            Positioned(
+              top: 16,
+              right: 16,
+              child: IconButton(
+                iconSize: 32,
+                icon: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.3),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.language,
+                    color: Colors.white,
+                    size: 28,
+                  ),
+                ),
+                onPressed: () {
+                  print('Language clicked!');
+                  GlobalAudioService.playClickSound();
+                  _showLanguageDialog();
+                },
+              ),
+            ),
+          ]),
         ),
       ),
     );
@@ -435,19 +528,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
     String animationUrl;
     switch (_currentStep) {
       case 0:
-        // Personal info - person/profile animation
+      // Personal info - person/profile animation
         return Lottie.network(
           'https://lottie.host/4d498849-4530-4e3f-8ccd-b236f1adfd5b/A0bBqkmU5s.json',
           fit: BoxFit.contain,
         );
       case 1:
-        // Preferences - settings/yoga animation
+      // Preferences - settings/yoga animation
         return Lottie.network(
           'https://lottie.host/30cd278d-76cf-45b1-b586-efce4269ff30/IgVs13JkK4.json',
           fit: BoxFit.contain,
         );
       case 2:
-        // Account - security/lock animation
+      // Account - security/lock animation
         return Lottie.network(
           'https://lottie.host/b882a045-2582-4815-90ce-0591a1d2434c/URk6v1m8VD.json',
           fit: BoxFit.contain,
@@ -481,13 +574,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: isCompleted
                 ? const Icon(Icons.check, color: Color(0xFF40E0D0), size: 20)
                 : Text(
-                    '${step + 1}',
-                    style: TextStyle(
-                      color:
-                          isActive ? const Color(0xFF40E0D0) : Colors.white70,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+              '${step + 1}',
+              style: TextStyle(
+                color:
+                isActive ? const Color(0xFF40E0D0) : Colors.white70,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ),
         const SizedBox(height: 4),
@@ -696,7 +789,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           label: AppLocalizations.of(context)!.password,
           controller: _passwordController,
           hint:
-              AppLocalizations.of(context)!.passwordHint,
+          AppLocalizations.of(context)!.passwordHint,
           obscureText: true,
         ),
         const SizedBox(height: 16),
@@ -785,10 +878,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide:
-                  const BorderSide(color: Color(0xFF40E0D0), width: 2.5),
+              const BorderSide(color: Color(0xFF40E0D0), width: 2.5),
             ),
             contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           ),
         ),
       ],

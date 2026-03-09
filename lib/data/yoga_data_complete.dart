@@ -55,7 +55,8 @@ class YogaDataComplete {
       nameKey: 'yogaShouldersTorsoTwist',
       descriptionKey: 'yogaDescShouldersTorsoTwist',
       imageUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500',
-      durationSeconds: 120,
+      videoAsset: 'assets/videos/shouldertorsotwist.mp4',
+      durationSeconds: 67,
       modifications: ['yogaModHipsStable', 'yogaModShouldersLevel'],
       instructions: 'yogaInstShouldersTorsoTwist',
       category: 'warmup',
@@ -78,7 +79,7 @@ class YogaDataComplete {
       durationSeconds: 90,
       modifications: ['yogaModBeginBent', 'yogaModUseChairForSupport'],
       instructions: 'yogaInstLegRaiseStraight',
-      category: 'warmup',  
+      category: 'warmup',
     ),
     YogaPose(
       id: 'bw_sit_08',
@@ -251,58 +252,59 @@ class YogaDataComplete {
 // INTERMEDIATE LEVEL — Main Poses (Hatha Yoga)
 // ============================================
 
-static final List<YogaPose> intermediateMain = [
-  YogaPose(
-    id: 'int_main_01',
-    nameKey: 'yogaDownwardDog',
-    descriptionKey: 'yogaDescDownwardDog',
-    imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=500',
-    durationSeconds: 120,
-    modifications: ['yogaModBendKnees', 'yogaModHeelsLifted'],
-    instructions: 'yogaInstDownwardDog',
-    category: 'main',
-  ),
-  YogaPose(
-    id: 'int_main_02',
-    nameKey: 'yogaPlank',
-    descriptionKey: 'yogaDescPlank',
-    imageUrl: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=500',
-    durationSeconds: 90,
-    modifications: ['yogaModLowerKnees', 'yogaModFeetTogether'],
-    instructions: 'yogaInstPlank',
-    category: 'main',
-  ),
-  YogaPose(
-    id: 'int_main_03',
-    nameKey: 'yogaEightPointPose',
-    descriptionKey: 'yogaDescEightPoint',
-    imageUrl: 'https://images.unsplash.com/photo-1588286840104-8957b019727f?w=500',
-    durationSeconds: 90,
-    modifications: ['yogaModAvoidPregnancy', 'yogaModSlowControl'],
-    instructions: 'yogaInstEightPoint',
-    category: 'main',
-  ),
-  YogaPose(
-    id: 'int_main_04',
-    nameKey: 'yogaBabyCobra',
-    descriptionKey: 'yogaDescBabyCobra',
-    imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=500',
-    durationSeconds: 90,
-    modifications: ['yogaModLiftPalms', 'yogaModPressFeet'],
-    instructions: 'yogaInstBabyCobra',
-    category: 'main',
-  ),
-  YogaPose(
-    id: 'int_main_05',
-    nameKey: 'yogaFullCobra',
-    descriptionKey: 'yogaDescFullCobra',
-    imageUrl: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=500',
-    durationSeconds: 90,
-    modifications: ['yogaModNoLockElbows', 'yogaModTuckStomach'],
-    instructions: 'yogaInstFullCobra',
-    category: 'main',
-  ),
-];
+  static final List<YogaPose> intermediateMain = [
+    YogaPose(
+      id: 'int_main_01',
+      nameKey: 'yogaDownwardDog',
+      descriptionKey: 'yogaDescDownwardDog',
+      imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=500',
+      videoAsset: 'assets/videos/downwardfacingdog.mp4',
+      durationSeconds: 82,
+      modifications: ['yogaModBendKnees', 'yogaModHeelsLifted'],
+      instructions: 'yogaInstDownwardDog',
+      category: 'main',
+    ),
+    YogaPose(
+      id: 'int_main_02',
+      nameKey: 'yogaPlank',
+      descriptionKey: 'yogaDescPlank',
+      imageUrl: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=500',
+      durationSeconds: 90,
+      modifications: ['yogaModLowerKnees', 'yogaModFeetTogether'],
+      instructions: 'yogaInstPlank',
+      category: 'main',
+    ),
+    YogaPose(
+      id: 'int_main_03',
+      nameKey: 'yogaEightPointPose',
+      descriptionKey: 'yogaDescEightPoint',
+      imageUrl: 'https://images.unsplash.com/photo-1588286840104-8957b019727f?w=500',
+      durationSeconds: 90,
+      modifications: ['yogaModAvoidPregnancy', 'yogaModSlowControl'],
+      instructions: 'yogaInstEightPoint',
+      category: 'main',
+    ),
+    YogaPose(
+      id: 'int_main_04',
+      nameKey: 'yogaBabyCobra',
+      descriptionKey: 'yogaDescBabyCobra',
+      imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=500',
+      durationSeconds: 90,
+      modifications: ['yogaModLiftPalms', 'yogaModPressFeet'],
+      instructions: 'yogaInstBabyCobra',
+      category: 'main',
+    ),
+    YogaPose(
+      id: 'int_main_05',
+      nameKey: 'yogaFullCobra',
+      descriptionKey: 'yogaDescFullCobra',
+      imageUrl: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=500',
+      durationSeconds: 90,
+      modifications: ['yogaModNoLockElbows', 'yogaModTuckStomach'],
+      instructions: 'yogaInstFullCobra',
+      category: 'main',
+    ),
+  ];
 
 
 // ============================================
@@ -310,56 +312,56 @@ static final List<YogaPose> intermediateMain = [
 // (uses same cooldown as beginner for consistency)
 // ============================================
 
-static final List<YogaPose> intermediateCooldown = [
-  YogaPose(
-    id: 'int_cd_01',
-    nameKey: 'yogaGentleBreathing',
-    descriptionKey: 'Cooldown breathing to settle heart rate and calm the mind.',
-    imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=500',
-    durationSeconds: 180,
-    modifications: ['yogaModSitOrLieDown', 'yogaModCloseEyesIfComfortable'],
-    instructions: 'yogaInstGentleBreathingIntermediate',
-    category: 'cooldown',
-  ),
-];
+  static final List<YogaPose> intermediateCooldown = [
+    YogaPose(
+      id: 'int_cd_01',
+      nameKey: 'yogaGentleBreathing',
+      descriptionKey: 'Cooldown breathing to settle heart rate and calm the mind.',
+      imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=500',
+      durationSeconds: 180,
+      modifications: ['yogaModSitOrLieDown', 'yogaModCloseEyesIfComfortable'],
+      instructions: 'yogaInstGentleBreathingIntermediate',
+      category: 'cooldown',
+    ),
+  ];
 
 
 // ============================================
 // INTERMEDIATE LEVEL — Sessions
 // ============================================
 
-static final List<YogaSession> intermediateSessions = [
-  YogaSession(
-    id: 'intermediate_1',
-    titleKey: 'yogaSessionHathaFundamentals',
-    levelKey: 'Intermediate',
-    descriptionKey: 'yogaDescHathaFundamentals',
-    totalDurationMinutes: 30,
-    warmupPoses: [], // intermediate warmup intentionally minimal
-    mainPoses: intermediateMain,
-    cooldownPoses: intermediateCooldown,
-  ),
-  YogaSession(
-    id: 'intermediate_2',
-    titleKey: 'yogaSessionCoreStrength',
-    levelKey: 'Intermediate',
-    descriptionKey: 'yogaDescCoreStrength',
-    totalDurationMinutes: 20,
-    warmupPoses: [],
-    mainPoses: intermediateMain.take(3).toList(),
-    cooldownPoses: intermediateCooldown,
-  ),
-  YogaSession(
-    id: 'intermediate_3',
-    titleKey: 'yogaSessionBackbendFlow',
-    levelKey: 'Intermediate',
-    descriptionKey: 'yogaDescBackbendFlow',
-    totalDurationMinutes: 25,
-    warmupPoses: [],
-    mainPoses: intermediateMain.sublist(2).toList(),
-    cooldownPoses: intermediateCooldown,
-  ),
-];
+  static final List<YogaSession> intermediateSessions = [
+    YogaSession(
+      id: 'intermediate_1',
+      titleKey: 'yogaSessionHathaFundamentals',
+      levelKey: 'Intermediate',
+      descriptionKey: 'yogaDescHathaFundamentals',
+      totalDurationMinutes: 30,
+      warmupPoses: [], // intermediate warmup intentionally minimal
+      mainPoses: intermediateMain,
+      cooldownPoses: intermediateCooldown,
+    ),
+    YogaSession(
+      id: 'intermediate_2',
+      titleKey: 'yogaSessionCoreStrength',
+      levelKey: 'Intermediate',
+      descriptionKey: 'yogaDescCoreStrength',
+      totalDurationMinutes: 20,
+      warmupPoses: [],
+      mainPoses: intermediateMain.take(3).toList(),
+      cooldownPoses: intermediateCooldown,
+    ),
+    YogaSession(
+      id: 'intermediate_3',
+      titleKey: 'yogaSessionBackbendFlow',
+      levelKey: 'Intermediate',
+      descriptionKey: 'yogaDescBackbendFlow',
+      totalDurationMinutes: 25,
+      warmupPoses: [],
+      mainPoses: intermediateMain.sublist(2).toList(),
+      cooldownPoses: intermediateCooldown,
+    ),
+  ];
 
 // ============================================
 // ADVANCED LEVEL — Sun Salutation Flow
@@ -371,28 +373,29 @@ static final List<YogaSession> intermediateSessions = [
       nameKey: 'yogaSunSalutation',
       descriptionKey: 'yogaDescSunSalutation',
       imageUrl: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=500',
-      durationSeconds: 300, // 5 minutes
+      videoAsset: 'assets/videos/sunsalutation.mp4',
+      durationSeconds: 83,
       modifications: ['yogaModRestChildPose', 'yogaModSlowTransitions', 'yogaModBendDownwardDog'],
       instructions: 'yogaInstSunSalutation',
       // '''
       // This flowing sequence repeats continuously — one breath per movement.
 
-      // 1. Inhale — Downward Dog  
+      // 1. Inhale — Downward Dog
       //   Lift hips high, lengthen spine.
 
-      // 2. Exhale — Plank  
+      // 2. Exhale — Plank
       //   Shift forward into strong plank position.
 
-      // 3. Inhale — Knees-Chest-Chin (Eight-Point Pose)  
+      // 3. Inhale — Knees-Chest-Chin (Eight-Point Pose)
       //   Lower down with control, hips lifted.
 
-      // 4. Exhale — Baby Cobra  
+      // 4. Exhale — Baby Cobra
       //   Lift chest gently, elbows close.
 
-      // 5. Inhale — Full Cobra  
+      // 5. Inhale — Full Cobra
       //   Straighten arms slightly, open chest.
 
-      // 6. Exhale — Return to Downward Dog  
+      // 6. Exhale — Return to Downward Dog
       //   Press back into inverted V-shape.
 
       // Repeat for 5–10 rounds or to your ability level.

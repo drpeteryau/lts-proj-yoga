@@ -85,12 +85,28 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
   Future<void> _initializeVideo() async {
     await _videoController?.dispose();
 
-    // Placeholder video URL
-    _videoController = VideoPlayerController.networkUrl(
-      Uri.parse(
-        'https://rkhmailqbmbijsfzhcch.supabase.co/storage/v1/object/public/pose-videos/beginner/NeckHeadShoulders.MOV',
-      ),
-    );
+    // Priority: Local asset > Network URL > Placeholder
+    if (currentPose.videoAsset != null && currentPose.videoAsset!.isNotEmpty) {
+      // Use local asset video
+      debugPrint('📹 Loading video from asset: ${currentPose.videoAsset}');
+      _videoController = VideoPlayerController.asset(
+        currentPose.videoAsset!,
+      );
+    } else if (currentPose.videoUrl != null && currentPose.videoUrl!.isNotEmpty) {
+      // Use network video URL
+      debugPrint('📹 Loading video from URL: ${currentPose.videoUrl}');
+      _videoController = VideoPlayerController.networkUrl(
+        Uri.parse(currentPose.videoUrl!),
+      );
+    } else {
+      // Fallback to placeholder video
+      debugPrint('📹 Loading placeholder video');
+      _videoController = VideoPlayerController.networkUrl(
+        Uri.parse(
+          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+        ),
+      );
+    }
 
     try {
       await _videoController!.initialize();
@@ -102,8 +118,14 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
           _isVideoInitialized = true;
         });
       }
+      debugPrint('✅ Video initialized and playing');
     } catch (e) {
-      debugPrint('Error initializing video: $e');
+      debugPrint('❌ Error initializing video: $e');
+      if (mounted) {
+        setState(() {
+          _isVideoInitialized = false;
+        });
+      }
     }
   }
 
@@ -187,7 +209,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       body: Stack(
         children: [
           // Main content
@@ -211,11 +233,18 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
             left: 16,
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.5),
+                color: Colors.white.withOpacity(0.9),
                 shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
               child: IconButton(
-                icon: const Icon(Icons.close, color: Colors.white, size: 28),
+                icon: const Icon(Icons.close, color: Color(0xFF40E0D0), size: 28),
                 onPressed: () async {
                   await GlobalAudioService.playClickSound();
                   await _flushPoseTime();
@@ -232,8 +261,15 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.5),
+                color: const Color(0xFF40E0D0),
                 borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
               child: Text(
                 '${_currentPoseIndex + 1}/${widget.allPoses.length}',
@@ -254,7 +290,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
     // Show PIN waiting message only if PIN not verified yet
     if (!SimplePinService.isPinVerifiedThisSession()) {
       return Container(
-        color: Colors.black,
+        color: Colors.grey[100],
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -268,7 +304,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
               Text(
                 'Waiting for PIN...',
                 style: GoogleFonts.poppins(
-                  color: Colors.white70,
+                  color: Colors.grey[700],
                   fontSize: 16,
                 ),
               ),
@@ -280,7 +316,11 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
 
     // PIN verified - show video player or loading spinner
     return GestureDetector(
-      onTap: _showControlsTemporarily,
+      onTap: () {
+        // Toggle video play/pause on tap
+        _toggleVideo();
+        _showControlsTemporarily();
+      },
       child: Container(
         color: Colors.black,
         child: Stack(
@@ -302,150 +342,164 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
                 ),
               ),
 
-            // Video controls (bottom)
+            // Video controls (bottom) - Always show
             if (_isVideoInitialized)
               Positioned(
                 bottom: 0,
                 left: 0,
                 right: 0,
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.bottomCenter,
-                      end: Alignment.topCenter,
-                      colors: [
-                        Colors.black.withOpacity(0.8),
-                        Colors.transparent,
-                      ],
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Progress bar
-                      VideoProgressIndicator(
-                        _videoController!,
-                        allowScrubbing: true,
-                        colors: const VideoProgressColors(
-                          playedColor: Color(0xFF40E0D0),
-                          bufferedColor: Colors.white30,
-                          backgroundColor: Colors.white12,
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                      ),
-
-                      const SizedBox(height: 8),
-
-                      // Control buttons row
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // Playback speed
-                          PopupMenuButton<double>(
-                            icon: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                '${_playbackSpeed}x',
-                                style: GoogleFonts.poppins(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                            onSelected: (speed) {
-                              setState(() {
-                                _playbackSpeed = speed;
-                                _videoController!.setPlaybackSpeed(speed);
-                              });
-                            },
-                            itemBuilder: (context) => [
-                              PopupMenuItem(value: 0.5, child: Text('0.5x', style: GoogleFonts.poppins())),
-                              PopupMenuItem(value: 0.75, child: Text('0.75x', style: GoogleFonts.poppins())),
-                              PopupMenuItem(value: 1.0, child: Text('1.0x (Normal)', style: GoogleFonts.poppins())),
-                              PopupMenuItem(value: 1.25, child: Text('1.25x', style: GoogleFonts.poppins())),
-                              PopupMenuItem(value: 1.5, child: Text('1.5x', style: GoogleFonts.poppins())),
-                              PopupMenuItem(value: 2.0, child: Text('2.0x', style: GoogleFonts.poppins())),
-                            ],
-                          ),
-
-                          const Spacer(),
-
-                          // Volume button
-                          IconButton(
-                            icon: Icon(
-                              _videoController!.value.volume > 0 ? Icons.volume_up : Icons.volume_off,
-                              color: Colors.white,
-                              size: 26,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                if (_videoController!.value.volume > 0) {
-                                  _videoController!.setVolume(0);
-                                } else {
-                                  _videoController!.setVolume(1.0);
-                                }
-                              });
-                            },
-                          ),
-
-                          // Fullscreen button
-                          IconButton(
-                            icon: const Icon(
-                              Icons.fullscreen,
-                              color: Colors.white,
-                              size: 26,
-                            ),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => _FullscreenVideoPlayer(
-                                    controller: _videoController!,
-                                    poseName: YogaLocalizationHelper.getPoseName(context, currentPose.nameKey),
-                                    playbackSpeed: _playbackSpeed,
-                                    onSpeedChanged: (speed) {
-                                      setState(() {
-                                        _playbackSpeed = speed;
-                                      });
-                                    },
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
+                child: AnimatedOpacity(
+                  opacity: _showVideoControls ? 1.0 : 0.0,
+                  duration: const Duration(milliseconds: 300),
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                        colors: [
+                          Colors.black.withOpacity(0.8),
+                          Colors.transparent,
                         ],
                       ),
-                    ],
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Progress bar
+                        VideoProgressIndicator(
+                          _videoController!,
+                          allowScrubbing: true,
+                          colors: const VideoProgressColors(
+                            playedColor: Color(0xFF40E0D0),
+                            bufferedColor: Colors.white30,
+                            backgroundColor: Colors.white12,
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 4),
+                        ),
+
+                        const SizedBox(height: 8),
+
+                        // Control buttons row
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            // Playback speed
+                            PopupMenuButton<double>(
+                              icon: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  '${_playbackSpeed}x',
+                                  style: GoogleFonts.poppins(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                              onSelected: (speed) {
+                                setState(() {
+                                  _playbackSpeed = speed;
+                                  _videoController!.setPlaybackSpeed(speed);
+                                });
+                              },
+                              itemBuilder: (context) => [
+                                PopupMenuItem(value: 0.5, child: Text('0.5x', style: GoogleFonts.poppins())),
+                                PopupMenuItem(value: 0.75, child: Text('0.75x', style: GoogleFonts.poppins())),
+                                PopupMenuItem(value: 1.0, child: Text('1.0x (Normal)', style: GoogleFonts.poppins())),
+                                PopupMenuItem(value: 1.25, child: Text('1.25x', style: GoogleFonts.poppins())),
+                                PopupMenuItem(value: 1.5, child: Text('1.5x', style: GoogleFonts.poppins())),
+                                PopupMenuItem(value: 2.0, child: Text('2.0x', style: GoogleFonts.poppins())),
+                              ],
+                            ),
+
+                            const Spacer(),
+
+                            // Play/Pause button
+                            IconButton(
+                              icon: Icon(
+                                _videoController!.value.isPlaying ? Icons.pause : Icons.play_arrow,
+                                color: Colors.white,
+                                size: 28,
+                              ),
+                              onPressed: _toggleVideo,
+                            ),
+
+                            const Spacer(),
+
+                            // Volume button
+                            IconButton(
+                              icon: Icon(
+                                _videoController!.value.volume > 0 ? Icons.volume_up : Icons.volume_off,
+                                color: Colors.white,
+                                size: 26,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  if (_videoController!.value.volume > 0) {
+                                    _videoController!.setVolume(0);
+                                  } else {
+                                    _videoController!.setVolume(1.0);
+                                  }
+                                });
+                              },
+                            ),
+
+                            // Fullscreen button
+                            IconButton(
+                              icon: const Icon(
+                                Icons.fullscreen,
+                                color: Colors.white,
+                                size: 26,
+                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => _FullscreenVideoPlayer(
+                                      controller: _videoController!,
+                                      poseName: YogaLocalizationHelper.getPoseName(context, currentPose.nameKey),
+                                      playbackSpeed: _playbackSpeed,
+                                      onSpeedChanged: (speed) {
+                                        setState(() {
+                                          _playbackSpeed = speed;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
 
-            // Tap to play/pause overlay
+            // Center play/pause icon overlay (appears on tap)
             if (_showVideoControls && _isVideoInitialized)
               Positioned.fill(
-                child: Container(
-                  color: Colors.black.withOpacity(0.3),
-                  child: Center(
+                child: Center(
+                  child: AnimatedOpacity(
+                    opacity: _showVideoControls ? 1.0 : 0.0,
+                    duration: const Duration(milliseconds: 200),
                     child: Container(
                       width: 80,
                       height: 80,
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.5),
+                        color: Colors.black.withOpacity(0.6),
                         shape: BoxShape.circle,
                       ),
-                      child: IconButton(
-                        icon: Icon(
-                          _videoController!.value.isPlaying ? Icons.pause : Icons.play_arrow,
-                          size: 48,
-                          color: Colors.white,
-                        ),
-                        onPressed: _toggleVideo,
+                      child: Icon(
+                        _videoController!.value.isPlaying ? Icons.pause : Icons.play_arrow,
+                        size: 48,
+                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -460,11 +514,18 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
   Widget _buildInformationPanel() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey[900],
+        color: Colors.white,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(28),
           topRight: Radius.circular(28),
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, -2),
+          ),
+        ],
       ),
       child: Column(
         children: [
@@ -474,7 +535,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
             width: 44,
             height: 5,
             decoration: BoxDecoration(
-              color: Colors.grey[700],
+              color: Colors.grey[300],
               borderRadius: BorderRadius.circular(3),
             ),
           ),
@@ -493,7 +554,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
                     style: GoogleFonts.poppins(
                       fontSize: 28,  // Very large for elderly
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: Colors.black87,
                       height: 1.2,
                     ),
                   ),
@@ -504,7 +565,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF40E0D0).withOpacity(0.15),
+                      color: const Color(0xFF40E0D0).withOpacity(0.2),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
@@ -539,7 +600,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
                     style: GoogleFonts.poppins(
                       fontSize: 22,  // Large
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: Colors.black87,
                     ),
                   ),
 
@@ -550,7 +611,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
                     YogaLocalizationHelper.getPoseInstructions(context, currentPose.instructions),
                     style: GoogleFonts.poppins(
                       fontSize: 17,  // Large, easy to read
-                      color: Colors.white,  // Good contrast
+                      color: Colors.black87,  // Good contrast
                       height: 1.7,
                       letterSpacing: 0.2,
                     ),
@@ -614,7 +675,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
                               translatedTip,
                               style: GoogleFonts.poppins(
                                 fontSize: 16,  // Large
-                                color: Colors.white,
+                                color: Colors.black87,
                                 height: 1.6,
                               ),
                             ),
@@ -650,7 +711,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
                             AppLocalizations.of(context)!.learningNotice,
                             style: GoogleFonts.poppins(
                               fontSize: 14,
-                              color: Colors.blue[200],
+                              color: Colors.blue[800],
                               height: 1.5,
                             ),
                           ),
@@ -682,21 +743,24 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
                       style: GoogleFonts.poppins(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color: Colors.grey
+                          color: _currentPoseIndex > 0
+                              ? const Color(0xFF40E0D0)
+                              : Colors.grey[400]
                       ),
                     ),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.white,
+                      foregroundColor: const Color(0xFF40E0D0),
                       side: BorderSide(
                         color: _currentPoseIndex > 0
-                            ? Colors.white.withOpacity(0.3)
-                            : Colors.grey[800]!,
+                            ? const Color(0xFF40E0D0)
+                            : Colors.grey[300]!,
                         width: 2,
                       ),
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
+                      disabledForegroundColor: Colors.grey[400],
                     ),
                   ),
                 ),
@@ -725,7 +789,7 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
                         borderRadius: BorderRadius.circular(16),
                       ),
                       elevation: 0,
-                      disabledBackgroundColor: Colors.grey[800],
+                      disabledBackgroundColor: Colors.grey[300],
                     ),
                   ),
                 ),

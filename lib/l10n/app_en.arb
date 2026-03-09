@@ -80,6 +80,28 @@
       "error": { "type": "String" }
     }
   },
+  "forgotPassword": "Forgot Password?",
+  "resetPassword": "Reset Password",
+  "resetPasswordTitle": "Reset Your Password",
+  "resetPasswordSubtitle": "Enter your email and we'll send you a reset link",
+  "sendResetLink": "Send Reset Link",
+  "resetLinkSent": "Password reset link sent! Check your email 📧",
+  "resetLinkFailed": "Failed to send reset link: {error}",
+  "@resetLinkFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "backToLogin": "Back to Login",
+  "invalidCredentials": "Invalid email or password. Please try again.",
+  "emailNotVerified": "Please verify your email before logging in. Check your inbox.",
+  "accountNotFound": "No account found with this email. Please register first.",
+  "tooManyAttempts": "Too many login attempts. Please try again later.",
+  "networkError": "Network error. Please check your connection and try again.",
+  "unknownError": "An unexpected error occurred. Please try again.",
+  "emailAlreadyExists": "This email is already registered. Please log in instead.",
+  "weakPassword": "Password is too weak. Please follow the requirements.",
+  "changeLanguage": "Change Language",
 
   
   "onboardingHeading": "Feel stronger",
@@ -470,7 +492,7 @@
 
   "calendar": "Calendar",  
   "activitySummary": "Activity Summary",
-  "totalMinutes": "Total Minutes",
+  "totalMinutes": "Minutes",
   "thisWeek": "This Week",
   "dailyMinutes": "Daily Minutes",
   "week": "Week",
@@ -482,7 +504,7 @@
       "goal": { "type": "int" }
     }
   },
-  "weeklyBadges": "Weekly Badges",
+  "weeklyBadges": "Badges",
   "wellnessCheckIn": "Wellness Check-In",
   "checkedInThisWeek": "Checked in this week ✓",
   "howAreYouFeeling": "How are you feeling?",

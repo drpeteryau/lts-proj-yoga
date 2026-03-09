@@ -180,6 +180,67 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get forgotPassword => 'Forgot Password?';
+
+  @override
+  String get resetPassword => 'Reset Password';
+
+  @override
+  String get resetPasswordTitle => 'Reset Your Password';
+
+  @override
+  String get resetPasswordSubtitle =>
+      'Enter your email and we\'ll send you a reset link';
+
+  @override
+  String get sendResetLink => 'Send Reset Link';
+
+  @override
+  String get resetLinkSent => 'Password reset link sent! Check your email 📧';
+
+  @override
+  String resetLinkFailed(String error) {
+    return 'Failed to send reset link: $error';
+  }
+
+  @override
+  String get backToLogin => 'Back to Login';
+
+  @override
+  String get invalidCredentials =>
+      'Invalid email or password. Please try again.';
+
+  @override
+  String get emailNotVerified =>
+      'Please verify your email before logging in. Check your inbox.';
+
+  @override
+  String get accountNotFound =>
+      'No account found with this email. Please register first.';
+
+  @override
+  String get tooManyAttempts =>
+      'Too many login attempts. Please try again later.';
+
+  @override
+  String get networkError =>
+      'Network error. Please check your connection and try again.';
+
+  @override
+  String get unknownError => 'An unexpected error occurred. Please try again.';
+
+  @override
+  String get emailAlreadyExists =>
+      'This email is already registered. Please log in instead.';
+
+  @override
+  String get weakPassword =>
+      'Password is too weak. Please follow the requirements.';
+
+  @override
+  String get changeLanguage => 'Change Language';
+
+  @override
   String get onboardingHeading => 'Feel stronger';
 
   @override
@@ -1104,7 +1165,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get activitySummary => 'Activity Summary';
 
   @override
-  String get totalMinutes => 'Total Minutes';
+  String get totalMinutes => 'Minutes';
 
   @override
   String get thisWeek => 'This Week';
@@ -1127,7 +1188,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get weeklyBadges => 'Weekly Badges';
+  String get weeklyBadges => 'Badges';
 
   @override
   String get wellnessCheckIn => 'Wellness Check-In';
