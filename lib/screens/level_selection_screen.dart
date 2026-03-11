@@ -155,151 +155,153 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
           ),
         ),
         child: SafeArea(
-            child: Center(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxWidth: isWeb ? 1200 : double.infinity,
+          child: Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: isWeb ? 1280 : double.infinity,
+              ),
+              child: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(
+                  horizontal: isWeb ? 40 : 20,
+                  vertical: isWeb ? 40 : 20,
                 ),
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: EdgeInsets.all(isWeb ? 40.0 : 20.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: isWeb ?5 : 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: isWeb ? 10 : 12),
 
-                        // Header - Motivating text
-                        Text(
-                          AppLocalizations.of(context)!.beginYour,
-                          style: GoogleFonts.poppins(
-                            fontSize: isWeb ? 36 : 32,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black87,
-                            height: 1.2,
-                          ),
-                        ),
-                        Text(
-                          AppLocalizations.of(context)!.wellnessJourney,
-                          style: GoogleFonts.poppins(
-                            fontSize: isWeb ? 36 : 32,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFF40E0D0),
-                            height: 1.2,
-                          ),
-                        ),
-
-
-
-                        SizedBox(height: isWeb ? 48 : 32),
-
-                        // Beginner Card
-                        _buildLevelCard(
-                          context,
-                          title: AppLocalizations.of(context)!.beginnerTitle,
-                          subtitle: AppLocalizations.of(context)!.beginnerSubtitle,
-                          description: AppLocalizations.of(context)!.beginnerDesc,
-                          imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600',
-                          color: const Color(0xCD000000),
-                          isLocked: false,
-                          sessionsCompleted: _getSessionsCompleted('beginner'),
-                          onTap: () {
-                            GlobalAudioService.playClickSound();
-                            final session = YogaDataComplete.beginnerSessions.first;
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => SessionDetailScreen(session: session),
-                              ),
-                            );
-                          },
-                        ),
-
-                        SizedBox(height: isWeb ? 28 : 20),
-
-                        // Intermediate Card
-                        _buildLevelCard(
-                          context,
-                          title: AppLocalizations.of(context)!.intermediateTitle,
-                          subtitle: AppLocalizations.of(context)!.intermediateSubtitle,
-                          description: AppLocalizations.of(context)!.intermediateDesc,
-                          imageUrl: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=600',
-                          color: const Color(0xCD000000),
-                          isLocked: !(_userProgress?.intermediateUnlocked ?? false),
-                          sessionsCompleted: _getSessionsCompleted('intermediate'),
-                          progress: (_userProgress?.progressToIntermediate ?? 0.0),
-                          requiredSessions: UserProgress.sessionsRequiredForIntermediate,
-                          currentLevelSessions: _getSessionsCompleted('beginner'),
-                          onTap: () {
-                            if (_userProgress?.intermediateUnlocked ?? false) {
-                              GlobalAudioService.playClickSound();
-                              final session = YogaDataComplete.intermediateSessions.first;
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => SessionDetailScreen(session: session),
-                                ),
-                              );
-                            } else {
-                              _showLockedDialog(
-                                AppLocalizations.of(context)!.intermediateTitle,
-                                UserProgress.sessionsRequiredForIntermediate,
-                                _getSessionsCompleted('beginner'),
-                              );
-                            }
-                          },
-                        ),
-
-                        SizedBox(height: isWeb ? 28 : 20),
-
-                        // Advanced Card
-                        _buildLevelCard(
-                          context,
-                          title: AppLocalizations.of(context)!.advancedTitle,
-                          subtitle: AppLocalizations.of(context)!.advancedSubtitle,
-                          description: AppLocalizations.of(context)!.advancedDesc,
-                          imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600',
-                          color: const Color(0xCD000000),
-                          isLocked: !(_userProgress?.advancedUnlocked ?? false),
-                          sessionsCompleted: _getSessionsCompleted('advanced'),
-                          progress: (_userProgress?.progressToAdvanced ?? 0.0),
-                          requiredSessions: UserProgress.sessionsRequiredForAdvanced,
-                          currentLevelSessions: _getSessionsCompleted('intermediate'),
-                          needsIntermediate: !(_userProgress?.intermediateUnlocked ?? false),
-                          onTap: () {
-                            if (_userProgress?.advancedUnlocked ?? false) {
-                              GlobalAudioService.playClickSound();
-                              final session = YogaDataComplete.advancedSessions.first;
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => SessionDetailScreen(session: session),
-                                ),
-                              );
-                            } else {
-                              if (!(_userProgress?.intermediateUnlocked ?? false)) {
-                                _showLockedDialog(
-                                  AppLocalizations.of(context)!.advancedTitle,
-                                  UserProgress.sessionsRequiredForIntermediate,
-                                  _getSessionsCompleted('beginner'),
-                                  message: AppLocalizations.of(context)!.unlockIntermediateFirst,
-                                );
-                              } else {
-                                _showLockedDialog(
-                                  AppLocalizations.of(context)!.advancedTitle,
-                                  UserProgress.sessionsRequiredForAdvanced,
-                                  _getSessionsCompleted('intermediate'),
-                                );
-                              }
-                            }
-                          },
-                        ),
-
-                        const SizedBox(height: 40),
-                      ],
+                    // Header - Motivating text
+                    Text(
+                      AppLocalizations.of(context)!.beginYour,
+                      style: GoogleFonts.poppins(
+                        fontSize: isWeb ? 40 : 32,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                        height: 1.2,
+                      ),
                     ),
-                  ),
+                    Text(
+                      AppLocalizations.of(context)!.wellnessJourney,
+                      style: GoogleFonts.poppins(
+                        fontSize: isWeb ? 40 : 32,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF40E0D0),
+                        height: 1.2,
+                      ),
+                    ),
+
+
+
+                    SizedBox(height: isWeb ? 56 : 32),
+
+                    // Beginner Card
+                    _buildLevelCard(
+                      context,
+                      title: AppLocalizations.of(context)!.beginnerTitle,
+                      subtitle: AppLocalizations.of(context)!.beginnerSubtitle,
+                      description: AppLocalizations.of(context)!.beginnerDesc,
+                      imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600',
+                      color: const Color(0xCD000000),
+                      isLocked: false,
+                      sessionsCompleted: _getSessionsCompleted('beginner'),
+                      onTap: () {
+                        GlobalAudioService.playClickSound();
+                        final session = YogaDataComplete.beginnerSessions.first;
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SessionDetailScreen(session: session),
+                          ),
+                        );
+                      },
+                    ),
+
+                    SizedBox(height: isWeb ? 28 : 20),
+
+                    // Intermediate Card
+                    _buildLevelCard(
+                      context,
+                      title: AppLocalizations.of(context)!.intermediateTitle,
+                      subtitle: AppLocalizations.of(context)!.intermediateSubtitle,
+                      description: AppLocalizations.of(context)!.intermediateDesc,
+                      imageUrl: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=600',
+                      color: const Color(0xCD000000),
+                      isLocked: !(_userProgress?.intermediateUnlocked ?? false),
+                      sessionsCompleted: _getSessionsCompleted('intermediate'),
+                      progress: (_userProgress?.progressToIntermediate ?? 0.0),
+                      requiredSessions: UserProgress.sessionsRequiredForIntermediate,
+                      currentLevelSessions: _getSessionsCompleted('beginner'),
+                      onTap: () {
+                        if (_userProgress?.intermediateUnlocked ?? false) {
+                          GlobalAudioService.playClickSound();
+                          final session = YogaDataComplete.intermediateSessions.first;
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SessionDetailScreen(session: session),
+                            ),
+                          );
+                        } else {
+                          _showLockedDialog(
+                            AppLocalizations.of(context)!.intermediateTitle,
+                            UserProgress.sessionsRequiredForIntermediate,
+                            _getSessionsCompleted('beginner'),
+                          );
+                        }
+                      },
+                    ),
+
+                    SizedBox(height: isWeb ? 28 : 20),
+
+                    // Advanced Card
+                    _buildLevelCard(
+                      context,
+                      title: AppLocalizations.of(context)!.advancedTitle,
+                      subtitle: AppLocalizations.of(context)!.advancedSubtitle,
+                      description: AppLocalizations.of(context)!.advancedDesc,
+                      imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600',
+                      color: const Color(0xCD000000),
+                      isLocked: !(_userProgress?.advancedUnlocked ?? false),
+                      sessionsCompleted: _getSessionsCompleted('advanced'),
+                      progress: (_userProgress?.progressToAdvanced ?? 0.0),
+                      requiredSessions: UserProgress.sessionsRequiredForAdvanced,
+                      currentLevelSessions: _getSessionsCompleted('intermediate'),
+                      needsIntermediate: !(_userProgress?.intermediateUnlocked ?? false),
+                      onTap: () {
+                        if (_userProgress?.advancedUnlocked ?? false) {
+                          GlobalAudioService.playClickSound();
+                          final session = YogaDataComplete.advancedSessions.first;
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SessionDetailScreen(session: session),
+                            ),
+                          );
+                        } else {
+                          if (!(_userProgress?.intermediateUnlocked ?? false)) {
+                            _showLockedDialog(
+                              AppLocalizations.of(context)!.advancedTitle,
+                              UserProgress.sessionsRequiredForIntermediate,
+                              _getSessionsCompleted('beginner'),
+                              message: AppLocalizations.of(context)!.unlockIntermediateFirst,
+                            );
+                          } else {
+                            _showLockedDialog(
+                              AppLocalizations.of(context)!.advancedTitle,
+                              UserProgress.sessionsRequiredForAdvanced,
+                              _getSessionsCompleted('intermediate'),
+                            );
+                          }
+                        }
+                      },
+                    ),
+
+                    const SizedBox(height: 40),
+                  ],
                 ),
-              ),)));
+              ),
+            ),
+          ),));
   }
 
   Widget _buildLevelCard(
@@ -317,12 +319,14 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
         int? currentLevelSessions,
         bool needsIntermediate = false,
       }) {
+    final isWeb = MediaQuery.of(context).size.width > 600;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 220, // Taller for elderly-friendly spacing
+        height: isWeb ? 260 : 220,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24), // More rounded
+          borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.15),
@@ -369,7 +373,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
 
               // Content
               Padding(
-                padding: const EdgeInsets.all(20),
+                padding: EdgeInsets.all(isWeb ? 28 : 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -378,9 +382,9 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 8,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: isWeb ? 18 : 14,
+                            vertical: isWeb ? 10 : 8,
                           ),
                           decoration: BoxDecoration(
                             color: color,
@@ -389,7 +393,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                           child: Text(
                             title.toUpperCase(),
                             style: GoogleFonts.poppins(
-                              fontSize: 13, // Larger
+                              fontSize: isWeb ? 15 : 13,
                               fontWeight: FontWeight.w700,
                               color: Colors.white,
                               letterSpacing: 1.2,
@@ -400,19 +404,19 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                           Icon(
                             Icons.lock_outline,
                             color: Colors.white.withOpacity(0.9),
-                            size: 28,
+                            size: isWeb ? 32 : 28,
                           )
                         else if (sessionsCompleted > 0)
                           Container(
-                            padding: const EdgeInsets.all(6),
+                            padding: EdgeInsets.all(isWeb ? 8 : 6),
                             decoration: BoxDecoration(
                               color: color,
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(
+                            child: Icon(
                               Icons.check,
                               color: Colors.white,
-                              size: 20,
+                              size: isWeb ? 24 : 20,
                             ),
                           ),
                       ],
@@ -427,7 +431,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                         Text(
                           AppLocalizations.of(context)!.unlockIntermediateFirst,
                           style: GoogleFonts.poppins(
-                            fontSize: 18, // Larger
+                            fontSize: isWeb ? 22 : 18,
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
                           ),
@@ -439,23 +443,23 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                             Text(
                               AppLocalizations.of(context)!.completeSessionsToUnlock(requiredSessions - currentLevelSessions),
                               style: GoogleFonts.poppins(
-                                fontSize: 18, // Larger
+                                fontSize: isWeb ? 22 : 18,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.white,
                               ),
                             ),
-                            const SizedBox(height: 6),
+                            SizedBox(height: isWeb ? 8 : 6),
                             Text(
                               AppLocalizations.of(context)!.sessionsProgress(currentLevelSessions, requiredSessions),
                               style: GoogleFonts.poppins(
-                                fontSize: 15, // Larger
+                                fontSize: isWeb ? 17 : 15,
                                 color: Colors.white.withOpacity(0.95),
                               ),
                             ),
                           ],
                         ),
 
-                      const SizedBox(height: 12),
+                      SizedBox(height: isWeb ? 16 : 12),
 
                       // Progress bar
                       if (progress != null && progress > 0 && !needsIntermediate)
@@ -465,7 +469,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                             value: progress,
                             backgroundColor: Colors.white.withOpacity(0.3),
                             valueColor: AlwaysStoppedAnimation<Color>(color),
-                            minHeight: 8, // Thicker bar
+                            minHeight: isWeb ? 10 : 8,
                           ),
                         ),
                     ]
@@ -474,17 +478,17 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                       Text(
                         subtitle,
                         style: GoogleFonts.poppins(
-                          fontSize: 24, // Larger for elderly
+                          fontSize: isWeb ? 28 : 24,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                           height: 1.2,
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: isWeb ? 12 : 8),
                       Text(
                         description,
                         style: GoogleFonts.poppins(
-                          fontSize: 15, // Larger for elderly
+                          fontSize: isWeb ? 17 : 15,
                           color: Colors.white.withOpacity(0.95),
                           height: 1.4,
                         ),
@@ -493,19 +497,19 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                       ),
 
                       if (sessionsCompleted > 0) ...[
-                        const SizedBox(height: 10),
+                        SizedBox(height: isWeb ? 14 : 10),
                         Row(
                           children: [
                             Icon(
                               Icons.check_circle,
                               color: color,
-                              size: 16,
+                              size: isWeb ? 18 : 16,
                             ),
-                            const SizedBox(width: 6),
+                            SizedBox(width: isWeb ? 8 : 6),
                             Text(
                               AppLocalizations.of(context)!.sessionsCompletedCount(sessionsCompleted),
                               style: GoogleFonts.poppins(
-                                fontSize: 14, // Larger
+                                fontSize: isWeb ? 16 : 14,
                                 color: Colors.white,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -526,12 +530,12 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
   }
 
   void _showLockedDialog(
-    String levelName,
-    int requiredSessions,
-    int currentSessions, {
-      String? message,
-    }) {
-      final TextEditingController passcodeController = TextEditingController();
+      String levelName,
+      int requiredSessions,
+      int currentSessions, {
+        String? message,
+      }) {
+    final TextEditingController passcodeController = TextEditingController();
 
     showDialog(
       context: context,

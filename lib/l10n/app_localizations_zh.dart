@@ -296,6 +296,24 @@ class AppLocalizationsZh extends AppLocalizations {
   String get wellnessOverview => '健康概览';
 
   @override
+  String get haveANiceDay => '祝你今天愉快！';
+
+  @override
+  String get selectDate => '选择日期';
+
+  @override
+  String get todaysPractice => '今日练习';
+
+  @override
+  String get recommendedForYou => '为你推荐';
+
+  @override
+  String get seeAll => '查看全部';
+
+  @override
+  String get ambient => '环境音';
+
+  @override
   String get streak => '连续天数';
 
   @override
@@ -998,6 +1016,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get playing => '播放中';
+
+  @override
+  String get pause => '暂停';
+
+  @override
+  String get resume => '继续';
 
   @override
   String get waitingForPin => '等待输入密码...';
@@ -2138,6 +2162,24 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get wellnessOverview => '健康概览';
 
   @override
+  String get haveANiceDay => '祝你今天愉快！';
+
+  @override
+  String get selectDate => '选择日期';
+
+  @override
+  String get todaysPractice => '今日练习';
+
+  @override
+  String get recommendedForYou => '为你推荐';
+
+  @override
+  String get seeAll => '查看全部';
+
+  @override
+  String get ambient => '环境音';
+
+  @override
   String get streak => '连续天数';
 
   @override
@@ -2840,6 +2882,12 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get playing => '播放中';
+
+  @override
+  String get pause => '暂停';
+
+  @override
+  String get resume => '继续';
 
   @override
   String get waitingForPin => '等待输入密码...';
@@ -3980,6 +4028,24 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get wellnessOverview => '健康概覽';
 
   @override
+  String get haveANiceDay => '祝你今天愉快！';
+
+  @override
+  String get selectDate => '選擇日期';
+
+  @override
+  String get todaysPractice => '今日練習';
+
+  @override
+  String get recommendedForYou => '為你推薦';
+
+  @override
+  String get seeAll => '查看全部';
+
+  @override
+  String get ambient => '環境音';
+
+  @override
   String get streak => '連續天數';
 
   @override
@@ -4682,6 +4748,12 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get playing => '播放中';
+
+  @override
+  String get pause => '暫停';
+
+  @override
+  String get resume => '繼續';
 
   @override
   String get waitingForPin => '等待輸入密碼...';

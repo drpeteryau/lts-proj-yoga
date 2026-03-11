@@ -129,144 +129,177 @@ class _SimplePinDialogState extends State<SimplePinDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final isSmallPhone = width < 360;
+
     return Dialog(
+      insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-      child: Container(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Lock icon
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: const Color(0xFF40E0D0).withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.lock_outline,
-                size: 48,
-                color: Color(0xFF40E0D0),
-              ),
-            ),
-
-            const SizedBox(height: 24),
-
-            // Title
-            Text(
-              AppLocalizations.of(context)!.enterPinCode,
-              style: GoogleFonts.poppins(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-
-            const SizedBox(height: 8),
-
-            Text(
-              AppLocalizations.of(context)!.pinInstructions,
-              style: GoogleFonts.poppins(fontSize: 14, color: Colors.grey[600]),
-            ),
-
-            const SizedBox(height: 32),
-
-            // PIN dots with shake animation
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 100),
-              transform: Matrix4.translationValues(
-                _isError ? (DateTime.now().millisecond % 2 == 0 ? -5 : 5) : 0,
-                0,
-                0,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(4, (index) {
-                  return Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 8),
-                    width: 16,
-                    height: 16,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: _isError
-                          ? Colors.red
-                          : index < _enteredPin.length
-                          ? const Color(0xFF40E0D0)
-                          : Colors.grey[300],
-                    ),
-                  );
-                }),
-              ),
-            ),
-
-            if (_isError) ...[
-              const SizedBox(height: 16),
-              Text(
-                AppLocalizations.of(context)!.incorrectPin,
-                style: GoogleFonts.poppins(
-                  color: Colors.red,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-
-            const SizedBox(height: 32),
-
-            // Number pad
-            Column(
-              children: [
-                _buildNumberRow(['1', '2', '3']),
-                const SizedBox(height: 12),
-                _buildNumberRow(['4', '5', '6']),
-                const SizedBox(height: 12),
-                _buildNumberRow(['7', '8', '9']),
-                const SizedBox(height: 12),
-                _buildNumberRow(['', '0', '⌫']),
-              ],
-            ),
-          ],
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 420),
+        child: Padding(
+          padding: EdgeInsets.all(isSmallPhone ? 20 : 28),
+          child: _buildContent(isSmallPhone),
         ),
       ),
     );
   }
 
-  Widget _buildNumberRow(List<String> numbers) {
+  Widget _buildContent(bool isSmallPhone) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: const Color(0xFF40E0D0).withOpacity(0.1),
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(
+            Icons.lock_outline,
+            size: 40,
+            color: Color(0xFF40E0D0),
+          ),
+        ),
+
+        const SizedBox(height: 20),
+
+        Text(
+          AppLocalizations.of(context)!.enterPinCode,
+          style: GoogleFonts.poppins(
+            fontSize: isSmallPhone ? 20 : 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+
+        const SizedBox(height: 6),
+
+        Text(
+          AppLocalizations.of(context)!.pinInstructions,
+          textAlign: TextAlign.center,
+          style: GoogleFonts.poppins(
+            fontSize: isSmallPhone ? 13 : 14,
+            color: Colors.grey[600],
+          ),
+        ),
+
+        const SizedBox(height: 24),
+
+        _buildPinDots(),
+
+        if (_isError) ...[
+          const SizedBox(height: 10),
+          Text(
+            AppLocalizations.of(context)!.incorrectPin,
+            style: GoogleFonts.poppins(
+              color: Colors.red,
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+
+        const SizedBox(height: 24),
+
+        _buildKeypad(isSmallPhone),
+      ],
+    );
+  }
+
+  Widget _buildPinDots() {
+    final width = MediaQuery.of(context).size.width;
+    final isSmallPhone = width < 360;
+
+    final dotSize = isSmallPhone ? 14.0 : 16.0;
+    final spacing = isSmallPhone ? 6.0 : 8.0;
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 120),
+      transform: Matrix4.translationValues(
+        _isError ? 6 : 0,
+        0,
+        0,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: List.generate(4, (index) {
+          return Container(
+            margin: EdgeInsets.symmetric(horizontal: spacing),
+            width: dotSize,
+            height: dotSize,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: _isError
+                  ? Colors.red
+                  : index < _enteredPin.length
+                  ? const Color(0xFF40E0D0)
+                  : Colors.grey[300],
+            ),
+          );
+        }),
+      ),
+    );
+  }
+
+  Widget _buildKeypad(bool isSmallPhone) {
+    return Column(
+      children: [
+        _buildNumberRow(['1','2','3'], isSmallPhone),
+        const SizedBox(height: 10),
+        _buildNumberRow(['4','5','6'], isSmallPhone),
+        const SizedBox(height: 10),
+        _buildNumberRow(['7','8','9'], isSmallPhone),
+        const SizedBox(height: 10),
+        _buildNumberRow(['','0','⌫'], isSmallPhone),
+      ],
+    );
+  }
+
+  Widget _buildNumberRow(List<String> numbers, bool isSmallPhone) {
+    final size = isSmallPhone ? 60.0 : 70.0;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: numbers.map((number) {
+
         if (number.isEmpty) {
-          return const SizedBox(width: 72);
+          return SizedBox(width: size);
         }
 
         return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 8),
+          margin: const EdgeInsets.symmetric(horizontal: 6),
           child: Material(
             color: Colors.transparent,
             child: InkWell(
               onTap: _isVerifying
                   ? null
                   : () {
-                      if (number == '⌫') {
-                        _onBackspace();
-                      } else {
-                        _onNumberPressed(number);
-                      }
-                    },
-              borderRadius: BorderRadius.circular(36),
+                if (number == '⌫') {
+                  _onBackspace();
+                } else {
+                  _onNumberPressed(number);
+                }
+              },
+              borderRadius: BorderRadius.circular(size),
               child: Container(
-                width: 72,
-                height: 72,
+                width: size,
+                height: size,
                 decoration: BoxDecoration(
-                  color: _isVerifying ? Colors.grey[200] : Colors.grey[100],
-                  borderRadius: BorderRadius.circular(36),
+                  color: _isVerifying
+                      ? Colors.grey[200]
+                      : Colors.grey[100],
+                  borderRadius: BorderRadius.circular(size),
                 ),
                 child: Center(
                   child: Text(
                     number,
                     style: GoogleFonts.poppins(
-                      fontSize: 24,
+                      fontSize: isSmallPhone ? 20 : 24,
                       fontWeight: FontWeight.w600,
-                      color: _isVerifying ? Colors.grey[400] : Colors.black87,
+                      color: _isVerifying
+                          ? Colors.grey[400]
+                          : Colors.black87,
                     ),
                   ),
                 ),
@@ -276,5 +309,6 @@ class _SimplePinDialogState extends State<SimplePinDialog> {
         );
       }).toList(),
     );
+
   }
 }

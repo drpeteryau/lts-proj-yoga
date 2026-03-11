@@ -72,7 +72,7 @@ class _MeditationScreenState extends State<MeditationScreen> {
   // Real ambient sounds (looping audio files from free sources)
   final List<MeditationSession> sounds = [
     MeditationSession(
-      titleKey: "oceanWaves",
+      titleKey: "Ocean Waves",
       descriptionKey: "oceanWavesDesc",
       durationMinutes: 60,
       imageUrl:
@@ -83,7 +83,7 @@ class _MeditationScreenState extends State<MeditationScreen> {
       isLooping: true,
     ),
     MeditationSession(
-      titleKey: "rainSounds",
+      titleKey: "Rain Sounds",
       descriptionKey: "rainSoundsDesc",
       durationMinutes: 60,
       imageUrl:
@@ -94,7 +94,7 @@ class _MeditationScreenState extends State<MeditationScreen> {
       isLooping: true,
     ),
     MeditationSession(
-      titleKey: "forestBirds",
+      titleKey: "Forest Birds",
       descriptionKey: "forestBirdsDesc",
       durationMinutes: 60,
       imageUrl:
@@ -105,7 +105,7 @@ class _MeditationScreenState extends State<MeditationScreen> {
       isLooping: true,
     ),
     MeditationSession(
-      titleKey: "cracklingFire",
+      titleKey: "Crackling Fire",
       descriptionKey: "cracklingFireDesc",
       durationMinutes: 60,
       imageUrl:
@@ -116,7 +116,7 @@ class _MeditationScreenState extends State<MeditationScreen> {
       isLooping: true,
     ),
     MeditationSession(
-      titleKey: "whiteNoise",
+      titleKey: "White Noise",
       descriptionKey: "whiteNoiseDesc",
       durationMinutes: 60,
       imageUrl:
@@ -127,7 +127,7 @@ class _MeditationScreenState extends State<MeditationScreen> {
       isLooping: true,
     ),
     MeditationSession(
-      titleKey: "flowingWater",
+      titleKey: "Flowing Water",
       descriptionKey: "flowingWaterDesc",
       durationMinutes: 60,
       imageUrl:
@@ -138,7 +138,7 @@ class _MeditationScreenState extends State<MeditationScreen> {
       isLooping: true,
     ),
     MeditationSession(
-      titleKey: "windChimes",
+      titleKey: "Wind Chimes",
       descriptionKey: "windChimesDesc",
       durationMinutes: 60,
       imageUrl:
@@ -149,7 +149,7 @@ class _MeditationScreenState extends State<MeditationScreen> {
       isLooping: true,
     ),
     MeditationSession(
-      titleKey: "nightCrickets",
+      titleKey: "Night Crickets",
       descriptionKey: "nightCricketsDesc",
       durationMinutes: 60,
       imageUrl:
@@ -165,6 +165,7 @@ class _MeditationScreenState extends State<MeditationScreen> {
   Widget build(BuildContext context) {
     // Initialize the localization helper
     final lookup = MeditationLookup(context);
+    final isWeb = MediaQuery.of(context).size.width > 600;
 
     return Scaffold(
       body: Container(
@@ -182,46 +183,53 @@ class _MeditationScreenState extends State<MeditationScreen> {
           ),
         ),
         child: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(),
-              Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  children: [
-                    const SizedBox(height: 14),
-                    _buildQuickStartCard(lookup),
-                    const SizedBox(height: 32),
-                    _buildSectionTitle(AppLocalizations.of(context)!.guidedMeditationSection),
-                    const SizedBox(height: 16),
-                    ...sessions.map((session) => _buildMeditationCard(session, lookup)),
-                    const SizedBox(height: 32),
-                    _buildSectionTitle(AppLocalizations.of(context)!.ambientSoundsSection),
-                    const SizedBox(height: 8),
-                    Text(
-                      AppLocalizations.of(context)!.ambientSoundsSubtitle,
-                      style: GoogleFonts.poppins(
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    _buildSoundsGrid(),
-                    const SizedBox(height: 32),
-                  ],
-                ),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: isWeb ? 1280 : double.infinity,
               ),
-            ],
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildHeader(isWeb),
+                  Expanded(
+                    child: ListView(
+                      padding: EdgeInsets.symmetric(horizontal: isWeb ? 40 : 20),
+                      children: [
+                        SizedBox(height: isWeb ? 20 : 14),
+                        _buildQuickStartCard(lookup, isWeb),
+                        SizedBox(height: isWeb ? 40 : 32),
+                        _buildSectionTitle(AppLocalizations.of(context)!.guidedMeditationSection, isWeb),
+                        SizedBox(height: isWeb ? 20 : 16),
+                        ...sessions.map((session) => _buildMeditationCard(session, lookup, isWeb)),
+                        SizedBox(height: isWeb ? 40 : 32),
+                        _buildSectionTitle(AppLocalizations.of(context)!.ambientSoundsSection, isWeb),
+                        const SizedBox(height: 8),
+                        Text(
+                          AppLocalizations.of(context)!.ambientSoundsSubtitle,
+                          style: GoogleFonts.poppins(
+                            fontSize: isWeb ? 16 : 14,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                        SizedBox(height: isWeb ? 20 : 16),
+                        _buildSoundsGrid(isWeb),
+                        SizedBox(height: isWeb ? 40 : 32),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(bool isWeb) {
     return Padding(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(isWeb ? 40 : 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -234,7 +242,7 @@ class _MeditationScreenState extends State<MeditationScreen> {
                     Text(
                       AppLocalizations.of(context)!.meditationHeader,
                       style: GoogleFonts.poppins(
-                        fontSize: 26,
+                        fontSize: isWeb ? 32 : 26,
                         fontWeight: FontWeight.bold,
                         color: Colors.black87,
                       ),
@@ -250,24 +258,24 @@ class _MeditationScreenState extends State<MeditationScreen> {
     );
   }
 
-  Widget _buildSectionTitle(String title) {
+  Widget _buildSectionTitle(String title, bool isWeb) {
     return Text(
       title,
       style: GoogleFonts.poppins(
-        fontSize: 20,
+        fontSize: isWeb ? 24 : 20,
         fontWeight: FontWeight.bold,
         color: Colors.black87,
       ),
     );
   }
 
-  Widget _buildQuickStartCard(MeditationLookup lookup) {
+  Widget _buildQuickStartCard(MeditationLookup lookup, bool isWeb) {
     final quickSession = sessions.first;
 
     return GestureDetector(
       onTap: () => _startSession(quickSession),
       child: Container(
-        height: 180,
+        height: isWeb ? 220 : 180,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
@@ -351,12 +359,12 @@ class _MeditationScreenState extends State<MeditationScreen> {
     );
   }
 
-  Widget _buildMeditationCard(MeditationSession session, MeditationLookup lookup) {
+  Widget _buildMeditationCard(MeditationSession session, MeditationLookup lookup, bool isWeb) {
     return GestureDetector(
       onTap: () => _startSession(session),
       child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
-        height: 140,
+        margin: EdgeInsets.only(bottom: isWeb ? 20 : 16),
+        height: isWeb ? 160 : 140,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -378,8 +386,8 @@ class _MeditationScreenState extends State<MeditationScreen> {
               ),
               child: Image.network(
                 session.imageUrl,
-                width: 120,
-                height: 140,
+                width: isWeb ? 160 : 120,
+                height: isWeb ? 160 : 140,
                 fit: BoxFit.cover,
               ),
             ),
@@ -387,7 +395,7 @@ class _MeditationScreenState extends State<MeditationScreen> {
             // Content
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(isWeb ? 20 : 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -395,18 +403,18 @@ class _MeditationScreenState extends State<MeditationScreen> {
                     Text(
                       lookup.getTitle(session.titleKey),
                       style: GoogleFonts.poppins(
-                        fontSize: 18,
+                        fontSize: isWeb ? 20 : 18,
                         fontWeight: FontWeight.bold,
                         color: Colors.black87,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 6),
+                    SizedBox(height: isWeb ? 8 : 6),
                     Text(
                       lookup.getDescription(session.descriptionKey),
                       style: GoogleFonts.poppins(
-                        fontSize: 14,
+                        fontSize: isWeb ? 16 : 14,
                         color: Colors.grey[600],
                       ),
                       maxLines: 2,
@@ -458,27 +466,27 @@ class _MeditationScreenState extends State<MeditationScreen> {
     );
   }
 
-  Widget _buildSoundsGrid() {
+  Widget _buildSoundsGrid(bool isWeb) {
     final lookup = MeditationLookup(context);
 
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        childAspectRatio: 0.85,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: isWeb ? 3 : 2,  // 3 columns on web, 2 on mobile
+        crossAxisSpacing: isWeb ? 20 : 12,
+        mainAxisSpacing: isWeb ? 20 : 12,
+        childAspectRatio: isWeb ? 1.15 : 0.85,
       ),
       itemCount: sounds.length,
       itemBuilder: (context, index) {
         final sound = sounds[index];
-        return _buildSoundCard(sound, lookup);
+        return _buildSoundCard(sound, lookup, isWeb);
       },
     );
   }
 
-  Widget _buildSoundCard(MeditationSession sound, MeditationLookup lookup) {
+  Widget _buildSoundCard(MeditationSession sound, MeditationLookup lookup, bool isWeb) {
     return GestureDetector(
       onTap: () => _startSession(sound),
       child: Container(
@@ -526,15 +534,15 @@ class _MeditationScreenState extends State<MeditationScreen> {
                     // Volume icon overlay
                     Center(
                       child: Container(
-                        padding: const EdgeInsets.all(12),
+                        padding: EdgeInsets.all(isWeb ? 14 : 12),
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.9),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.volume_up,
-                          color: Color(0xFF40E0D0),
-                          size: 28,
+                          color: const Color(0xFF40E0D0),
+                          size: isWeb ? 32 : 28,
                         ),
                       ),
                     ),
@@ -547,28 +555,29 @@ class _MeditationScreenState extends State<MeditationScreen> {
             Expanded(
               flex: 2,
               child: Padding(
-                padding: const EdgeInsets.all(12),
+                padding: EdgeInsets.all(isWeb ? 12 : 12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
                       lookup.getTitle(sound.titleKey),
                       style: GoogleFonts.poppins(
-                        fontSize: 15,
+                        fontSize: isWeb ? 17 : 15,
                         fontWeight: FontWeight.w600,
                         color: Colors.black87,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 2),
                     Text(
                       lookup.getDescription(sound.descriptionKey),
                       style: GoogleFonts.poppins(
                         fontSize: 12,
                         color: Colors.grey[600],
                       ),
-                      maxLines: 2,
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
@@ -581,54 +590,54 @@ class _MeditationScreenState extends State<MeditationScreen> {
     );
   }
 
-void _startSession(MeditationSession session) async {
-  if (MeditationSessionScreen.isActive) return;
+  void _startSession(MeditationSession session) async {
+    if (MeditationSessionScreen.isActive) return;
 
-  final audioService = GlobalAudioService();
+    final audioService = GlobalAudioService();
 
-  // Stop current audio before switching
-  if (audioService.hasSound) {
-    await audioService.clearSound();
-    await Future.delayed(const Duration(milliseconds: 300));
-  }
+    // Stop current audio before switching
+    if (audioService.hasSound) {
+      await audioService.clearSound();
+      await Future.delayed(const Duration(milliseconds: 300));
+    }
 
-  if (session.type == MeditationType.sound) {
+    if (session.type == MeditationType.sound) {
 
-    final index = sounds.indexOf(session);
+      final index = sounds.indexOf(session);
 
-    // Start ambient playlist
-    await audioService.startAmbientPlaylist(
-      sounds: sounds,
-      index: index,
-    );
+      // Start ambient playlist
+      await audioService.startAmbientPlaylist(
+        sounds: sounds,
+        index: index,
+      );
 
-    // Open ambient player
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => SoundPlayerScreen(
-          sounds: sounds,
-          initialIndex: index,
+      // Open ambient player
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => SoundPlayerScreen(
+            sounds: sounds,
+            initialIndex: index,
+          ),
         ),
-      ),
-    );
+      );
 
-  } else {
+    } else {
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => MeditationSessionScreen(session: session),
-      ),
-    );
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => MeditationSessionScreen(session: session),
+        ),
+      );
 
-    audioService.startMeditationWithWelcome(
-      assetFile: session.audioFile,
-      title: session.titleKey,
-      category: "Meditation",
-      imageUrl: session.imageUrl,
-      duration: Duration(minutes: session.durationMinutes),
-    );
+      audioService.startMeditationWithWelcome(
+        assetFile: session.audioFile,
+        title: session.titleKey,
+        category: "Meditation",
+        imageUrl: session.imageUrl,
+        duration: Duration(minutes: session.durationMinutes),
+      );
+    }
   }
-}
 }

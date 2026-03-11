@@ -20,7 +20,6 @@ class _LoginScreenState extends State<LoginScreen>
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
-
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
 

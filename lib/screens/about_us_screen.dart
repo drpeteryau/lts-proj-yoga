@@ -12,7 +12,7 @@ class AboutUsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.black12,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, size: 28, color: Colors.black87),

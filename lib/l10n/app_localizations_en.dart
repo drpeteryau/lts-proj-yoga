@@ -300,6 +300,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get wellnessOverview => 'Wellness Overview';
 
   @override
+  String get haveANiceDay => 'Have a nice day!';
+
+  @override
+  String get selectDate => 'Select Date';
+
+  @override
+  String get todaysPractice => 'Today\'s Practice';
+
+  @override
+  String get recommendedForYou => 'Recommended for you';
+
+  @override
+  String get seeAll => 'See All';
+
+  @override
+  String get ambient => 'Ambient';
+
+  @override
   String get streak => 'Streak';
 
   @override
@@ -1059,6 +1077,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get playing => 'Playing';
+
+  @override
+  String get pause => 'Pause';
+
+  @override
+  String get resume => 'Resume';
 
   @override
   String get waitingForPin => 'Waiting for PIN...';

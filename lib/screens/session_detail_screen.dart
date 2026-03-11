@@ -47,116 +47,114 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isWeb = MediaQuery.of(context).size.width > 600;
+
     return Scaffold(
-
-      backgroundColor: Colors.white, // Light theme
-
+      backgroundColor: Colors.white,
       body: Stack(
         children: [
-          // Main content
-          Column(
-            children: [
-              // Hero image with fade gradient
-              _buildHeroSection(),
+          // Main scrollable content
+          Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: isWeb ? 1280 : double.infinity,
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Hero image (now scrollable)
+                    _buildHeroSection(),
 
-              // Scrollable content
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.only(bottom: 120), // Space for button
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 26),
+                    // Session title
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isWeb ? 40 : 24,
+                        vertical: isWeb ? 32 : 26,
+                      ),
+                      child: Text(
+                        YogaLocalizationHelper.getSessionTitle(context, widget.session.titleKey),
+                        style: GoogleFonts.poppins(
+                          fontSize: isWeb ? 32 : 26,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                          height: 1.2,
+                        ),
+                      ),
+                    ),
 
-                      // Session title (Chair Yoga, etc.)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 24),
-                        child: Text(
-                          YogaLocalizationHelper.getSessionTitle(context, widget.session.titleKey),
-                          style: GoogleFonts.poppins(
-                            fontSize: 26, // Elderly-friendly header
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                            height: 1.2,
+                    // 3 Circular info boxes
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: isWeb ? 40 : 24),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: _buildInfoBox(
+                              label: AppLocalizations.of(context)!.sessionLevelLabel,
+                              value: YogaLocalizationHelper.getSessionLevel(context, widget.session.levelKey),
+                              color: const Color(0xFFFFF0E4),
+                            ),
                           ),
-                        ),
+                          SizedBox(width: isWeb ? 16 : 12),
+                          Expanded(
+                            child: _buildInfoBox(
+                              label: AppLocalizations.of(context)!.sessionTotalTimeLabel,
+                              value: AppLocalizations.of(context)!.minsLabel(widget.session.totalDurationMinutes),
+                              color: const Color(0xFFEBFFFF),
+                            ),
+                          ),
+                          SizedBox(width: isWeb ? 16 : 12),
+                          Expanded(
+                            child: _buildInfoBox(
+                              label: AppLocalizations.of(context)!.sessionTotalPosesLabel,
+                              value: AppLocalizations.of(context)!.poseCount(widget.session.allPoses.length),
+                              color: const Color(0xFFE1FFF9),
+                            ),
+                          ),
+                        ],
                       ),
+                    ),
 
-                      const SizedBox(height: 20),
+                    SizedBox(height: isWeb ? 32 : 24),
 
-                      // 3 Circular info boxes
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 24),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: _buildInfoBox(
-                                label: AppLocalizations.of(context)!.sessionLevelLabel,
-                                value: YogaLocalizationHelper.getSessionLevel(context, widget.session.levelKey),
-                                color: const Color(0xFFFFF0E4),
-                              ),
+                    // About this session
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: isWeb ? 40 : 24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            AppLocalizations.of(context)!.aboutThisSession,
+                            style: GoogleFonts.poppins(
+                              fontSize: isWeb ? 26 : 22,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
                             ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: _buildInfoBox(
-                                label: AppLocalizations.of(context)!.sessionTotalTimeLabel,
-                                value: AppLocalizations.of(context)!.minsLabel(widget.session.totalDurationMinutes),
-                                color: const Color(0xFFEBFFFF),
-                              ),
+                          ),
+                          SizedBox(height: isWeb ? 12 : 10),
+                          Text(
+                            YogaLocalizationHelper.getSessionDescription(context, widget.session.descriptionKey),
+                            style: GoogleFonts.poppins(
+                              fontSize: isWeb ? 20 : 18,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black,
+                              height: 1.4,
                             ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: _buildInfoBox(
-                                label: AppLocalizations.of(context)!.sessionTotalPosesLabel,
-                                value: AppLocalizations.of(context)!.poseCount(widget.session.allPoses.length),
-                                color: const Color(0xFFE1FFF9),
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
+                    ),
 
-                      const SizedBox(height: 24),
+                    SizedBox(height: isWeb ? 36 : 28),
 
-                      // About this session
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 24),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              AppLocalizations.of(context)!.aboutThisSession,
-                              style: GoogleFonts.poppins(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black87,
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              YogaLocalizationHelper.getSessionDescription(context, widget.session.descriptionKey),
-                              style: GoogleFonts.poppins(
-                                fontSize: 18,
-                                fontWeight:FontWeight.w400,
-                                color: Colors.black,
-                                height: 1.4,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                    // Pose list
+                    _buildPoseList(),
 
-                      const SizedBox(height: 28),
-
-                      // Pose list (simple cards, no descriptions)
-                      _buildPoseList(),
-
-                      const SizedBox(height: 20),
-                    ],
-                  ),
+                    SizedBox(height: isWeb ? 140 : 120), // Space for button
+                  ],
                 ),
               ),
-            ],
+            ),
           ),
 
           // Floating Join Class button
@@ -164,13 +162,20 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
             left: 0,
             right: 0,
             bottom: 0,
-            child: _buildJoinButton(),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: isWeb ? 1280 : double.infinity,
+                ),
+                child: _buildJoinButton(),
+              ),
+            ),
           ),
 
           // Back button overlay
           Positioned(
             top: MediaQuery.of(context).padding.top + 16,
-            left: 16,
+            left: isWeb ? (MediaQuery.of(context).size.width - 1280) / 2 + 16 : 16,
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -184,7 +189,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                 ],
               ),
               child: IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.black87, size: 24),
+                icon: Icon(Icons.arrow_back, color: Colors.black87, size: isWeb ? 28 : 24),
                 onPressed: () async {
                   await GlobalAudioService.playClickSound();
                   Navigator.pop(context);
@@ -202,8 +207,13 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
     required String value,
     required Color color,
   }) {
+    final isWeb = MediaQuery.of(context).size.width > 600;
+
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+      padding: EdgeInsets.symmetric(
+        vertical: isWeb ? 20 : 16,
+        horizontal: isWeb ? 16 : 12,
+      ),
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(20),
@@ -213,17 +223,17 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
           Text(
             label,
             style: GoogleFonts.poppins(
-              fontSize: 12,
+              fontSize: isWeb ? 14 : 12,
               color: Colors.black54,
               fontWeight: FontWeight.w500,
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: isWeb ? 6 : 4),
           Text(
             value,
             style: GoogleFonts.poppins(
-              fontSize: 16,
+              fontSize: isWeb ? 18 : 16,
               fontWeight: FontWeight.bold,
               color: Colors.black87,
             ),
@@ -235,8 +245,10 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
   }
 
   Widget _buildHeroSection() {
+    final isWeb = MediaQuery.of(context).size.width > 600;
+
     return SizedBox(
-      height: 280,
+      height: isWeb ? 400 : 280,
       width: double.infinity,
       child: Stack(
         fit: StackFit.expand,
@@ -248,9 +260,9 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
             errorBuilder: (context, error, stackTrace) {
               return Container(
                 color: Colors.grey[300],
-                child: const Icon(
+                child: Icon(
                   Icons.self_improvement,
-                  size: 100,
+                  size: isWeb ? 120 : 100,
                   color: Colors.grey,
                 ),
               );
@@ -259,14 +271,13 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
 
           // Gradient fade to white background
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.transparent,
                   Colors.transparent,
-
                   Colors.white, // Full white at bottom
                 ],
                 stops: const [0.0, 0.3, 0.6, 0.85, 1.0],
@@ -279,8 +290,10 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
   }
 
   Widget _buildPoseList() {
+    final isWeb = MediaQuery.of(context).size.width > 600;
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: EdgeInsets.symmetric(horizontal: isWeb ? 40 : 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -288,13 +301,13 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
           Text(
             AppLocalizations.of(context)!.posesPreview,
             style: GoogleFonts.poppins(
-              fontSize: 22,
+              fontSize: isWeb ? 26 : 22,
               fontWeight: FontWeight.bold,
               color: Colors.black87,
             ),
           ),
 
-          const SizedBox(height: 16),
+          SizedBox(height: isWeb ? 20 : 16),
 
           // Pose cards
           ...widget.session.allPoses.asMap().entries.map((entry) {
@@ -310,8 +323,10 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
   }
 
   Widget _buildPoseCard(YogaPose pose, int number, bool isCompleted) {
+    final isWeb = MediaQuery.of(context).size.width > 600;
+
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: EdgeInsets.only(bottom: isWeb ? 16 : 12),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
@@ -331,11 +346,10 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
           },
           borderRadius: BorderRadius.circular(16),
           child: Container(
-            padding: const EdgeInsets.all(18),
+            padding: EdgeInsets.all(isWeb ? 22 : 18),
             decoration: BoxDecoration(
-              color: Colors.white, // Light card
+              color: Colors.white,
               borderRadius: BorderRadius.circular(16),
-
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.05),
@@ -348,8 +362,8 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
               children: [
                 // Number or checkmark circle
                 Container(
-                  width: 44,
-                  height: 44,
+                  width: isWeb ? 52 : 44,
+                  height: isWeb ? 52 : 44,
                   decoration: BoxDecoration(
                     color: isCompleted
                         ? const Color(0xFF40E0D0)
@@ -358,15 +372,15 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                   ),
                   child: Center(
                     child: isCompleted
-                        ? const Icon(
+                        ? Icon(
                       Icons.check,
                       color: Colors.white,
-                      size: 24,
+                      size: isWeb ? 28 : 24,
                     )
                         : Text(
                       '$number',
                       style: GoogleFonts.poppins(
-                        fontSize: 18,
+                        fontSize: isWeb ? 20 : 18,
                         fontWeight: FontWeight.bold,
                         color: Colors.grey[700],
                       ),
@@ -374,7 +388,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                   ),
                 ),
 
-                const SizedBox(width: 16),
+                SizedBox(width: isWeb ? 20 : 16),
 
                 // Pose name and duration
                 Expanded(
@@ -384,21 +398,20 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                       Text(
                         YogaLocalizationHelper.getPoseName(context, pose.nameKey),
                         style: GoogleFonts.poppins(
-                          fontSize: 18,
+                          fontSize: isWeb ? 20 : 18,
                           fontWeight: FontWeight.bold,
                           color: Colors.black87,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      SizedBox(height: isWeb ? 6 : 4),
                       Text(
                         AppLocalizations.of(context)!.durationFormat(
                           (pose.durationSeconds ~/ 60),
                           (pose.durationSeconds % 60).toString().padLeft(2, '0'),
                         ),
-                        // '${pose.durationSeconds ~/ 60}:${(pose.durationSeconds % 60).toString().padLeft(2, '0')} min',
                         style: GoogleFonts.poppins(
-                          fontSize: 14,
-                          color: Colors.black
+                          fontSize: isWeb ? 16 : 14,
+                          color: Colors.black,
                         ),
                       ),
                     ],
@@ -408,7 +421,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                 // Arrow icon
                 Icon(
                   Icons.arrow_forward_ios,
-                  size: 18,
+                  size: isWeb ? 20 : 18,
                   color: Colors.grey[400],
                 ),
               ],
@@ -420,6 +433,8 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
   }
 
   Widget _buildJoinButton() {
+    final isWeb = MediaQuery.of(context).size.width > 600;
+
     // Count completed poses
     final completedCount = widget.session.allPoses
         .where((pose) => poseProgress[pose.id] ?? false)
@@ -429,10 +444,10 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
 
     return Container(
       padding: EdgeInsets.fromLTRB(
-        24,
-        24,
-        24,
-        MediaQuery.of(context).padding.bottom + 24,
+        isWeb ? 40 : 24,
+        isWeb ? 32 : 24,
+        isWeb ? 40 : 24,
+        MediaQuery.of(context).padding.bottom + (isWeb ? 32 : 24),
       ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -451,8 +466,11 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
           // Progress indicator (if started)
           if (completedCount > 0 && !isFullyCompleted)
             Container(
-              margin: const EdgeInsets.only(bottom: 16),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              margin: EdgeInsets.only(bottom: isWeb ? 20 : 16),
+              padding: EdgeInsets.symmetric(
+                horizontal: isWeb ? 20 : 16,
+                vertical: isWeb ? 12 : 10,
+              ),
               decoration: BoxDecoration(
                 color: const Color(0xFF40E0D0).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
@@ -463,16 +481,16 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
               ),
               child: Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.check_circle,
-                    size: 20,
-                    color: Color(0xFF40E0D0),
+                    size: isWeb ? 24 : 20,
+                    color: const Color(0xFF40E0D0),
                   ),
-                  const SizedBox(width: 10),
+                  SizedBox(width: isWeb ? 12 : 10),
                   Text(
                     AppLocalizations.of(context)!.posesCompletedCount(completedCount, totalPoses),
                     style: GoogleFonts.poppins(
-                      fontSize: 15,
+                      fontSize: isWeb ? 17 : 15,
                       color: const Color(0xFF40E0D0),
                       fontWeight: FontWeight.w600,
                     ),
@@ -481,7 +499,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
               ),
             ),
 
-          // Join Now button - Purple rounded style
+          // Join Now button
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
@@ -495,11 +513,11 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                 ).then((_) => _loadPoseProgress());
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF40E0D0), // Purple/Blue
+                backgroundColor: const Color(0xFF40E0D0),
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 18),
+                padding: EdgeInsets.symmetric(vertical: isWeb ? 20 : 18),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30), // More rounded
+                  borderRadius: BorderRadius.circular(30),
                 ),
                 elevation: 0,
               ),
@@ -509,21 +527,21 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                   Text(
                     isFullyCompleted ? AppLocalizations.of(context)!.practiceAgain : AppLocalizations.of(context)!.joinClass,
                     style: GoogleFonts.poppins(
-                      fontSize: 17,
+                      fontSize: isWeb ? 19 : 17,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 0.3,
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  SizedBox(width: isWeb ? 16 : 12),
                   Container(
-                    padding: const EdgeInsets.all(4),
+                    padding: EdgeInsets.all(isWeb ? 6 : 4),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.2),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.arrow_forward,
-                      size: 18,
+                      size: isWeb ? 20 : 18,
                     ),
                   ),
                 ],

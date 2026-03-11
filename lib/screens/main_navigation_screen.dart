@@ -61,7 +61,7 @@ class _MainNavigationScreenState
 
   Widget _buildTopNav() {
     return Container(
-      height: 84,
+      height: 94,
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
@@ -76,32 +76,28 @@ class _MainNavigationScreenState
         padding: const EdgeInsets.symmetric(horizontal: 40),
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 1150),
+            constraints: const BoxConstraints(maxWidth: 1280),
             child: Row(
               mainAxisAlignment:
                   MainAxisAlignment.spaceBetween,
               children: [
                 Row(
                   children: [
-                    const Icon(
-                      Icons.self_improvement,
-                      color: Color(0xFF40E0D0),
-                      size: 28,
-                    ),
-                    const SizedBox(width: 10),
+
+
                     Text(
-                      'HEAL',
+                      'ZEN',
                       style: GoogleFonts.poppins(
-                        fontSize: 20,
+                        fontSize: 28,
                         fontWeight: FontWeight.w700,
                         color:
                             const Color(0xFF1F3D3A),
                       ),
                     ),
                     Text(
-                      'YOGA',
+                      'CORE',
                       style: GoogleFonts.poppins(
-                        fontSize: 20,
+                        fontSize: 28,
                         fontWeight: FontWeight.w400,
                         color:
                             const Color(0xFF40E0D0),
@@ -137,7 +133,7 @@ class _MainNavigationScreenState
         child: Text(
           label,
           style: GoogleFonts.poppins(
-            fontSize: 13,
+            fontSize: 16,
             fontWeight: isSelected
                 ? FontWeight.w600
                 : FontWeight.w400,

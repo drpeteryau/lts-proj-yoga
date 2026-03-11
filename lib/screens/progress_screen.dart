@@ -239,7 +239,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
               child: Center(
                 child: ConstrainedBox(
                   constraints: BoxConstraints(
-                    maxWidth: isWeb ? 1200 : double.infinity,
+                    maxWidth: isWeb ? 1280 : double.infinity,
                   ),
                   child: SingleChildScrollView(
                     padding: EdgeInsets.all(isWeb ? 40 : 22),
@@ -258,34 +258,49 @@ class _ProgressScreenState extends State<ProgressScreen> {
 
                         SizedBox(height: isWeb ? 32 : 24),
 
-                        // On web: 2-column layout to use horizontal space properly.
+                        // On web: Custom layout per requirements
+                        // Row 1: This Week (left) | Stats + Wellness stacked (right)
+                        // Row 2: Daily Minutes (left) | Calendar (right)
                         // On mobile: single column, same order as before.
                         if (isWeb) ...[
-                          // Row 1: Stats | Wellness
+                          // Row 1: This Week (left) | Stats + Wellness (right)
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Expanded(child: _buildStatsOverview()),
+                              // Left: This Week widget
+                              Expanded(
+                                flex: 1,
+                                child: _buildWeeklyProgress(),
+                              ),
+
                               const SizedBox(width: 24),
-                              Expanded(child: _buildWellnessCheckInCard()),
+
+                              // Right: Stats (4 boxes) + Wellness stacked
+                              Expanded(
+                                flex: 1,
+                                child: Column(
+                                  children: [
+                                    _buildStatsOverview(),
+                                    const SizedBox(height: 24),
+                                    _buildWellnessCheckInCard(),
+                                  ],
+                                ),
+                              ),
                             ],
                           ),
 
                           const SizedBox(height: 24),
 
-                          // Daily minutes chart (full width)
-                          _buildDailyMinutesChart(),
-
-                          const SizedBox(height: 24),
-
-                          // Row 2: Weekly Progress | Calendar
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(child: _buildWeeklyProgress()),
-                              const SizedBox(width: 24),
-                              Expanded(child: _buildPracticeCalendar()),
-                            ],
+                          // Row 2: Daily Minutes (left) | Calendar (right) - matched heights
+                          IntrinsicHeight(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Expanded(child: _buildDailyMinutesChart()),
+                                const SizedBox(width: 24),
+                                Expanded(child: _buildPracticeCalendar()),
+                              ],
+                            ),
                           ),
                         ] else ...[
                           _buildWeeklyProgress(),
@@ -425,7 +440,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
 
   Widget _buildDailyMinutesChart() {
     final now = DateTime.now();
-    
+
     // 1. Find the Monday of the current week
     // If today is Sunday (7), subtracting 6 days gets us to Monday.
     // If today is Monday (1), subtracting 0 days stays on Monday.
@@ -438,7 +453,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
     for (int i = 0; i < 7; i++) {
       final date = mondayOfThisWeek.add(Duration(days: i));
       final dateKey = DateFormat('yyyy-MM-dd').format(date);
-      
+
       // Use the locale-aware short day name (Mon, Tue, etc.)
       final dayName = DateFormat('E', Localizations.localeOf(context).toString()).format(date);
 
@@ -493,82 +508,80 @@ class _ProgressScreenState extends State<ProgressScreen> {
             ],
           ),
           const SizedBox(height: 24),
-          if (!hasData)
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 40),
-                child: Column(
-                  children: [
-                    Icon(Icons.show_chart, size: 48, color: Colors.grey[300]),
-                    const SizedBox(height: 12),
-                    Text(
-                      AppLocalizations.of(context)!.nothingTracked,
-                      style: GoogleFonts.poppins(
-                        fontSize: 15,
-                        color: Colors.grey[400],
-                        fontWeight: FontWeight.w500,
-                      ),
+          // Fixed height avoids Expanded-in-unbounded-Column crash on mobile
+          SizedBox(
+            height: 160,
+            child: !hasData
+                ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.show_chart, size: 48, color: Colors.grey[300]),
+                  const SizedBox(height: 12),
+                  Text(
+                    AppLocalizations.of(context)!.nothingTracked,
+                    style: GoogleFonts.poppins(
+                      fontSize: 15,
+                      color: Colors.grey[400],
+                      fontWeight: FontWeight.w500,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             )
-          else
-            SizedBox(
-              height: 160,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: weekData.map((data) {
-                  final minutes = data['minutes'] as int;
-                  final dayName = data['day'] as String;
-                  final isToday = data['isToday'] as bool;
-                  final heightRatio = maxMinutes > 0 ? (minutes / maxMinutes) : 0.0;
-                  final barHeight = 100 * heightRatio;
+                : Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: weekData.map((data) {
+                final minutes = data['minutes'] as int;
+                final dayName = data['day'] as String;
+                final isToday = data['isToday'] as bool;
+                final heightRatio = maxMinutes > 0 ? (minutes / maxMinutes) : 0.0;
+                final barHeight = 100 * heightRatio;
 
-                  return Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          if (minutes > 0)
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 4),
-                              child: Text(
-                                '$minutes',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600,
-                                  color: isToday ? const Color(0xFF40E0D0) : Colors.black87,
-                                ),
+                return Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        if (minutes > 0)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 4),
+                            child: Text(
+                              '$minutes',
+                              style: GoogleFonts.poppins(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: isToday ? const Color(0xFF40E0D0) : Colors.black87,
                               ),
                             ),
-                          Container(
-                            height: max(barHeight, minutes > 0 ? 20 : 10),
-                            decoration: BoxDecoration(
-                              color: isToday
-                                  ? const Color(0xFFFFB74D) // Orange for today
-                                  : const Color(0xFF40E0D0), // Teal for others
-                              borderRadius: BorderRadius.circular(8),
-                            ),
                           ),
-                          const SizedBox(height: 8),
-                          Text(
-                            dayName,
-                            style: GoogleFonts.poppins(
-                              fontSize: 12,
-                              color: Colors.grey[600],
-                              fontWeight: FontWeight.w500,
-                            ),
+                        Container(
+                          height: max(barHeight, minutes > 0 ? 20 : 10),
+                          decoration: BoxDecoration(
+                            color: isToday
+                                ? const Color(0xFFFFB74D) // Orange for today
+                                : const Color(0xFF40E0D0), // Teal for others
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                        ],
-                      ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          dayName,
+                          style: GoogleFonts.poppins(
+                            fontSize: 12,
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
                     ),
-                  );
-                }).toList(),
-              ),
+                  ),
+                );
+              }).toList(),
             ),
+          ),
         ],
       ),
     );

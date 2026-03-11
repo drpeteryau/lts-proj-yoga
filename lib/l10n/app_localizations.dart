@@ -634,6 +634,42 @@ abstract class AppLocalizations {
   /// **'Wellness Overview'**
   String get wellnessOverview;
 
+  /// No description provided for @haveANiceDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Have a nice day!'**
+  String get haveANiceDay;
+
+  /// No description provided for @selectDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Date'**
+  String get selectDate;
+
+  /// No description provided for @todaysPractice.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Practice'**
+  String get todaysPractice;
+
+  /// No description provided for @recommendedForYou.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended for you'**
+  String get recommendedForYou;
+
+  /// No description provided for @seeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'See All'**
+  String get seeAll;
+
+  /// No description provided for @ambient.
+  ///
+  /// In en, this message translates to:
+  /// **'Ambient'**
+  String get ambient;
+
   /// No description provided for @streak.
   ///
   /// In en, this message translates to:
@@ -1953,6 +1989,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Playing'**
   String get playing;
+
+  /// No description provided for @pause.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get pause;
+
+  /// No description provided for @resume.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume'**
+  String get resume;
 
   /// No description provided for @waitingForPin.
   ///

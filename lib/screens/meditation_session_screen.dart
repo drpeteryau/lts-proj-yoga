@@ -100,9 +100,9 @@ class _MeditationSessionScreenState
 
   String _formatDuration(Duration duration) {
     final minutes =
-        duration.inMinutes.remainder(60).toString().padLeft(2, '0');
+    duration.inMinutes.remainder(60).toString().padLeft(2, '0');
     final seconds =
-        duration.inSeconds.remainder(60).toString().padLeft(2, '0');
+    duration.inSeconds.remainder(60).toString().padLeft(2, '0');
     return "$minutes:$seconds";
   }
 
@@ -126,7 +126,7 @@ class _MeditationSessionScreenState
 
     final isComplete =
         _audioService.sessionTotal != Duration.zero &&
-        _audioService.sessionRemaining == Duration.zero;
+            _audioService.sessionRemaining == Duration.zero;
 
     if (isComplete && !_completionTriggered) {
       _completionTriggered = true;
@@ -182,7 +182,7 @@ class _MeditationSessionScreenState
               }
 
               final breathingText =
-                  _breathingPhaseText(currentPhaseIndex);
+              _breathingPhaseText(currentPhaseIndex);
 
               return Stack(
                 fit: StackFit.expand,
@@ -197,31 +197,31 @@ class _MeditationSessionScreenState
                     child: Column(
                       children: [
 
-if (!isPreparing && !isComplete)
-  Align(
-    alignment: Alignment.topLeft,
-    child: Padding(
-      padding: const EdgeInsets.only(left: 8),
-      child: GestureDetector(
-        onTap: () {
-          Navigator.pop(context);
-        },
-        child: Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.6),
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.white70, width: 1.5),
-          ),
-          child: const Icon(
-            Icons.remove,
-            color: Colors.white,
-            size: 28,
-          ),
-        ),
-      ),
-    ),
-  ),
+                        if (!isPreparing && !isComplete)
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 8),
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withOpacity(0.6),
+                                    shape: BoxShape.circle,
+                                    border: Border.all(color: Colors.white70, width: 1.5),
+                                  ),
+                                  child: const Icon(
+                                    Icons.remove,
+                                    color: Colors.white,
+                                    size: 28,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
 
                         const Spacer(),
 
@@ -251,63 +251,63 @@ if (!isPreparing && !isComplete)
 
                         const SizedBox(height: 30),
 
-AnimatedSwitcher(
-  duration: const Duration(milliseconds: 600),
-  child: isPreparing
-      ? Column(
-          key: const ValueKey("preparing"),
-          children: [
-            Text(
-              AppLocalizations.of(context)!.meditationPreparing,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 600),
+                          child: isPreparing
+                              ? Column(
+                            key: const ValueKey("preparing"),
+                            children: [
+                              Text(
+                                AppLocalizations.of(context)!.meditationPreparing,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
 
-            const SizedBox(height: 30),
+                              const SizedBox(height: 30),
 
-            GestureDetector(
-              onTap: () async {
-                _audioService.cancelPendingSessionStart();
-await _audioService.clearSound();
-if (mounted) Navigator.pop(context);
-              },
-              child: Container(
-                width: 240,
-                padding: const EdgeInsets.symmetric(
-                  vertical: 16,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade800,
-                  borderRadius: BorderRadius.circular(40),
-                  border: Border.all(color: Colors.white70),
-                ),
-                child: Center(
-                  child: Text(
-                    AppLocalizations.of(context)!.meditationCancel,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        )
-      : Text(
-          breathingText,
-          key: const ValueKey("breathing"),
-          style: const TextStyle(
-            color: Colors.white70,
-            fontSize: 22,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-),
+                              GestureDetector(
+                                onTap: () async {
+                                  _audioService.cancelPendingSessionStart();
+                                  await _audioService.clearSound();
+                                  if (mounted) Navigator.pop(context);
+                                },
+                                child: Container(
+                                  width: 240,
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.shade800,
+                                    borderRadius: BorderRadius.circular(40),
+                                    border: Border.all(color: Colors.white70),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      AppLocalizations.of(context)!.meditationCancel,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                              : Text(
+                            breathingText,
+                            key: const ValueKey("breathing"),
+                            style: const TextStyle(
+                              color: Colors.white70,
+                              fontSize: 22,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
 
                         const SizedBox(height: 40),
 
@@ -350,81 +350,81 @@ if (mounted) Navigator.pop(context);
                               // 🔥 ADDED END SESSION BUTTON
                               const SizedBox(height: 20),
 
-GestureDetector(
-  onTap: () async {
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          title: Text(
-            AppLocalizations.of(context)!.meditationEndTitle,
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          content: Text(
-            AppLocalizations.of(context)!.meditationEndMessage,
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context, false);
-              },
-              child: Text(AppLocalizations.of(context)!.cancel),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context, true);
-              },
-              child: Text(
-                AppLocalizations.of(context)!.meditationConfirmEnd,
-                style: TextStyle(color: Colors.red),
-              ),
-            ),
-          ],
-        );
-      },
-    );
+                              GestureDetector(
+                                onTap: () async {
+                                  final confirm = await showDialog<bool>(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(16),
+                                        ),
+                                        title: Text(
+                                          AppLocalizations.of(context)!.meditationEndTitle,
+                                          style: TextStyle(fontWeight: FontWeight.bold),
+                                        ),
+                                        content: Text(
+                                          AppLocalizations.of(context)!.meditationEndMessage,
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context, false);
+                                            },
+                                            child: Text(AppLocalizations.of(context)!.cancel),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context, true);
+                                            },
+                                            child: Text(
+                                              AppLocalizations.of(context)!.meditationConfirmEnd,
+                                              style: TextStyle(color: Colors.red),
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
 
-    if (confirm == true) {
-      await _audioService.clearSound();
-      if (mounted) Navigator.pop(context);
-    }
-  },
-  child: Container(
-    width: 220,
-    padding: const EdgeInsets.symmetric(
-      vertical: 16,
-    ),
-    decoration: BoxDecoration(
-      color: Colors.redAccent,
-      borderRadius: BorderRadius.circular(30),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.redAccent.withOpacity(0.5),
-          blurRadius: 12,
-          spreadRadius: 1,
-        ),
-      ],
-    ),
-    child: Center(
-      child: Text(
-        AppLocalizations.of(context)!.meditationEndSession,
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    ),
-  ),
-),
-                          
-                      ],
+                                  if (confirm == true) {
+                                    await _audioService.clearSound();
+                                    if (mounted) Navigator.pop(context);
+                                  }
+                                },
+                                child: Container(
+                                  width: 220,
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.redAccent,
+                                    borderRadius: BorderRadius.circular(30),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.redAccent.withOpacity(0.5),
+                                        blurRadius: 12,
+                                        spreadRadius: 1,
+                                      ),
+                                    ],
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      AppLocalizations.of(context)!.meditationEndSession,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                            ],
                           )
-                          
-                          
+
+
                         else if (isComplete)
                           FadeTransition(
                             opacity: _completionFade,
