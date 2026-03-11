@@ -20,6 +20,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
   UserProgress? _userProgress;
   bool _isLoading = true;
   String? _error;
+  bool _isAdmin = false;
 
   @override
   void initState() {
@@ -39,8 +40,20 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
 
       final progress = await _progressService.getUserProgress(userId);
 
+      // Fetch admin flag from profiles
+      bool isAdmin = false;
+      try {
+        final profile = await Supabase.instance.client
+            .from('profiles')
+            .select('is_admin')
+            .eq('id', userId)
+            .maybeSingle();
+        isAdmin = profile?['is_admin'] == true;
+      } catch (_) {}
+
       setState(() {
         _userProgress = progress;
+        _isAdmin = isAdmin;
         _isLoading = false;
       });
     } catch (e) {
@@ -192,6 +205,38 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
 
 
 
+                    // Admin badge
+                    if (_isAdmin) ...[
+                      const SizedBox(height: 16),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF40E0D0).withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: const Color(0xFF40E0D0).withOpacity(0.5),
+                            width: 1.5,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.admin_panel_settings,
+                                color: Color(0xFF40E0D0), size: 18),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Admin Mode — All levels unlocked',
+                              style: GoogleFonts.poppins(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xFF40E0D0),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+
                     SizedBox(height: isWeb ? 56 : 32),
 
                     // Beginner Card
@@ -226,13 +271,13 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                       description: AppLocalizations.of(context)!.intermediateDesc,
                       imageUrl: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=600',
                       color: const Color(0xCD000000),
-                      isLocked: !(_userProgress?.intermediateUnlocked ?? false),
+                      isLocked: _isAdmin ? false : !(_userProgress?.intermediateUnlocked ?? false),
                       sessionsCompleted: _getSessionsCompleted('intermediate'),
                       progress: (_userProgress?.progressToIntermediate ?? 0.0),
                       requiredSessions: UserProgress.sessionsRequiredForIntermediate,
                       currentLevelSessions: _getSessionsCompleted('beginner'),
                       onTap: () {
-                        if (_userProgress?.intermediateUnlocked ?? false) {
+                        if ((_userProgress?.intermediateUnlocked ?? false) || _isAdmin) {
                           GlobalAudioService.playClickSound();
                           final session = YogaDataComplete.intermediateSessions.first;
                           Navigator.push(
@@ -261,14 +306,14 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                       description: AppLocalizations.of(context)!.advancedDesc,
                       imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600',
                       color: const Color(0xCD000000),
-                      isLocked: !(_userProgress?.advancedUnlocked ?? false),
+                      isLocked: _isAdmin ? false : !(_userProgress?.advancedUnlocked ?? false),
                       sessionsCompleted: _getSessionsCompleted('advanced'),
                       progress: (_userProgress?.progressToAdvanced ?? 0.0),
                       requiredSessions: UserProgress.sessionsRequiredForAdvanced,
                       currentLevelSessions: _getSessionsCompleted('intermediate'),
-                      needsIntermediate: !(_userProgress?.intermediateUnlocked ?? false),
+                      needsIntermediate: _isAdmin ? false : !(_userProgress?.intermediateUnlocked ?? false),
                       onTap: () {
-                        if (_userProgress?.advancedUnlocked ?? false) {
+                        if ((_userProgress?.advancedUnlocked ?? false) || _isAdmin) {
                           GlobalAudioService.playClickSound();
                           final session = YogaDataComplete.advancedSessions.first;
                           Navigator.push(

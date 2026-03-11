@@ -72,40 +72,40 @@ class _MeditationScreenState extends State<MeditationScreen> {
   // Real ambient sounds (looping audio files from free sources)
   final List<MeditationSession> sounds = [
     MeditationSession(
-      titleKey: "Ocean Waves",
+      titleKey: "oceanWaves",
       descriptionKey: "oceanWavesDesc",
       durationMinutes: 60,
       imageUrl:
       "https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=800",
-      // Ocean waves 
+      // Ocean waves
       audioFile: "oceanwaves.mp3",
       type: MeditationType.sound,
       isLooping: true,
     ),
     MeditationSession(
-      titleKey: "Rain Sounds",
+      titleKey: "rainSounds",
       descriptionKey: "rainSoundsDesc",
       durationMinutes: 60,
       imageUrl:
       "https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?w=800",
-      // Rain sounds 
+      // Rain sounds
       audioFile: "raining.mp3",
       type: MeditationType.sound,
       isLooping: true,
     ),
     MeditationSession(
-      titleKey: "Forest Birds",
+      titleKey: "forestBirds",
       descriptionKey: "forestBirdsDesc",
       durationMinutes: 60,
       imageUrl:
       "https://images.unsplash.com/photo-1511497584788-876760111969?w=800",
-      // Forest ambience 
+      // Forest ambience
       audioFile: "forestbirds.mp3",
       type: MeditationType.sound,
       isLooping: true,
     ),
     MeditationSession(
-      titleKey: "Crackling Fire",
+      titleKey: "cracklingFire",
       descriptionKey: "cracklingFireDesc",
       durationMinutes: 60,
       imageUrl:
@@ -116,7 +116,7 @@ class _MeditationScreenState extends State<MeditationScreen> {
       isLooping: true,
     ),
     MeditationSession(
-      titleKey: "White Noise",
+      titleKey: "whiteNoise",
       descriptionKey: "whiteNoiseDesc",
       durationMinutes: 60,
       imageUrl:
@@ -127,7 +127,7 @@ class _MeditationScreenState extends State<MeditationScreen> {
       isLooping: true,
     ),
     MeditationSession(
-      titleKey: "Flowing Water",
+      titleKey: "flowingWater",
       descriptionKey: "flowingWaterDesc",
       durationMinutes: 60,
       imageUrl:
@@ -138,7 +138,7 @@ class _MeditationScreenState extends State<MeditationScreen> {
       isLooping: true,
     ),
     MeditationSession(
-      titleKey: "Wind Chimes",
+      titleKey: "windChimes",
       descriptionKey: "windChimesDesc",
       durationMinutes: 60,
       imageUrl:
@@ -149,7 +149,7 @@ class _MeditationScreenState extends State<MeditationScreen> {
       isLooping: true,
     ),
     MeditationSession(
-      titleKey: "Night Crickets",
+      titleKey: "nightCrickets",
       descriptionKey: "nightCricketsDesc",
       durationMinutes: 60,
       imageUrl:

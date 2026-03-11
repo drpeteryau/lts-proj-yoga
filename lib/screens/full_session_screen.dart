@@ -686,9 +686,6 @@ class _FullSessionScreenState extends State<FullSessionScreen> {
             // 16:9 video
             SliverToBoxAdapter(
               child: Container(
-                color: Colors.black,
-                padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).padding.top),
                 child: AspectRatio(
                   aspectRatio: 16 / 9,
                   child: _VideoCore(

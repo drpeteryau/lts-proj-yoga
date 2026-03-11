@@ -632,24 +632,31 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
         {'session': advanced.first, 'label': 'Advanced'},
     ];
 
-    // Fallback: if only beginner unlocked, show 2 beginner sessions
-    if (items.length == 1 && beginner.length > 1) {
-      items.add({'session': beginner[1], 'label': 'Beginner'});
-    }
-
     return Column(
-      children: items.map((item) {
-        final session = item['session'] as dynamic;
-        final label = item['label'] as String;
-        return Padding(
-          padding: EdgeInsets.only(
-            left: isWeb ? 0 : 20,
-            right: isWeb ? 0 : 20,
-            bottom: 14,
+      children: [
+        ...items.map((item) {
+          final session = item['session'] as dynamic;
+          final label = item['label'] as String;
+          return Padding(
+            padding: EdgeInsets.only(
+              left: isWeb ? 0 : 20,
+              right: isWeb ? 0 : 20,
+              bottom: 14,
+            ),
+            child: _buildPracticeCard(session, label),
+          );
+        }),
+        // If only beginner unlocked, show a meditation suggestion card instead
+        if (items.length == 1 && _meditationSessions.isNotEmpty)
+          Padding(
+            padding: EdgeInsets.only(
+              left: isWeb ? 0 : 20,
+              right: isWeb ? 0 : 20,
+              bottom: 14,
+            ),
+            child: _buildMeditationSuggestionCard(_meditationSessions.first),
           ),
-          child: _buildPracticeCard(session, label),
-        );
-      }).toList(),
+      ],
     );
   }
 
@@ -776,6 +783,138 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                       ),
                       child: const Icon(Icons.arrow_forward_ios,
                           color: Colors.white, size: 16),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ─── Meditation suggestion card (shown when only beginner unlocked) ──────────
+
+  Widget _buildMeditationSuggestionCard(MeditationSession session) {
+    final isWeb = MediaQuery.of(context).size.width > 600;
+    final lookup = MeditationLookup(context);
+    return GestureDetector(
+      onTap: () async {
+        await GlobalAudioService.playClickSound();
+        _startMeditationSession(session);
+      },
+      child: Container(
+        height: isWeb ? 160 : 140,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.12),
+              blurRadius: 12,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              // Background image
+              Image.network(
+                session.imageUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [Color(0xFF26A69A), Color(0xFF00BCD4)],
+                    ),
+                  ),
+                ),
+              ),
+              // Dark gradient
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withOpacity(0.72),
+                    ],
+                  ),
+                ),
+              ),
+              // Content
+              Padding(
+                padding: EdgeInsets.all(isWeb ? 20 : 16),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: _kTeal.withOpacity(0.85),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              'Meditation',
+                              style: GoogleFonts.poppins(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            lookup.getTitle(session.titleKey),
+                            style: GoogleFonts.poppins(
+                              fontSize: isWeb ? 18 : 16,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              const Icon(Icons.self_improvement,
+                                  color: Colors.white70, size: 14),
+                              const SizedBox(width: 4),
+                              Text(
+                                '${session.durationMinutes} ${AppLocalizations.of(context)!.min}',
+                                style: GoogleFonts.poppins(
+                                  fontSize: isWeb ? 14 : 13,
+                                  color: Colors.white70,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white30),
+                      ),
+                      child: const Icon(Icons.play_arrow,
+                          color: Colors.white, size: 18),
                     ),
                   ],
                 ),
@@ -1097,7 +1236,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
   }) {
     final isWeb = MediaQuery.of(context).size.width > 600;
     return Container(
-      padding: EdgeInsets.all(isWeb ? 20 : 16),
+      padding: EdgeInsets.all(isWeb ? 20 : 20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
@@ -1105,7 +1244,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
             blurRadius: 8,
-            offset: const Offset(0, 3),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -1113,38 +1252,39 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: iconColor.withOpacity(0.12),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Icon(icon, color: iconColor, size: isWeb ? 26 : 22),
-          ),
-          SizedBox(height: isWeb ? 12 : 10),
-          Text(
-            title,
-            style: GoogleFonts.poppins(
-              fontSize: isWeb ? 14 : 13,
-              color: Colors.black54,
-              fontWeight: FontWeight.w500,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: 2),
-          Flexible(
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.centerLeft,
-              child: Text(
-                value,
-                style: GoogleFonts.poppins(
-                  fontSize: isWeb ? 24 : 20,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.black87,
+          // Icon + label side by side (matches progress screen style)
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: const Color(0xE4E9FFFC),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Icon(icon, color: Colors.black, size: 20),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  title,
+                  style: GoogleFonts.poppins(
+                    fontSize: isWeb ? 16 : 16,
+                    color: Colors.black87,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            value,
+            style: GoogleFonts.poppins(
+              fontSize: isWeb ? 26 : 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
             ),
           ),
         ],
@@ -1202,4 +1342,4 @@ class FlowerBackgroundPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-} 
+}

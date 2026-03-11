@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../models/yoga_session.dart';
@@ -432,6 +433,35 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
     );
   }
 
+  void _showCountdownOverlay() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      barrierColor: Colors.transparent,
+      builder: (_) => _CountdownOverlay(
+        sessionName: YogaLocalizationHelper.getSessionTitle(context, widget.session.titleKey),
+        onComplete: () {
+          Navigator.pop(context); // close overlay
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => FullSessionScreen(session: widget.session),
+            ),
+          ).then((_) => _loadPoseProgress());
+        },
+        onSkip: () {
+          Navigator.pop(context); // close overlay
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => FullSessionScreen(session: widget.session),
+            ),
+          ).then((_) => _loadPoseProgress());
+        },
+      ),
+    );
+  }
+
   Widget _buildJoinButton() {
     final isWeb = MediaQuery.of(context).size.width > 600;
 
@@ -505,12 +535,7 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
             child: ElevatedButton(
               onPressed: () async {
                 await GlobalAudioService.playClickSound();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => FullSessionScreen(session: widget.session),
-                  ),
-                ).then((_) => _loadPoseProgress());
+                _showCountdownOverlay();
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF40E0D0),
@@ -552,4 +577,385 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
       ),
     );
   }
+}
+// ─────────────────────────────────────────────────────────────────────────────
+// Countdown Overlay
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _CountdownOverlay extends StatefulWidget {
+  final String sessionName;
+  final VoidCallback onComplete;
+  final VoidCallback onSkip;
+
+  const _CountdownOverlay({
+    required this.sessionName,
+    required this.onComplete,
+    required this.onSkip,
+  });
+
+  @override
+  State<_CountdownOverlay> createState() => _CountdownOverlayState();
+}
+
+class _CountdownOverlayState extends State<_CountdownOverlay>
+    with TickerProviderStateMixin {
+  int _seconds = 10;
+  Timer? _timer;
+
+  // Ring animation
+  late AnimationController _ringCtrl;
+  late Animation<double> _ringAnim;
+
+  // Pulse animation for the number
+  late AnimationController _pulseCtrl;
+  late Animation<double> _pulseAnim;
+
+  // Fade-in for the whole overlay
+  late AnimationController _fadeCtrl;
+  late Animation<double> _fadeAnim;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Fade in
+    _fadeCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 600));
+    _fadeAnim = CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeIn);
+    _fadeCtrl.forward();
+
+    // Ring sweeps from full (1.0) to empty (0.0) over 10 s
+    _ringCtrl = AnimationController(
+        vsync: this, duration: const Duration(seconds: 10));
+    _ringAnim = Tween<double>(begin: 1.0, end: 0.0).animate(_ringCtrl);
+    _ringCtrl.forward();
+
+    // Pulse on each tick
+    _pulseCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 500));
+    _pulseAnim = Tween<double>(begin: 1.0, end: 1.15).animate(
+      CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeOut),
+    );
+
+    _startTimer();
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (t) {
+      _pulseCtrl.forward(from: 0);
+      setState(() => _seconds--);
+      if (_seconds <= 0) {
+        t.cancel();
+        widget.onComplete();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _ringCtrl.dispose();
+    _pulseCtrl.dispose();
+    _fadeCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isWeb = MediaQuery.of(context).size.width > 600;
+
+    return FadeTransition(
+      opacity: _fadeAnim,
+      child: Material(
+        // On web: dark scrim behind the centred card
+        color: isWeb ? Colors.black.withOpacity(0.75) : Colors.transparent,
+        child: Center(
+          child: isWeb ? _buildCard() : _buildFullScreen(),
+        ),
+      ),
+    );
+  }
+
+  // ── Web: centred rounded card ─────────────────────────────────────────────
+  Widget _buildCard() {
+    return Container(
+      width: 480,
+      padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 56),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(32),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF1A3C40), Color(0xFF0D2E32), Color(0xFF1A3C40)],
+          stops: [0.0, 0.5, 1.0],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.5),
+            blurRadius: 60,
+            offset: const Offset(0, 20),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(32),
+        child: Stack(
+          clipBehavior: Clip.hardEdge,
+          children: [
+            ..._buildAmbientCircles(),
+            _buildContent(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ── Mobile: full screen ───────────────────────────────────────────────────
+  Widget _buildFullScreen() {
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF1A3C40), Color(0xFF0D2E32), Color(0xFF1A3C40)],
+          stops: [0.0, 0.5, 1.0],
+        ),
+      ),
+      child: Stack(
+        children: [
+          ..._buildAmbientCircles(),
+          SafeArea(child: _buildContent()),
+        ],
+      ),
+    );
+  }
+
+  // ── Shared content column ─────────────────────────────────────────────────
+  Widget _buildContent() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 32),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const SizedBox(height: 8),
+
+          // "GET READY" label
+          Text(
+            'GET READY',
+            style: GoogleFonts.poppins(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: Colors.white38,
+              letterSpacing: 4,
+            ),
+          ),
+
+          const SizedBox(height: 10),
+
+          // Session name
+          Text(
+            widget.sessionName,
+            style: GoogleFonts.poppins(
+              fontSize: 26,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
+              height: 1.2,
+            ),
+            textAlign: TextAlign.center,
+          ),
+
+          const SizedBox(height: 52),
+
+          // Countdown ring + number
+          SizedBox(
+            width: 200,
+            height: 200,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                // Outer glow ring
+                Container(
+                  width: 200,
+                  height: 200,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: const Color(0xFF40E0D0).withOpacity(0.15),
+                      width: 2,
+                    ),
+                  ),
+                ),
+                // Animated sweep ring
+                AnimatedBuilder(
+                  animation: _ringAnim,
+                  builder: (_, __) => CustomPaint(
+                    size: const Size(200, 200),
+                    painter: _RingPainter(
+                      progress: _ringAnim.value,
+                      color: const Color(0xFF40E0D0),
+                      trackColor: const Color(0xFF40E0D0).withOpacity(0.12),
+                      strokeWidth: 6,
+                    ),
+                  ),
+                ),
+                // Pulsing number
+                ScaleTransition(
+                  scale: _pulseAnim,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '$_seconds',
+                        style: GoogleFonts.poppins(
+                          fontSize: 80,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                          height: 1,
+                        ),
+                      ),
+                      Text(
+                        'seconds',
+                        style: GoogleFonts.poppins(
+                          fontSize: 13,
+                          color: Colors.white38,
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 44),
+
+          // Calming message
+          Text(
+            'Take a deep breath.\nRelax your shoulders and close your eyes.',
+            style: GoogleFonts.poppins(
+              fontSize: 15,
+              color: Colors.white54,
+              height: 1.8,
+              fontWeight: FontWeight.w400,
+            ),
+            textAlign: TextAlign.center,
+          ),
+
+          const SizedBox(height: 48),
+
+          // Skip button
+          GestureDetector(
+            onTap: widget.onSkip,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 13),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+                border: Border.all(color: Colors.white24, width: 1),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Skip',
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      color: Colors.white54,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  const Icon(Icons.arrow_forward_ios,
+                      color: Colors.white38, size: 13),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 8),
+        ],
+      ),
+    );
+  }
+
+  List<Widget> _buildAmbientCircles() {
+    return [
+      Positioned(
+        top: -60,
+        right: -60,
+        child: _ambientCircle(220, const Color(0xFF40E0D0).withOpacity(0.06)),
+      ),
+      Positioned(
+        bottom: -80,
+        left: -80,
+        child: _ambientCircle(260, const Color(0xFF40E0D0).withOpacity(0.05)),
+      ),
+      Positioned(
+        top: MediaQuery.of(context).size.height * 0.3,
+        left: -40,
+        child: _ambientCircle(120, const Color(0xFF40E0D0).withOpacity(0.04)),
+      ),
+    ];
+  }
+
+  Widget _ambientCircle(double size, Color color) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: color,
+      ),
+    );
+  }
+}
+
+// ── Ring painter ──────────────────────────────────────────────────────────────
+class _RingPainter extends CustomPainter {
+  final double progress;
+  final Color color;
+  final Color trackColor;
+  final double strokeWidth;
+
+  const _RingPainter({
+    required this.progress,
+    required this.color,
+    required this.trackColor,
+    required this.strokeWidth,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = (size.width / 2) - strokeWidth / 2;
+    const startAngle = -3.14159 / 2; // top
+
+    final trackPaint = Paint()
+      ..color = trackColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth
+      ..strokeCap = StrokeCap.round;
+
+    final progressPaint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth
+      ..strokeCap = StrokeCap.round;
+
+    // Track
+    canvas.drawCircle(center, radius, trackPaint);
+
+    // Arc
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius),
+      startAngle,
+      2 * 3.14159 * progress,
+      false,
+      progressPaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_RingPainter old) =>
+      old.progress != progress || old.color != color;
 }

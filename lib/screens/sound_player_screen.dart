@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../services/global_audio_service.dart';
 import 'meditation_screen.dart';
+import '../utils/meditation_sounds_localization_helper.dart';
+import '../l10n/app_localizations.dart';
 
 class SoundPlayerScreen extends StatefulWidget {
   final List<MeditationSession> sounds;
@@ -29,6 +31,17 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
   void initState() {
     super.initState();
     _audioService = GlobalAudioService();
+  }
+
+  /// Returns the localized title for the currently playing sound.
+  /// Falls back to the raw service title if no titleKey is available.
+  String _getLocalizedTitle(BuildContext context) {
+    final sound = currentSound;
+    if (sound != null) {
+      final lookup = MeditationLookup(context);
+      return lookup.getTitle(sound.titleKey);
+    }
+    return _audioService.currentSoundTitle ?? '';
   }
 
   @override
@@ -131,7 +144,7 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Text(
-            _audioService.currentSoundTitle ?? '',
+            _getLocalizedTitle(context),
             style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
             maxLines: 1,
@@ -139,9 +152,9 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
           ),
         ),
         const SizedBox(height: 4),
-        const Text(
-          "Ambient Sound",
-          style: TextStyle(color: Colors.grey, fontSize: 14),
+        Text(
+          AppLocalizations.of(context)!.ambient,
+          style: const TextStyle(color: Colors.grey, fontSize: 14),
         ),
 
         const SizedBox(height: 16),
@@ -337,7 +350,7 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Text(
-            _audioService.currentSoundTitle ?? '',
+            _getLocalizedTitle(context),
             style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
             maxLines: 1,
@@ -346,9 +359,9 @@ class _SoundPlayerScreenState extends State<SoundPlayerScreen> {
         ),
 
         const SizedBox(height: 4),
-        const Text(
-          "Ambient Sound",
-          style: TextStyle(color: Colors.grey, fontSize: 14),
+        Text(
+          AppLocalizations.of(context)!.ambient,
+          style: const TextStyle(color: Colors.grey, fontSize: 14),
         ),
 
         const SizedBox(height: 16),

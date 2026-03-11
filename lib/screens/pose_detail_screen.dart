@@ -256,9 +256,6 @@ class _PoseDetailScreenState extends State<PoseDetailScreen> {
             // 16:9 video block (black bg extends behind status bar)
             SliverToBoxAdapter(
               child: Container(
-                color: Colors.black,
-                padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).padding.top),
                 child: AspectRatio(
                   aspectRatio: 16 / 9,
                   child: _VideoCore(
