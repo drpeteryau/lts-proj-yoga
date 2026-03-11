@@ -163,6 +163,7 @@ class _MeditationSessionScreenState
             builder: (context, _) {
 
               final isPreparing = _audioService.isPreparing;
+              final waitingForTap = _audioService.waitingForUserStart;
 
               final seconds =
                   _audioService.sessionRemaining.inSeconds;
@@ -259,12 +260,46 @@ class _MeditationSessionScreenState
                             children: [
                               Text(
                                 AppLocalizations.of(context)!.meditationPreparing,
+                                
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 24,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
+                              if (waitingForTap) ...[
+  const SizedBox(height: 24),
+
+  GestureDetector(
+    onTap: () async {
+      await _audioService.continueMeditationAfterWelcome(
+  assetFile: widget.session.audioFile,
+  title: widget.session.titleKey,
+  category: "Meditation",
+  imageUrl: widget.session.imageUrl,
+  duration: Duration(minutes: widget.session.durationMinutes),
+);
+    },
+    child: Container(
+      width: 240,
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      decoration: BoxDecoration(
+        color: Colors.tealAccent.shade400,
+        borderRadius: BorderRadius.circular(40),
+      ),
+      child: const Center(
+        child: Text(
+          "Tap to Begin Session",
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    ),
+  ),
+],
 
                               const SizedBox(height: 30),
 

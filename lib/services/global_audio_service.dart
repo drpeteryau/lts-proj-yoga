@@ -2,7 +2,13 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart';
 
+bool get isIOSWeb =>
+    kIsWeb &&
+    (defaultTargetPlatform == TargetPlatform.iOS ||
+     defaultTargetPlatform == TargetPlatform.macOS);
 
 class GlobalAudioService extends ChangeNotifier {
   static final GlobalAudioService _instance = GlobalAudioService._internal();
@@ -38,6 +44,8 @@ class GlobalAudioService extends ChangeNotifier {
   bool _isPreparing = false;
 bool get isPreparing => _isPreparing;
 bool _isManuallyStopped = false;
+bool _waitingForUserStart = false;
+bool get waitingForUserStart => _waitingForUserStart;
 
   // 🔥 Session Timer
   Timer? _sessionTimer;
@@ -71,6 +79,18 @@ bool _shuffle = false;
 List<dynamic> get playlist => _playlist;
 int get currentIndex => _currentIndex;
 bool get shuffle => _shuffle;
+final Map<String, Source> _cueSources = {};
+bool _cueInitialized = false;
+
+Future<void> _initCues() async {
+  if (_cueInitialized) return;
+
+  _cueSources["inhale"] = AssetSource("audio/inhale.mp3");
+  _cueSources["hold"]   = AssetSource("audio/hold.mp3");
+  _cueSources["exhale"] = AssetSource("audio/exhale.mp3");
+
+  _cueInitialized = true;
+}
 
 
 Future<void> startAmbientPlaylist({
@@ -198,49 +218,36 @@ Future<void> previousSound() async {
   }
 
   // 🔥 NEW: Breathing Voice Cue
-  Future<void> playBreathingCue(String phase) async {
-    if (!isSoundEffectsEnabled) return;
-    if (_isCuePlaying) return;
+Future<void> playBreathingCue(String phase) async {
+  if (!isSoundEffectsEnabled) return;
+  if (_isCuePlaying) return;
 
-    try {
-      _isCuePlaying = true;
+  try {
+    _isCuePlaying = true;
 
-      String file;
+    await _initCues();
 
-      switch (phase) {
-        case "inhale":
-          file = "audio/inhale.mp3";
-          break;
-        case "exhale":
-          file = "audio/exhale.mp3";
-          break;
-        case "hold":
-          file = "audio/hold.mp3";
-          break;
-        default:
-          _isCuePlaying = false;
-          return;
-      }
+    _originalVolume = _volume;
+    await _audioPlayer.setVolume(_originalVolume * 0.4);
 
-      // 🔥 Duck background music
-      _originalVolume = _volume;
-      await _audioPlayer.setVolume(_originalVolume * 0.4);
+    final source = _cueSources[phase];
+    if (source == null) return;
 
-      await _effectPlayer.stop();
-      await _effectPlayer.setSource(AssetSource(file));
-      await _effectPlayer.resume();
+    // Safari-safe playback
+    await _effectPlayer.setSource(source);
+    await _effectPlayer.seek(Duration.zero);
+    await _effectPlayer.resume();
 
-      // Wait for cue to finish
-      await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
 
-      // 🔥 Restore volume
-      await _audioPlayer.setVolume(_originalVolume);
-    } catch (e) {
-      debugPrint("Breathing cue error: $e");
-    } finally {
-      _isCuePlaying = false;
-    }
+    await _audioPlayer.setVolume(_originalVolume);
+
+  } catch (e) {
+    debugPrint("Cue error: $e");
+  } finally {
+    _isCuePlaying = false;
   }
+}
 
   // 🔥 Session Timer Logic (unchanged except kept intact)
  void startSessionTimer(Duration duration) {
@@ -665,12 +672,14 @@ Future<void> startMeditationWithWelcome({
 
     await _effectPlayer.resume();
 
-    await completer.future;
-    await Future.delayed(const Duration(milliseconds: 300));
+await completer.future;
+await Future.delayed(const Duration(milliseconds: 300));
 
-
-if (kIsWeb) {
-  await Future.delayed(const Duration(milliseconds: 700));
+if (isIOSWeb) {
+  // iOS Safari cannot autoplay next audio
+  _waitingForUserStart = true;
+  notifyListeners();
+  return;
 }
 
     if (_sessionStartCancelled) {
@@ -730,5 +739,27 @@ Future<void> _fadeIn(AudioPlayer player, Duration duration) async {
     await player.setVolume(v.clamp(0.0, 1.0));
     await Future.delayed(Duration(milliseconds: stepDelay));
   }
+}
+
+Future<void> continueMeditationAfterWelcome({
+  required String assetFile,
+  required String title,
+  required String category,
+  required String imageUrl,
+  required Duration duration,
+}) async {
+  if (_sessionStartCancelled) return;
+  _waitingForUserStart = false;
+
+  await playSound(
+    assetFile: assetFile,
+    title: title,
+    category: category,
+    imageUrl: imageUrl,
+  );
+
+  startSessionTimer(duration);
+  _isPreparing = false;
+  notifyListeners();
 }
 }
