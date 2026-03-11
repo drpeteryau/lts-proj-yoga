@@ -5,6 +5,7 @@ import 'main_navigation_screen.dart';
 import 'complete_profile_screen.dart';
 import 'splash_screen.dart';
 import '../main.dart';
+import 'reset_password_screen.dart';
 
 class AuthGate extends StatefulWidget {
   const AuthGate({super.key});
@@ -16,13 +17,14 @@ class AuthGate extends StatefulWidget {
 class _AuthGateState extends State<AuthGate> {
   bool _isLoading = true;
   bool _showSplash = true;
+  bool _isPasswordRecovery = false;
 
   @override
   void initState() {
     super.initState();
 
     // Start loading auth immediately in background
-    _checkAuthState();
+
 
     // Show splash for 4.5 seconds (longer duration)
     Future.delayed(const Duration(milliseconds: 4500), () {
@@ -32,9 +34,32 @@ class _AuthGateState extends State<AuthGate> {
     });
 
     // 🔄 React to login/logout automatically
-    Supabase.instance.client.auth.onAuthStateChange.listen((event) {
-      _checkAuthState();
+Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+
+  final event = data.event;
+
+  // ⭐ Handle password reset FIRST
+  if (event == AuthChangeEvent.passwordRecovery) {
+
+     _isPasswordRecovery = true;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const ResetPasswordScreen(),
+        ),
+      );
     });
+
+    return; // stop normal auth flow
+  }
+
+  // Normal login/logout handling
+if (!_isPasswordRecovery) {
+  _checkAuthState();
+}
+});
   }
 
   Future<void> _ensureProfileExists(User user) async {
@@ -58,7 +83,6 @@ class _AuthGateState extends State<AuthGate> {
       await supabase.from('profiles').upsert({
         'id': user.id,
         'email': user.email,
-        'full_name': user.userMetadata?['full_name'] ?? '',
       });
       print('✅ Profile upserted successfully');
     } catch (e) {
@@ -71,6 +95,9 @@ class _AuthGateState extends State<AuthGate> {
   }
 
   Future<void> _checkAuthState() async {
+
+    
+    if (_isPasswordRecovery) return;
     final supabase = Supabase.instance.client;
     final session = supabase.auth.currentSession;
 
@@ -78,6 +105,10 @@ class _AuthGateState extends State<AuthGate> {
       if (mounted) setState(() => _isLoading = false);
       return;
     }
+      // 🚨 If this is a password recovery session, do not redirect
+  if (supabase.auth.currentSession?.user?.aud == 'recovery') {
+    return;
+  }
 
     final user = session.user;
     await _ensureProfileExists(user);

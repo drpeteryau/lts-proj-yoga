@@ -50,6 +50,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     try {
       await Supabase.instance.client.auth.resetPasswordForEmail(
         _emailController.text.trim(),
+        redirectTo: 'https://healyoga-web.web.app/reset-password',
+
       );
 
       if (context.mounted) {

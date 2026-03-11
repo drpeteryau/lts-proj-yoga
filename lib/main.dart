@@ -6,6 +6,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../services/notification_service.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'l10n/app_localizations.dart';
+import 'screens/reset_password_screen.dart';
+
 
 final ValueNotifier<Locale> appLocale = ValueNotifier(const Locale('en'));
 
@@ -42,6 +44,10 @@ class HealYogaApp extends StatelessWidget {
         return MaterialApp(
           title: 'HealYoga',
           debugShowCheckedModeBanner: false,
+            routes: {
+    '/reset-password': (context) => const ResetPasswordScreen(),
+  },
+
           theme: ThemeData(
             primaryColor: const Color(0xFF40E0D0), // Turquoise
             colorScheme: ColorScheme.fromSwatch().copyWith(

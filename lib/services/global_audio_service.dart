@@ -1,6 +1,8 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:flutter/foundation.dart';
+
 
 class GlobalAudioService extends ChangeNotifier {
   static final GlobalAudioService _instance = GlobalAudioService._internal();
@@ -177,7 +179,7 @@ Future<void> previousSound() async {
 
 
     // 🔥 MAIN FIX STARTS HERE
-    await _effectPlayer.setPlayerMode(PlayerMode.lowLatency);
+    await _effectPlayer.setPlayerMode(PlayerMode.mediaPlayer);
     await _effectPlayer.setReleaseMode(ReleaseMode.stop);
 
     await _effectPlayer.setAudioContext(
@@ -524,6 +526,7 @@ Future<void> stop() async {
 
   Future<void> clearSound() async {
     await _audioPlayer.stop();
+    await _effectPlayer.stop();
     _isPlaying = false;
     _currentSoundTitle = null;
     _currentSoundCategory = null;
@@ -610,6 +613,10 @@ Future<void> playWelcomeMessage() async {
 
     // Wait until welcome actually finishes
     await completer.future;
+    await Future.delayed(const Duration(milliseconds: 300));
+    if (kIsWeb) {
+  await Future.delayed(const Duration(milliseconds: 700));
+}
 
   } catch (e) {
     debugPrint("Welcome message error: $e");
@@ -659,6 +666,12 @@ Future<void> startMeditationWithWelcome({
     await _effectPlayer.resume();
 
     await completer.future;
+    await Future.delayed(const Duration(milliseconds: 300));
+
+
+if (kIsWeb) {
+  await Future.delayed(const Duration(milliseconds: 700));
+}
 
     if (_sessionStartCancelled) {
       _isPreparing = false;
@@ -690,5 +703,32 @@ void cancelPendingSessionStart() {
   _isPreparing = false;
   _effectPlayer.stop();
   notifyListeners();
+}
+
+
+Future<void> _fadeOut(AudioPlayer player, Duration duration) async {
+  const steps = 20;
+  final stepDelay = duration.inMilliseconds ~/ steps;
+
+  for (int i = 0; i < steps; i++) {
+    final v = _volume * (1 - (i + 1) / steps);
+    await player.setVolume(v.clamp(0.0, 1.0));
+    await Future.delayed(Duration(milliseconds: stepDelay));
+  }
+
+  await player.stop();
+}
+
+Future<void> _fadeIn(AudioPlayer player, Duration duration) async {
+  const steps = 20;
+  final stepDelay = duration.inMilliseconds ~/ steps;
+
+  await player.setVolume(0);
+
+  for (int i = 0; i < steps; i++) {
+    final v = _volume * ((i + 1) / steps);
+    await player.setVolume(v.clamp(0.0, 1.0));
+    await Future.delayed(Duration(milliseconds: stepDelay));
+  }
 }
 }

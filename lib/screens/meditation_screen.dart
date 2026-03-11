@@ -45,7 +45,7 @@ class _MeditationScreenState extends State<MeditationScreen> {
       descriptionKey: "morningClarityDesc",
       durationMinutes: 10,
       imageUrl:
-      "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800",
+      "https://images.unsplash.com/photo-1545389336-cf090694435e?w=800",
       audioFile: "morning.mp3",
       type: MeditationType.guided,
     ),
@@ -54,7 +54,7 @@ class _MeditationScreenState extends State<MeditationScreen> {
       descriptionKey: "deepBreathingDesc",
       durationMinutes: 5,
       imageUrl:
-      "https://images.unsplash.com/photo-1511497584788-876760111969?w=800",
+      "https://images.unsplash.com/photo-1528715471579-d1bcf0ba5e83?w=800",
       audioFile: "deepbreathing.mp3",
       type: MeditationType.breathing,
     ),
@@ -63,7 +63,7 @@ class _MeditationScreenState extends State<MeditationScreen> {
       descriptionKey: "eveningWindDownDesc",
       durationMinutes: 15,
       imageUrl:
-      "https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=800",
+      "https://images.unsplash.com/photo-1554067559-269708c83fb6?w=800",
       audioFile: "evening.mp3",
       type: MeditationType.guided,
     ),
