@@ -1876,180 +1876,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get allRightsReserved => '保留所有权利';
-
-  @override
-  String get hearFromExperts => '听听专家怎么说';
-
-  @override
-  String get hearFromExpertsDesc =>
-      '观看我们的瑜伽导师和学术合作伙伴的独家视频访谈，涵盖瑜伽安全、益处及本应用的背景故事。';
-
-  @override
-  String get expertInsights => '专家见解';
-
-  @override
-  String get expertInsightsSubtitle => '5个视频 · 林丽平老师 & CK教授';
-
-  @override
-  String get watchNow => '立即观看';
-
-  @override
-  String get acknowledgment => '致谢';
-
-  @override
-  String get ackPartALabel => 'A  ·  机构支持与免责声明';
-
-  @override
-  String get ackPartBLabel => 'B  ·  专业导师';
-
-  @override
-  String get ackPartCLabel => 'C  ·  鸣谢';
-
-  @override
-  String get ackInstitutionalP1 =>
-      '本应用程序的开发得到了格拉斯哥大学（UofG）、格拉斯哥大学新加坡分校（UGS）以及新加坡理工学院（SIT）的支持。';
-
-  @override
-  String get ackInstitutionalP2 =>
-      '本项目是CSC2101专业软件开发及CSC2102团队项目模块的学习内容，仅作为学术学习与教学之用。';
-
-  @override
-  String get ackDisclaimerTitle => '生成式AI免责声明';
-
-  @override
-  String get ackDisclaimerBody =>
-      '本应用程序可能采用了生成式人工智能（GenAI）技术。尽管我们已尽力确保内容的准确性和适当性，但开发者、格拉斯哥大学、格拉斯哥大学新加坡分校及新加坡理工学院对因使用、误用或依赖本应用程序所提供信息而造成的任何损失、伤害、损害或不良后果概不负责。\n\n强烈建议用户在开始任何体育活动或瑜伽练习前，自行审慎判断，并咨询专业人士——包括医生和认证健身教练。';
-
-  @override
-  String get ackTrainerIntro => '我们衷心感谢我们的专业瑜伽导师在整个项目开发过程中给予的宝贵指导、专业支持和无私奉献。';
-
-  @override
-  String get ackViewFullProfile => '查看完整简介';
-
-  @override
-  String get ackDevTeam => '开发团队';
-
-  @override
-  String get ackSupervisor => '项目主管';
-
-  @override
-  String get ackSupportingStaff => '支持及行政人员';
-
-  @override
-  String get ackSupportingStaffDesc =>
-      '我们也感谢来自格拉斯哥大学、格拉斯哥大学新加坡分校及新加坡理工学院的支持及行政人员，感谢他们在整个项目过程中给予的协助、协调与持续支持。';
-
-  @override
-  String get insightsTitle => '专家见解';
-
-  @override
-  String get insightsMsLimRole => '认证瑜伽导师';
-
-  @override
-  String get insightsProfCKRole => '教授 · 格拉斯哥大学';
-
-  @override
-  String get insightsComingSoon => '视频即将上线，敬请期待！';
-
-  @override
-  String get insightsWatch => '观看';
-
-  @override
-  String get insightsSoon => '即将上线';
-
-  @override
-  String get insightsMsLimQ1 => '瑜伽对老年人和青少年有哪些主要益处？';
-
-  @override
-  String get insightsMsLimQ2 => '瑜伽对老年人和初学者安全吗？';
-
-  @override
-  String get insightsMsLimQ3 => '老年人和青少年应多久练习一次瑜伽以获得最佳效果？';
-
-  @override
-  String get insightsProfCKQ1 => '格拉斯哥计算机科学学院为何支持一个开源瑜伽移动应用项目？';
-
-  @override
-  String get insightsProfCKQ2 => '这个项目为学生和行业合作伙伴带来了哪些价值？';
-
-  @override
-  String get instructorYourInstructor => '您的导师';
-
-  @override
-  String get instructorRole => '认证瑜伽导师';
-
-  @override
-  String get instructorTagline => '新加坡 · 10年以上教学经验';
-
-  @override
-  String get instructorOrg => 'Yoga8288 · 新加坡';
-
-  @override
-  String get instructorAboutTitle => '关于林丽平';
-
-  @override
-  String get instructorBioP1 =>
-      '林丽平是一位新加坡瑜伽导师，她与瑜伽的缘分始于个人的迫切需求，最终成为她毕生的使命。三十多岁时，她饱受脊柱侧弯的折磨，严重到连肩包都无法背负。她没有寻求药物治疗，而是选择休养——后来又开始练习瑜伽。';
-
-  @override
-  String get instructorQuote =>
-      '「自从四十岁开始练习瑜伽，疼痛很少再回来。我的内心变得更坚韧，情绪也更平和。这就是我想与更多人分享这门古老艺术的原因。」';
-
-  @override
-  String get instructorBioP2 =>
-      '如今，林丽平将这份从容的韧性带给她的学生——循序渐进地引导每个人，尊重身体的极限，同时温和地扩展它。她以多种风格教授小班和一对一课程，并曾出现在新传媒8频道《晨光第一线》节目中，指导前国家乒乓球运动员于梦雨备战东京2020奥运会。';
-
-  @override
-  String get instructorYogaStyles => '瑜伽风格';
-
-  @override
-  String get instructorHathaTitle => '哈他瑜伽';
-
-  @override
-  String get instructorHathaDesc => '经典体式，增强力量、矫正体态、提升呼吸意识。';
-
-  @override
-  String get instructorYinTitle => '阴瑜伽';
-
-  @override
-  String get instructorYinDesc => '深度被动保持，针对结缔组织，促进情绪释放。';
-
-  @override
-  String get instructorChairTitle => '椅子瑜伽';
-
-  @override
-  String get instructorChairDesc => '借助椅子辅助完成体式，适合各年龄层人士。';
-
-  @override
-  String get instructorChildrenTitle => '儿童瑜伽';
-
-  @override
-  String get instructorChildrenDesc => '趣味十足、适合年龄的课程，适合8岁以上的小练习者。';
-
-  @override
-  String get instructorCredentials => '资质与培训';
-
-  @override
-  String get instructorMediaTitle => '媒体报道';
-
-  @override
-  String get instructorMediaDesc =>
-      '为新传媒8频道《晨光第一线》指导前国家乒乓球运动员于梦雨——该节目专题报道了新加坡代表如何备战东京2020奥运会。';
-
-  @override
-  String get insightsTagBenefits => '益处';
-
-  @override
-  String get insightsTagSafety => '安全性';
-
-  @override
-  String get insightsTagPractice => '练习';
-
-  @override
-  String get insightsTagAcademia => '学术';
-
-  @override
-  String get insightsTagImpact => '影响';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hans`).
@@ -3916,177 +3742,6 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get allRightsReserved => '保留所有权利';
-
-  @override
-  String get hearFromExperts => '听听专家怎么说';
-
-  @override
-  String get hearFromExpertsDesc =>
-      '观看我们的瑜伽导师和学术合作伙伴的独家视频访谈，涵盖瑜伽安全、益处及本应用的背景故事。';
-
-  @override
-  String get expertInsights => '专家见解';
-
-  @override
-  String get expertInsightsSubtitle => '5个视频 · 林丽平老师 & CK教授';
-
-  @override
-  String get watchNow => '立即观看';
-
-  @override
-  String get acknowledgment => '致谢';
-
-  @override
-  String get ackPartALabel => 'A  ·  机构支持与免责声明';
-
-  @override
-  String get ackPartBLabel => 'B  ·  专业导师';
-
-  @override
-  String get ackPartCLabel => 'C  ·  鸣谢';
-
-  @override
-  String get ackInstitutionalP1 =>
-      '本应用程序的开发得到了格拉斯哥大学（UofG）、格拉斯哥大学新加坡分校（UGS）以及新加坡理工学院（SIT）的支持。';
-
-  @override
-  String get ackInstitutionalP2 =>
-      '本项目是CSC2101专业软件开发及CSC2102团队项目模块的学习内容，仅作为学术学习与教学之用。';
-
-  @override
-  String get ackDisclaimerTitle => '生成式AI免责声明';
-
-  @override
-  String get ackDisclaimerBody =>
-      '本应用程序可能采用了生成式人工智能（GenAI）技术。尽管我们已尽力确保内容的准确性和适当性，但开发者及各合作院校对因使用本应用程序所造成的任何损失概不负责。\n\n强烈建议用户在开始任何体育活动前咨询专业人士。';
-
-  @override
-  String get ackTrainerIntro => '我们衷心感谢我们的专业瑜伽导师在整个项目开发过程中给予的宝贵指导与无私奉献。';
-
-  @override
-  String get ackViewFullProfile => '查看完整简介';
-
-  @override
-  String get ackDevTeam => '开发团队';
-
-  @override
-  String get ackSupervisor => '项目主管';
-
-  @override
-  String get ackSupportingStaff => '支持及行政人员';
-
-  @override
-  String get ackSupportingStaffDesc =>
-      '我们也感谢来自各合作院校的支持及行政人员在整个项目过程中给予的协助与持续支持。';
-
-  @override
-  String get insightsTitle => '专家见解';
-
-  @override
-  String get insightsMsLimRole => '认证瑜伽导师';
-
-  @override
-  String get insightsProfCKRole => '教授 · 格拉斯哥大学';
-
-  @override
-  String get insightsComingSoon => '视频即将上线，敬请期待！';
-
-  @override
-  String get insightsWatch => '观看';
-
-  @override
-  String get insightsSoon => '即将上线';
-
-  @override
-  String get insightsMsLimQ1 => '瑜伽对老年人和青少年有哪些主要益处？';
-
-  @override
-  String get insightsMsLimQ2 => '瑜伽对老年人和初学者安全吗？';
-
-  @override
-  String get insightsMsLimQ3 => '老年人和青少年应多久练习一次瑜伽以获得最佳效果？';
-
-  @override
-  String get insightsProfCKQ1 => '格拉斯哥计算机科学学院为何支持一个开源瑜伽移动应用项目？';
-
-  @override
-  String get insightsProfCKQ2 => '这个项目为学生和行业合作伙伴带来了哪些价值？';
-
-  @override
-  String get instructorYourInstructor => '您的导师';
-
-  @override
-  String get instructorRole => '认证瑜伽导师';
-
-  @override
-  String get instructorTagline => '新加坡 · 10年以上教学经验';
-
-  @override
-  String get instructorOrg => 'Yoga8288 · 新加坡';
-
-  @override
-  String get instructorAboutTitle => '关于林丽平';
-
-  @override
-  String get instructorBioP1 =>
-      '林丽平是一位新加坡瑜伽导师，她与瑜伽的缘分始于个人的迫切需求，最终成为她毕生的使命。三十多岁时，她饱受脊柱侧弯的折磨，严重到连肩包都无法背负。';
-
-  @override
-  String get instructorQuote => '「自从四十岁开始练习瑜伽，疼痛很少再回来。我的内心变得更坚韧，情绪也更平和。」';
-
-  @override
-  String get instructorBioP2 => '如今，林丽平将这份从容的韧性带给她的学生，并曾出现在新传媒8频道《晨光第一线》节目中。';
-
-  @override
-  String get instructorYogaStyles => '瑜伽风格';
-
-  @override
-  String get instructorHathaTitle => '哈他瑜伽';
-
-  @override
-  String get instructorHathaDesc => '经典体式，增强力量、矫正体态、提升呼吸意识。';
-
-  @override
-  String get instructorYinTitle => '阴瑜伽';
-
-  @override
-  String get instructorYinDesc => '深度被动保持，针对结缔组织，促进情绪释放。';
-
-  @override
-  String get instructorChairTitle => '椅子瑜伽';
-
-  @override
-  String get instructorChairDesc => '借助椅子辅助完成体式，适合各年龄层人士。';
-
-  @override
-  String get instructorChildrenTitle => '儿童瑜伽';
-
-  @override
-  String get instructorChildrenDesc => '趣味十足的课程，适合8岁以上的小练习者。';
-
-  @override
-  String get instructorCredentials => '资质与培训';
-
-  @override
-  String get instructorMediaTitle => '媒体报道';
-
-  @override
-  String get instructorMediaDesc => '为新传媒8频道《晨光第一线》指导前国家乒乓球运动员于梦雨备战东京2020奥运会。';
-
-  @override
-  String get insightsTagBenefits => '益处';
-
-  @override
-  String get insightsTagSafety => '安全性';
-
-  @override
-  String get insightsTagPractice => '练习';
-
-  @override
-  String get insightsTagAcademia => '学术';
-
-  @override
-  String get insightsTagImpact => '影响';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -5955,173 +5610,167 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get allRightsReserved => '保留所有權利';
 
   @override
-  String get hearFromExperts => '聽聽專家怎麼說';
+  String get hearFromExperts => '听听专家怎么说';
 
   @override
-  String get hearFromExpertsDesc =>
-      '觀看我們的瑜伽導師和學術合作夥伴的獨家視頻訪談，涵蓋瑜伽安全、益處及本應用的背景故事。';
+  String get hearFromExpertsDesc => '观看我们的瑜伽导师和学术合作伙伴的独家视频访谈，涵盖瑜伽安全、益处及本应用的背景故事。';
 
   @override
-  String get expertInsights => '專家見解';
+  String get expertInsights => '专家见解';
 
   @override
-  String get expertInsightsSubtitle => '5個視頻 · 林麗平老師 & CK教授';
+  String get expertInsightsSubtitle => '5个视频 · 林丽平老师 & CK教授';
 
   @override
-  String get watchNow => '立即觀看';
+  String get watchNow => '立即观看';
 
   @override
-  String get acknowledgment => '致謝';
+  String get acknowledgment => '致谢';
 
   @override
-  String get ackPartALabel => 'A  ·  機構支持與免責聲明';
+  String get ackPartALabel => 'A  ·  机构支持与免责声明';
 
   @override
-  String get ackPartBLabel => 'B  ·  專業導師';
+  String get ackPartBLabel => 'B  ·  专业导师';
 
   @override
-  String get ackPartCLabel => 'C  ·  鳴謝';
+  String get ackPartCLabel => 'C  ·  鸣谢';
 
   @override
-  String get ackInstitutionalP1 =>
-      '本應用程式的開發獲得格拉斯哥大學（UofG）、格拉斯哥大學新加坡分校（UGS）及新加坡理工學院（SIT）的支持。';
+  String get ackInstitutionalP1 => '本应用程序的开发得到了格拉斯哥大学（UofG）、格拉斯哥大学新加坡分校（UGS）及新加坡理工学院（SIT）的支持。';
 
   @override
-  String get ackInstitutionalP2 =>
-      '本項目是CSC2101專業軟件開發及CSC2102團隊項目模塊的學習內容，僅作為學術學習與教學之用。';
+  String get ackInstitutionalP2 => '本项目是CSC2101专业软件开发及CSC2102团队项目模块的学习内容，仅作为学术学习与教学之用。';
 
   @override
-  String get ackDisclaimerTitle => '生成式AI免責聲明';
+  String get ackDisclaimerTitle => '生成式AI免责声明';
 
   @override
-  String get ackDisclaimerBody =>
-      '本應用程式可能採用了生成式人工智能（GenAI）技術。儘管我們已盡力確保內容的準確性，但開發者及各合作院校對因使用本應用程式所造成的任何損失概不負責。\n\n強烈建議用戶在開始任何體育活動前諮詢專業人士。';
+  String get ackDisclaimerBody => '本应用程序可能采用了生成式人工智能技术。开发者及各合作院校对因使用本应用程序所造成的任何损失概不负责。\n\n强烈建议用户在开始任何体育活动前咨询专业人士。';
 
   @override
-  String get ackTrainerIntro => '我們衷心感謝我們的專業瑜伽導師在整個項目開發過程中給予的寶貴指導與無私奉獻。';
+  String get ackTrainerIntro => '我们衷心感谢我们的专业瑜伽导师在整个项目开发过程中给予的宝贵指导与无私奉献。';
 
   @override
-  String get ackViewFullProfile => '查看完整簡介';
+  String get ackViewFullProfile => '查看完整简介';
 
   @override
-  String get ackDevTeam => '開發團隊';
+  String get ackDevTeam => '开发团队';
 
   @override
-  String get ackSupervisor => '項目主管';
+  String get ackSupervisor => '项目主管';
 
   @override
-  String get ackSupportingStaff => '支援及行政人員';
+  String get ackSupportingStaff => '支持及行政人员';
 
   @override
-  String get ackSupportingStaffDesc =>
-      '我們也感謝來自各合作院校的支援及行政人員在整個項目過程中給予的協助與持續支持。';
+  String get ackSupportingStaffDesc => '我们也感谢来自各合作院校的支持及行政人员在整个项目过程中给予的协助与持续支持。';
 
   @override
-  String get insightsTitle => '專家見解';
+  String get insightsTitle => '专家见解';
 
   @override
-  String get insightsMsLimRole => '認證瑜伽導師';
+  String get insightsMsLimRole => '认证瑜伽导师';
 
   @override
-  String get insightsProfCKRole => '教授 · 格拉斯哥大學';
+  String get insightsProfCKRole => '教授 · 格拉斯哥大学';
 
   @override
-  String get insightsComingSoon => '視頻即將上線，敬請期待！';
+  String get insightsComingSoon => '视频即将上线，敬请期待！';
 
   @override
-  String get insightsWatch => '觀看';
+  String get insightsWatch => '观看';
 
   @override
-  String get insightsSoon => '即將上線';
+  String get insightsSoon => '即将上线';
 
   @override
-  String get insightsMsLimQ1 => '瑜伽對老年人和青少年有哪些主要益處？';
+  String get insightsMsLimQ1 => '瑜伽对老年人和青少年有哪些主要益处？';
 
   @override
-  String get insightsMsLimQ2 => '瑜伽對老年人和初學者安全嗎？';
+  String get insightsMsLimQ2 => '瑜伽对老年人和初学者安全吗？';
 
   @override
-  String get insightsMsLimQ3 => '老年人和青少年應多久練習一次瑜伽以獲得最佳效果？';
+  String get insightsMsLimQ3 => '老年人和青少年应多久练习一次瑜伽以获得最佳效果？';
 
   @override
-  String get insightsProfCKQ1 => '格拉斯哥計算機科學學院為何支持一個開源瑜伽移動應用項目？';
+  String get insightsProfCKQ1 => '格拉斯哥计算机科学学院为何支持一个开源瑜伽移动应用项目？';
 
   @override
-  String get insightsProfCKQ2 => '這個項目為學生和行業合作夥伴帶來了哪些價值？';
+  String get insightsProfCKQ2 => '这个项目为学生和行业合作伙伴带来了哪些价值？';
 
   @override
-  String get instructorYourInstructor => '您的導師';
-
-  @override
-  String get instructorRole => '認證瑜伽導師';
-
-  @override
-  String get instructorTagline => '新加坡 · 10年以上教學經驗';
-
-  @override
-  String get instructorOrg => 'Yoga8288 · 新加坡';
-
-  @override
-  String get instructorAboutTitle => '關於林麗平';
-
-  @override
-  String get instructorBioP1 =>
-      '林麗平是一位新加坡瑜伽導師，她與瑜伽的緣分始於個人的迫切需求，最終成為她畢生的使命。三十多歲時，她飽受脊柱側彎的折磨，嚴重到連肩包都無法背負。';
-
-  @override
-  String get instructorQuote => '「自從四十歲開始練習瑜伽，疼痛很少再回來。我的內心變得更堅韌，情緒也更平和。」';
-
-  @override
-  String get instructorBioP2 => '如今，林麗平將這份從容的韌性帶給她的學生，並曾出現在新傳媒8頻道《晨光第一線》節目中。';
-
-  @override
-  String get instructorYogaStyles => '瑜伽風格';
-
-  @override
-  String get instructorHathaTitle => '哈他瑜伽';
-
-  @override
-  String get instructorHathaDesc => '經典體式，增強力量、矯正體態、提升呼吸意識。';
-
-  @override
-  String get instructorYinTitle => '陰瑜伽';
-
-  @override
-  String get instructorYinDesc => '深度被動保持，針對結締組織，促進情緒釋放。';
-
-  @override
-  String get instructorChairTitle => '椅子瑜伽';
-
-  @override
-  String get instructorChairDesc => '借助椅子輔助完成體式，適合各年齡層人士。';
-
-  @override
-  String get instructorChildrenTitle => '兒童瑜伽';
-
-  @override
-  String get instructorChildrenDesc => '趣味十足的課程，適合8歲以上的小練習者。';
-
-  @override
-  String get instructorCredentials => '資質與培訓';
-
-  @override
-  String get instructorMediaTitle => '媒體報道';
-
-  @override
-  String get instructorMediaDesc => '為新傳媒8頻道《晨光第一線》指導前國家乒乓球運動員于夢雨備戰東京2020奧運會。';
-
-  @override
-  String get insightsTagBenefits => '益處';
+  String get insightsTagBenefits => '益处';
 
   @override
   String get insightsTagSafety => '安全性';
 
   @override
-  String get insightsTagPractice => '練習';
+  String get insightsTagPractice => '练习';
 
   @override
-  String get insightsTagAcademia => '學術';
+  String get insightsTagAcademia => '学术';
 
   @override
-  String get insightsTagImpact => '影響';
+  String get insightsTagImpact => '影响';
+
+  @override
+  String get instructorYourInstructor => '您的导师';
+
+  @override
+  String get instructorRole => '认证瑜伽导师';
+
+  @override
+  String get instructorTagline => '新加坡 · 10年以上教学经验';
+
+  @override
+  String get instructorOrg => 'Yoga8288 · 新加坡';
+
+  @override
+  String get instructorAboutTitle => '关于林丽平';
+
+  @override
+  String get instructorBioP1 => '林丽平是一位新加坡瑜伽导师，她与瑜伽的缘分始于个人的迫切需求，最终成为她毕生的使命。三十多岁时，她饱受脊柱侧弯的折磨，严重到连肩包都无法背负。';
+
+  @override
+  String get instructorQuote => '「自从四十岁开始练习瑜伽，疼痛很少再回来。我的内心变得更坚韧，情绪也更平和。这就是我想与更多人分享这门古老艺术的原因。」';
+
+  @override
+  String get instructorBioP2 => '如今，林丽平将这份从容的韧性带给她的学生，并曾出现在新传媒8频道《晨光第一线》节目中，指导前国家乒乓球运动员于梦雨备战东京2020奥运会。';
+
+  @override
+  String get instructorYogaStyles => '瑜伽风格';
+
+  @override
+  String get instructorHathaTitle => '哈他瑜伽';
+
+  @override
+  String get instructorHathaDesc => '经典体式，增强力量、矫正体态、提升呼吸意识。';
+
+  @override
+  String get instructorYinTitle => '阴瑜伽';
+
+  @override
+  String get instructorYinDesc => '深度被动保持，针对结缔组织，促进情绪释放。';
+
+  @override
+  String get instructorChairTitle => '椅子瑜伽';
+
+  @override
+  String get instructorChairDesc => '借助椅子辅助完成体式，适合各年龄层人士。';
+
+  @override
+  String get instructorChildrenTitle => '儿童瑜伽';
+
+  @override
+  String get instructorChildrenDesc => '趣味十足的课程，适合8岁以上的小练习者。';
+
+  @override
+  String get instructorCredentials => '资质与培训';
+
+  @override
+  String get instructorMediaTitle => '媒体报道';
+
+  @override
+  String get instructorMediaDesc => '为新传媒8频道《晨光第一线》指导前国家乒乓球运动员于梦雨备战东京2020奥运会。';
 }

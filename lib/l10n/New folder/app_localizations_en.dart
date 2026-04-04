@@ -1964,8 +1964,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hearFromExperts => 'Hear From the Experts';
 
   @override
-  String get hearFromExpertsDesc =>
-      'Watch exclusive video interviews with our yoga instructor and academic partner — covering yoga safety, benefits, and the story behind this app.';
+  String get hearFromExpertsDesc => 'Watch exclusive video interviews with our yoga instructor and academic partner — covering yoga safety, benefits, and the story behind this app.';
 
   @override
   String get expertInsights => 'Expert Insights';
@@ -1989,23 +1988,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ackPartCLabel => 'C  ·  Credits';
 
   @override
-  String get ackInstitutionalP1 =>
-      'This application was developed with the support of the University of Glasgow (UofG), University of Glasgow Singapore (UGS), and the Singapore Institute of Technology (SIT).';
+  String get ackInstitutionalP1 => 'This application was developed with the support of the University of Glasgow (UofG), University of Glasgow Singapore (UGS), and the Singapore Institute of Technology (SIT).';
 
   @override
-  String get ackInstitutionalP2 =>
-      'This project is undertaken as part of the CSC2101 Professional Software Development and CSC2102 Team Project modules, and is intended solely as an academic learning and teaching exercise.';
+  String get ackInstitutionalP2 => 'This project is undertaken as part of the CSC2101 Professional Software Development and CSC2102 Team Project modules, and is intended solely as an academic learning and teaching exercise.';
 
   @override
   String get ackDisclaimerTitle => 'Generative AI Disclaimer';
 
   @override
-  String get ackDisclaimerBody =>
-      'This application may incorporate Generative AI (GenAI) technologies. While every effort has been made to ensure the accuracy and appropriateness of the content, the developers, University of Glasgow, University of Glasgow Singapore, and the Singapore Institute of Technology shall not be held liable for any loss, injury, harm, or adverse outcome arising from the use, misuse, or reliance on information provided by this application.\n\nUsers are strongly advised to exercise personal discretion and consult qualified professionals — including medical practitioners and certified fitness instructors — before commencing any physical activity or yoga practice.';
+  String get ackDisclaimerBody => 'This application may incorporate Generative AI (GenAI) technologies. While every effort has been made to ensure the accuracy and appropriateness of the content, the developers, University of Glasgow, University of Glasgow Singapore, and the Singapore Institute of Technology shall not be held liable for any loss, injury, harm, or adverse outcome arising from the use, misuse, or reliance on information provided by this application.\n\nUsers are strongly advised to exercise personal discretion and consult qualified professionals — including medical practitioners and certified fitness instructors — before commencing any physical activity or yoga practice.';
 
   @override
-  String get ackTrainerIntro =>
-      'We extend our sincere gratitude to our professional yoga trainer for her invaluable guidance, expertise, and dedication throughout the development of this project.';
+  String get ackTrainerIntro => 'We extend our sincere gratitude to our professional yoga trainer for her invaluable guidance, expertise, and dedication throughout the development of this project.';
 
   @override
   String get ackViewFullProfile => 'View full profile';
@@ -2020,8 +2015,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ackSupportingStaff => 'Supporting & Administrative Staff';
 
   @override
-  String get ackSupportingStaffDesc =>
-      'We also thank the supporting and administrative staff from the University of Glasgow, University of Glasgow Singapore, and the Singapore Institute of Technology for their assistance, coordination, and continued support throughout this project.';
+  String get ackSupportingStaffDesc => 'We also thank the supporting and administrative staff from the University of Glasgow, University of Glasgow Singapore, and the Singapore Institute of Technology for their assistance, coordination, and continued support throughout this project.';
 
   @override
   String get insightsTitle => 'Expert Insights';
@@ -2042,24 +2036,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get insightsSoon => 'Soon';
 
   @override
-  String get insightsMsLimQ1 =>
-      'What are the key benefits of yoga for elderly and youth?';
+  String get insightsMsLimQ1 => 'What are the key benefits of yoga for elderly and youth?';
 
   @override
-  String get insightsMsLimQ2 =>
-      'Is yoga safe for elderly people and beginners?';
+  String get insightsMsLimQ2 => 'Is yoga safe for elderly people and beginners?';
 
   @override
-  String get insightsMsLimQ3 =>
-      'How often should elderly and youth practice yoga for best results?';
+  String get insightsMsLimQ3 => 'How often should elderly and youth practice yoga for best results?';
 
   @override
-  String get insightsProfCKQ1 =>
-      'Why does Glasgow Computing Science support an open-source yoga mobile app project?';
+  String get insightsProfCKQ1 => 'Why does Glasgow Computing Science support an open-source yoga mobile app project?';
 
   @override
-  String get insightsProfCKQ2 =>
-      'What value does this project bring to students and industry partners?';
+  String get insightsProfCKQ2 => 'What value does this project bring to students and industry partners?';
+
+  @override
+  String get insightsTagBenefits => 'Benefits';
+
+  @override
+  String get insightsTagSafety => 'Safety';
+
+  @override
+  String get insightsTagPractice => 'Practice';
+
+  @override
+  String get insightsTagAcademia => 'Academia';
+
+  @override
+  String get insightsTagImpact => 'Impact';
 
   @override
   String get instructorYourInstructor => 'Your Instructor';
@@ -2077,16 +2081,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get instructorAboutTitle => 'About Li Peng';
 
   @override
-  String get instructorBioP1 =>
-      'Li Peng is a Singaporean yoga instructor whose journey with yoga began out of personal necessity — and blossomed into a lifelong calling. In her thirties, she lived with debilitating scoliosis pain, so severe she couldn\'t carry a sling bag on her shoulder. Rather than seeking medication, she turned to rest — and later, yoga.';
+  String get instructorBioP1 => 'Li Peng is a Singaporean yoga instructor whose journey with yoga began out of personal necessity — and blossomed into a lifelong calling. In her thirties, she lived with debilitating scoliosis pain, so severe she couldn\'t carry a sling bag on her shoulder. Rather than seeking medication, she turned to rest — and later, yoga.';
 
   @override
-  String get instructorQuote =>
-      '\"Since I started practising yoga in my forties, the pain seldom returned. I became stronger mentally, calmer emotionally. This is why I want to share this ancient art with more people.\"';
+  String get instructorQuote => '"Since I started practising yoga in my forties, the pain seldom returned. I became stronger mentally, calmer emotionally. This is why I want to share this ancient art with more people."';
 
   @override
-  String get instructorBioP2 =>
-      'Today, Li Peng brings that same quiet resilience to her students — guiding each person step by step, respecting the body\'s limits while gently expanding them. She teaches small groups and one-on-one sessions across a variety of styles, and has appeared on Mediacorp Channel 8\'s Morning Express, coaching Singapore\'s former national table tennis player Yu Meng Yu ahead of the Tokyo 2020 Olympics.';
+  String get instructorBioP2 => 'Today, Li Peng brings that same quiet resilience to her students — guiding each person step by step, respecting the body\'s limits while gently expanding them. She teaches small groups and one-on-one sessions across a variety of styles, and has appeared on Mediacorp Channel 8\'s Morning Express, coaching Singapore\'s former national table tennis player Yu Meng Yu ahead of the Tokyo 2020 Olympics.';
 
   @override
   String get instructorYogaStyles => 'Yoga Styles';
@@ -2095,29 +2096,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get instructorHathaTitle => 'Hatha Yoga';
 
   @override
-  String get instructorHathaDesc =>
-      'Classic postures to build strength, alignment, and breath awareness.';
+  String get instructorHathaDesc => 'Classic postures to build strength, alignment, and breath awareness.';
 
   @override
   String get instructorYinTitle => 'Yin Yoga';
 
   @override
-  String get instructorYinDesc =>
-      'Deep, passive holds targeting connective tissue and emotional release.';
+  String get instructorYinDesc => 'Deep, passive holds targeting connective tissue and emotional release.';
 
   @override
   String get instructorChairTitle => 'Chair Yoga';
 
   @override
-  String get instructorChairDesc =>
-      'Accessible poses using a chair for support — ideal for all ages.';
+  String get instructorChairDesc => 'Accessible poses using a chair for support — ideal for all ages.';
 
   @override
-  String get instructorChildrenTitle => 'Children\'s Yoga';
+  String get instructorChildrenTitle => "Children's Yoga";
 
   @override
-  String get instructorChildrenDesc =>
-      'Playful, age-appropriate sessions for young practitioners from age 8.';
+  String get instructorChildrenDesc => 'Playful, age-appropriate sessions for young practitioners from age 8.';
 
   @override
   String get instructorCredentials => 'Credentials & Training';
@@ -2126,21 +2123,5 @@ class AppLocalizationsEn extends AppLocalizations {
   String get instructorMediaTitle => 'Media Feature';
 
   @override
-  String get instructorMediaDesc =>
-      'Coached former national table tennis player Yu Meng Yu for Mediacorp Channel 8\'s Morning Express — a feature on how Singapore\'s Olympic representatives prepared for Tokyo 2020.';
-
-  @override
-  String get insightsTagBenefits => 'Benefits';
-
-  @override
-  String get insightsTagSafety => 'Safety';
-
-  @override
-  String get insightsTagPractice => 'Practice';
-
-  @override
-  String get insightsTagAcademia => 'Academia';
-
-  @override
-  String get insightsTagImpact => 'Impact';
+  String get instructorMediaDesc => "Coached former national table tennis player Yu Meng Yu for Mediacorp Channel 8's Morning Express — a feature on how Singapore's Olympic representatives prepared for Tokyo 2020.";
 }

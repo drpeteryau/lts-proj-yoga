@@ -81,19 +81,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       _experienceLevel = profile['experience_level'] ?? 'Beginner';
       _sessionLength = profile['preferred_session_length'] ?? '15 minutes';
       _language = profile['preferred_language'] ?? 'English';
-      // Logic to handle old data
+      // Normalise any legacy or unexpected values to valid dropdown items
+      const _validLanguages = ['English', 'Mandarin (Simplified)', 'Mandarin (Traditional)'];
       if (_language == 'Mandarin') {
-        _language = 'Mandarin (Simplified)'; // Map old value to new default
-      } else {
-        _language = _language;
+        _language = 'Mandarin (Simplified)';
+      } else if (!_validLanguages.contains(_language)) {
+        // Catches locale codes like 'en', 'zh', or anything else unexpected
+        _language = 'English';
       }
       // Update the locale based on the corrected _language
       if (_language == 'Mandarin (Simplified)') {
         appLocale.value =
-            const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans');
+        const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans');
       } else if (_language == 'Mandarin (Traditional)') {
         appLocale.value =
-            const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant');
+        const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant');
       } else {
         appLocale.value = const Locale('en');
       }
@@ -372,9 +374,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       onPressed: _isSaving
                           ? null
                           : () async {
-                              GlobalAudioService.playClickSound();
-                              _saveProfile();
-                            },
+                        GlobalAudioService.playClickSound();
+                        _saveProfile();
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: turquoise,
                         foregroundColor: Colors.white,
@@ -415,7 +417,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 : null,
                             child: _profileImageUrl == null
                                 ? const Icon(Icons.person,
-                                    size: 60, color: turquoise)
+                                size: 60, color: turquoise)
                                 : null,
                           ),
                           Positioned(
@@ -493,20 +495,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               '20 minutes',
                               '30 minutes'
                             ],
-                            (v) => setState(() => _sessionLength = v),
+                                (v) => setState(() => _sessionLength = v),
                             itemLabelBuilder: (value) {
-                          if (value == '5 minutes')
-                            return AppLocalizations.of(context)!.min5;
-                          if (value == '10 minutes')
-                            return AppLocalizations.of(context)!.min10;
-                          if (value == '15 minutes')
-                            return AppLocalizations.of(context)!.min15;
-                          if (value == '20 minutes')
-                            return AppLocalizations.of(context)!.min20;
-                          if (value == '30 minutes')
-                            return AppLocalizations.of(context)!.min30;
-                          return value;
-                        }),
+                              if (value == '5 minutes')
+                                return AppLocalizations.of(context)!.min5;
+                              if (value == '10 minutes')
+                                return AppLocalizations.of(context)!.min10;
+                              if (value == '15 minutes')
+                                return AppLocalizations.of(context)!.min15;
+                              if (value == '20 minutes')
+                                return AppLocalizations.of(context)!.min20;
+                              if (value == '30 minutes')
+                                return AppLocalizations.of(context)!.min30;
+                              return value;
+                            }),
                         _dropdown(
                           AppLocalizations.of(context)!.language,
                           _language,
@@ -515,7 +517,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             'Mandarin (Simplified)',
                             'Mandarin (Traditional)',
                           ],
-                          (v) {
+                              (v) {
                             setState(() => _language = v);
                             if (v == 'Mandarin (Simplified)') {
                               appLocale.value = const Locale.fromSubtags(
@@ -615,7 +617,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             }),
                         ListTile(
                           title:
-                              Text(AppLocalizations.of(context)!.reminderTime),
+                          Text(AppLocalizations.of(context)!.reminderTime),
                           trailing: Text(
                             _reminderTime,
                             style: const TextStyle(color: Color(0xFF6B8F8A)),
@@ -673,14 +675,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             children: [
                               Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     _isWebPlatform
                                         ? AppLocalizations.of(context)!
-                                            .appVolume
+                                        .appVolume
                                         : AppLocalizations.of(context)!
-                                            .systemVolume,
+                                        .systemVolume,
                                     style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500,
@@ -766,9 +768,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               Text(
                                 _isWebPlatform
                                     ? AppLocalizations.of(context)!
-                                        .appVolumeDesc
+                                    .appVolumeDesc
                                     : AppLocalizations.of(context)!
-                                        .systemVolumeDesc,
+                                    .systemVolumeDesc,
                                 style: const TextStyle(
                                   fontSize: 12,
                                   color: Color(0xFF9CA3AF),
@@ -828,10 +830,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Widget _textField(
-    String label,
-    TextEditingController controller, {
-    TextInputType keyboardType = TextInputType.text,
-  }) {
+      String label,
+      TextEditingController controller, {
+        TextInputType keyboardType = TextInputType.text,
+      }) {
     return Padding(
       padding: EdgeInsets.only(bottom: isWeb ? 18 : 16),
       child: TextField(
@@ -866,16 +868,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Widget _dropdown(
-    String label,
-    String value,
-    List<String> items,
-    ValueChanged<String> onChanged, {
-    String Function(String)? itemLabelBuilder,
-  }) {
+      String label,
+      String value,
+      List<String> items,
+      ValueChanged<String> onChanged, {
+        String Function(String)? itemLabelBuilder,
+      }) {
     return Padding(
       padding: EdgeInsets.only(bottom: isWeb ? 18 : 16),
       child: DropdownButtonFormField<String>(
-          initialValue: value,
+          value: value,
           style: GoogleFonts.poppins(
             fontSize: isWeb ? 17 : 16,
             color: Colors.black87,

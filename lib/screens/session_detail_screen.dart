@@ -9,6 +9,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/global_audio_service.dart';
 import '../utils/yoga_localization_helper.dart';
 import '../l10n/app_localizations.dart';
+import 'instructor_profile_screen.dart';
 
 class SessionDetailScreen extends StatefulWidget {
   final YogaSession session;
@@ -67,22 +68,35 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
                     // Hero image (now scrollable)
                     _buildHeroSection(),
 
-                    // Session title
+                    // Session title + instructor byline block
                     Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: isWeb ? 40 : 24,
-                        vertical: isWeb ? 32 : 26,
+                      padding: EdgeInsets.fromLTRB(
+                        isWeb ? 40 : 24,
+                        isWeb ? 32 : 22,
+                        isWeb ? 40 : 24,
+                        0,
                       ),
-                      child: Text(
-                        YogaLocalizationHelper.getSessionTitle(context, widget.session.titleKey),
-                        style: GoogleFonts.poppins(
-                          fontSize: isWeb ? 32 : 26,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                          height: 1.2,
-                        ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Session title
+                          Text(
+                            YogaLocalizationHelper.getSessionTitle(context, widget.session.titleKey),
+                            style: GoogleFonts.poppins(
+                              fontSize: isWeb ? 32 : 26,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                              height: 1.2,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          // Instructor byline
+                          _buildInstructorStrip(),
+                        ],
                       ),
                     ),
+
+                    SizedBox(height: isWeb ? 28 : 20),
 
                     // 3 Circular info boxes
                     Padding(
@@ -285,6 +299,90 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
               ),
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  // ─── Instructor byline ─────────────────────────────────────────────────────
+
+  Widget _buildInstructorStrip() {
+    return GestureDetector(
+      onTap: () async {
+        await GlobalAudioService.playClickSound();
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const InstructorProfileScreen()),
+        );
+      },
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // Circular avatar
+          Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: const Color(0xFF40E0D0).withOpacity(0.5),
+                width: 2,
+              ),
+            ),
+            child: ClipOval(
+              child: Image.asset(
+                'assets/images/instructor_lim_li_peng.jpg',
+                width: 42,
+                height: 42,
+                fit: BoxFit.cover,
+                alignment: Alignment.topCenter,
+                errorBuilder: (_, __, ___) => Container(
+                  width: 42,
+                  height: 42,
+                  color: const Color(0xFFD4F1F0),
+                  child: const Icon(Icons.person,
+                      color: Color(0xFF40E0D0), size: 24),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          // Name + role
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Lim Li Peng',
+                  style: GoogleFonts.poppins(
+                    fontSize: 16.5,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black87,
+                    height: 1.2,
+                  ),
+                ),
+                Text(
+                  'Certified Yoga Instructor',
+                  style: GoogleFonts.poppins(
+                    fontSize: 13.5,
+                    color: Colors.black45,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Subtle "View profile" text link
+          Text(
+            'View profile',
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF00897B),
+            ),
+          ),
+          const SizedBox(width: 2),
+          const Icon(Icons.chevron_right_rounded,
+              size: 16, color: Color(0xFF00897B)),
         ],
       ),
     );

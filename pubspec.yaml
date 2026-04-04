@@ -52,6 +52,7 @@ dependencies:
   web: ^1.0.0
   volume_controller: ^3.4.2
   url_launcher: ^6.2.5
+  youtube_player_flutter: ^9.1.1
 
 
 dev_dependencies:
@@ -99,6 +100,7 @@ flutter:
     - assets/audio/whitenoise.mp3
     - assets/audio/windchime.mp3
     - assets/audio/raining.mp3
+    - assets/images/instructor_lim_li_peng.jpg
 
 
 

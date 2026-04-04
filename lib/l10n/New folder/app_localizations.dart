@@ -3682,335 +3682,69 @@ abstract class AppLocalizations {
   /// **'All Rights Reserved'**
   String get allRightsReserved;
 
-  /// No description provided for @hearFromExperts.
-  ///
-  /// In en, this message translates to:
-  /// **'Hear From the Experts'**
+  // ── About Us – Hear From Experts ──────────────────────────────────────────
   String get hearFromExperts;
-
-  /// No description provided for @hearFromExpertsDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Watch exclusive video interviews with our yoga instructor and academic partner — covering yoga safety, benefits, and the story behind this app.'**
   String get hearFromExpertsDesc;
-
-  /// No description provided for @expertInsights.
-  ///
-  /// In en, this message translates to:
-  /// **'Expert Insights'**
   String get expertInsights;
-
-  /// No description provided for @expertInsightsSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'5 videos · Ms Lim & Prof CK'**
   String get expertInsightsSubtitle;
-
-  /// No description provided for @watchNow.
-  ///
-  /// In en, this message translates to:
-  /// **'Watch now'**
   String get watchNow;
 
-  /// No description provided for @acknowledgment.
-  ///
-  /// In en, this message translates to:
-  /// **'Acknowledgment'**
+  // ── About Us – Acknowledgment ─────────────────────────────────────────────
   String get acknowledgment;
-
-  /// No description provided for @ackPartALabel.
-  ///
-  /// In en, this message translates to:
-  /// **'A  ·  Institutional Support & Disclaimer'**
   String get ackPartALabel;
-
-  /// No description provided for @ackPartBLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'B  ·  Professional Trainer'**
   String get ackPartBLabel;
-
-  /// No description provided for @ackPartCLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'C  ·  Credits'**
   String get ackPartCLabel;
-
-  /// No description provided for @ackInstitutionalP1.
-  ///
-  /// In en, this message translates to:
-  /// **'This application was developed with the support of the University of Glasgow (UofG), University of Glasgow Singapore (UGS), and the Singapore Institute of Technology (SIT).'**
   String get ackInstitutionalP1;
-
-  /// No description provided for @ackInstitutionalP2.
-  ///
-  /// In en, this message translates to:
-  /// **'This project is undertaken as part of the CSC2101 Professional Software Development and CSC2102 Team Project modules, and is intended solely as an academic learning and teaching exercise.'**
   String get ackInstitutionalP2;
-
-  /// No description provided for @ackDisclaimerTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Generative AI Disclaimer'**
   String get ackDisclaimerTitle;
-
-  /// No description provided for @ackDisclaimerBody.
-  ///
-  /// In en, this message translates to:
-  /// **'This application may incorporate Generative AI (GenAI) technologies. While every effort has been made to ensure the accuracy and appropriateness of the content, the developers, University of Glasgow, University of Glasgow Singapore, and the Singapore Institute of Technology shall not be held liable for any loss, injury, harm, or adverse outcome arising from the use, misuse, or reliance on information provided by this application.\n\nUsers are strongly advised to exercise personal discretion and consult qualified professionals — including medical practitioners and certified fitness instructors — before commencing any physical activity or yoga practice.'**
   String get ackDisclaimerBody;
-
-  /// No description provided for @ackTrainerIntro.
-  ///
-  /// In en, this message translates to:
-  /// **'We extend our sincere gratitude to our professional yoga trainer for her invaluable guidance, expertise, and dedication throughout the development of this project.'**
   String get ackTrainerIntro;
-
-  /// No description provided for @ackViewFullProfile.
-  ///
-  /// In en, this message translates to:
-  /// **'View full profile'**
   String get ackViewFullProfile;
-
-  /// No description provided for @ackDevTeam.
-  ///
-  /// In en, this message translates to:
-  /// **'Development Team'**
   String get ackDevTeam;
-
-  /// No description provided for @ackSupervisor.
-  ///
-  /// In en, this message translates to:
-  /// **'Project Supervisor'**
   String get ackSupervisor;
-
-  /// No description provided for @ackSupportingStaff.
-  ///
-  /// In en, this message translates to:
-  /// **'Supporting & Administrative Staff'**
   String get ackSupportingStaff;
-
-  /// No description provided for @ackSupportingStaffDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'We also thank the supporting and administrative staff from the University of Glasgow, University of Glasgow Singapore, and the Singapore Institute of Technology for their assistance, coordination, and continued support throughout this project.'**
   String get ackSupportingStaffDesc;
 
-  /// No description provided for @insightsTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Expert Insights'**
+  // ── Insights screen ───────────────────────────────────────────────────────
   String get insightsTitle;
-
-  /// No description provided for @insightsMsLimRole.
-  ///
-  /// In en, this message translates to:
-  /// **'Certified Yoga Instructor'**
   String get insightsMsLimRole;
-
-  /// No description provided for @insightsProfCKRole.
-  ///
-  /// In en, this message translates to:
-  /// **'Professor · University of Glasgow'**
   String get insightsProfCKRole;
-
-  /// No description provided for @insightsComingSoon.
-  ///
-  /// In en, this message translates to:
-  /// **'Video coming soon — stay tuned!'**
   String get insightsComingSoon;
-
-  /// No description provided for @insightsWatch.
-  ///
-  /// In en, this message translates to:
-  /// **'Watch'**
   String get insightsWatch;
-
-  /// No description provided for @insightsSoon.
-  ///
-  /// In en, this message translates to:
-  /// **'Soon'**
   String get insightsSoon;
-
-  /// No description provided for @insightsMsLimQ1.
-  ///
-  /// In en, this message translates to:
-  /// **'What are the key benefits of yoga for elderly and youth?'**
   String get insightsMsLimQ1;
-
-  /// No description provided for @insightsMsLimQ2.
-  ///
-  /// In en, this message translates to:
-  /// **'Is yoga safe for elderly people and beginners?'**
   String get insightsMsLimQ2;
-
-  /// No description provided for @insightsMsLimQ3.
-  ///
-  /// In en, this message translates to:
-  /// **'How often should elderly and youth practice yoga for best results?'**
   String get insightsMsLimQ3;
-
-  /// No description provided for @insightsProfCKQ1.
-  ///
-  /// In en, this message translates to:
-  /// **'Why does Glasgow Computing Science support an open-source yoga mobile app project?'**
   String get insightsProfCKQ1;
-
-  /// No description provided for @insightsProfCKQ2.
-  ///
-  /// In en, this message translates to:
-  /// **'What value does this project bring to students and industry partners?'**
   String get insightsProfCKQ2;
 
-  /// No description provided for @instructorYourInstructor.
-  ///
-  /// In en, this message translates to:
-  /// **'Your Instructor'**
-  String get instructorYourInstructor;
-
-  /// No description provided for @instructorRole.
-  ///
-  /// In en, this message translates to:
-  /// **'Certified Yoga Instructor'**
-  String get instructorRole;
-
-  /// No description provided for @instructorTagline.
-  ///
-  /// In en, this message translates to:
-  /// **'Singapore · 10+ years teaching'**
-  String get instructorTagline;
-
-  /// No description provided for @instructorOrg.
-  ///
-  /// In en, this message translates to:
-  /// **'Yoga8288 · Singapore'**
-  String get instructorOrg;
-
-  /// No description provided for @instructorAboutTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'About Li Peng'**
-  String get instructorAboutTitle;
-
-  /// No description provided for @instructorBioP1.
-  ///
-  /// In en, this message translates to:
-  /// **'Li Peng is a Singaporean yoga instructor whose journey with yoga began out of personal necessity — and blossomed into a lifelong calling. In her thirties, she lived with debilitating scoliosis pain, so severe she couldn\'t carry a sling bag on her shoulder. Rather than seeking medication, she turned to rest — and later, yoga.'**
-  String get instructorBioP1;
-
-  /// No description provided for @instructorQuote.
-  ///
-  /// In en, this message translates to:
-  /// **'\"Since I started practising yoga in my forties, the pain seldom returned. I became stronger mentally, calmer emotionally. This is why I want to share this ancient art with more people.\"'**
-  String get instructorQuote;
-
-  /// No description provided for @instructorBioP2.
-  ///
-  /// In en, this message translates to:
-  /// **'Today, Li Peng brings that same quiet resilience to her students — guiding each person step by step, respecting the body\'s limits while gently expanding them. She teaches small groups and one-on-one sessions across a variety of styles, and has appeared on Mediacorp Channel 8\'s Morning Express, coaching Singapore\'s former national table tennis player Yu Meng Yu ahead of the Tokyo 2020 Olympics.'**
-  String get instructorBioP2;
-
-  /// No description provided for @instructorYogaStyles.
-  ///
-  /// In en, this message translates to:
-  /// **'Yoga Styles'**
-  String get instructorYogaStyles;
-
-  /// No description provided for @instructorHathaTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Hatha Yoga'**
-  String get instructorHathaTitle;
-
-  /// No description provided for @instructorHathaDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Classic postures to build strength, alignment, and breath awareness.'**
-  String get instructorHathaDesc;
-
-  /// No description provided for @instructorYinTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Yin Yoga'**
-  String get instructorYinTitle;
-
-  /// No description provided for @instructorYinDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Deep, passive holds targeting connective tissue and emotional release.'**
-  String get instructorYinDesc;
-
-  /// No description provided for @instructorChairTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Chair Yoga'**
-  String get instructorChairTitle;
-
-  /// No description provided for @instructorChairDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Accessible poses using a chair for support — ideal for all ages.'**
-  String get instructorChairDesc;
-
-  /// No description provided for @instructorChildrenTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Children\'s Yoga'**
-  String get instructorChildrenTitle;
-
-  /// No description provided for @instructorChildrenDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Playful, age-appropriate sessions for young practitioners from age 8.'**
-  String get instructorChildrenDesc;
-
-  /// No description provided for @instructorCredentials.
-  ///
-  /// In en, this message translates to:
-  /// **'Credentials & Training'**
-  String get instructorCredentials;
-
-  /// No description provided for @instructorMediaTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Media Feature'**
-  String get instructorMediaTitle;
-
-  /// No description provided for @instructorMediaDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Coached former national table tennis player Yu Meng Yu for Mediacorp Channel 8\'s Morning Express — a feature on how Singapore\'s Olympic representatives prepared for Tokyo 2020.'**
-  String get instructorMediaDesc;
-
-  /// No description provided for @insightsTagBenefits.
-  ///
-  /// In en, this message translates to:
-  /// **'Benefits'**
   String get insightsTagBenefits;
-
-  /// No description provided for @insightsTagSafety.
-  ///
-  /// In en, this message translates to:
-  /// **'Safety'**
   String get insightsTagSafety;
-
-  /// No description provided for @insightsTagPractice.
-  ///
-  /// In en, this message translates to:
-  /// **'Practice'**
   String get insightsTagPractice;
-
-  /// No description provided for @insightsTagAcademia.
-  ///
-  /// In en, this message translates to:
-  /// **'Academia'**
   String get insightsTagAcademia;
-
-  /// No description provided for @insightsTagImpact.
-  ///
-  /// In en, this message translates to:
-  /// **'Impact'**
   String get insightsTagImpact;
+
+  // ── Instructor profile screen ─────────────────────────────────────────────
+  String get instructorYourInstructor;
+  String get instructorRole;
+  String get instructorTagline;
+  String get instructorOrg;
+  String get instructorAboutTitle;
+  String get instructorBioP1;
+  String get instructorQuote;
+  String get instructorBioP2;
+  String get instructorYogaStyles;
+  String get instructorHathaTitle;
+  String get instructorHathaDesc;
+  String get instructorYinTitle;
+  String get instructorYinDesc;
+  String get instructorChairTitle;
+  String get instructorChairDesc;
+  String get instructorChildrenTitle;
+  String get instructorChildrenDesc;
+  String get instructorCredentials;
+  String get instructorMediaTitle;
+  String get instructorMediaDesc;
 }
 
 class _AppLocalizationsDelegate
