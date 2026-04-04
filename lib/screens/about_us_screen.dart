@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AboutUsScreen extends StatelessWidget {
   const AboutUsScreen({super.key});
@@ -111,10 +112,40 @@ class AboutUsScreen extends StatelessWidget {
             const SizedBox(height: 40),
 
             // Yoga Instructor
-            _teamMember(
-              name: "Ms. Lim Li Peng",
-              role: AppLocalizations.of(context)!.yogaInstructor,
-            ),
+Column(
+  children: [
+    GestureDetector(
+    onTap: () async {
+  final url = Uri.parse("https://yoga8288.com");
+
+  try {
+    await launchUrl(url, mode: LaunchMode.externalApplication);
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Could not open link")),
+    );
+  }
+},
+      child: Text(
+        "Ms. Lim Li Peng (View Profile)",
+        style: GoogleFonts.poppins(
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          color: Colors.blue,
+          decoration: TextDecoration.underline,
+        ),
+      ),
+    ),
+    const SizedBox(height: 4),
+    Text(
+      AppLocalizations.of(context)!.yogaInstructor,
+      style: GoogleFonts.poppins(
+        fontSize: 16,
+        color: Colors.grey[600],
+      ),
+    ),
+  ],
+),
 
             const SizedBox(height: 32),
 
@@ -199,6 +230,42 @@ class AboutUsScreen extends StatelessWidget {
             ),
 
             const SizedBox(height: 30),
+
+            // Acknowledgment Section
+_sectionTitle("Acknowledgment"),
+
+const SizedBox(height: 16),
+
+Text(
+  "This project was developed with the support of the University of Glasgow (UofG), "
+  "University of Glasgow Singapore (UGS), and the Singapore Institute of Technology (SIT). "
+  "It is part of the CSC2101 and CSC2102 modules and serves as an academic learning project.\n\n"
+
+  "This application may incorporate Generative AI technologies. While efforts have been made "
+  "to ensure accuracy and safety, the developers and affiliated institutions shall not be held "
+  "liable for any misuse, incorrect guidance, or injury resulting from the use of this application. "
+  "Users are advised to exercise discretion and consult professionals where necessary.\n\n"
+
+  "We would like to express our sincere gratitude to our trainer, Ms. Lim Li Peng, "
+  "for her guidance and expertise throughout the development of this project.\n\n"
+
+  "Project Team:\n"
+  "- Jocasta Tan\n"
+  "- Daniel Soong\n"
+  "- Kaam Yan Hye\n"
+  "- Natalie Narayanan\n\n"
+
+  "We also thank the supporting and administrative staff from UofG, UGS, and SIT for their assistance and support.",
+
+  textAlign: TextAlign.center,
+  style: GoogleFonts.poppins(
+    fontSize: 16,
+    color: Colors.black87,
+    height: 1.6,
+  ),
+),
+
+const SizedBox(height: 40),
 
             // Footer
             Text(

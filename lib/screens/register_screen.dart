@@ -399,15 +399,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
               // Navigation buttons
               Row(
                 children: [
-                  if (_currentStep > 0)
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: _isLoading
-                            ? null
-                            : () async {
-                          await GlobalAudioService.playClickSound();
-                          _previousStep();
-                        },
+Expanded(
+  child: OutlinedButton(
+    onPressed: _isLoading
+        ? null
+        : () async {
+            await GlobalAudioService.playClickSound();
+            if (_currentStep == 0) {
+              Navigator.pushReplacement(
+  context,
+  MaterialPageRoute(builder: (_) => const LoginScreen()),
+); // go back to login
+            } else {
+              _previousStep();
+            }
+          },
+          
                         style: OutlinedButton.styleFrom(
                           backgroundColor: Colors.red,
                           padding: const EdgeInsets.symmetric(vertical: 16),
@@ -425,7 +432,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                       ),
                     ),
-                  if (_currentStep > 0) const SizedBox(width: 12),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: ElevatedButton(
                       onPressed: _isLoading

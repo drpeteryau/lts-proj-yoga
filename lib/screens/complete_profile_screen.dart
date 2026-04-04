@@ -120,7 +120,22 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen>
     const turquoise = Color(0xFF40E0D0);
 
     return Scaffold(
-      body: Container(
+  appBar: AppBar(
+    backgroundColor: Colors.transparent,
+    elevation: 0,
+    leading: IconButton(
+      icon: const Icon(Icons.arrow_back, color: Colors.black),
+      onPressed: () async {
+        await GlobalAudioService.playClickSound();
+        Navigator.pushAndRemoveUntil(
+  context,
+  MaterialPageRoute(builder: (_) => const MainNavigationScreen()),
+  (route) => false,
+);
+      },
+    ),
+  ),
+  body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [Color(0xFF40E0D0), Colors.white],
