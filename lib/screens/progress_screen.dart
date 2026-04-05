@@ -6,6 +6,7 @@ import 'dart:math';
 import 'dart:ui' as ui;
 import '../services/global_audio_service.dart';
 import '../l10n/app_localizations.dart';
+import 'register_screen.dart';
 
 class ProgressScreen extends StatefulWidget {
   const ProgressScreen({super.key});
@@ -21,6 +22,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
 
   bool _isLoading = true;
   String? _error;
+  bool _isGuest = false;
 
   // Data
   int _currentStreak = 0;
@@ -51,6 +53,14 @@ class _ProgressScreenState extends State<ProgressScreen> {
     try {
       final userId = supabase.auth.currentUser?.id;
       if (userId == null) throw Exception('User not authenticated');
+
+      // Check if guest
+      final profile = await supabase
+          .from('profiles')
+          .select('is_guest')
+          .eq('id', userId)
+          .maybeSingle();
+      if (mounted) setState(() => _isGuest = profile?['is_guest'] == true);
 
       print('🔍 DEBUG: Loading progress for user: $userId');
 
@@ -246,7 +256,12 @@ class _ProgressScreenState extends State<ProgressScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Header - simplified
+                        // Guest sign-up nudge
+                        if (_isGuest) ...[
+                          _buildGuestSignUpCard(),
+                          SizedBox(height: isWeb ? 24 : 16),
+                        ],
+                        // Header
                         Text(
                           AppLocalizations.of(context)!.activitySummary,
                           style: GoogleFonts.poppins(
@@ -321,6 +336,94 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 ),
               ),
             ))
+    );
+  }
+
+  Widget _buildGuestSignUpCard() {
+    const turquoise = Color(0xFF40E0D0);
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFFE0FAF7), Color(0xFFFFF8E1)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: turquoise.withOpacity(0.3)),
+        boxShadow: [
+          BoxShadow(
+            color: turquoise.withOpacity(0.1),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: turquoise,
+              borderRadius: BorderRadius.circular(13),
+            ),
+            child: const Icon(Icons.bookmark_add_rounded,
+                color: Colors.white, size: 24),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Save Your Progress',
+                  style: GoogleFonts.poppins(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black87,
+                  ),
+                ),
+                Text(
+                  'Create a free account to keep this data permanently.',
+                  style: GoogleFonts.poppins(
+                    fontSize: 11.5,
+                    color: Colors.black54,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 10),
+          ElevatedButton(
+            onPressed: () async {
+              await GlobalAudioService.playClickSound();
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const RegisterScreen()),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: turquoise,
+              foregroundColor: Colors.white,
+              elevation: 0,
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: Text(
+              'Sign Up',
+              style: GoogleFonts.poppins(
+                fontSize: 12.5,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

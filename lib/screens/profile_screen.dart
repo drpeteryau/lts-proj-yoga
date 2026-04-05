@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'edit_profile_screen.dart';
 import 'auth_gate.dart';
+import 'register_screen.dart';
 import '../services/global_audio_service.dart';
 import '../l10n/app_localizations.dart';
 import 'about_us_screen.dart';
@@ -26,6 +27,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Map<String, dynamic>? _profile;
   bool _isLoading = true;
+  bool _isGuest = false;
 
   int _totalSessions = 0;
   int _totalMinutes = 0;
@@ -53,6 +55,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     setState(() {
       _profile = data;
+      _isGuest = data?['is_guest'] == true;
       _isLoading = false;
     });
   }
@@ -175,6 +178,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   // ─────────────────────────────────────────────────────────────────────────
 
   Widget _buildWebLayout(String name, String email, String? imageUrl) {
+    if (_isGuest) return _buildGuestProfilePrompt();
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -229,6 +233,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
                 child: Column(
                   children: [
+                    if (_isGuest) _buildGuestSignUpCard(),
+                    if (_isGuest) const SizedBox(height: 20),
                     // Row 1: Profile Card (Left) | Stats Grid (Right)
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -430,6 +436,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   // ─────────────────────────────────────────────────────────────────────────
 
   Widget _buildMobileLayout(String name, String email, String? imageUrl) {
+    // Guests see a simplified sign-up prompt instead of the full profile
+    if (_isGuest) return _buildGuestProfilePrompt();
+
     return Column(
       children: [
         Padding(
@@ -480,6 +489,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               children: [
+                if (_isGuest) _buildGuestSignUpCard(),
                 _buildProfileCard(name, email, imageUrl),
 
                 const SizedBox(height: 20),
@@ -644,6 +654,231 @@ class _ProfileScreenState extends State<ProfileScreen> {
   // ─────────────────────────────────────────────────────────────────────────
   // Shared Components
   // ─────────────────────────────────────────────────────────────────────────
+
+  /// Full-page guest prompt — replaces profile screen for guest users
+  Widget _buildGuestProfilePrompt() {
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(28),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Icon
+            Container(
+              width: 90,
+              height: 90,
+              decoration: BoxDecoration(
+                color: turquoise.withOpacity(0.15),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.person_outline_rounded,
+                  size: 48, color: turquoise),
+            ),
+            const SizedBox(height: 24),
+
+            Text(
+              'You\'re a Guest',
+              style: GoogleFonts.poppins(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Create a free account to unlock your full profile, save your progress permanently, and track your wellness journey.',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.poppins(
+                fontSize: 14.5,
+                color: Colors.black54,
+                height: 1.6,
+              ),
+            ),
+            const SizedBox(height: 32),
+
+            // Benefits list
+            _guestBenefit(Icons.bookmark_rounded, 'Save progress permanently'),
+            _guestBenefit(Icons.person_rounded, 'Your own profile & preferences'),
+            _guestBenefit(Icons.notifications_rounded, 'Daily practice reminders'),
+            _guestBenefit(Icons.bar_chart_rounded, 'Full wellness tracking'),
+
+            const SizedBox(height: 36),
+
+            // Sign up button
+            SizedBox(
+              width: double.infinity,
+              height: 52,
+              child: ElevatedButton(
+                onPressed: () async {
+                  await GlobalAudioService.playClickSound();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const RegisterScreen()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: turquoise,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+                child: Text(
+                  'Create Free Account',
+                  style: GoogleFonts.poppins(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            // Sign out option
+            TextButton(
+              onPressed: () async {
+                await GlobalAudioService.playClickSound();
+                await supabase.auth.signOut();
+                if (mounted) {
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (_) => const AuthGate()),
+                        (route) => false,
+                  );
+                }
+              },
+              child: Text(
+                'Sign out of guest session',
+                style: GoogleFonts.poppins(
+                  fontSize: 13,
+                  color: Colors.grey[500],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _guestBenefit(IconData icon, String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        children: [
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: turquoise.withOpacity(0.12),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, size: 18, color: turquoise),
+          ),
+          const SizedBox(width: 14),
+          Text(
+            text,
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              color: Colors.black87,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGuestSignUpCard() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFFE0FAF7), Color(0xFFFFF8E1)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: turquoise.withOpacity(0.3)),
+        boxShadow: [
+          BoxShadow(
+            color: turquoise.withOpacity(0.1),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          // Icon
+          Container(
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+              color: turquoise,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: const Icon(Icons.person_add_rounded,
+                color: Colors.white, size: 26),
+          ),
+          const SizedBox(width: 16),
+          // Text
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Save Your Progress',
+                  style: GoogleFonts.poppins(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  'You\'re browsing as a guest. Create a free account to keep your progress permanently.',
+                  style: GoogleFonts.poppins(
+                    fontSize: 12,
+                    color: Colors.black54,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          // Button
+          ElevatedButton(
+            onPressed: () async {
+              await GlobalAudioService.playClickSound();
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const RegisterScreen()),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: turquoise,
+              foregroundColor: Colors.white,
+              elevation: 0,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: Text(
+              'Sign Up',
+              style: GoogleFonts.poppins(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildProfileCard(String name, String email, String? imageUrl) {
     return Container(

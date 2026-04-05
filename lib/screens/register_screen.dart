@@ -178,6 +178,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
         throw Exception('Please enter a valid age');
       }
 
+      // ⭐ Capture guest UUID BEFORE sign up wipes the session
+      final supabase = Supabase.instance.client;
+      final guestUserId = supabase.auth.currentUser?.id;
+      final isGuest = guestUserId != null &&
+          (await supabase
+              .from('profiles')
+              .select('is_guest')
+              .eq('id', guestUserId)
+              .maybeSingle())?['is_guest'] ==
+              true;
+      debugPrint('🔍 Guest check before signup — guestUserId: $guestUserId, isGuest: $isGuest');
+
       // Determine age group
       String ageGroup = 'Unknown';
       if (age < 18) {
@@ -233,7 +245,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
         'preferred_session_length': _preferredSessionLength,
         'preferred_language': _preferredLanguage,
         'push_notifications_enabled': _pushNotifications,
+        'is_guest': false,
       });
+
+      // ⭐ Migrate guest data to the new account
+      if (isGuest && guestUserId != null && guestUserId != user.id) {
+        await _migrateGuestData(
+            guestUserId: guestUserId, newUserId: user.id);
+      }
 
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -264,6 +283,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (mounted) {
         setState(() => _isLoading = false);
       }
+    }
+  }
+
+  /// Migrates all progress data from guest UUID to the new registered account.
+  /// Called once during registration when the user was previously a guest.
+  Future<void> _migrateGuestData({
+    required String guestUserId,
+    required String newUserId,
+  }) async {
+    final supabase = Supabase.instance.client;
+    try {
+      // Use a SECURITY DEFINER function to bypass RLS
+      // This runs as superuser so it can update rows owned by the old guest UUID
+      await supabase.rpc('migrate_guest_data', params: {
+        'guest_id': guestUserId,
+        'new_id': newUserId,
+      });
+      debugPrint('✅ Guest data migrated from $guestUserId to $newUserId');
+    } catch (e) {
+      debugPrint('⚠️ Guest migration failed (non-fatal): $e');
     }
   }
 
@@ -330,200 +369,200 @@ class _RegisterScreenState extends State<RegisterScreen> {
         child: SafeArea(
           child: Stack(
               children: [
-          // Main content
-          SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-          child: Column(
-            children: [
-              const SizedBox(height: 10),
+                // Main content
+                SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 10),
 
-              // Animated Lottie header based on step
-              SizedBox(
-                height: 140,
-                child: _buildStepAnimation(),
-              ),
-              const SizedBox(height: 10),
+                      // Animated Lottie header based on step
+                      SizedBox(
+                        height: 140,
+                        child: _buildStepAnimation(),
+                      ),
+                      const SizedBox(height: 10),
 
-              Text(
-                AppLocalizations.of(context)!.registerTitle,
-                style: const TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 10),
-              Text(
-                AppLocalizations.of(context)!.registerSubtitle,
-                style: const TextStyle(
-                  color: Colors.white70,
-                  fontSize: 16,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 25),
-
-              // Progress indicator
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildStepIndicator(0, AppLocalizations.of(context)!.stepPersonal),
-                  _buildStepLine(0),
-                  _buildStepIndicator(1, AppLocalizations.of(context)!.stepPreferences),
-                  _buildStepLine(1),
-                  _buildStepIndicator(2, AppLocalizations.of(context)!.stepAccount),
-                ],
-              ),
-              const SizedBox(height: 25),
-
-              // White card with form
-              Container(
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(24),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 20,
-                      offset: const Offset(0, 10),
-                    ),
-                  ],
-                ),
-                child: _buildStepContent(),
-              ),
-
-              const SizedBox(height: 20),
-
-              // Navigation buttons
-              Row(
-                children: [
-Expanded(
-  child: OutlinedButton(
-    onPressed: _isLoading
-        ? null
-        : () async {
-            await GlobalAudioService.playClickSound();
-            if (_currentStep == 0) {
-              Navigator.pushReplacement(
-  context,
-  MaterialPageRoute(builder: (_) => const LoginScreen()),
-); // go back to login
-            } else {
-              _previousStep();
-            }
-          },
-          
-                        style: OutlinedButton.styleFrom(
-                          backgroundColor: Colors.red,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
+                      Text(
+                        AppLocalizations.of(context)!.registerTitle,
+                        style: const TextStyle(
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        AppLocalizations.of(context)!.registerSubtitle,
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 16,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 25),
+
+                      // Progress indicator
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _buildStepIndicator(0, AppLocalizations.of(context)!.stepPersonal),
+                          _buildStepLine(0),
+                          _buildStepIndicator(1, AppLocalizations.of(context)!.stepPreferences),
+                          _buildStepLine(1),
+                          _buildStepIndicator(2, AppLocalizations.of(context)!.stepAccount),
+                        ],
+                      ),
+                      const SizedBox(height: 25),
+
+                      // White card with form
+                      Container(
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(24),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 20,
+                              offset: const Offset(0, 10),
+                            ),
+                          ],
+                        ),
+                        child: _buildStepContent(),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      // Navigation buttons
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: _isLoading
+                                  ? null
+                                  : () async {
+                                await GlobalAudioService.playClickSound();
+                                if (_currentStep == 0) {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(builder: (_) => const LoginScreen()),
+                                  ); // go back to login
+                                } else {
+                                  _previousStep();
+                                }
+                              },
+
+                              style: OutlinedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                              ),
+                              child: Text(
+                                AppLocalizations.of(context)!.back,
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: _isLoading
+                                  ? null
+                                  : () async {
+                                await GlobalAudioService.playClickSound();
+                                _currentStep < 2 ? _nextStep() : _register();
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: turquoise,
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                              ),
+                              child: _isLoading
+                                  ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              )
+                                  : Text(
+                                _currentStep < 2
+                                    ? AppLocalizations.of(context)!.continueButton
+                                    : AppLocalizations.of(context)!.createAccount,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      // Link to login
+                      TextButton(
+                        onPressed: _isLoading
+                            ? null
+                            : () async {
+                          await GlobalAudioService.playClickSound();
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const LoginScreen()),
+                          );
+                        },
                         child: Text(
-                          AppLocalizations.of(context)!.back,
+                          AppLocalizations.of(context)!.alreadyHaveAccount,
                           style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
+                            color: Colors.black87,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
-                    ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: _isLoading
-                          ? null
-                          : () async {
-                        await GlobalAudioService.playClickSound();
-                        _currentStep < 2 ? _nextStep() : _register();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: turquoise,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                      ),
-                      child: _isLoading
-                          ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
-                          : Text(
-                        _currentStep < 2
-                            ? AppLocalizations.of(context)!.continueButton
-                            : AppLocalizations.of(context)!.createAccount,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 20),
-
-              // Link to login
-              TextButton(
-                onPressed: _isLoading
-                    ? null
-                    : () async {
-                  await GlobalAudioService.playClickSound();
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => const LoginScreen()),
-                  );
-                },
-                child: Text(
-                  AppLocalizations.of(context)!.alreadyHaveAccount,
-                  style: TextStyle(
-                    color: Colors.black87,
-                    fontWeight: FontWeight.w600,
+                    ],
                   ),
                 ),
-              ),
-            ],
-          ),
-        ),
 
-          // Language selector button (top right) - positioned AFTER content for proper z-index
-            Positioned(
-              top: 16,
-              right: 16,
-              child: IconButton(
-                iconSize: 32,
-                icon: Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.3),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.language,
-                    color: Colors.white,
-                    size: 28,
+                // Language selector button (top right) - positioned AFTER content for proper z-index
+                Positioned(
+                  top: 16,
+                  right: 16,
+                  child: IconButton(
+                    iconSize: 32,
+                    icon: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.3),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.language,
+                        color: Colors.white,
+                        size: 28,
+                      ),
+                    ),
+                    onPressed: () {
+                      print('Language clicked!');
+                      GlobalAudioService.playClickSound();
+                      _showLanguageDialog();
+                    },
                   ),
                 ),
-                onPressed: () {
-                  print('Language clicked!');
-                  GlobalAudioService.playClickSound();
-                  _showLanguageDialog();
-                },
-              ),
-            ),
-          ]),
+              ]),
         ),
       ),
     );

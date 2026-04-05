@@ -152,6 +152,59 @@ class _LoginScreenState extends State<LoginScreen>
     );
   }
 
+  Future<void> _loginAsGuest() async {
+    setState(() => _isLoading = true);
+    try {
+      final supabase = Supabase.instance.client;
+
+      // Sign in anonymously — Supabase gives each guest their own UUID
+      final response = await supabase.auth.signInAnonymously();
+      final user = response.user;
+      if (user == null) throw Exception('Guest login failed');
+
+      // Create a guest profile if one doesn't exist yet
+      final existing = await supabase
+          .from('profiles')
+          .select()
+          .eq('id', user.id)
+          .maybeSingle();
+
+      if (existing == null) {
+        await supabase.from('profiles').insert({
+          'id': user.id,
+          'email': null,
+          'full_name': 'Guest',
+          'age': 25,
+          'age_group': '18-24 years',
+          'experience_level': 'Beginner',
+          'preferred_session_length': '15 minutes',
+          'preferred_language': 'English',
+          'push_notifications_enabled': false,
+          'is_guest': true,
+        });
+      }
+
+      if (context.mounted) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => const MainNavigationScreen()),
+              (route) => false,
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Guest login failed. Please try again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     const turquoise = Color(0xFF40E0D0);
@@ -168,176 +221,217 @@ class _LoginScreenState extends State<LoginScreen>
         child: SafeArea(
           child: Stack(
               children: [
-          // Main content
-          SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-          child: FadeTransition(
-            opacity: _fadeAnimation,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(height: 40),
-                Lottie.network(
-                  'https://lottie.host/30cd278d-76cf-45b1-b586-efce4269ff30/IgVs13JkK4.json',
-                  height: 200,
-                  repeat: true,
-                  animate: true,
-                  fit: BoxFit.contain,
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  AppLocalizations.of(context)!.welcomeBack,
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  AppLocalizations.of(context)!.loginSubtitle,
-                  style: TextStyle(color: Colors.white70, fontSize: 16),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 40),
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(24),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 10,
-                        offset: const Offset(0, 5),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      _buildField(
-                        Icons.email_outlined,
-                        AppLocalizations.of(context)!.email,
-                        _emailController,
-                        keyboardType: TextInputType.emailAddress,
-                      ),
-                      _buildField(
-                        Icons.lock_outline,
-                        AppLocalizations.of(context)!.password,
-                        _passwordController,
-                        obscureText: true,
-                      ),
-                      const SizedBox(height: 20),
-
-                      // 🌿 Normal Log In Button
-                      SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: turquoise,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                          ),
-                          onPressed: _isLoading ? null : () async {
-                            await GlobalAudioService.playClickSound();
-                            _login();
-                          },
-                          child: _isLoading
-                              ? const CircularProgressIndicator(
-                              color: Colors.white)
-                              : Text(
-                            AppLocalizations.of(context)!.logIn,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
+                // Main content
+                SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                  child: FadeTransition(
+                    opacity: _fadeAnimation,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 40),
+                        Lottie.network(
+                          'https://lottie.host/30cd278d-76cf-45b1-b586-efce4269ff30/IgVs13JkK4.json',
+                          height: 200,
+                          repeat: true,
+                          animate: true,
+                          fit: BoxFit.contain,
                         ),
-                      ),
-
-
-                      const SizedBox(height: 12),
-
-                      // Forgot Password Link
-                      TextButton(
-                        onPressed: () {
-                          GlobalAudioService.playClickSound();
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) => const ForgotPasswordScreen()),
-                          );
-                        },
-                        child: Text(
-                          AppLocalizations.of(context)!.forgotPassword,
+                        const SizedBox(height: 10),
+                        Text(
+                          AppLocalizations.of(context)!.welcomeBack,
                           style: TextStyle(
-                            color: Colors.grey[600],
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14,
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
                         ),
-                      ),
+                        const SizedBox(height: 10),
+                        Text(
+                          AppLocalizations.of(context)!.loginSubtitle,
+                          style: TextStyle(color: Colors.white70, fontSize: 16),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 40),
+                        Container(
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(24),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 10,
+                                offset: const Offset(0, 5),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            children: [
+                              _buildField(
+                                Icons.email_outlined,
+                                AppLocalizations.of(context)!.email,
+                                _emailController,
+                                keyboardType: TextInputType.emailAddress,
+                              ),
+                              _buildField(
+                                Icons.lock_outline,
+                                AppLocalizations.of(context)!.password,
+                                _passwordController,
+                                obscureText: true,
+                              ),
+                              const SizedBox(height: 20),
 
-                      const SizedBox(height: 8),
+                              // 🌿 Normal Log In Button
+                              SizedBox(
+                                width: double.infinity,
+                                height: 50,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: turquoise,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                  ),
+                                  onPressed: _isLoading ? null : () async {
+                                    await GlobalAudioService.playClickSound();
+                                    _login();
+                                  },
+                                  child: _isLoading
+                                      ? const CircularProgressIndicator(
+                                      color: Colors.white)
+                                      : Text(
+                                    AppLocalizations.of(context)!.logIn,
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
 
-                      TextButton(
-                        onPressed: () {
-                          GlobalAudioService.playClickSound();
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) => const RegisterScreen()),
-                          );
-                        },
-                        child: Text(
-                          AppLocalizations.of(context)!.dontHaveAccount,
-                          style: TextStyle(
-                            color: turquoise,
-                            fontWeight: FontWeight.w600,
+
+                              const SizedBox(height: 12),
+
+                              // Forgot Password Link
+                              TextButton(
+                                onPressed: () {
+                                  GlobalAudioService.playClickSound();
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (_) => const ForgotPasswordScreen()),
+                                  );
+                                },
+                                child: Text(
+                                  AppLocalizations.of(context)!.forgotPassword,
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+
+                              const SizedBox(height: 8),
+
+                              TextButton(
+                                onPressed: () {
+                                  GlobalAudioService.playClickSound();
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (_) => const RegisterScreen()),
+                                  );
+                                },
+                                child: Text(
+                                  AppLocalizations.of(context)!.dontHaveAccount,
+                                  style: TextStyle(
+                                    color: turquoise,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+
+                              const Divider(height: 24),
+
+                              // Guest login button
+                              SizedBox(
+                                width: double.infinity,
+                                height: 50,
+                                child: OutlinedButton.icon(
+                                  style: OutlinedButton.styleFrom(
+                                    side: BorderSide(color: Colors.grey[400]!),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                  ),
+                                  onPressed: _isLoading ? null : () async {
+                                    await GlobalAudioService.playClickSound();
+                                    _loginAsGuest();
+                                  },
+                                  icon: Icon(
+                                    Icons.person_outline_rounded,
+                                    color: Colors.grey[600],
+                                  ),
+                                  label: Text(
+                                    'Try as Guest',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.grey[700],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'No sign-up needed · Progress not permanently saved',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: Colors.grey[500],
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
                           ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 60),
+                      ],
+                    ),
                   ),
                 ),
-                const SizedBox(height: 60),
-              ],
-            ),
-          ),
-        ),
 
-          // Language selector button (top right) - positioned AFTER content for proper z-index
-          Positioned(
-            top: 16,
-            right: 16,
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(24),
-                onTap: () {
-                  print('Language button tapped!'); // Debug
-                  GlobalAudioService.playClickSound();
-                  _showLanguageDialog();
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.2),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.language,
-                    color: Colors.white,
-                    size: 28,
+                // Language selector button (top right) - positioned AFTER content for proper z-index
+                Positioned(
+                  top: 16,
+                  right: 16,
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(24),
+                      onTap: () {
+                        print('Language button tapped!'); // Debug
+                        GlobalAudioService.playClickSound();
+                        _showLanguageDialog();
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.2),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.language,
+                          color: Colors.white,
+                          size: 28,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-          ),
-          ]),
+              ]),
         ),
       ),
     );

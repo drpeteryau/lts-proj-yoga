@@ -34,32 +34,32 @@ class _AuthGateState extends State<AuthGate> {
     });
 
     // 🔄 React to login/logout automatically
-Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+    Supabase.instance.client.auth.onAuthStateChange.listen((data) {
 
-  final event = data.event;
+      final event = data.event;
 
-  // ⭐ Handle password reset FIRST
-  if (event == AuthChangeEvent.passwordRecovery) {
+      // ⭐ Handle password reset FIRST
+      if (event == AuthChangeEvent.passwordRecovery) {
 
-     _isPasswordRecovery = true;
+        _isPasswordRecovery = true;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => const ResetPasswordScreen(),
-        ),
-      );
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const ResetPasswordScreen(),
+            ),
+          );
+        });
+
+        return; // stop normal auth flow
+      }
+
+      // Normal login/logout handling
+      if (!_isPasswordRecovery) {
+        _checkAuthState();
+      }
     });
-
-    return; // stop normal auth flow
-  }
-
-  // Normal login/logout handling
-if (!_isPasswordRecovery) {
-  _checkAuthState();
-}
-});
   }
 
   Future<void> _ensureProfileExists(User user) async {
@@ -96,7 +96,7 @@ if (!_isPasswordRecovery) {
 
   Future<void> _checkAuthState() async {
 
-    
+
     if (_isPasswordRecovery) return;
     final supabase = Supabase.instance.client;
     final session = supabase.auth.currentSession;
@@ -105,10 +105,10 @@ if (!_isPasswordRecovery) {
       if (mounted) setState(() => _isLoading = false);
       return;
     }
-      // 🚨 If this is a password recovery session, do not redirect
-  if (supabase.auth.currentSession?.user?.aud == 'recovery') {
-    return;
-  }
+    // 🚨 If this is a password recovery session, do not redirect
+    if (supabase.auth.currentSession?.user?.aud == 'recovery') {
+      return;
+    }
 
     final user = session.user;
     await _ensureProfileExists(user);
@@ -131,24 +131,24 @@ if (!_isPasswordRecovery) {
       }
       else if (savedLanguage == 'Mandarin (Traditional)') {
         appLocale.value = const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant');
-      } 
+      }
       else {
         appLocale.value = const Locale('en');
       }
-      
+
       print('🌍 App language synced to: $savedLanguage');
     }
 
     final fullName = (profile?['full_name'] as String?)?.trim() ?? '';
     final age = profile?['age'];
-    final isIncomplete = fullName.isEmpty || age == null;
+    final isGuest = profile?['is_guest'] == true;
+    final isIncomplete = !isGuest && (fullName.isEmpty || age == null);
 
     if (!mounted) return;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (isIncomplete) {
-        print(
-            '🪷 Incomplete profile detected — going to CompleteProfileScreen');
+        print('🪷 Incomplete profile detected — going to CompleteProfileScreen');
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
